@@ -285,7 +285,7 @@ export default {
         if (oracleId === 3) {
           reqObj = [multiply, divide, parsedDecimals];
         }
-        console.log("bytesData before");
+        console.log("bytesData before ");
         const bytesData = await oracleContract.getDataParameter(...reqObj, {
           gasLimit: 300000,
         });
