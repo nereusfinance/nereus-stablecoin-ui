@@ -49,35 +49,35 @@ export default {
         JSON.stringify(pool.contract.abi),
         this.signer
       );
-
+      console.log("poolContract ready");
       const tokenContract = new this.$ethers.Contract(
         pool.token.address,
         JSON.stringify(pool.token.abi),
         this.signer
       );
-
+      console.log("token contract ready");
       const pairTokenContract = new this.$ethers.Contract(
         pool.pairToken.address,
         JSON.stringify(pool.token.abi),
         this.signer
       );
-
-      const swapContract = new this.$ethers.Contract(
-        pool.swapContractInfo.address,
-        JSON.stringify(pool.swapContractInfo.abi),
-        this.signer
-      );
+      console.log("pair token contract ready");
+      // const swapContract = new this.$ethers.Contract(
+      //   pool.swapContractInfo.address,
+      //   JSON.stringify(pool.swapContractInfo.abi),
+      //   this.signer
+      // );
 
       const oracleExchangeRate = await this.getOracleExchangeRate(
         pool.token.oracleId,
         pool.token.oracleDatas,
         pool.token.address
       );
-
+      console.log("oracleExchangeRate ready");
       const contractExchangeRate = await this.getContractExchangeRate(
         poolContract
       );
-
+      console.log("contractExchangeRate ready");
       let tokenPairRate;
       let askUpdatePrice = false;
 
@@ -118,7 +118,7 @@ export default {
         pool.contract.address,
         pool.pairToken.address
       );
-
+      console.log("dynamicBorrowAmount ready");
       let userBalance;
       try {
         userBalance = await tokenContract.balanceOf(this.account, {
@@ -142,20 +142,20 @@ export default {
         pool.stabilityFee,
         pool.interest
       );
-
+      console.log("mainInfo ready", mainInfo);
       const tokenPairPrice = 1;
 
       const tokenPrice = Number(
         this.$ethers.utils.formatUnits(tokenPairRate, pool.token.decimals)
       );
-
+      console.log("tokenPrice ready", tokenPrice);
       const collateralInfo = this.createCollateralInfo(
         userCollateralShare,
         userBorrowPart,
         tokenPrice,
         pool.ltv
       );
-
+      console.log("collateralInfo ready", collateralInfo);
       return {
         name: pool.name,
         id: pool.id,
@@ -186,7 +186,7 @@ export default {
           decimals: pool.token.decimals,
           oracleExchangeRate: tokenPairRate,
         },
-        swapContract: swapContract,
+        // swapContract: swapContract,
       };
     },
     async getContractExchangeRate(contract) {
@@ -258,20 +258,20 @@ export default {
       const oracleContractInfo = oracleContractsInfo.find(
         (item) => item.id === oracleId
       );
-
+      console.log("oracleContractInfo", oracleContractInfo);
       const oracleContract = new this.$ethers.Contract(
         oracleContractInfo.address,
         JSON.stringify(oracleContractInfo.abi),
         this.signer
       );
-
+      console.log("oracleContract", oracleContract);
       try {
         const parsedDecimals = this.$ethers.BigNumber.from(
           Math.pow(10, decimals).toLocaleString("fullwide", {
             useGrouping: false,
           })
         );
-
+        console.log('parsedDecimals', parsedDecimals);
         let reqObj;
 
         if (oracleId === 1) {
@@ -282,14 +282,19 @@ export default {
           reqObj = [multiply, divide, parsedDecimals]; //xSUSHI pool
         }
 
+        if (oracleId === 3) {
+          reqObj = [multiply, divide, parsedDecimals];
+        }
+        console.log("bytesData before");
         const bytesData = await oracleContract.getDataParameter(...reqObj, {
           gasLimit: 300000,
         });
-
+        console.log("bytesData after");
+        console.log("rate before");
         const rate = await oracleContract.peekSpot(bytesData, {
           gasLimit: 300000,
         });
-
+        console.log("rate after");
         return rate;
       } catch (e) {
         console.log("getOracleExchangeRate err:", e);
@@ -354,7 +359,7 @@ export default {
           additional: "",
         },
         {
-          title: "MIM borrowed",
+          title: "NUSD borrowed",
           value: `$${parseFloat(userBorrowPart).toFixed(4)}`,
           additional: "",
         },
@@ -364,7 +369,7 @@ export default {
           additional: "",
         },
         {
-          title: "MIM left to borrow",
+          title: "NUSD left to borrow",
           value: `${borrowLeftParsed}`,
           additional: "",
         },
