@@ -121,12 +121,9 @@ export default {
 
       let userBalance;
       try {
-        // userBalance = await tokenContract.balanceOf(this.account, {
-        //   gasLimit: 600000,
-        // });
-        userBalance = await this.$store.getters.getProvider.getBalance(
-          this.account
-        );
+        userBalance = await tokenContract.balanceOf(this.account, {
+          gasLimit: 600000,
+        });
       } catch (e) {
         console.log("userBalance Err:", e);
       }
