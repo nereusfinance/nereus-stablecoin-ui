@@ -264,7 +264,7 @@ export default {
         JSON.stringify(oracleContractInfo.abi),
         this.signer
       );
-      console.log("oracleContract", oracleContract);
+      console.log("oracleContract", oracleContract );
       try {
         const parsedDecimals = this.$ethers.BigNumber.from(
           Math.pow(10, decimals).toLocaleString("fullwide", {
