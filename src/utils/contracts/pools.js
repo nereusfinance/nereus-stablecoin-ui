@@ -8317,14 +8317,14 @@ export default [
       ],
     },
     token: {
-      name: "AVAX",
+      name: "WAVAX",
       decimals: 18,
       address: "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7",
       oracleId: 3,
       oracleDatas: {
         multiply: "0x0000000000000000000000000000000000000000",
         divide: "0x0A77230d17318075983913bC2145DB16C7366156",
-        decimals: 8,
+        decimals: 18,
       },
       abi: [
         {
