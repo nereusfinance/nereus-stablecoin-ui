@@ -8324,7 +8324,7 @@ export default [
       oracleDatas: {
         multiply: "0x0000000000000000000000000000000000000000",
         divide: "0x0A77230d17318075983913bC2145DB16C7366156",
-        decimals: 8,
+        decimals: 18,
       },
       abi: [
         {
