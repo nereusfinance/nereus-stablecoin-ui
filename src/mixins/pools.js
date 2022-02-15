@@ -121,9 +121,12 @@ export default {
 
       let userBalance;
       try {
-        userBalance = await tokenContract.balanceOf(this.account, {
-          gasLimit: 600000,
-        });
+        // userBalance = await tokenContract.balanceOf(this.account, {
+        //   gasLimit: 600000,
+        // });
+        userBalance = await this.$ethers
+          .getDefaultProvider("http://localhost:8545")
+          .getBalance(this.account);
       } catch (e) {
         console.log("userBalance Err:", e);
       }
