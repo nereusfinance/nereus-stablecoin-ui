@@ -52,7 +52,7 @@ export default {
   },
   computed: {
     activeNetwork() {
-      console.log('this.networkType', this.networkType);
+      console.log("this.networkType", this.networkType);
       return this.networks.find((item) => item.chainid == this.networkType);
     },
   },
