@@ -3,6 +3,17 @@
     <h3 v-if="actionType === 'borrow'">Deposit collateral</h3>
     <h3 v-if="actionType === 'repay'">Repay {{ tokenPairName }}</h3>
 
+    <div class="checkbox-wrap" v-if="this.tokenName === 'WAVAX'">
+      <div
+        class="box-wrap"
+        @click="toggleUseAvax"
+        :class="{ active: useAVAX }"
+      >
+        <div class="box"></div>
+      </div>
+      <p class="label-text" @click="toggleUseAvax">Use AVAX</p>
+    </div>
+
     <div class="input-wrap">
       <ValueInput
         :max="maxMainValue"
@@ -168,6 +179,8 @@ export default {
       multiplier: 1,
       slipage: 1,
       showLeverage: false,
+
+      useAVAX: true,
     };
   },
   watch: {
@@ -339,6 +352,9 @@ export default {
       }
 
       this.showLeverage = !this.showLeverage;
+    },
+    toggleUseAvax() {
+      this.useAVAX = !this.useAVAX;
     },
     toFixed(num, fixed) {
       // eslint-disable-next-line no-useless-escape
