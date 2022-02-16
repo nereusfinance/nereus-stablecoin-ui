@@ -33,9 +33,6 @@ export default {
   methods: {
     async checkProvider() {
       const provider = await detectEthereumProvider();
-      console.log('--------------------');
-      console.log('provider', provider);
-      console.log('--------------------');
       if (!provider) {
         this.$store.commit("setPopupState", {
           type: "browser",
