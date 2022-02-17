@@ -9714,8 +9714,8 @@ export default [
         },
       ],
     },
-    stabilityFee: 3,
-    interest: 0.5,
+    stabilityFee: 12.5,
+    interest: 1,
     ltv: 75,
     initialMax: 20,
     swapContractInfo: {

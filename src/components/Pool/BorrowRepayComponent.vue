@@ -6,12 +6,12 @@
     <div class="checkbox-wrap" v-if="this.tokenName === 'WAVAX'">
       <div
         class="box-wrap"
-        @click="toggleUseAvax"
+        @click="toggleUseAVAX"
         :class="{ active: useAVAX }"
       >
         <div class="box"></div>
       </div>
-      <p class="label-text" @click="toggleUseAvax">Use AVAX</p>
+      <p class="label-text" @click="toggleUseAVAX">Use AVAX</p>
     </div>
 
     <div class="input-wrap">
@@ -117,6 +117,9 @@ export default {
     balance: {
       required: true,
     },
+    balanceNativeToken: {
+      required: true,
+    },
     pairBalance: {
       require: true,
     },
@@ -165,6 +168,7 @@ export default {
   data() {
     return {
       userBalance: null,
+      userBalanceNativeToken: null,
 
       mainValue: "",
       mainValueError: "",
@@ -179,8 +183,6 @@ export default {
       multiplier: 1,
       slipage: 1,
       showLeverage: false,
-
-      useAVAX: true,
     };
   },
   watch: {
@@ -189,6 +191,9 @@ export default {
     },
   },
   computed: {
+    useAVAX() {
+      return this.$store.getters.getUseAVAX;
+    },
     liquidationMultiplier() {
       return (200 - this.ltv) / 100;
     },
@@ -198,7 +203,11 @@ export default {
       return true;
     },
     maxMainValue() {
-      if (this.actionType === "borrow") return this.userBalance;
+      const balance = this.getAVAXStatus()
+        ? this.userBalanceNativeToken
+        : this.userBalance;
+
+      if (this.actionType === "borrow") return balance;
       if (this.actionType === "repay") {
         if (
           parseFloat(this.userTotalBorrowed) >
@@ -212,14 +221,16 @@ export default {
       return 0;
     },
     mainValueTokenName() {
-      if (this.actionType === "borrow") return this.tokenName;
+      const tokenSymbol = this.getAVAXStatus() ? 'AVAX' : this.tokenName
+      if (this.actionType === "borrow") return tokenSymbol;
       if (this.actionType === "repay") return this.tokenPairName;
 
       return "XX";
     },
     pairValueTokenName() {
+      const tokenSymbol = this.getAVAXStatus() ? 'AVAX' : this.tokenName
       if (this.actionType === "borrow") return this.tokenPairName;
-      if (this.actionType === "repay") return this.tokenName;
+      if (this.actionType === "repay") return tokenSymbol;
 
       return "XX";
     },
@@ -337,6 +348,9 @@ export default {
     },
   },
   methods: {
+    getAVAXStatus() {
+      return this.$store.getters.getUseAVAX;
+    },
     updateMultiplier(newVal) {
       this.multiplier = newVal;
     },
@@ -353,8 +367,9 @@ export default {
 
       this.showLeverage = !this.showLeverage;
     },
-    toggleUseAvax() {
-      this.useAVAX = !this.useAVAX;
+    toggleUseAVAX() {
+      const AVAXStatus = this.$store.getters.getUseAVAX;
+      this.$store.commit("setUseAVAX", !AVAXStatus);
     },
     toFixed(num, fixed) {
       // eslint-disable-next-line no-useless-escape
@@ -676,9 +691,15 @@ export default {
         this.tokenDecimals
       );
 
+      const parsedBalanceNativeToken = this.$ethers.utils.formatEther(
+        this.balanceNativeToken.toString()
+      );
+
       this.userBalance = parsedBalance;
+      this.userBalanceNativeToken = parsedBalanceNativeToken;
 
       console.log("FORMAT BALANCE:", this.userBalance);
+      console.log("FORMAT BALANCE NATIVE TOKEN:", this.userBalanceNativeToken);
     },
   },
   async created() {
