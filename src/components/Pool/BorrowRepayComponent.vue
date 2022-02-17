@@ -117,7 +117,9 @@ export default {
     balance: {
       required: true,
     },
-    balanceNativeToken,
+    balanceNativeToken: {
+      required: false,
+    },
     pairBalance: {
       require: true,
     },
