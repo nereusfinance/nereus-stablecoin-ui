@@ -1650,7 +1650,7 @@ export default {
       console.log("GAS PRICE:", gasPrice);
 
       const depositAmount = this.getAVAXStatus() ? amount : 0;
-      console.log('depositAmount', depositAmount)
+
       if (isApprowed) {
         console.log("APPROWED");
 
