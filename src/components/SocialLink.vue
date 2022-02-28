@@ -64,6 +64,7 @@ export default {
     align-items: center;
     position: relative;
     z-index: 2;
+    margin: 0 82px 0 80px;
 
     .footer-nav {
       display: flex;
