@@ -56,30 +56,12 @@
         />
 
         <CollateralParameters
-          :infoItems="pool.collateralInfo"
+          :infoItems="collateralInfo"
           :exchangeRate="pool.tokenPrice"
           :tokenName="pool.token.name"
         />
 
-        <Balances
-          :balances="[
-            {
-              balance: pool.userBalanceNativeToken,
-              token: 'AVAX',
-              decimals: '18',
-            },
-            {
-              balance: pool.userBalance,
-              token: pool.token.name,
-              decimals: pool.token.decimals,
-            },
-            {
-              balance: pool.userPairBalance,
-              token: pool.pairToken.name,
-              decimals: pool.pairToken.decimals,
-            },
-          ]"
-        />
+        <Balances :balances="userBalancesProp" />
 
         <InfoBlock :infoItems="pool.mainInfo" />
       </div>
@@ -106,6 +88,44 @@ export default {
     };
   },
   computed: {
+    collateralInfo() {
+      return this.$store.getters.getCollateralInfo;
+    },
+    userBalancesProp() {
+      const pool = this.pool;
+      const balances = [
+        {
+          balance: this.userBalanceNativeToken,
+          token: "AVAX",
+          decimals: "18",
+        },
+        {
+          balance: this.userBalanceToken,
+          token: pool.token.name,
+          decimals: pool.token.decimals.toString(),
+        },
+        {
+          balance: this.userBalancePairToken,
+          token: pool.pairToken.name,
+          decimals: pool.pairToken.decimals.toString(),
+        },
+      ];
+      if (pool.userBalanceNativeToken === "") {
+        const filterBalances = balances.filter((item) => item !== "");
+        return filterBalances;
+      } else {
+        return balances;
+      }
+    },
+    userBalanceNativeToken() {
+      return this.$store.getters.getBalanceNativeToken;
+    },
+    userBalanceToken() {
+      return this.$store.getters.getBalanceToken;
+    },
+    userBalancePairToken() {
+      return this.$store.getters.getBalancePairToken;
+    },
     pool() {
       const poolId = this.$route.params.id;
       return this.$store.getters.getPoolById(poolId);
@@ -121,6 +141,32 @@ export default {
     },
   },
   methods: {
+    async checkAllbalances() {
+      this.useAVAX
+        ? await this.$store.dispatch("checkBalanceNativeToken")
+        : await this.$store.dispatch(
+            "checkBalanceToken",
+            this.pool.token.contract
+          );
+      await this.$store.dispatch(
+        "checkBalancePairToken",
+        this.pool.pairTokenContract
+      );
+      await this.checkCollateralInfo();
+    },
+    async checkCollateralInfo() {
+      this.$store.commit("setTokenPrice", this.pool.tokenPrice);
+      await this.$store.dispatch(
+        "setUserCollateralShare",
+        this.pool.contractInstance,
+        this.pool.token.decimals
+      );
+      await this.$store.dispatch(
+        "setUserBorrowPart",
+        this.pool.contractInstance
+      );
+      this.$store.dispatch("createCollateralInfo");
+    },
     getAVAXStatus() {
       return this.$store.getters.getUseAVAX;
     },
@@ -204,7 +250,7 @@ export default {
         );
         if (approveResult) this.cookAddAndBorrow(data, isApprowed);
       } else {
-        this.cookAddAndBorrow(data, isApprowed)
+        this.cookAddAndBorrow(data, isApprowed);
       }
     },
     async addCollateralHandler(data) {
@@ -235,23 +281,28 @@ export default {
     async borrowHandler(data) {
       console.log("BORROW HANDLER", data);
 
-      const isTokenApprove = await this.isTokenApprowed(
-        this.pool.token.contract,
-        this.pool.masterContractInstance.address
-      );
-
       const isApprowed = await this.isApprowed();
+      const useAVAXStatus = this.getAVAXStatus();
 
-      if (isTokenApprove) {
+      if (!useAVAXStatus) {
+        const isTokenApprove = await this.isTokenApprowed(
+          this.pool.token.contract,
+          this.pool.masterContractInstance.address
+        );
+
+        if (isTokenApprove) {
+          this.cookBorrow(data, isApprowed);
+          return false;
+        }
+
+        const approveResult = await this.approveToken(
+          this.pool.token.contract,
+          this.pool.masterContractInstance.address
+        );
+        if (approveResult) this.cookBorrow(data, isApprowed);
+      } else {
         this.cookBorrow(data, isApprowed);
-        return false;
       }
-
-      const approveResult = await this.approveToken(
-        this.pool.token.contract,
-        this.pool.masterContractInstance.address
-      );
-      if (approveResult) this.cookBorrow(data, isApprowed);
     },
     async removeAndRepayHandler(data) {
       console.log("REMOVE & REPAY HANDLER", data);
@@ -694,6 +745,11 @@ export default {
             }
           );
 
+          const status = await result.wait();
+          if (status) {
+            await this.checkAllbalances();
+          }
+
           console.log(result);
           return false;
         }
@@ -723,6 +779,11 @@ export default {
             gasLimit,
           }
         );
+
+        const status = await result.wait();
+        if (status) {
+          await this.checkAllbalances();
+        }
 
         console.log(result);
       } else {
@@ -768,6 +829,11 @@ export default {
               }
             );
 
+            const status = await result.wait();
+            if (status) {
+              await this.checkAllbalances();
+            }
+
             console.log(result);
             return false;
           }
@@ -797,6 +863,11 @@ export default {
               gasLimit,
             }
           );
+
+          const status = await result.wait();
+          if (status) {
+            await this.checkAllbalances();
+          }
 
           console.log(result);
           return false;
@@ -843,6 +914,11 @@ export default {
             }
           );
 
+          const status = await result.wait();
+          if (status) {
+            await this.checkAllbalances();
+          }
+
           console.log(result);
           return false;
         }
@@ -872,6 +948,11 @@ export default {
             gasLimit,
           }
         );
+
+        const status = await result.wait();
+        if (status) {
+          await this.checkAllbalances();
+        }
 
         console.log(result);
       }
@@ -925,6 +1006,11 @@ export default {
             }
           );
 
+          const status = await result.wait();
+          if (status) {
+            await this.checkAllbalances();
+          }
+
           console.log(result);
           return false;
         }
@@ -954,6 +1040,11 @@ export default {
             gasLimit,
           }
         );
+
+        const status = await result.wait();
+        if (status) {
+          await this.checkAllbalances();
+        }
 
         console.log(result);
       } else {
@@ -999,6 +1090,11 @@ export default {
               }
             );
 
+            const status = await result.wait();
+            if (status) {
+              await this.checkAllbalances();
+            }
+
             console.log(result);
             return false;
           }
@@ -1028,6 +1124,11 @@ export default {
               gasLimit,
             }
           );
+
+          const status = await result.wait();
+          if (status) {
+            await this.checkAllbalances();
+          }
 
           console.log(result);
 
@@ -1073,6 +1174,11 @@ export default {
             }
           );
 
+          const status = await result.wait();
+          if (status) {
+            await this.checkAllbalances();
+          }
+
           console.log(result);
           return false;
         }
@@ -1102,6 +1208,11 @@ export default {
             gasLimit,
           }
         );
+
+        const status = await result.wait();
+        if (status) {
+          await this.checkAllbalances();
+        }
 
         console.log(result);
       }
@@ -1196,6 +1307,11 @@ export default {
             }
           );
 
+          const status = await result.wait();
+          if (status) {
+            await this.checkAllbalances();
+          }
+
           console.log(result);
           return false;
         }
@@ -1237,6 +1353,11 @@ export default {
             gasLimit,
           }
         );
+
+        const status = await result.wait();
+        if (status) {
+          await this.checkAllbalances();
+        }
 
         console.log(result);
       } else {
@@ -1294,6 +1415,11 @@ export default {
               }
             );
 
+            const status = await result.wait();
+            if (status) {
+              await this.checkAllbalances();
+            }
+
             console.log(result);
             return false;
           }
@@ -1335,6 +1461,11 @@ export default {
               gasLimit,
             }
           );
+
+          const status = await result.wait();
+          if (status) {
+            await this.checkAllbalances();
+          }
 
           console.log(result);
 
@@ -1386,6 +1517,11 @@ export default {
             }
           );
 
+          const status = await result.wait();
+          if (status) {
+            await this.checkAllbalances();
+          }
+
           console.log(result);
           return false;
         }
@@ -1429,6 +1565,11 @@ export default {
             gasLimit,
           }
         );
+
+        const status = await result.wait();
+        if (status) {
+          await this.checkAllbalances();
+        }
 
         console.log(result);
       }
@@ -1472,6 +1613,11 @@ export default {
             }
           );
 
+          const status = await result.wait();
+          if (status) {
+            await this.checkAllbalances();
+          }
+
           console.log(result);
           return false;
         }
@@ -1501,6 +1647,11 @@ export default {
             gasLimit,
           }
         );
+
+        const status = await result.wait();
+        if (status) {
+          await this.checkAllbalances();
+        }
 
         console.log(result);
         return false;
@@ -1545,6 +1696,11 @@ export default {
             }
           );
 
+          const status = await result.wait();
+          if (status) {
+            await this.checkAllbalances();
+          }
+
           console.log(result);
           return false;
         }
@@ -1574,6 +1730,11 @@ export default {
             gasLimit,
           }
         );
+
+        const status = await result.wait();
+        if (status) {
+          await this.checkAllbalances();
+        }
 
         console.log(result);
 
@@ -1609,6 +1770,11 @@ export default {
           }
         );
 
+        const status = await result.wait();
+        if (status) {
+          await this.checkAllbalances();
+        }
+
         console.log(result);
         return false;
       }
@@ -1638,6 +1804,11 @@ export default {
           gasLimit,
         }
       );
+
+      const status = await result.wait();
+      if (status) {
+        await this.checkAllbalances();
+      }
 
       console.log(result);
     },
@@ -1683,6 +1854,11 @@ export default {
             }
           );
 
+          const status = await result.wait();
+          if (status) {
+            await this.checkAllbalances();
+          }
+
           console.log(result);
           return false;
         }
@@ -1712,6 +1888,11 @@ export default {
             gasLimit,
           }
         );
+
+        const status = await result.wait();
+        if (status) {
+          await this.checkAllbalances();
+        }
 
         console.log(result);
         return false;
@@ -1758,6 +1939,11 @@ export default {
             }
           );
 
+          const status = await result.wait();
+          if (status) {
+            await this.checkAllbalances();
+          }
+
           console.log(result);
           return false;
         }
@@ -1787,6 +1973,11 @@ export default {
             gasLimit,
           }
         );
+
+        const status = await result.wait();
+        if (status) {
+          await this.checkAllbalances();
+        }
 
         console.log(result);
 
@@ -1822,6 +2013,11 @@ export default {
           }
         );
 
+        const status = await result.wait();
+        if (status) {
+          await this.checkAllbalances();
+        }
+
         console.log(result);
         return false;
       }
@@ -1851,6 +2047,11 @@ export default {
           gasLimit,
         }
       );
+
+      const status = await result.wait();
+      if (status) {
+        await this.checkAllbalances();
+      }
 
       console.log(result);
     },
@@ -1917,6 +2118,11 @@ export default {
             }
           );
 
+          const status = await result.wait();
+          if (status) {
+            await this.checkAllbalances();
+          }
+
           console.log(result);
           return false;
         }
@@ -1946,6 +2152,11 @@ export default {
             gasLimit,
           }
         );
+
+        const status = await result.wait();
+        if (status) {
+          await this.checkAllbalances();
+        }
 
         console.log(result);
         return false;
@@ -2004,6 +2215,11 @@ export default {
             }
           );
 
+          const status = await result.wait();
+          if (status) {
+            await this.checkAllbalances();
+          }
+
           console.log(result);
           return false;
         }
@@ -2033,6 +2249,11 @@ export default {
             gasLimit,
           }
         );
+
+        const status = await result.wait();
+        if (status) {
+          await this.checkAllbalances();
+        }
 
         console.log(result);
 
@@ -2082,6 +2303,11 @@ export default {
           }
         );
 
+        const status = await result.wait();
+        if (status) {
+          await this.checkAllbalances();
+        }
+
         console.log(result);
         return false;
       }
@@ -2123,6 +2349,11 @@ export default {
           gasLimit,
         }
       );
+
+      const status = await result.wait();
+      if (status) {
+        await this.checkAllbalances();
+      }
 
       console.log(result);
     },
@@ -2610,6 +2841,8 @@ export default {
       console.log("POOL IS UNDEFINED");
       return false;
     }
+
+    await this.$store.dispatch("checkBalanceNativeToken");
 
     console.log("POOL:", poolId);
 
