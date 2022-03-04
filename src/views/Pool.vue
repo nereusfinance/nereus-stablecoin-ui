@@ -110,8 +110,8 @@ export default {
           decimals: pool.pairToken.decimals.toString(),
         },
       ];
-      if (pool.userBalanceNativeToken === "") {
-        const filterBalances = balances.filter((item) => item !== "");
+      if (pool.name !== "AVAX") {
+        const filterBalances = balances.slice(1);
         return filterBalances;
       } else {
         return balances;
@@ -141,7 +141,13 @@ export default {
     },
   },
   methods: {
-    async checkAllbalances() {
+    async wrapperStatusTx(result) {
+      const status = await result.wait();
+      if (status) {
+        await this.updateBalancesAndCollateralInfo();
+      }
+    },
+    async updateBalancesAndCollateralInfo() {
       this.useAVAX
         ? await this.$store.dispatch("checkBalanceNativeToken")
         : await this.$store.dispatch(
@@ -228,12 +234,12 @@ export default {
     },
     async addAndBorrowHandler(data) {
       console.log("ADD COLL & BORROW HANDLER", data);
-
       const useAVAXStatus = this.getAVAXStatus();
-
       const isApprowed = await this.isApprowed();
 
-      if (!useAVAXStatus) {
+      if (useAVAXStatus) {
+        this.cookAddAndBorrow(data, isApprowed);
+      } else {
         const isTokenApprove = await this.isTokenApprowed(
           this.pool.token.contract,
           this.pool.masterContractInstance.address
@@ -249,8 +255,6 @@ export default {
           this.pool.masterContractInstance.address
         );
         if (approveResult) this.cookAddAndBorrow(data, isApprowed);
-      } else {
-        this.cookAddAndBorrow(data, isApprowed);
       }
     },
     async addCollateralHandler(data) {
@@ -258,7 +262,9 @@ export default {
       const useAVAXStatus = this.getAVAXStatus();
       const isApprowed = await this.isApprowed();
 
-      if (!useAVAXStatus) {
+      if (useAVAXStatus) {
+        this.cookAddCollateral(data, isApprowed);
+      } else {
         const isTokenApprove = await this.isTokenApprowed(
           this.pool.token.contract,
           this.pool.masterContractInstance.address
@@ -274,17 +280,16 @@ export default {
           this.pool.masterContractInstance.address
         );
         if (approveResult) this.cookAddCollateral(data, isApprowed);
-      } else {
-        this.cookAddCollateral(data, isApprowed);
       }
     },
     async borrowHandler(data) {
       console.log("BORROW HANDLER", data);
-
       const isApprowed = await this.isApprowed();
       const useAVAXStatus = this.getAVAXStatus();
 
-      if (!useAVAXStatus) {
+      if (useAVAXStatus) {
+        this.cookBorrow(data, isApprowed);
+      } else {
         const isTokenApprove = await this.isTokenApprowed(
           this.pool.token.contract,
           this.pool.masterContractInstance.address
@@ -300,8 +305,6 @@ export default {
           this.pool.masterContractInstance.address
         );
         if (approveResult) this.cookBorrow(data, isApprowed);
-      } else {
-        this.cookBorrow(data, isApprowed);
       }
     },
     async removeAndRepayHandler(data) {
@@ -744,11 +747,7 @@ export default {
               gasLimit,
             }
           );
-
-          const status = await result.wait();
-          if (status) {
-            await this.checkAllbalances();
-          }
+          await this.wrapperStatusTx(result);
 
           console.log(result);
           return false;
@@ -780,10 +779,7 @@ export default {
           }
         );
 
-        const status = await result.wait();
-        if (status) {
-          await this.checkAllbalances();
-        }
+        await this.wrapperStatusTx(result);
 
         console.log(result);
       } else {
@@ -829,10 +825,7 @@ export default {
               }
             );
 
-            const status = await result.wait();
-            if (status) {
-              await this.checkAllbalances();
-            }
+            await this.wrapperStatusTx(result);
 
             console.log(result);
             return false;
@@ -864,10 +857,7 @@ export default {
             }
           );
 
-          const status = await result.wait();
-          if (status) {
-            await this.checkAllbalances();
-          }
+          await this.wrapperStatusTx(result);
 
           console.log(result);
           return false;
@@ -914,10 +904,7 @@ export default {
             }
           );
 
-          const status = await result.wait();
-          if (status) {
-            await this.checkAllbalances();
-          }
+          await this.wrapperStatusTx(result);
 
           console.log(result);
           return false;
@@ -949,10 +936,7 @@ export default {
           }
         );
 
-        const status = await result.wait();
-        if (status) {
-          await this.checkAllbalances();
-        }
+        await this.wrapperStatusTx(result);
 
         console.log(result);
       }
@@ -1006,10 +990,7 @@ export default {
             }
           );
 
-          const status = await result.wait();
-          if (status) {
-            await this.checkAllbalances();
-          }
+          await this.wrapperStatusTx(result);
 
           console.log(result);
           return false;
@@ -1041,10 +1022,7 @@ export default {
           }
         );
 
-        const status = await result.wait();
-        if (status) {
-          await this.checkAllbalances();
-        }
+        await this.wrapperStatusTx(result);
 
         console.log(result);
       } else {
@@ -1090,10 +1068,7 @@ export default {
               }
             );
 
-            const status = await result.wait();
-            if (status) {
-              await this.checkAllbalances();
-            }
+            await this.wrapperStatusTx(result);
 
             console.log(result);
             return false;
@@ -1125,10 +1100,7 @@ export default {
             }
           );
 
-          const status = await result.wait();
-          if (status) {
-            await this.checkAllbalances();
-          }
+          await this.wrapperStatusTx(result);
 
           console.log(result);
 
@@ -1174,10 +1146,7 @@ export default {
             }
           );
 
-          const status = await result.wait();
-          if (status) {
-            await this.checkAllbalances();
-          }
+          await this.wrapperStatusTx(result);
 
           console.log(result);
           return false;
@@ -1209,10 +1178,7 @@ export default {
           }
         );
 
-        const status = await result.wait();
-        if (status) {
-          await this.checkAllbalances();
-        }
+        await this.wrapperStatusTx(result);
 
         console.log(result);
       }
@@ -1307,10 +1273,7 @@ export default {
             }
           );
 
-          const status = await result.wait();
-          if (status) {
-            await this.checkAllbalances();
-          }
+          await this.wrapperStatusTx(result);
 
           console.log(result);
           return false;
@@ -1354,10 +1317,7 @@ export default {
           }
         );
 
-        const status = await result.wait();
-        if (status) {
-          await this.checkAllbalances();
-        }
+        await this.wrapperStatusTx(result);
 
         console.log(result);
       } else {
@@ -1415,10 +1375,7 @@ export default {
               }
             );
 
-            const status = await result.wait();
-            if (status) {
-              await this.checkAllbalances();
-            }
+            await this.wrapperStatusTx(result);
 
             console.log(result);
             return false;
@@ -1462,10 +1419,7 @@ export default {
             }
           );
 
-          const status = await result.wait();
-          if (status) {
-            await this.checkAllbalances();
-          }
+          await this.wrapperStatusTx(result);
 
           console.log(result);
 
@@ -1517,10 +1471,7 @@ export default {
             }
           );
 
-          const status = await result.wait();
-          if (status) {
-            await this.checkAllbalances();
-          }
+          await this.wrapperStatusTx(result);
 
           console.log(result);
           return false;
@@ -1566,10 +1517,7 @@ export default {
           }
         );
 
-        const status = await result.wait();
-        if (status) {
-          await this.checkAllbalances();
-        }
+        await this.wrapperStatusTx(result);
 
         console.log(result);
       }
@@ -1613,10 +1561,7 @@ export default {
             }
           );
 
-          const status = await result.wait();
-          if (status) {
-            await this.checkAllbalances();
-          }
+          await this.wrapperStatusTx(result);
 
           console.log(result);
           return false;
@@ -1648,10 +1593,7 @@ export default {
           }
         );
 
-        const status = await result.wait();
-        if (status) {
-          await this.checkAllbalances();
-        }
+        await this.wrapperStatusTx(result);
 
         console.log(result);
         return false;
@@ -1696,10 +1638,7 @@ export default {
             }
           );
 
-          const status = await result.wait();
-          if (status) {
-            await this.checkAllbalances();
-          }
+          await this.wrapperStatusTx(result);
 
           console.log(result);
           return false;
@@ -1731,10 +1670,7 @@ export default {
           }
         );
 
-        const status = await result.wait();
-        if (status) {
-          await this.checkAllbalances();
-        }
+        await this.wrapperStatusTx(result);
 
         console.log(result);
 
@@ -1770,10 +1706,7 @@ export default {
           }
         );
 
-        const status = await result.wait();
-        if (status) {
-          await this.checkAllbalances();
-        }
+        await this.wrapperStatusTx(result);
 
         console.log(result);
         return false;
@@ -1805,10 +1738,7 @@ export default {
         }
       );
 
-      const status = await result.wait();
-      if (status) {
-        await this.checkAllbalances();
-      }
+      await this.wrapperStatusTx(result);
 
       console.log(result);
     },
@@ -1854,10 +1784,7 @@ export default {
             }
           );
 
-          const status = await result.wait();
-          if (status) {
-            await this.checkAllbalances();
-          }
+          await this.wrapperStatusTx(result);
 
           console.log(result);
           return false;
@@ -1889,10 +1816,7 @@ export default {
           }
         );
 
-        const status = await result.wait();
-        if (status) {
-          await this.checkAllbalances();
-        }
+        await this.wrapperStatusTx(result);
 
         console.log(result);
         return false;
@@ -1939,10 +1863,7 @@ export default {
             }
           );
 
-          const status = await result.wait();
-          if (status) {
-            await this.checkAllbalances();
-          }
+          await this.wrapperStatusTx(result);
 
           console.log(result);
           return false;
@@ -1974,10 +1895,7 @@ export default {
           }
         );
 
-        const status = await result.wait();
-        if (status) {
-          await this.checkAllbalances();
-        }
+        await this.wrapperStatusTx(result);
 
         console.log(result);
 
@@ -2013,10 +1931,7 @@ export default {
           }
         );
 
-        const status = await result.wait();
-        if (status) {
-          await this.checkAllbalances();
-        }
+        await this.wrapperStatusTx(result);
 
         console.log(result);
         return false;
@@ -2048,10 +1963,7 @@ export default {
         }
       );
 
-      const status = await result.wait();
-      if (status) {
-        await this.checkAllbalances();
-      }
+      await this.wrapperStatusTx(result);
 
       console.log(result);
     },
@@ -2118,10 +2030,7 @@ export default {
             }
           );
 
-          const status = await result.wait();
-          if (status) {
-            await this.checkAllbalances();
-          }
+          await this.wrapperStatusTx(result);
 
           console.log(result);
           return false;
@@ -2153,10 +2062,7 @@ export default {
           }
         );
 
-        const status = await result.wait();
-        if (status) {
-          await this.checkAllbalances();
-        }
+        await this.wrapperStatusTx(result);
 
         console.log(result);
         return false;
@@ -2215,10 +2121,7 @@ export default {
             }
           );
 
-          const status = await result.wait();
-          if (status) {
-            await this.checkAllbalances();
-          }
+          await this.wrapperStatusTx(result);
 
           console.log(result);
           return false;
@@ -2250,10 +2153,7 @@ export default {
           }
         );
 
-        const status = await result.wait();
-        if (status) {
-          await this.checkAllbalances();
-        }
+        await this.wrapperStatusTx(result);
 
         console.log(result);
 
@@ -2303,10 +2203,7 @@ export default {
           }
         );
 
-        const status = await result.wait();
-        if (status) {
-          await this.checkAllbalances();
-        }
+        await this.wrapperStatusTx(result);
 
         console.log(result);
         return false;
@@ -2350,10 +2247,7 @@ export default {
         }
       );
 
-      const status = await result.wait();
-      if (status) {
-        await this.checkAllbalances();
-      }
+      await this.wrapperStatusTx(result);
 
       console.log(result);
     },

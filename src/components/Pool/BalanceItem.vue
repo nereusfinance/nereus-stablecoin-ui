@@ -36,7 +36,6 @@ export default {
   // },
   computed: {
     balance() {
-      console.log("item", this.item);
       this.parseBalance(this.item.balance, this.item.decimals);
       return this.userBalance;
     },

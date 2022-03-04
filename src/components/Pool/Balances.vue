@@ -21,9 +21,6 @@ export default {
       filtredBalances: [],
     };
   },
-  mounted() {
-    this.filtredBalances = this.balances.filter((item) => item.balance !== "");
-  },
   components: {
     BalanceItem,
   },
