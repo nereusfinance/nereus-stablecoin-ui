@@ -9,7 +9,7 @@
         <!-- <router-link :to="{ name: 'Docs' }" class="nav-link">Docs</router-link>
         <router-link :to="{ name: 'Tech' }" class="nav-link">Tech</router-link> -->
         <router-link :to="{ name: 'Liquidations' }" class="nav-link"
-          >Liquidations</router-link
+        >Liquidations</router-link
         >
       </nav>
       <div class="links-wrap">
