@@ -160,6 +160,7 @@ export default {
     justify-content: space-between;
     position: relative;
     padding: 0 80px 0 80px;
+    width: 100%;
   }
 
   .containerS {
