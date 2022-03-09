@@ -1,48 +1,65 @@
 <template>
   <footer class="app-footer" :class="{ transparent: itsTransparent }">
     <div class="container">
-      <SocialLink
-        v-for="(item, index) in socialLink"
-        :key="index"
-        :data="item.data"
-        :link="item.link"
-        :position="item.position"
-      />
+      <div class="leftLinks">
+        <SocialLink
+          v-for="(item, index) in filtredLeftIcons"
+          :key="index"
+          :data="item.data"
+          :link="item.link"
+          :type="item.type"
+        />
+      </div>
+      <div class="rightLinks">
+        <SocialLink
+          v-for="(item, index) in filtredRightIcons"
+          :key="index"
+          :data="item.data"
+          :link="item.link"
+          :type="item.type"
+        />
+      </div>
     </div>
   </footer>
 </template>
 
 <script>
 const SocialLink = () => import("@/components/SocialLink");
-import imgDiscord from "@/assets/images/Discord.svg";
-import imgTwitter from "@/assets/images/Twitter.svg";
-import imgMedium from "@/assets/images/Medium.svg";
+import Discord from "@/assets/images/Discord.svg";
+import Twitter from "@/assets/images/Twitter.svg";
+import Medium from "@/assets/images/Medium.svg";
 
 export default {
   data(){
     return {
       socialLink: [
         {
-          data: 'GitBook',
+          data: "GitBook",
           link: 'https://gitbook.com',
           position: 'left',
+          type: 'text',
         },
         {
-          data: imgDiscord,
+          data: Discord,
           link: 'https://discord.com',
           position: 'right',
+          type: 'image',
         },
         {
-          data: imgTwitter,
+          data: Twitter,
           link: 'https://twitter.com',
           position: 'right',
+          type: 'image',
         },
         {
-          data: imgMedium,
+          data: Medium,
           link: 'https://medium.com',
           position: 'right',
+          type: 'image',
         },
       ],
+      filtredRightIcons: [],
+      filtredLeftIcons: [],
     };
   },
   components: {
@@ -55,6 +72,10 @@ export default {
 
       return pages.indexOf(this.$route.name) !== -1;
     },
+  },
+  mounted() {
+    this.filtredRightIcons = this.socialLink.filter((item) => item.position === "right");
+    this.filtredLeftIcons = this.socialLink.filter((item) => item.position === "left");
   },
 };
 </script>
@@ -71,12 +92,24 @@ export default {
   }
 
   .container {
+    padding: 0 80px;
     height: 100%;
     display: flex;
     align-items: center;
-    position: relative;
     z-index: 2;
     margin: auto;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .rightLinks {
+    display: flex;
+    align-items: center;
+  }
+
+  .leftLinks {
+    display: flex;
+    align-items: center;
   }
 }
 
