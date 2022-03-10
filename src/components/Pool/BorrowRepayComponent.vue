@@ -720,12 +720,13 @@ export default {
 .deposit-borrow-block {
   padding: 30px 20px;
   background: $clrBg2;
-  border-radius: 20px;
+  border-radius: 4px;
   width: 100%;
 
   .config-box {
     background: rgba(255, 255, 255, 0.02);
-    border-radius: 20px;
+    border-radius: 4px;
+    border: 1px solid #606060;
     padding: 20px;
     margin-bottom: 20px;
   }

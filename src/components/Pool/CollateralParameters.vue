@@ -50,7 +50,7 @@ export default {
   padding: 30px 20px;
   padding-bottom: 20px;
   background: $clrBg2;
-  border-radius: 20px;
+  border-radius: 4px;
   display: flex;
   flex-direction: column;
 
