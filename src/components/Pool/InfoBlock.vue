@@ -25,7 +25,7 @@ export default {
 .info-block {
   padding: 30px 20px;
   background: $clrBg2;
-  border-radius: 20px;
+  border-radius: 4px;
 
   .items-wrap {
     max-height: 200px;
