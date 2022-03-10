@@ -151,7 +151,7 @@ export default {
 }
 
 .values-select {
-  background: $clrBg1;
+  background: $clrBg2;
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
   position: absolute;
@@ -193,21 +193,22 @@ export default {
 }
 
 .val-input {
-  background: $clrBg1;
-  border-radius: 12px;
+  background: $clrBg2;
+  border-radius: 4px;
+  border: 1px solid #FFFFFF;
   padding: 5px;
   display: flex;
   align-items: center;
   height: 70px;
-  border: 1px solid transparent;
+  //border: 1px solid transparent;
   position: relative;
   width: 100%;
-  border: 1px solid transparent;
+  //border: 1px solid transparent;
   transition: border 0.3s ease;
 
-  &.focus {
-    border: 1px solid #605ee8;
-  }
+  //&.focus {
+  //  border: 1px solid #605ee8;
+  //}
 
   &.no-max {
     padding-right: 135px;

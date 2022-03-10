@@ -2769,7 +2769,7 @@ export default {
   }
 
   .pool-head-bar {
-    margin-bottom: 30px;
+    margin-bottom: 24px;
     display: grid;
     grid-template-columns: 62.5% 37.5%;
     column-gap: 20px;
