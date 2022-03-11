@@ -2771,39 +2771,45 @@ export default {
   .pool-head-bar {
     margin-bottom: 24px;
     display: grid;
-    grid-template-columns: 62.5% 37.5%;
+    grid-template-columns: 600px 375px;
     column-gap: 20px;
   }
 
   .btns-group {
     display: flex;
     align-items: center;
+    width: 146px;
+    height: 32px;
+    background: #262626;
+    border-radius: 100px;
 
     .btn {
       width: 127px;
-      font-size: 16px;
-      line-height: 1;
-      background: rgba(123, 121, 247, 0.3);
+      height: 32px;
+      font-size: 14px;
+      line-height: 20px;
+      background: #262626;
 
       &:hover {
-        background-color: $clrBlue5;
+        //background-color: $clrBlue5;
       }
 
       &.borrow-btn {
-        margin-right: 20px;
+        //margin-right: 20px;
       }
 
       &.active {
-        background-color: $clrBlue;
+        color: black;
+        background-color: $clrBg3;
       }
     }
   }
 
   .pool-content {
     display: grid;
-    grid-template-columns: 62.5% 37.5%;
+    grid-template-columns: 600px 375px;
     column-gap: 20px;
-    row-gap: 20px;
+    row-gap: 16px;
   }
 }
 

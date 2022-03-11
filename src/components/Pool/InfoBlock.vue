@@ -23,7 +23,7 @@ export default {
 
 <style scoped lang="scss">
 .info-block {
-  padding: 30px 20px;
+  padding: 24px 0;
   background: $clrBg2;
   border-radius: 4px;
 

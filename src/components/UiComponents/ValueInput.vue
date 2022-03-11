@@ -199,11 +199,9 @@ export default {
   padding: 5px;
   display: flex;
   align-items: center;
-  height: 70px;
-  //border: 1px solid transparent;
+  height: 48px;
   position: relative;
   width: 100%;
-  //border: 1px solid transparent;
   transition: border 0.3s ease;
 
   //&.focus {
@@ -226,6 +224,8 @@ export default {
     align-items: center;
     justify-content: center;
     position: relative;
+    font-size: 14px;
+    line-height: 20px;
 
     &.values-choose {
       background: rgba(255, 255, 255, 0.02);
@@ -242,8 +242,8 @@ export default {
     }
 
     .token-icon-wrap {
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       margin-right: 10px;
       position: relative;
 
