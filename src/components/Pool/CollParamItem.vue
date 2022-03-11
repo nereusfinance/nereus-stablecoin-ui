@@ -2,7 +2,7 @@
   <div class="param-item">
     <div class="item-main" @click="toggleInfo">
       <div class="title">
-        <img src="@/assets/images/i-icon.svg" alt="" class="info-icon" />
+        <img src="@/assets/images/i-icon.svg" alt="" class="info-icon" v-tooltip="itemProp.tooltip" />
         <p>{{ itemProp.title }}</p>
       </div>
 
@@ -52,7 +52,6 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    cursor: pointer;
     padding: 0 24px;
     font-size: 14px;
     line-height: 20px;
