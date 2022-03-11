@@ -10,7 +10,7 @@
             alt=""
             class="info-icon"
             v-tooltip="
-          'This mana bar displays how healthy your position is. If it is empty, you will be flagged for liquidation. Stable ibTKNs Mana bar is enlarged by 10x to allow better visual representation.'
+          'This bar displays how healthy your position is. If it is empty, you will be flagged for liquidation. The bar is enlarged by 10x to allow better visual representation.'
         "
           />
         </div>
@@ -111,7 +111,6 @@ export default {
     .info-icon {
       width: 13px;
       height: 13px;
-      cursor: pointer;
     }
   }
 

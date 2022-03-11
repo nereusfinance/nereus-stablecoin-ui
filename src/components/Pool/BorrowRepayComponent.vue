@@ -53,7 +53,7 @@
         <div
           class="box-wrap"
           @click="toggleShowLeverage"
-          :class="{ active: showLeverage }"
+          :class="{ active: showLeverage, disabled: !showLeverage }"
         >
           <div class="checkbox" v-if="showLeverage"><img class="checkbox-checked" src="@/assets/images/checkboxChecked.svg" alt=""></div>
           <div class="checkbox" v-else><img src="@/assets/images/checkbox.svg" alt=""></div>
@@ -64,7 +64,7 @@
           src="@/assets/images/i-icon.svg"
           alt=""
           class="info-icon"
-          v-tooltip="'Some txt'"
+          v-tooltip="'Will be implemented in the future'"
         />
       </div>
 
@@ -94,7 +94,7 @@
           src="@/assets/images/i-icon.svg"
           alt=""
           class="info-icon"
-          v-tooltip="'Update ibTKN price for a small gas fee'"
+          v-tooltip="'Update Collateral price from the oracle, for a small gas fee!'"
         />
       </div>
 
@@ -370,7 +370,7 @@ export default {
         this.multiplier = 1;
       }
 
-      this.showLeverage = !this.showLeverage;
+      // this.showLeverage = !this.showLeverage;
     },
     toggleUseAVAX() {
       const AVAXStatus = this.$store.getters.getUseAVAX;
@@ -771,13 +771,18 @@ export default {
         }
       }
 
+      &.disabled .checkbox {
+        cursor: not-allowed;
+        filter: brightness(0) saturate(100%) invert(61%) sepia(1%) saturate(2362%) hue-rotate(40deg) brightness(90%) contrast(83%);
+      }
+
       .checkbox {
         height: 18px;
         width: 18px;
       }
 
       .checkbox-checked {
-        filter: brightness(0) saturate(100%) invert(81%) sepia(54%) saturate(404%) hue-rotate(18deg) brightness(108%) contrast(98%);;
+        filter: brightness(0) saturate(100%) invert(81%) sepia(54%) saturate(404%) hue-rotate(18deg) brightness(108%) contrast(98%);
       }
 
       .box {
