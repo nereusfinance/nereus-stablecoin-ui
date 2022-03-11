@@ -74,8 +74,13 @@ export default {
     },
   },
   mounted() {
-    this.filtredRightIcons = this.socialLink.filter((item) => item.position === "right");
-    this.filtredLeftIcons = this.socialLink.filter((item) => item.position === "left");
+    this.socialLink.forEach((item) => {
+      if (item.position === "left") {
+        this.filteredLeftIcons.push(item);
+      } else if (item.position === "right") {
+        this.filteredRightIcons.push(item);
+      }
+    });
   },
 };
 </script>
