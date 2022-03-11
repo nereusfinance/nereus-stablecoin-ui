@@ -9,7 +9,8 @@
         @click="toggleUseAVAX"
         :class="{ active: useAVAX }"
       >
-        <div class="box"></div>
+        <div class="checkbox" v-if="useAVAX"><img class="checkbox-checked" src="@/assets/images/checkboxChecked.svg" alt=""></div>
+        <div class="checkbox" v-else><img src="@/assets/images/checkbox.svg" alt=""></div>
       </div>
       <p class="label-text" @click="toggleUseAVAX">Use AVAX</p>
     </div>
@@ -54,7 +55,8 @@
           @click="toggleShowLeverage"
           :class="{ active: showLeverage }"
         >
-          <div class="box"></div>
+          <div class="checkbox" v-if="showLeverage"><img class="checkbox-checked" src="@/assets/images/checkboxChecked.svg" alt=""></div>
+          <div class="checkbox" v-else><img src="@/assets/images/checkbox.svg" alt=""></div>
         </div>
         <p class="label-text" @click="toggleShowLeverage">Change leverage</p>
 
@@ -83,7 +85,8 @@
           @click="toggleUpdatePrice"
           :class="{ active: updatePrice }"
         >
-          <div class="box"></div>
+          <div class="checkbox" v-if="updatePrice"><img class="checkbox-checked" src="@/assets/images/checkboxChecked.svg" alt=""></div>
+          <div class="checkbox" v-else><img src="@/assets/images/checkbox.svg" alt=""></div>
         </div>
         <p class="label-text" @click="toggleUpdatePrice">Update price</p>
 
@@ -718,7 +721,7 @@ export default {
 
 <style scoped lang="scss">
 .deposit-borrow-block {
-  padding: 30px 20px;
+  padding: 0 24px;
   background: $clrBg2;
   border-radius: 4px;
   width: 100%;
@@ -728,20 +731,22 @@ export default {
     border-radius: 4px;
     border: 1px solid #606060;
     padding: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
   }
 
   .checkbox-wrap {
     display: flex;
     align-items: center;
+    font-size: 14px;
+    line-height: 20px;
 
     .label-text {
       cursor: pointer;
     }
 
     .info-icon {
-      width: 16px;
-      height: 16px;
+      width: 13px;
+      height: 13px;
       margin-left: 5px;
     }
 
@@ -749,25 +754,30 @@ export default {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 24px;
-      height: 24px;
+      width: 18px;
+      height: 18px;
       margin-right: 10px;
-      border-radius: 8px;
-      border: 1px solid #57507a;
       background: rgba(255, 255, 255, 0.06);
       cursor: pointer;
       transition: all 0.1s ease;
 
       &:hover {
-        border: 1px solid $clrBlue;
+        //border: 1px solid $clrBlue;
       }
 
       &.active {
-        border: 1px solid $clrBlue;
-
         .box {
           opacity: 1;
         }
+      }
+
+      .checkbox {
+        height: 18px;
+        width: 18px;
+      }
+
+      .checkbox-checked {
+        filter: brightness(0) saturate(100%) invert(81%) sepia(54%) saturate(404%) hue-rotate(18deg) brightness(108%) contrast(98%);;
       }
 
       .box {
@@ -785,23 +795,32 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin: 16px 0 24px;
   }
 
   h3 {
-    margin-bottom: 15px;
+    margin: 24px 0 16px;
     text-align: left;
-    text-transform: uppercase;
+    font-size: 16px;
+    line-height: 24px;
   }
 
   .input-wrap {
-    margin: 20px 0;
+    margin: 16px 0;
   }
 
   .action-btn {
+    color: #000000;
     margin-left: auto;
-    width: auto;
-    padding-left: 15px;
-    padding-right: 15px;
+    //width: auto;
+    width: 200px;
+    height: 32px;
+  }
+
+  .btn {
+    &:disabled {
+      color: $clrDisableText;
+    }
   }
 }
 

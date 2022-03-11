@@ -109,8 +109,8 @@ export default {
     //position: relative;
 
     .info-icon {
-      width: 16px;
-      height: 16px;
+      width: 13px;
+      height: 13px;
       cursor: pointer;
     }
   }
@@ -129,15 +129,15 @@ export default {
       transition: all 0.3s ease;
 
       &.safe {
-        background: #75c9ee;
+        background: #FDD33F;
       }
 
       &.medium {
-        background: #f2994a;
+        background: #FDD33F;
       }
 
       &.hight {
-        background: #bb0145;
+        background: #FDD33F;
       }
     }
   }

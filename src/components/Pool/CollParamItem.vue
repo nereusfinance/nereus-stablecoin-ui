@@ -49,19 +49,22 @@ export default {
 <style lang="scss" scoped>
 .param-item {
   .item-main {
-    height: 45px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
+    padding: 0 24px;
+    font-size: 14px;
+    line-height: 20px;
+    margin-bottom: 16px;
 
     .title {
       display: flex;
       align-items: center;
 
       .info-icon {
-        width: 16px;
-        height: 16px;
+        width: 13px;
+        height: 13px;
         margin-right: 10px;
       }
 
@@ -72,6 +75,7 @@ export default {
     }
 
     .percent-text {
+      font-weight: 700;
       margin-left: auto;
     }
   }
