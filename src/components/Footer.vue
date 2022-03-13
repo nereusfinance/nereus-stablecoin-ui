@@ -7,8 +7,7 @@
             :key="index"
             :data="item.data"
             :link="item.link"
-            :icon="item.icon"
-            :text="item.text"
+            :type="item.type"
         />
       </div>
       <div class="rightLinks">
@@ -17,8 +16,7 @@
             :key="index"
             :data="item.data"
             :link="item.link"
-            :icon="item.icon"
-            :text="item.text"
+            :type="item.type"
         />
       </div>
     </div>
@@ -26,49 +24,54 @@
 </template>
 
 <script>
-
 const SocialLink = () => import("@/components/SocialLink");
-import Discord from "../assets/images/discord.svg";
-import Twitter from "../assets/images/twitter.svg";
-import Medium from "../assets/images/medium.svg";
-import Content from "./UiComponents/Content.vue";
-import IconContent from "./UiComponents/IconContent.vue";
+import Discord from "@/assets/images/Discord.svg";
+import Twitter from "@/assets/images/Twitter.svg";
+import Medium from "@/assets/images/Medium.svg";
 
 export default {
-  data() {
+  data(){
     return {
       socialLink: [
         {
-          data: Content,
-          text: "GitBook",
-          link: "https://gitbook.com",
-          position: "left",
+          data: "GitBook",
+          link: 'https://gitbook.com',
+          position: 'left',
+          type: 'text',
         },
         {
-          data: IconContent,
-          icon: Discord,
-          link: "https://discord.com",
-          position: "right",
+          data: Discord,
+          link: 'https://discord.com',
+          position: 'right',
+          type: 'image',
         },
         {
-          data: IconContent,
-          icon: Twitter,
-          link: "https://twitter.com",
-          position: "right",
+          data: Twitter,
+          link: 'https://twitter.com',
+          position: 'right',
+          type: 'image',
         },
         {
-          data: IconContent,
-          icon: Medium,
-          link: "https://medium.com",
-          position: "right",
+          data: Medium,
+          link: 'https://medium.com',
+          position: 'right',
+          type: 'image',
         },
       ],
-      filteredLeftIcons: [],
       filteredRightIcons: [],
+      filteredLeftIcons: [],
     };
   },
   components: {
+    // eslint-disable-next-line vue/no-unused-components
     SocialLink,
+  },
+  computed: {
+    itsTransparent() {
+      const pages = ["Home", "Docs", "Tech", "Liquidations"];
+
+      return pages.indexOf(this.$route.name) !== -1;
+    },
   },
   mounted() {
     this.socialLink.forEach((item) => {
@@ -79,12 +82,6 @@ export default {
       }
     });
   },
-  computed: {
-    itsTransparent() {
-      const pages = ["Home", "Docs", "Tech", "Liquidations"];
-      return pages.indexOf(this.$route.name) !== -1;
-    },
-  }
 };
 </script>
 <style scoped lang="scss">
