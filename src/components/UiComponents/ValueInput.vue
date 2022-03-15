@@ -3,7 +3,6 @@
     <div
       class="val-input"
       :class="{
-        'no-max': parseFloat(max) == 0 || !showMax,
         focus: isFocus,
         error,
       }"
@@ -35,7 +34,7 @@
       />
 
       <div class="max-btn" v-if="parseFloat(max) && showMax" @click="setMax">
-        <p>max</p>
+        <p>MAX</p>
       </div>
 
       <transition name="fade">
@@ -196,9 +195,9 @@ export default {
   background: $clrBg2;
   border-radius: 4px;
   border: 1px solid #FFFFFF;
-  padding: 5px;
   display: flex;
   align-items: center;
+  justify-content: center;
   height: 48px;
   position: relative;
   width: 100%;
@@ -208,24 +207,19 @@ export default {
   //  border: 1px solid #605ee8;
   //}
 
-  &.no-max {
-    padding-right: 135px;
-  }
-
   &.error {
     border: 1px solid $clrInputError;
   }
 
   .value-type {
     border-radius: 12px;
-    width: 130px;
     height: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
-    position: relative;
+    position: absolute;
     font-size: 14px;
     line-height: 20px;
+    left: 12px;
 
     &.values-choose {
       background: rgba(255, 255, 255, 0.02);
@@ -271,12 +265,12 @@ export default {
   input {
     flex: 1;
     display: block;
-    margin: 0 20px;
     text-align: center;
     background-color: transparent;
     border: none;
     outline: none;
-    font-size: 20px;
+    font-size: 14px;
+    height: 100%;
     color: $clrText;
 
     &::placeholder {
@@ -285,15 +279,13 @@ export default {
   }
 
   .max-btn {
-    width: 80px;
-    margin-left: 50px;
-    height: 100%;
+    position: absolute;
+    right: 12px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.02);
     border-radius: 12px;
+    font-size: 14px;
   }
 }
 
@@ -319,10 +311,6 @@ export default {
 
   .val-input .max-btn {
     margin-left: 0;
-  }
-
-  .val-input.no-max {
-    padding-right: 80px;
   }
 
   .val-input .value-type .arrow-icon {
