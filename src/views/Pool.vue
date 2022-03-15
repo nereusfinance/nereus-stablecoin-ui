@@ -285,26 +285,9 @@ export default {
     async borrowHandler(data) {
       console.log("BORROW HANDLER", data);
       const isApprowed = await this.isApprowed();
-      const useAVAXStatus = this.getAVAXStatus();
 
-      if (useAVAXStatus) {
+      if (isApprowed) {
         this.cookBorrow(data, isApprowed);
-      } else {
-        const isTokenApprove = await this.isTokenApprowed(
-          this.pool.token.contract,
-          this.pool.masterContractInstance.address
-        );
-
-        if (isTokenApprove) {
-          this.cookBorrow(data, isApprowed);
-          return false;
-        }
-
-        const approveResult = await this.approveToken(
-          this.pool.token.contract,
-          this.pool.masterContractInstance.address
-        );
-        if (approveResult) this.cookBorrow(data, isApprowed);
       }
     },
     async removeAndRepayHandler(data) {
