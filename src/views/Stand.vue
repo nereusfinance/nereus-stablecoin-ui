@@ -2,7 +2,7 @@
   <div class="stand-view">
     <div class="container mini">
       <div class="stand-group">
-        <h1>nUSD Markets </h1>
+        <h1>nUSD Markets</h1>
 
         <StandTable :tableType="2" :items="pools" />
       </div>
@@ -36,7 +36,7 @@ export default {
 
 <style lang="scss" scoped>
 .stand-view {
-  padding-top: 40px;
+  padding: 40px 0;
   position: relative;
   flex: 1;
 
@@ -47,6 +47,8 @@ export default {
     h1 {
       text-align: left;
       margin-bottom: 24px;
+      font-size: 32px;
+      line-height: 36px;
     }
   }
 }
