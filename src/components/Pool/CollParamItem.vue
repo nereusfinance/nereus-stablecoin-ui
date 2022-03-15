@@ -1,6 +1,6 @@
 <template>
   <div class="param-item">
-    <div class="item-main" @click="toggleInfo">
+    <div class="item-main">
       <div class="title">
         <img src="@/assets/images/i-icon.svg" alt="" class="info-icon" v-tooltip="itemProp.tooltip" />
         <p>{{ itemProp.title }}</p>
@@ -8,11 +8,6 @@
 
       <p class="percent-text">{{ itemProp.value }}</p>
     </div>
-    <transition name="fade">
-      <div class="item-info" v-if="showInfo && hasInfo">
-        <p>{{ itemProp.additional }}</p>
-      </div>
-    </transition>
   </div>
 </template>
 
@@ -24,23 +19,9 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      showInfo: false,
-    };
-  },
   computed: {
-    hasInfo() {
-      return !!this.item.additional;
-    },
     itemProp() {
       return this.item;
-    },
-  },
-  methods: {
-    toggleInfo() {
-      if (!this.hasInfo) return false;
-      this.showInfo = !this.showInfo;
     },
   },
 };

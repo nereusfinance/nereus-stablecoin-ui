@@ -30,7 +30,7 @@
 
     <div class="input-wrap">
       <ValueInput
-        :max="maxPairValue"
+        :max="maxValueAmount"
         :showMax="showMax"
         :valueName="pairValueTokenName"
         @onchange="updatePairValue"
@@ -194,6 +194,26 @@ export default {
     },
   },
   computed: {
+    maxValueAmount() {
+      const borrowedInDolarts = this.$store.getters.getUserBorrowPart / this.tokenPairToUsd;
+      const collateralInDolarts = this.$store.getters.getUserCollateralShare / this.tokenToUsd;
+      const userHasDolars = collateralInDolarts - borrowedInDolarts;
+
+      let calcAmount;
+
+      if (this.mainValue) {
+        const borrowPercent =
+          (this.mainValue / this.$store.getters.getUserBorrowPart) * 100;
+
+        calcAmount = (this.maxPairValue * borrowPercent) / 100;
+      } else {
+        const acceptedPercent = (userHasDolars / collateralInDolarts) * 100;
+
+        calcAmount = (this.maxPairValue * acceptedPercent) / 100;
+      }
+
+      return calcAmount;
+    },
     useAVAX() {
       return this.$store.getters.getUseAVAX;
     },
@@ -207,8 +227,13 @@ export default {
     },
     maxMainValue() {
       const balance = this.getAVAXStatus()
-        ? this.$store.getters.getBalanceNativeToken
-        : this.$store.getters.getBalanceToken;
+        ? this.$ethers.utils.formatEther(
+            this.$store.getters.getBalanceNativeToken.toString()
+          )
+        : this.$ethers.utils.formatUnits(
+            this.$store.getters.getBalanceToken.toString(),
+            this.tokenDecimals
+          );
 
       if (this.actionType === "borrow") return balance;
       if (this.actionType === "repay") {
@@ -586,7 +611,7 @@ export default {
       this.mainValue = value;
 
       if (parseFloat(value) > parseFloat(this.maxMainValue)) {
-        this.mainValueError = `The value cannot be greater than ${this.maxMainValue}`;
+        this.mainValueError = `Insufficient amount. The value available ${this.maxMainValue}`;
         return false;
       }
 
@@ -594,10 +619,10 @@ export default {
 
       if (this.actionType === "repay") {
         const collateralPercent = (this.pairValue / this.maxPairValue) * 100;
-        const borrowPercent = (value / this.userTotalBorrowed) * 100;
+        const borrowPercent = (value / this.$store.getters.getUserBorrowPart) * 100; //this.userTotalBorrowed
 
-        const borrowedInDolarts = this.userTotalBorrowed / this.tokenPairToUsd;
-        const collateralInDolarts = this.userTotalCollateral / this.tokenToUsd;
+        const borrowedInDolarts = this.$store.getters.getUserBorrowPart/ this.tokenPairToUsd; //this.userTotalBorrowed
+        const collateralInDolarts = this.$store.getters.getUserCollateralShare / this.tokenToUsd; //this.userTotalCollateral
         const userHasDolars = collateralInDolarts - borrowedInDolarts;
         const acceptedPercent = (userHasDolars / collateralInDolarts) * 100;
 
@@ -623,7 +648,7 @@ export default {
     },
     updatePairValue(value) {
       if (parseFloat(value) > parseFloat(this.maxPairValue)) {
-        this.pairValueError = `The value cannot be greater than ${this.maxPairValue}`;
+        this.pairValueError = `Insufficient amount. The value available ${this.maxPairValue}`;
         return false;
       }
 
@@ -633,8 +658,8 @@ export default {
           this.pairValue = value;
         }
 
-        const borrowedInDolarts = this.userTotalBorrowed / this.tokenPairToUsd;
-        const collateralInDolarts = this.userTotalCollateral / this.tokenToUsd;
+        const borrowedInDolarts = this.$store.getters.getUserBorrowPart / this.tokenPairToUsd;
+        const collateralInDolarts = this.$store.getters.getUserCollateralShare / this.tokenToUsd;
         const userHasDolars = collateralInDolarts - borrowedInDolarts;
         const acceptedPercent = (userHasDolars / collateralInDolarts) * 100;
 
@@ -646,8 +671,7 @@ export default {
         // );
 
         const collateralPercent = (value / this.maxPairValue) * 100;
-        const borrowPercent = (this.mainValue / this.userTotalBorrowed) * 100;
-
+        const borrowPercent = (this.mainValue / this.$store.getters.getUserBorrowPart) * 100;
         if (
           acceptedPercent < collateralPercent &&
           collateralPercent > borrowPercent
