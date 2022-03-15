@@ -194,11 +194,13 @@ h3 {
   .tooltip-inner {
     background: $clrBg2;
     color: white;
-    border-radius: 16px;
-    padding: 5px 10px 5px;
+    border-radius: 4px;
+    border: 1px solid #606060;
+    padding: 8px 12px;
     max-width: 300px;
-    text-align: center;
+    text-align: left;
     font-size: 14px;
+    line-height: 20px;
   }
 
   .tooltip-arrow {
