@@ -48,17 +48,11 @@ export default {
         return false;
       }
 
-      if (!window.ethereum) return false;
-
-      this.connectLoader = true;
-
       try {
         await this.$store.dispatch("connectAccount", window.ethereum);
       } catch (e) {
         console.log("e:", e);
       }
-
-      this.connectLoader = false;
     },
   },
 };
