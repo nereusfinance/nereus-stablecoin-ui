@@ -44,7 +44,7 @@ export default {
       return this.isWalletConnected;
     },
     async walletBtnHandler() {
-      if (this.isWalletConnected) {
+     if (this.isWalletConnected || !window.ethereum) {
         return false;
       }
 
