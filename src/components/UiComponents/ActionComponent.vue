@@ -6,8 +6,9 @@
     <button
       class="connect-btn"
       @click="onClick"
+      :disabled="disabledStatus"
     >
-      {{name}}
+        {{name}}
     </button>
   </div>
 </template>
@@ -24,6 +25,9 @@ export default {
     onClick: {
       type: Function,
     },
+    disabledStatus: {
+      type: Boolean,
+    }
   },
 };
 </script>
