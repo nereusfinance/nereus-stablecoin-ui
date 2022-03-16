@@ -41,11 +41,7 @@ export default {
   },
   methods: {
     isConnected() {
-      if (this.isWalletConnected) {
-        return true;
-      } else {
-        return false;
-      }
+      return this.isWalletConnected;
     },
     async walletBtnHandler() {
       if (this.isWalletConnected) {
