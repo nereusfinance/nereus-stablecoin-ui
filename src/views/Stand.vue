@@ -2,7 +2,7 @@
   <div v-if="isConnected()" class="stand-view">
     <div class="container mini">
       <div class="stand-group">
-        <h1>LET’S SUMMON SOME MIM<span>s</span></h1>
+        <h1>nUSD Markets</h1>
         <StandTable :tableType="2" :items="pools" />
       </div>
     </div>
@@ -63,25 +63,19 @@ export default {
 
 <style lang="scss" scoped>
 .stand-view {
-  padding-top: 30px;
-  padding-bottom: 300px;
+  padding: 40px 0;
   position: relative;
   flex: 1;
 
   .stand-group {
-    padding-top: 100px;
     position: relative;
     z-index: 2;
 
     h1 {
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      margin-bottom: 60px;
-
-      span {
-        text-transform: lowercase;
-      }
+      text-align: left;
+      margin-bottom: 24px;
+      font-size: 32px;
+      line-height: 36px;
     }
   }
 }

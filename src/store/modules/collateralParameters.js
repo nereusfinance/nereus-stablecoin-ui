@@ -3,6 +3,7 @@ export default {
   state: {
     collateralShare: 0,
     borrowPart: 0,
+    totalBorrow: 0,
     ltv: 0,
     tokenPrice: 0,
     collateralInfo: [],
@@ -27,8 +28,16 @@ export default {
     setUserBorrowPart(state, payload) {
       state.borrowPart = payload;
     },
+
+    setTotalBorrow(state, payload) {
+      state.totalBorrow = payload;
+    },
   },
   actions: {
+    async checkTotalBorrow({ commit }, contract) {
+      const totalBorrowResp = await contract.totalBorrow();
+      commit("setTotalBorrow", totalBorrowResp.base);
+    },
     async setUserCollateralShare({ getters, commit }, contract, decimals) {
       try {
         const userCollateralShare = await contract.userCollateralShare(
@@ -96,19 +105,19 @@ export default {
         },
         {
           title: "Collateral value",
-          value: `$${parseFloat(tokenInUsd).toFixed(4)}`,
+          value: `$ ${parseFloat(tokenInUsd).toFixed(4)}`,
           tooltip: "USD Value of the Collateral Deposited in your Position",
           additional: "",
         },
         {
           title: "NUSD borrowed",
-          value: `$${parseFloat(userBorrowPart).toFixed(4)}`,
+          value: `$ ${parseFloat(userBorrowPart).toFixed(4)}`,
           tooltip: "NUSD Currently Borrowed in your Position",
           additional: "",
         },
         {
           title: "Liquidation price",
-          value: `$${parseFloat(liquidationPrice).toFixed(4)}`,
+          value: `$ ${parseFloat(liquidationPrice).toFixed(4)}`,
           tooltip: "Collateral Price at which your Position will be Liquidated",
           additional: "",
         },
@@ -129,5 +138,6 @@ export default {
     getPoolLtv: (state) => state.ltv,
     getTokenPrice: (state) => state.tokenPrice,
     getCollateralInfo: (state) => state.collateralInfo,
+    getTotalBorrow: (state) => state.totalBorrow,
   },
 };
