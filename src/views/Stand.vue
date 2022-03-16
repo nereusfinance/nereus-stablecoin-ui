@@ -65,15 +65,6 @@ export default {
       this.connectLoader = false;
     },
   },
-  // created() {
-  //   const isConnected = this.$store.getters.getWalletIsConnected;
-  //
-  //   if (!isConnected) {
-  //     this.$router.push({ name: "Home" });
-  //     alert("Connect wallet first");
-  //     return false;
-  //   }
-  // },
 };
 </script>
 
@@ -104,7 +95,7 @@ export default {
 .stand-action-view {
   position: relative;
   flex: 1;
-  background: #333333;
+  background: #1C1C1C;
 }
 @media screen and(max-width: 980px) {
 
