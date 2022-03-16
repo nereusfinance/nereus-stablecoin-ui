@@ -12,6 +12,7 @@
       :text="text"
       :name="name"
       :onClick="walletBtnHandler"
+      :disabled-status="disabledStatus"
     />
   </div>
 </template>
@@ -25,6 +26,7 @@ export default {
     return {
       text: "Please connect your wallet",
       name: "Connect",
+      disabledStatus: false,
     }
   },
   components: {
@@ -35,24 +37,25 @@ export default {
     pools() {
       return this.$store.getters.getPools;
     },
-    isWalletConnected() {
-      return this.$store.getters.getWalletIsConnected;
-    },
   },
   methods: {
     isConnected() {
-      return this.isWalletConnected;
+      return this.$store.getters.getWalletIsConnected;
     },
     async walletBtnHandler() {
-     if (this.isWalletConnected || !window.ethereum) {
+      if (this.isWalletConnected || !window.ethereum) {
         return false;
       }
+
+      this.disabledStatus = true;
 
       try {
         await this.$store.dispatch("connectAccount", window.ethereum);
       } catch (e) {
         console.log("e:", e);
       }
+
+      this.disabledStatus = false;
     },
   },
 };
