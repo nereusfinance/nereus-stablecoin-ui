@@ -171,7 +171,7 @@ export default {
 
   .items-wrap {
     display: grid;
-    grid-template-columns: 486px 332px;
+    grid-template-columns: 486px 486px;
     column-gap: 26px;
     row-gap: 26px;
   }

@@ -18,7 +18,7 @@
       <div class="valute-item">
         <div class="value-type">
           <TokenIcon :token="pool.token.name" />
-          <p>{{ pool.token.name }}</p>
+          <p>{{ pool.name }}</p>
         </div>
 
         <p class="amount">
