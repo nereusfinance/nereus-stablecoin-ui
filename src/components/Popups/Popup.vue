@@ -1,13 +1,78 @@
 <template>
-$END$
+  <div class="popup" v-if="onClose">
+    <div class="popup-window">
+      <img
+        src="@/assets/images/close-popup.svg"
+        alt=""
+        class="close-btn"
+        @click="$emit('close')"
+      />
+      <p class="popup-title">{{title}}</p>
+
+      <div class="popup-body">
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
+
 export default {
-name: "Popup"
-}
+  name: "Popup",
+  props: {
+    title: {
+      type: String,
+    },
+    onClose: {
+      type: Boolean,
+    },
+  },
+};
 </script>
 
 <style scoped>
+.popup {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 19, 0.6);
+}
 
+.popup-window {
+  margin: 0 auto;
+  width: 500px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  background: #262626;
+  border-radius: 8px;
+  padding-bottom: 40px;
+}
+
+.popup-title {
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  text-align: center;
+  color: #FFFFFF;
+  margin-top: 0;
+  margin-bottom: 29px;
+}
+
+.close-btn {
+  height: 20px;
+  cursor: pointer;
+  margin: 21px 21px 0 auto;
+  justify-content: space-between;
+}
+
+.popup-body {
+  display: flex;
+  flex-direction: column;
+  padding: 0 75px;
+}
 </style>
