@@ -68,7 +68,7 @@ export default {
 }
 
 .close-btn {
-  height: 13px;
+  height: 14px;
   cursor: pointer;
   margin: 21px 21px 0 auto;
   justify-content: space-between;
