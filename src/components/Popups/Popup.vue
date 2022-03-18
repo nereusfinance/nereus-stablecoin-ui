@@ -59,12 +59,12 @@ export default {
   font-size: 20px;
   text-align: center;
   color: #FFFFFF;
-  margin-top: 0;
+  margin-top: 6px;
   margin-bottom: 29px;
 }
 
 .close-btn {
-  height: 20px;
+  height: 13px;
   cursor: pointer;
   margin: 21px 21px 0 auto;
   justify-content: space-between;
