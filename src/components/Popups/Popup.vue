@@ -4,7 +4,7 @@
     v-if="isOpen"
     @click="$emit('close')"
   >
-    <div  class="popup-window">
+    <div class="popup-window" @click.stop="">
       <img
         src="@/assets/images/close-popup.svg"
         alt=""
