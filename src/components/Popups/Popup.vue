@@ -1,6 +1,10 @@
 <template>
-  <div class="popup" v-if="onClose">
-    <div class="popup-window">
+  <div
+    class="popup"
+    v-if="isOpen"
+    @click="$emit('close')"
+  >
+    <div  class="popup-window">
       <img
         src="@/assets/images/close-popup.svg"
         alt=""
@@ -8,9 +12,7 @@
         @click="$emit('close')"
       />
       <p class="popup-title">{{title}}</p>
-
-      <div class="popup-body">
-      </div>
+      <slot class="popup-body"></slot>
     </div>
   </div>
 </template>
@@ -23,7 +25,7 @@ export default {
     title: {
       type: String,
     },
-    onClose: {
+    isOpen: {
       type: Boolean,
     },
   },
