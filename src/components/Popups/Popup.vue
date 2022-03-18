@@ -12,7 +12,9 @@
         @click="$emit('close')"
       />
       <p class="popup-title">{{title}}</p>
-      <slot class="popup-body"></slot>
+      <div class="popup-body">
+        <slot class="popup-slot"></slot>
+      </div>
     </div>
   </div>
 </template>
@@ -75,6 +77,7 @@ export default {
 .popup-body {
   display: flex;
   flex-direction: column;
+  align-items: center;
   padding: 0 75px;
 }
 </style>
