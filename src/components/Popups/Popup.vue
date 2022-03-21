@@ -34,16 +34,17 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .popup {
   position: fixed;
   display: flex;
   align-items: center;
-  z-index: 1000;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 19, 0.6);
+  z-index: 10000;
 }
 
 .popup-window {
