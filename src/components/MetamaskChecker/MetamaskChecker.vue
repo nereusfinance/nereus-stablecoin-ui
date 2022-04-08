@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import detectEthereumProvider from "@metamask/detect-provider";
+// import detectEthereumProvider from "@metamask/detect-provider";
 export default {
   data() {
     return {
@@ -24,60 +24,60 @@ export default {
   watch: {
     walletIsConnected(value) {
       if (value && !this.checkInProgress) {
-        this.compareNetworkSupport(this.chainId);
-        this.setAccountListeners();
+        // this.compareNetworkSupport(this.chainId);
+        // this.setAccountListeners();
         this.$emit("checkSuccess");
       }
     },
   },
   methods: {
     async checkProvider() {
-      const provider = await detectEthereumProvider();
-      if (!provider) {
-        this.$store.commit("setPopupState", {
-          type: "browser",
-          isShow: true,
-        });
-        this.$emit("checkError", "Please install MetaMask!");
-        return false;
-      }
+      // const provider = await detectEthereumProvider();
+      // if (!provider) {
+      //   this.$store.commit("setPopupState", {
+      //     type: "browser",
+      //     isShow: true,
+      //   });
+      //   this.$emit("checkError", "Please install MetaMask!");
+      //   return false;
+      // }
+      //
+      // if (provider !== window.ethereum) {
+      //   this.$emit("checkError", "Do you have multiple wallets installed?");
+      //   return false;
+      // }
 
-      if (provider !== window.ethereum) {
-        this.$emit("checkError", "Do you have multiple wallets installed?");
-        return false;
-      }
+      // const userProvider = new this.$ethers.providers.Web3Provider(
+      //   window.ethereum
+      // );
 
-      const userProvider = new this.$ethers.providers.Web3Provider(
-        window.ethereum
-      );
-
-      const userSigner = userProvider.getSigner();
-
-      this.$store.commit("setMetamaskActive", true);
-      this.$store.commit("setProvider", userProvider);
-      this.$store.commit("setSigner", userSigner);
+      // const userSigner = userProvider.getSigner();
+      // console.log('userSigner', userSigner);
+      // this.$store.commit("setMetamaskActive", true);
+      // this.$store.commit("setProvider", userProvider);
+      // this.$store.commit("setSigner", userSigner);
 
       await this.checkConnection();
     },
     async checkConnection() {
-      const address = await this.$store.dispatch(
-        "fetchAccount",
-        window.ethereum
-      );
+      // const address = await this.$store.dispatch(
+      //   "fetchAccount",
+      //   window.ethereum
+      // );
+      //
+      // if (!address) {
+      //   this.$emit("checkError", "");
+      //   this.checkInProgress = false;
+      //   return false;
+      // }
 
-      if (!address) {
-        this.$emit("checkError", "");
-        this.checkInProgress = false;
-        return false;
-      }
-
-      this.$store.commit("setWalletConnection", true);
-      const chainId = await this.$store.dispatch(
-        "fetchChainId",
-        window.ethereum
-      );
-      this.compareNetworkSupport(chainId);
-      this.setAccountListeners();
+      // this.$store.commit("setWalletConnection", true);
+      // const chainId = await this.$store.dispatch(
+      //   "fetchChainId",
+      //   window.ethereum
+      // );
+      // this.compareNetworkSupport(chainId);
+      // this.setAccountListeners();
 
       this.checkInProgress = false;
       this.$emit("checkSuccess");

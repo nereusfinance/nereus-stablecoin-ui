@@ -1,3 +1,7 @@
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import { providers } from "ethers";
+import web3 from "web3";
+
 export default {
   state: {
     provider: null,
@@ -41,7 +45,8 @@ export default {
       }
     },
     async fetchChainId({ commit }, provider) {
-      const chainId = await provider.request({ method: "eth_chainId" });
+      // const chainId = await provider.request({ method: "eth_chainId" });
+      const chainId = web3.utils.toHex((await provider.getNetwork()).chainId);
 
       if (chainId) {
         commit("setChainId", chainId);
@@ -50,20 +55,33 @@ export default {
 
       return false;
     },
-    async connectAccount({ commit, dispatch }, provider) {
+    async connectAccount({ commit, dispatch }, ) {
       try {
-        const accounts = await provider.request({
-          method: "eth_requestAccounts",
-        });
+        // const accounts = await provider.request({
+        //   method: "eth_requestAccounts",
+        // });
+        //
+        // if (accounts.length === 0) {
+        //   // MetaMask is locked or the user has not connected any accounts
+        //   console.log("Please connect to MetaMask.");
+        //   return false;
+        // }
 
-        if (accounts.length === 0) {
-          // MetaMask is locked or the user has not connected any accounts
-          console.log("Please connect to MetaMask.");
-          return false;
-        }
+        const walletConnectProvider = new WalletConnectProvider({
+          rpc: {
+            43113: "https://api.avax-test.network/ext/bc/C/rpc",
+            43114: "https://api.avax.network/ext/bc/C/rpc",
+          },
+        });
+        const accounts = await walletConnectProvider.enable();
+
+        const provider = new providers.Web3Provider(walletConnectProvider);
+        commit('setProvider', provider);
+        const signer = await provider.getSigner();
+        commit('setSigner', signer)
 
         const chainId = await dispatch("fetchChainId", provider);
-
+        commit("setWalletConnection", true);
         console.log("connectAccount", accounts[0], chainId);
         commit("setAccount", accounts[0]);
         commit("setWalletConnection", true);

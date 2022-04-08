@@ -89,10 +89,10 @@ export default {
   },
   computed: {
     walletBtnText() {
-      let networkType = this.$store.getters.getChainId;
-      let networkName = this.networks.find((item) => item.chainid == networkType);
+      // let networkType = this.$store.getters.getChainId;
+      // let networkName = this.networks.find((item) => item.chainid == networkType);
 
-      return `${networkName.title}`;
+      return `Avalanche`;
     },
     slicedAccountAddress() {
       let account = this.$store.getters.getAccount;
@@ -115,12 +115,12 @@ export default {
         return false;
       }
 
-      if (!window.ethereum) return false;
+      // if (!window.ethereum) return false;
 
       this.connectLoader = true;
 
       try {
-        await this.$store.dispatch("connectAccount", window.ethereum);
+        await this.$store.dispatch("connectAccount");
       } catch (e) {
         console.log("e:", e);
       }
