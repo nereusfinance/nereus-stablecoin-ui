@@ -258,6 +258,12 @@ export default {
 
       return true;
     },
+    tokenToNXUSD() {
+      const tokenToNXUSD = 1 / this.tokenToUsd;
+      // eslint-disable-next-line no-useless-escape
+      let re = new RegExp(`^-?\\d+(?:\.\\d{0,` + (6 || -1) + `})?`);
+      return tokenToNXUSD.toString().match(re)[0];
+    },
     maxMainValue() {
       const balance = this.getAVAXStatus()
         ? this.$ethers.utils.formatEther(
@@ -334,9 +340,7 @@ export default {
       }
 
       if (this.actionType === "repay") {
-        const maxAmount = parseFloat(
-          +this.$store.getters.getUserCollateralShare(this.poolId)
-        ).toFixed(20);
+        const maxAmount = (this.$store.getters.getUserBorrowPart(this.poolId) / this.tokenToNXUSD).toFixed(20);
         // .toLocaleString(
         //   "fullwide",
         //   {
