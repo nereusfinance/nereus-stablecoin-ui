@@ -230,8 +230,7 @@ export default {
 
       const tokenInUsd = userCollateralShare / tokenPrice;
 
-      const maxNUSDBorrow = (tokenInUsd / 100) * (ltv - 1);
-
+      const maxNUSDBorrow = (tokenInUsd / 100) * ltv;
       const borrowLeft = parseFloat(maxNUSDBorrow - userBorrowPart).toFixed(20);
       let re = new RegExp(
         // eslint-disable-next-line no-useless-escape
