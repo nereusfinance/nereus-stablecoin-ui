@@ -270,7 +270,7 @@ export default {
         {
           title: "NXUSD left to borrow",
           value: `${borrowLeftParsed}`,
-          tooltip: "NXUSD Borrowable Given the Collateral Deposited",
+          tooltip: "NXUSD Borrowable Given the Collateral Deposited so as not to be liquidated",
           additional: "",
         },
       ];
