@@ -230,7 +230,7 @@ export default {
 
       const tokenInUsd = userCollateralShare / tokenPrice;
 
-      const maxNUSDBorrow = (tokenInUsd / 100) * (ltv - 1);
+      const maxNUSDBorrow = (tokenInUsd / 100) * ltv;
 
       const borrowLeft = parseFloat(maxNUSDBorrow - userBorrowPart).toFixed(20);
       let re = new RegExp(
@@ -271,7 +271,7 @@ export default {
         {
           title: "NXUSD left to borrow",
           value: `${borrowLeftParsed}`,
-          tooltip: "NXUSD Borrowable Given the Collateral Deposited",
+          tooltip: "NXUSD Borrowable Given the Collateral Deposited so as not to be liquidated",
           additional: "",
         },
       ];
