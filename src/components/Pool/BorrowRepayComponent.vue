@@ -43,7 +43,7 @@
       />
     </div>
 
-    <div class="estimate-box">
+    <div class="estimate-box" v-if="!showDeleverage && !showLeverage">
       <EstimationBlock
         :liquidityPrice="liquidationPrice"
         :nxusdAmount="
@@ -106,6 +106,48 @@
     <!--      </template>-->
     <!--    </div>-->
 
+    <div class="deleverage-config-box" v-if="actionType === 'repay'">
+      <div class="checkbox-wrap">
+        <div class="box-wrap" @click="toggleShowDeleverage">
+          <div class="checkbox" v-if="showDeleverage">
+            <img
+              class="checkbox-checked"
+              src="@/assets/images/checkboxChecked.svg"
+              alt=""
+            />
+          </div>
+          <div class="checkbox" v-else>
+            <img src="@/assets/images/checkbox.svg" alt="" />
+          </div>
+        </div>
+        <p class="label-text" @click="toggleShowDeleverage">Deleverage</p>
+        <img
+          src="@/assets/images/i-icon.svg"
+          alt=""
+          class="info-icon"
+          v-tooltip="
+            'Allows users to repay their leveraged position. Read more about this in the documents!'
+          "
+        />
+      </div>
+
+      <template v-if="showDeleverage">
+        <SlipageBlock :slipage="slipage" @update="updateSlipage" />
+        <DeleverageBar
+          :pool="pool"
+          :amountToRepay="this.mainValue"
+          :maxAmountToRepay="this.maxMainValue"
+          @updateAmountToRepay="updateMainValue"
+          :collateralToRemove="this.pairValue"
+          @updateCollateralToRemove="updatePairValue"
+          :maxCollateralToRemove="this.maxPairValue"
+          :liquidationPrice="this.liquidationPrice"
+          :mainTokenName="mainValueTokenName"
+          :pairTokenName="pairValueTokenName"
+        />
+      </template>
+    </div>
+
     <div class="action-wrap">
       <div class="checkbox-wrap">
         <div
@@ -151,6 +193,8 @@
 const ValueInput = () => import("@/components/UiComponents/ValueInput");
 const LiquidationRules = () => import("@/components/Pool/LiquidatonRules");
 const EstimationBlock = () => import("@/components/Pool/EstimationBlock");
+const SlipageBlock = () => import("@/components/Pool/SlipageBlock");
+const DeleverageBar = () => import("@/components/Pool/DeleverageBar");
 
 export default {
   props: {
@@ -230,6 +274,7 @@ export default {
       multiplier: 1,
       slipage: 1,
       showLeverage: false,
+      showDeleverage: false,
     };
   },
   watch: {
@@ -474,6 +519,13 @@ export default {
       }
 
       // this.showLeverage = !this.showLeverage;
+    },
+    toggleShowDeleverage() {
+      if (this.showDeleverage === true) {
+        this.multiplier = 1;
+      }
+
+      this.showDeleverage = !this.showDeleverage;
     },
     toggleUseAVAX() {
       const AVAXStatus = this.$store.getters.getUseAVAX;
@@ -806,6 +858,8 @@ export default {
     ValueInput,
     LiquidationRules,
     EstimationBlock,
+    SlipageBlock,
+    DeleverageBar,
   },
 };
 </script>
@@ -833,6 +887,19 @@ export default {
     margin-bottom: 8px;
   }
 
+  .deleverage-config-box {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+    border: 1px solid #606060;
+    padding: 20px 12px 0px;
+    margin-top: 16px;
+
+    .checkbox-wrap {
+      margin-bottom: 20px;
+      margin-left: 4px;
+    }
+  }
+
   .checkbox-wrap {
     display: flex;
     align-items: center;
@@ -846,7 +913,7 @@ export default {
     .info-icon {
       width: 13px;
       height: 13px;
-      margin-left: 5px;
+      margin-left: 10px;
     }
 
     .box-wrap {
