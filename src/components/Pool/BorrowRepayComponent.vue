@@ -347,13 +347,13 @@ export default {
         let valueInDolars;
         let maxPairValue;
 
+        valueInDolars =
+          (+this.mainValue +
+            +this.$store.getters.getUserCollateralShare(this.poolId)) /
+          +this.tokenToUsd;
         if (this.mainValue) {
-          valueInDolars = this.mainValue / this.tokenToUsd;
           maxPairValue = (valueInDolars / 100) * (this.ltv - 1);
         } else {
-          valueInDolars =
-            this.$store.getters.getUserCollateralShare(this.poolId) /
-            this.tokenToUsd;
           maxPairValue =
             (valueInDolars / 100) * (this.ltv - 1) -
             this.$store.getters.getUserBorrowPart(this.poolId);
