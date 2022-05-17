@@ -3,13 +3,17 @@
     <p class="bar-title">
       {{ `Choose the amount of ${this.mainTokenName} you want to repay` }}
     </p>
-
+    <div class="slider-wrapper">
+      <Slider :value="testValue" @changeValue="testOnChangeValue" />
+    </div>
     <p class="bar-conclusion">
       {{ `Liquidation Price ~ ${liquidationPriceFormatted}` }}
     </p>
 
     <p class="bar-title">Choose the amount of collateral you want to remove</p>
-
+    <div class="slider-wrapper">
+      <Slider :value="testValue" @changeValue="testOnChangeValue" />
+    </div>
     <p class="bar-conclusion">
       {{ `${this.collateralToRemoveFormatted} ${this.pairTokenName}` }}
     </p>
@@ -22,6 +26,8 @@
 </template>
 
 <script>
+const Slider = () => import("@/components/UiComponents/Slider");
+
 export default {
   props: {
     amountToRepay: {
@@ -61,14 +67,10 @@ export default {
   data() {
     return {
       maxMultiplier: 10,
+      testValue: "15",
     };
   },
   computed: {
-    risk() {
-      if (this.multiplier > 7) return "hight";
-      if (this.multiplier > 3) return "medium";
-      return "safe";
-    },
     liquidationPriceFormatted() {
       return isNaN(this.liquidationPrice)
         ? "xx.xxx"
@@ -85,7 +87,14 @@ export default {
         : this.amountToRepay.toFixed(4);
     },
   },
-  methods: {},
+  methods: {
+    testOnChangeValue(val) {
+      this.testValue = val;
+    },
+  },
+  components: {
+    Slider,
+  },
 };
 </script>
 
@@ -114,23 +123,19 @@ export default {
     }
   }
 
-  // .range {
-  //   height: 100%;
-  //   width: 39%;
-  //   border-radius: 39px;
-  //   transition: all 0.3s ease;
+  .slider-wrapper {
+    margin: 8px 0px 4px;
+  }
+}
 
-  //   &.safe {
-  //     background: #fdd33f;
-  //   }
-
-  //   &.medium {
-  //     background: #fdd33f;
-  //   }
-
-  //   &.hight {
-  //     background: #fdd33f;
-  //   }
-  // }
+@media screen and(max-width: 640px) {
+  .deleverage-bar {
+    .slider-wrapper {
+      margin: 4px 0px 4px;
+    }
+    .bar-conclusion {
+      margin-bottom: 22px;
+    }
+  }
 }
 </style>

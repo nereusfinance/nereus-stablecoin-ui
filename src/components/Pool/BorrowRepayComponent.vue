@@ -106,7 +106,13 @@
     <!--      </template>-->
     <!--    </div>-->
 
-    <div class="deleverage-config-box" v-if="actionType === 'repay'">
+    <div
+      class="deleverage-config-box"
+      v-if="
+        actionType === 'repay' &&
+        !this.poolsWithoutLeveradge.includes(this.pool.name)
+      "
+    >
       <div class="checkbox-wrap">
         <div class="box-wrap" @click="toggleShowDeleverage">
           <div class="checkbox" v-if="showDeleverage">
@@ -275,6 +281,8 @@ export default {
       slipage: 1,
       showLeverage: false,
       showDeleverage: false,
+
+      poolsWithoutLeveradge: ["DAI"],
     };
   },
   watch: {
