@@ -27,12 +27,14 @@ export default {
       type: Number,
       default: 1,
     },
-  },
-  data() {
-    return {
-      min: 0,
-      max: 100,
-    };
+    min: {
+      type: Number,
+      default: 0,
+    },
+    max: {
+      type: Number,
+      default: 100,
+    },
   },
   methods: {
     onChange(event) {

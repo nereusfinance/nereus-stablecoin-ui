@@ -43,7 +43,7 @@
       />
     </div>
 
-    <div class="estimate-box" v-if="!showDeleverage && !showLeverage">
+    <div class="estimate-box" v-if="!showLeverage">
       <EstimationBlock
         :liquidityPrice="liquidationPrice"
         :nxusdAmount="
@@ -66,56 +66,19 @@
       />
     </div>
 
-    <!--    <div class="config-box" v-if="actionType === 'borrow'">-->
-    <!--      <div class="checkbox-wrap">-->
-    <!--        <div-->
-    <!--          class="box-wrap"-->
-    <!--          @click="toggleShowLeverage"-->
-    <!--          :class="{ active: showLeverage, disabled: !showLeverage }"-->
-    <!--        >-->
-    <!--          <div class="checkbox" v-if="showLeverage">-->
-    <!--            <img-->
-    <!--              class="checkbox-checked"-->
-    <!--              src="@/assets/images/checkboxChecked.svg"-->
-    <!--              alt=""-->
-    <!--            />-->
-    <!--          </div>-->
-    <!--          <div class="checkbox" v-else>-->
-    <!--            <img src="@/assets/images/checkbox.svg" alt="" />-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--        <p class="label-text" @click="toggleShowLeverage">Change leverage</p>-->
-
-    <!--        <img-->
-    <!--          src="@/assets/images/i-icon.svg"-->
-    <!--          alt=""-->
-    <!--          class="info-icon"-->
-    <!--          v-tooltip="-->
-    <!--            'Allows users to leverage their position. Read more about this in the documents!'-->
-    <!--          "-->
-    <!--        />-->
-    <!--      </div>-->
-
-    <!--      <template v-if="showLeverage">-->
-    <!--        <transition name="fade">-->
-    <!--          <SlipageBlock :slipage="slipage" @update="updateSlipage" />-->
-    <!--        </transition>-->
-    <!--        <transition name="fade">-->
-    <!--          <LeverageBar :multiplier="multiplier" @update="updateMultiplier" />-->
-    <!--        </transition>-->
-    <!--      </template>-->
-    <!--    </div>-->
-
     <div
-      class="deleverage-config-box"
-      v-if="
-        actionType === 'repay' &&
+      class="config-box"
+      v-if="actionType === 'borrow' &&
         !this.poolsWithoutLeveradge.includes(this.pool.name)
       "
     >
       <div class="checkbox-wrap">
-        <div class="box-wrap" @click="toggleShowDeleverage">
-          <div class="checkbox" v-if="showDeleverage">
+        <div
+          class="box-wrap"
+          @click="toggleShowLeverage"
+          :class="{ active: showLeverage }"
+        >
+          <div class="checkbox" v-if="showLeverage">
             <img
               class="checkbox-checked"
               src="@/assets/images/checkboxChecked.svg"
@@ -126,31 +89,37 @@
             <img src="@/assets/images/checkbox.svg" alt="" />
           </div>
         </div>
-        <p class="label-text" @click="toggleShowDeleverage">Deleverage</p>
+        <p class="label-text" @click="toggleShowLeverage">Change leverage</p>
+
         <img
           src="@/assets/images/i-icon.svg"
           alt=""
           class="info-icon"
           v-tooltip="
-            'Allows users to repay their leveraged position. Read more about this in the documents!'
+            'Allows users to leverage their position. Read more about this in the documents!'
           "
         />
       </div>
 
-      <template v-if="showDeleverage">
-        <SlipageBlock :slipage="slipage" @update="updateSlipage" />
-        <DeleverageBar
-          :pool="pool"
-          :amountToRepay="this.mainValue"
-          :maxAmountToRepay="this.maxMainValue"
-          @updateAmountToRepay="updateMainValue"
-          :collateralToRemove="this.pairValue"
-          @updateCollateralToRemove="updatePairValue"
-          :maxCollateralToRemove="this.maxPairValue"
-          :liquidationPrice="this.liquidationPrice"
-          :mainTokenName="mainValueTokenName"
-          :pairTokenName="pairValueTokenName"
-        />
+      <template v-if="showLeverage">
+        <transition name="fade">
+          <SlipageBlock
+            :slipage="slipage"
+            @update="updateSlipage"
+            :maxValue="ltv"
+            :value="percentValue"
+          />
+        </transition>
+        <transition name="fade">
+          <LeverageBar
+            :multiplier="multiplier"
+            @update="updateMultiplier"
+            :pool="pool"
+            :tokentToNUSD="tokentToNUSD"
+            :mainValue="mainValue"
+            :pairValue="pairValue"
+          />
+        </transition>
       </template>
     </div>
 
@@ -199,8 +168,8 @@
 const ValueInput = () => import("@/components/UiComponents/ValueInput");
 const LiquidationRules = () => import("@/components/Pool/LiquidatonRules");
 const EstimationBlock = () => import("@/components/Pool/EstimationBlock");
+const LeverageBar = () => import("@/components/Pool/LeverageBar");
 const SlipageBlock = () => import("@/components/Pool/SlipageBlock");
-const DeleverageBar = () => import("@/components/Pool/DeleverageBar");
 
 export default {
   props: {
@@ -280,8 +249,6 @@ export default {
       multiplier: 1,
       slipage: 1,
       showLeverage: false,
-      showDeleverage: false,
-
       poolsWithoutLeveradge: ["DAI"],
     };
   },
@@ -337,12 +304,12 @@ export default {
     maxMainValue() {
       const balance = this.getAVAXStatus()
         ? this.$ethers.utils.formatEther(
-            this.$store.getters.getBalanceNativeToken(this.poolId).toString()
-          )
+          this.$store.getters.getBalanceNativeToken(this.poolId).toString()
+        )
         : this.$ethers.utils.formatUnits(
-            this.$store.getters.getBalanceToken(this.poolId).toString(),
-            this.tokenDecimals
-          );
+          this.$store.getters.getBalanceToken(this.poolId).toString(),
+          this.tokenDecimals
+        );
 
       if (this.actionType === "borrow") return balance;
       if (this.actionType === "repay") {
@@ -400,21 +367,16 @@ export default {
         let valueInDolars;
         let maxPairValue;
 
-        if (this.mainValue) {
-          valueInDolars = this.mainValue / this.tokenToUsd;
-          maxPairValue = (valueInDolars / 100) * (this.ltv - 1);
-        } else {
-          valueInDolars =
-            this.$store.getters.getUserCollateralShare(this.poolId) /
-            this.tokenToUsd;
-          maxPairValue =
-            (valueInDolars / 100) * (this.ltv - 1) -
-            this.$store.getters.getUserBorrowPart(this.poolId);
-        }
+        valueInDolars =
+          (this.$store.getters.getUserCollateralShare(this.poolId) + this.mainValue) /
+          this.tokenToUsd;
+        maxPairValue =
+          (valueInDolars / 100) * (this.ltv - 1) -
+          this.$store.getters.getUserBorrowPart(this.poolId);
 
         return this.toFixed(
           maxPairValue *
-            ((100 - this.$store.getters.getBorrowFee(this.poolId)) / 100),
+          ((100 - this.$store.getters.getBorrowFee(this.poolId)) / 100),
           this.pairValueDecimals
         );
       }
@@ -490,8 +452,8 @@ export default {
           (+this.$store.getters.getUserBorrowPart(this.poolId) +
             +this.pairValue) /
           (((+this.$store.getters.getUserCollateralShare(this.poolId) +
-            +parseFloat(+this.mainValue)) *
-            this.ltv) /
+                +parseFloat(+this.mainValue)) *
+              this.ltv) /
             100);
         return liquidationPrice;
       }
@@ -499,8 +461,8 @@ export default {
         (+this.$store.getters.getUserBorrowPart(this.poolId) -
           +this.mainValue) /
         (((+this.$store.getters.getUserCollateralShare(this.poolId) -
-          +parseFloat(+this.pairValue)) *
-          this.ltv) /
+              +parseFloat(+this.pairValue)) *
+            this.ltv) /
           100);
       if (liquidationPrice === Infinity || liquidationPrice <= 0) {
         return "xxx.xx";
@@ -526,14 +488,7 @@ export default {
         this.multiplier = 1;
       }
 
-      // this.showLeverage = !this.showLeverage;
-    },
-    toggleShowDeleverage() {
-      if (this.showDeleverage === true) {
-        this.multiplier = 1;
-      }
-
-      this.showDeleverage = !this.showDeleverage;
+      this.showLeverage = !this.showLeverage;
     },
     toggleUseAVAX() {
       const AVAXStatus = this.$store.getters.getUseAVAX;
@@ -866,8 +821,8 @@ export default {
     ValueInput,
     LiquidationRules,
     EstimationBlock,
+    LeverageBar,
     SlipageBlock,
-    DeleverageBar,
   },
 };
 </script>
@@ -891,21 +846,8 @@ export default {
     background: rgba(255, 255, 255, 0.02);
     border-radius: 4px;
     border: 1px solid #606060;
-    padding: 20px;
+    padding: 16px 12px;
     margin-bottom: 8px;
-  }
-
-  .deleverage-config-box {
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 4px;
-    border: 1px solid #606060;
-    padding: 20px 12px 0px;
-    margin-top: 16px;
-
-    .checkbox-wrap {
-      margin-bottom: 20px;
-      margin-left: 4px;
-    }
   }
 
   .checkbox-wrap {
@@ -921,7 +863,7 @@ export default {
     .info-icon {
       width: 13px;
       height: 13px;
-      margin-left: 10px;
+      margin-left: 5px;
     }
 
     .box-wrap {
@@ -948,7 +890,7 @@ export default {
       &.disabled .checkbox {
         cursor: not-allowed;
         filter: brightness(0) saturate(100%) invert(61%) sepia(1%)
-          saturate(2362%) hue-rotate(40deg) brightness(90%) contrast(83%);
+        saturate(2362%) hue-rotate(40deg) brightness(90%) contrast(83%);
       }
 
       .checkbox {
@@ -958,7 +900,7 @@ export default {
 
       .checkbox-checked {
         filter: brightness(0) saturate(100%) invert(81%) sepia(54%)
-          saturate(404%) hue-rotate(18deg) brightness(108%) contrast(98%);
+        saturate(404%) hue-rotate(18deg) brightness(108%) contrast(98%);
       }
 
       .box {
