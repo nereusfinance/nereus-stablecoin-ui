@@ -6,7 +6,7 @@
       <div class="slider-wrapper">
           <Slider
             :value="sliderValue"
-            :step="0.75"
+            :step="0.25"
             :min="0"
             :max="15"
             @changeValue="testOnChangeValue"
