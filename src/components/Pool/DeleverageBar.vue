@@ -89,6 +89,13 @@ export default {
   },
   methods: {
     testOnChangeValue(val) {
+      const record = localStorage.getItem("neverShowDeleveragePopup");
+      if (!(record === "true") && record === null) {
+        this.$store.commit("setPopupState", {
+          type: "deleverage",
+          isShow: true,
+        });
+      }
       this.testValue = val;
     },
   },

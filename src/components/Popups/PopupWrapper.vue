@@ -17,6 +17,10 @@
       v-if="popupActiveType === 'transaction'"
     />
     <NetworkPopup @close="closePopup" v-if="popupActiveType === 'network'" />
+    <DeleveragePopup
+      @close="closePopup"
+      v-if="popupActiveType === 'deleverage'"
+    />
     <WrongNetworkPopup
       @close="closePopup"
       v-if="popupActiveType === 'wrong-network'"
@@ -42,6 +46,7 @@ const TransactionSuccessPopup = () =>
   import("@/components/Popups/TransactionSuccess");
 const NetworkPopup = () => import("@/components/Popups/NetworkPopup");
 const MobileMenu = () => import("@/components/MobileMenu");
+const DeleveragePopup = () => import("@/components/Popups/DeleveragePopup");
 
 export default {
   methods: {
@@ -67,6 +72,7 @@ export default {
     UnstakePopup,
     DevicePopup,
     ConnectWalletModal,
+    DeleveragePopup,
   },
 };
 </script>
@@ -85,12 +91,15 @@ export default {
   overflow-y: auto;
   padding-bottom: 60px;
   padding-top: $headerHeight;
+  background-color: transparentize(#000000, 0.3);
 }
 
 @media screen and(max-width: 640px) {
   .popup-wrap {
     display: block;
     padding-bottom: 30px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 }
 </style>
