@@ -4,7 +4,11 @@
       {{ `Choose the amount of ${this.mainTokenName} you want to repay` }}
     </p>
     <div class="slider-wrapper">
-      <Slider :value="testValue" @changeValue="testOnChangeValue" />
+      <Slider
+        :value="repaySliderValue"
+        @changeValue="onRepaySliderChange"
+        :disabled="repaySliderMaxZero"
+      />
     </div>
     <p class="bar-conclusion">
       {{ `Liquidation Price ~ ${liquidationPriceFormatted}` }}
@@ -12,7 +16,11 @@
 
     <p class="bar-title">Choose the amount of collateral you want to remove</p>
     <div class="slider-wrapper">
-      <Slider :value="testValue" @changeValue="testOnChangeValue" />
+      <Slider
+        :value="removeCollateralSliderValue"
+        @changeValue="onRemoveCollateralSliderChange"
+        :disabled="removeCollateralSliderMaxZero"
+      />
     </div>
     <p class="bar-conclusion">
       {{ `${this.collateralToRemoveFormatted} ${this.pairTokenName}` }}
@@ -67,7 +75,6 @@ export default {
   data() {
     return {
       maxMultiplier: 10,
-      testValue: "15",
     };
   },
   computed: {
@@ -76,27 +83,68 @@ export default {
         ? "xx.xxx"
         : this.liquidationPrice.toFixed(4);
     },
-    collateralToRemoveFormatted() {
-      return this.collateralToRemove === 0 || this.collateralToRemove === ""
-        ? "0"
-        : this.collateralToRemove.toFixed(4);
-    },
     amountToRepayFormatted() {
-      return this.amountToRepay === 0 || this.amountToRepay === ""
+      return parseFloat(this.amountToRepay) === 0 || this.amountToRepay === ""
         ? "0"
         : this.amountToRepay.toFixed(4);
     },
+    collateralToRemoveFormatted() {
+      return parseFloat(this.collateralToRemove) === 0 ||
+        this.collateralToRemove === ""
+        ? "0"
+        : this.collateralToRemove.toFixed(4);
+    },
+    repaySliderMaxZero() {
+      return (
+        isNaN(this.amountToRepay) ||
+        isNaN(this.maxAmountToRepay) ||
+        parseFloat(this.maxAmountToRepay) === 0
+      );
+    },
+    repaySliderValue() {
+      if (this.repaySliderMaxZero) return "0";
+      return (
+        (parseFloat(this.maxAmountToRepay) * 100) /
+        parseFloat(this.maxAmountToRepay)
+      ).toString();
+    },
+    removeCollateralSliderMaxZero() {
+      return (
+        isNaN(this.collateralToRemove) ||
+        isNaN(this.maxCollateralToRemove) ||
+        parseFloat(this.maxCollateralToRemove) === 0
+      );
+    },
+    removeCollateralSliderValue() {
+      if (this.removeCollateralSliderMaxZero) return "0";
+      return (
+        (parseFloat(this.collateralToRemove) * 100) /
+        parseFloat(this.maxCollateralToRemove)
+      ).toString();
+    },
   },
   methods: {
-    testOnChangeValue(val) {
-      const record = localStorage.getItem("neverShowDeleveragePopup");
-      if (!(record === "true") && record === null) {
-        this.$store.commit("setPopupState", {
-          type: "deleverage",
-          isShow: true,
-        });
-      }
-      this.testValue = val;
+    // testOnChangeValue(val) {
+    //   const record = localStorage.getItem("neverShowDeleveragePopup");
+    //   if (!(record === "true") && record === null) {
+    //     this.$store.commit("setPopupState", {
+    //       type: "deleverage",
+    //       isShow: true,
+    //     });
+    //   }
+    //   this.testValue = val;
+    // },
+    onRepaySliderChange(newVal) {
+      this.$emit(
+        "updateAmountToRepay",
+        ((parseFloat(newVal) * this.maxAmountToRepay) / 100).toString()
+      );
+    },
+    onRemoveCollateralSliderChange(newVal) {
+      this.$emit(
+        "updateCollateralToRemove",
+        ((parseFloat(newVal) * this.maxCollateralToRemove) / 100).toString()
+      );
     },
   },
   components: {

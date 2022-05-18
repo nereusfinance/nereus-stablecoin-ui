@@ -11,6 +11,7 @@
       :style="{
         backgroundSize: ((value - min) * 100) / (max - min) + '% 100%',
       }"
+      :disabled="disabled"
     />
   </div>
 </template>
@@ -20,13 +21,16 @@ export default {
   props: {
     // from 0 to 100
     value: {
-      type: String,
       required: true,
     },
     step: {
       type: Number,
       default: 1,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    }
   },
   data() {
     return {
@@ -70,6 +74,9 @@ export default {
     background-size: 10px 20px;
     cursor: pointer;
     border-radius: 6px;
+  }
+  .slider:disabled::-webkit-slider-thumb {
+    cursor: not-allowed;
   }
   .slider::-moz-range-thumb {
     width: 10px;
