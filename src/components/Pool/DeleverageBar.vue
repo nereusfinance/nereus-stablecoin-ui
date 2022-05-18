@@ -84,15 +84,16 @@ export default {
         : this.liquidationPrice.toFixed(4);
     },
     amountToRepayFormatted() {
-      return parseFloat(this.amountToRepay) === 0 || this.amountToRepay === ""
+      const parsed = parseFloat(this.amountToRepay);
+      return parsed === 0 || this.amountToRepay === ""
         ? "0"
-        : this.amountToRepay.toFixed(4);
+        : parsed.toFixed(4);
     },
     collateralToRemoveFormatted() {
-      return parseFloat(this.collateralToRemove) === 0 ||
-        this.collateralToRemove === ""
+      const parsed = parseFloat(this.collateralToRemove);
+      return parsed === 0 || this.collateralToRemove === ""
         ? "0"
-        : this.collateralToRemove.toFixed(4);
+        : parsed.toFixed(4);
     },
     repaySliderMaxZero() {
       return (
@@ -103,8 +104,10 @@ export default {
     },
     repaySliderValue() {
       if (this.repaySliderMaxZero) return "0";
+      // empty string case
+      const amountToRepayFixed = parseFloat(this.amountToRepay) || 0;
       return (
-        (parseFloat(this.maxAmountToRepay) * 100) /
+        (amountToRepayFixed * 100) /
         parseFloat(this.maxAmountToRepay)
       ).toString();
     },
@@ -117,23 +120,15 @@ export default {
     },
     removeCollateralSliderValue() {
       if (this.removeCollateralSliderMaxZero) return "0";
+      // empty string case
+      const collateralToRemoveFixed = parseFloat(this.collateralToRemove) || 0;
       return (
-        (parseFloat(this.collateralToRemove) * 100) /
+        (collateralToRemoveFixed * 100) /
         parseFloat(this.maxCollateralToRemove)
       ).toString();
     },
   },
   methods: {
-    // testOnChangeValue(val) {
-    //   const record = localStorage.getItem("neverShowDeleveragePopup");
-    //   if (!(record === "true") && record === null) {
-    //     this.$store.commit("setPopupState", {
-    //       type: "deleverage",
-    //       isShow: true,
-    //     });
-    //   }
-    //   this.testValue = val;
-    // },
     onRepaySliderChange(newVal) {
       this.$emit(
         "updateAmountToRepay",

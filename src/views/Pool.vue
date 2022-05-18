@@ -37,6 +37,7 @@
           @addCollateral="addCollateralHandler"
           @borrow="borrowHandler"
           @removeAndRepay="removeAndRepayHandler"
+          @removeAndRepayWithDeleverage="removeAndRepayWithDeleverageHandler"
           @removeAndRepayMax="removeAndRepayMaxHandler"
           @repay="repayHandler"
           @removeCollateral="removeCollateralHandler"
@@ -324,6 +325,9 @@ export default {
         this.pool.masterContractInstance.address
       );
       if (approveResult) this.cookRemoveAndRepay(data, isApprowed);
+    },
+    async removeAndRepayWithDeleverageHandler(data) {
+      console.log("REMOVE & REPAY WITH DELEVERAGE HANDLER", data);
     },
     async repayHandler(data) {
       console.log("REPAY HANDLER", data);

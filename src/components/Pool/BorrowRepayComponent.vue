@@ -615,7 +615,18 @@ export default {
             return false;
           }
 
-          this.$emit("removeAndRepay", payload);
+          if (this.showDeleverage) {
+            const localStorageRecord = localStorage.getItem("neverShowDeleveragePopup");
+            if (!(localStorageRecord === "true") && localStorageRecord === null) {
+              this.$store.commit("setPopupState", {
+                type: "deleverage",
+                isShow: true,
+              });
+            }
+            this.$emit("removeAndRepayWithDeleverage", payload);
+          } else {
+            this.$emit("removeAndRepay", payload);
+          }
           this.clearData();
         }
         return false;
