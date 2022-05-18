@@ -616,8 +616,13 @@ export default {
           }
 
           if (this.showDeleverage) {
-            const localStorageRecord = localStorage.getItem("neverShowDeleveragePopup");
-            if (!(localStorageRecord === "true") && localStorageRecord === null) {
+            const localStorageRecord = localStorage.getItem(
+              "neverShowDeleveragePopup"
+            );
+            if (
+              !(localStorageRecord === "true") &&
+              localStorageRecord === null
+            ) {
               this.$store.commit("setPopupState", {
                 type: "deleverage",
                 isShow: true,
@@ -785,8 +790,6 @@ export default {
           this.pairValueError = "";
           return false;
         }
-        this.pairValueError = `You have insufficient collateral. Please enter a smaller amount or repay more.`;
-        return false;
       }
 
       if (this.pairValue) {
