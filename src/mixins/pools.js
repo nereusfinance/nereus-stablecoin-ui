@@ -364,8 +364,8 @@ export default {
           title: "Maximum collateral ratio",
           value: `${ltv} %`,
           tooltip:
-            "Maximum collateral ratio (MCR) - MCR represents the maximum amount of debt a user can borrow with a selected collateral token.",
-          additional: `Maximum collateral ratio (MCR) - MCR represents the maximum amount of debt a user can borrow with a selected collateral token.`,
+            "Maximum collateral ratio (MCR) - MCR represents the maximum amount of debt a user can borrow with a selected collateral token. So as not to be liquidated.",
+          additional: `Maximum collateral ratio (MCR) - MCR represents the maximum amount of debt a user can borrow with a selected collateral token. So as not to be liquidated.`,
         },
         {
           title: "Liquidation fee",
@@ -399,7 +399,7 @@ export default {
       const collateralDeposited = userCollateralShare.toString().match(re)[0];
 
       const liquidationPrice =
-        (userBorrowPart / (userCollateralShare * ltv / 100)) || 0;
+        userBorrowPart / ((userCollateralShare * ltv) / 100) || 0;
 
       return [
         {

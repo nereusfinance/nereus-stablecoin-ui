@@ -241,7 +241,7 @@ export default {
       const collateralDeposited = userCollateralShare.toString().match(re)[0];
 
       const liquidationPrice =
-        (userBorrowPart / (userCollateralShare*ltv/100)) || 0;
+        userBorrowPart / ((userCollateralShare * ltv) / 100) || 0;
 
       const collateralInfo = [
         {
@@ -287,5 +287,6 @@ export default {
     getPoolLtv: (state) => (id) => state.ltv[id],
     getTokenPrice: (state) => (id) => state.tokenPrice[id],
     getCollateralInfo: (state) => (id) => state.collateralInfo[id],
+    getBorrowFee: (state) => (id) => state.borrowFee[id],
   },
 };

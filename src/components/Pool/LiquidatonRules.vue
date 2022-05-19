@@ -74,8 +74,8 @@ export default {
       }
     },
     liquidationPriceFormatted() {
-      return this.liquidationPrice === "xxx.xx"
-        ? this.liquidationPrice
+      return this.liquidationPrice === "xxx.xx" || !this.liquidationPrice
+        ? "xxx.xx"
         : parseFloat(this.liquidationPrice).toFixed(8);
     },
   },
