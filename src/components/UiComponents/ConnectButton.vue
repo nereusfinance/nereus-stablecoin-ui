@@ -114,7 +114,6 @@ export default {
   methods: {
     async walletBtnHandler() {
       if (this.isConnected) {
-        this.toDashboard();
         return false;
       }
       this.$store.commit("setPopupState", {
@@ -136,9 +135,6 @@ export default {
       }
       delete window.localStorage.walletType
       window.location.reload();
-    },
-    toDashboard() {
-      this.$router.push({ name: "Dashboard" });
     },
   },
   components: {
