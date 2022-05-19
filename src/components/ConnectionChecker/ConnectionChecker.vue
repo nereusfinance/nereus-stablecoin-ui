@@ -72,9 +72,10 @@ export default {
     },
     async setAccountListeners() {
       let accounts;
-      if (window.ethereum) {
-        accounts = await window.ethereum.request({ method: "eth_accounts" });
-      }
+      const walletType = localStorage.getItem("walletType");
+      if(walletType === "Metamask" && window.ethereum){
+        accounts = await window.ethereum.request({ method: 'eth_accounts' });
+        }
       if (accounts && accounts.length > 0) {
         window.ethereum.on("chainChanged", this.reload);
         window.ethereum.on("accountsChanged", this.onAccountChange);
@@ -82,7 +83,7 @@ export default {
           this.updatePoolData();
         });
         console.log("SET METAMASK ACCOUNT LISTENERS FUNC");
-      } else {
+      } else if (walletType==="walletConnect") {
         const walletConnectProvider = new WalletConnectProvider({
           bridge: "https://bridge.walletconnect.org",
           rpc: {
@@ -104,8 +105,6 @@ export default {
     },
     onAccountChange(accounts) {
       if (accounts.length === 0) {
-        // MetaMask is locked or the user has not connected any accounts
-        console.log("Please connect to MetaMask.");
 
         this.disconnectHandler();
       } else {
@@ -129,8 +128,6 @@ export default {
 
       const routeName = this.$route.name;
       if (routeName !== "Stand") this.$router.push({ name: "Stand" });
-
-      this.$emit("checkError", "Please connect to MetaMask.");
     },
   },
   created() {
