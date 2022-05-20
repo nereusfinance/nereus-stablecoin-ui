@@ -35,7 +35,7 @@ export default {
   background: $clrBg1;
   border-radius: 4px;
   padding: 24px;
-  min-height: 252px;
+  min-height: 100%;
   position: relative;
 
   .left-bg {
