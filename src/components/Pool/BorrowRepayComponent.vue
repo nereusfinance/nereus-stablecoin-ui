@@ -147,6 +147,7 @@
           :collateralToRemove="this.pairValue"
           @updateCollateralToRemove="updatePairValue"
           :maxCollateralToRemove="this.maxPairValue"
+          :minCollateralToRemove="this.minCollateralToRemove"
           :liquidationPrice="this.liquidationPrice"
           :mainTokenName="mainValueTokenName"
           :pairTokenName="pairValueTokenName"
@@ -321,7 +322,7 @@ export default {
           (collateralInUSDCanRemove * this.userTotalCollateral) /
           collateralInDolarts;
       }
-      return calcAmount.toFixed(6);
+      return calcAmount;
     },
     useAVAX() {
       return this.$store.getters.getUseAVAX;
@@ -346,16 +347,27 @@ export default {
 
       if (this.actionType === "borrow") return balance;
       if (this.actionType === "repay") {
-        if (
-          parseFloat(this.$store.getters.getUserBorrowPart(this.poolId)) >
-          parseFloat(this.parsedPairBalance)
-        )
-          return this.parsedPairBalance;
+        const userBorrowPart = this.$store.getters.getUserBorrowPart(
+          this.poolId
+        );
+        let result =
+          parseFloat(userBorrowPart) > parseFloat(this.parsedPairBalance)
+            ? this.parsedPairBalance
+            : userBorrowPart;
 
-        return this.$store.getters.getUserBorrowPart(this.poolId);
+        if (this.showDeleverage) {
+          // TODO add collateral balance with slippage
+          result += 0;
+        }
+
+        return result;
       }
 
       return 0;
+    },
+    minCollateralToRemove() {
+      // TODO
+      return "0";
     },
     mainValueTokenName() {
       const tokenSymbol = this.getAVAXStatus() ? "AVAX" : this.tokenName;

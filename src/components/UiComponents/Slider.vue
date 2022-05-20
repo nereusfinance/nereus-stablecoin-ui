@@ -30,11 +30,13 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    min: {
+      default: '0',
     }
   },
   data() {
     return {
-      min: 0,
       max: 100,
     };
   },

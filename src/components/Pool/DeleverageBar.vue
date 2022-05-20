@@ -20,6 +20,7 @@
         :value="removeCollateralSliderValue"
         @changeValue="onRemoveCollateralSliderChange"
         :disabled="removeCollateralSliderMaxZero"
+        :min="removeCollateralSliderMinValue"
       />
     </div>
     <p class="bar-conclusion">
@@ -51,6 +52,10 @@ export default {
       required: true,
     },
     maxCollateralToRemove: {
+      type: String,
+      required: true,
+    },
+    minCollateralToRemove: {
       type: String,
       required: true,
     },
@@ -124,6 +129,15 @@ export default {
       const collateralToRemoveFixed = parseFloat(this.collateralToRemove) || 0;
       return (
         (collateralToRemoveFixed * 100) /
+        parseFloat(this.maxCollateralToRemove)
+      ).toString();
+    },
+    removeCollateralSliderMinValue() {
+      if (this.removeCollateralSliderMaxZero) {
+        return '0';
+      }
+      return (
+        (parseFloat(this.minCollateralToRemove) * 100) /
         parseFloat(this.maxCollateralToRemove)
       ).toString();
     },

@@ -60,6 +60,7 @@
 
 <script>
 const TokenIcon = () => import("@/components/UiComponents/TokenIcon");
+import { decimalAdjust } from "@/utils/fiexdMath/fixedMath";
 
 export default {
   props: {
@@ -122,7 +123,7 @@ export default {
       this.isFocus = payload;
     },
     setMax() {
-      this.value = this.max;
+      this.value = decimalAdjust("floor", this.max, -6);
     },
     openSelect() {
       if (this.values.length) {
