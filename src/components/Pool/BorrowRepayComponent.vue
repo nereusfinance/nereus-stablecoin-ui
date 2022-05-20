@@ -282,16 +282,12 @@ export default {
       return true;
     },
     maxMainValue() {
-      const balance = this.getAVAXStatus()
-        ? this.$ethers.utils.formatEther(
-            this.$store.getters.getBalanceNativeToken(this.poolId).toString()
-          )
-        : this.$ethers.utils.formatUnits(
-            this.$store.getters.getBalanceToken(this.poolId).toString(),
-            this.tokenDecimals
-          );
-
-      if (this.actionType === "borrow") return balance;
+      if (this.actionType === "borrow") {
+        const balance = this.getAVAXStatus()
+          ? this.userBalanceNativeToken
+          : this.userBalance;
+        return balance;
+      }
       if (this.actionType === "repay") {
         if (
           parseFloat(this.$store.getters.getUserBorrowPart(this.poolId)) >
