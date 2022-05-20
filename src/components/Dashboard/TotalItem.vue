@@ -6,18 +6,19 @@
     <!--      <img class="type-icon" :src="icon" alt="" />-->
     <!--    </div>-->
     <div class="token-container">
-      <TokenIcon v-if="type === 'borrow'" :token="'NXUSD'"/>
+      <TokenIcon v-if="type === 'borrow'" :token="'NXUSD'" />
       <p class="count-text">{{ amount }}</p>
-      <p class="token-text" v-if="type === 'borrow'">NXUSD</p>
+      <p v-if="type === 'borrow'" class="token-text">NXUSD</p>
     </div>
-    <p class="info-text" v-if="count">{{ type }}ed from {{ count }} pools</p>
+    <p v-if="count" class="info-text">{{ type }}ed from {{ count }} pools</p>
   </div>
 </template>
 
 <script>
 import TokenIcon from "../UiComponents/TokenIcon";
+
 export default {
-  components: {TokenIcon},
+  components: { TokenIcon },
   props: {
     type: {
       type: String,
@@ -37,11 +38,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .token-container{
-    display:flex;
-    flex-direction: row;
-    justify-content: space-between;
-  }
+.token-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .total-item {
   background: $clrBg1;
   border-radius: 4px;
@@ -84,6 +86,7 @@ export default {
     height: auto;
     object-fit: contain;
   }
+
   .count-text {
     text-align: left;
     font-size: 32px;
@@ -91,12 +94,14 @@ export default {
     text-transform: uppercase;
     padding-bottom: 8px;
   }
+
   .token-text {
     font-size: 18px;
     line-height: 44px;
     text-transform: uppercase;
     padding-bottom: 8px;
   }
+
   .info-text {
     font-size: 16px;
     line-height: 24px;
