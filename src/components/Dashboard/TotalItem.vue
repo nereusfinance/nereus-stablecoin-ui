@@ -5,13 +5,19 @@
     <!--    <div class="img-wrap">-->
     <!--      <img class="type-icon" :src="icon" alt="" />-->
     <!--    </div>-->
-    <p class="count-text">{{ amount }}</p>
+    <div class="token-container">
+      <TokenIcon v-if="type === 'borrow'" :token="'NXUSD'"/>
+      <p class="count-text">{{ amount }}</p>
+      <p class="token-text" v-if="type === 'borrow'">NXUSD</p>
+    </div>
     <p class="info-text" v-if="count">{{ type }}ed from {{ count }} pools</p>
   </div>
 </template>
 
 <script>
+import TokenIcon from "../UiComponents/TokenIcon";
 export default {
+  components: {TokenIcon},
   props: {
     type: {
       type: String,
@@ -31,6 +37,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .token-container{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
 .total-item {
   background: $clrBg1;
   border-radius: 4px;
@@ -73,11 +84,16 @@ export default {
     height: auto;
     object-fit: contain;
   }
-
   .count-text {
     text-align: left;
     font-size: 32px;
     line-height: 36px;
+    text-transform: uppercase;
+    padding-bottom: 8px;
+  }
+  .token-text {
+    font-size: 18px;
+    line-height: 44px;
     text-transform: uppercase;
     padding-bottom: 8px;
   }
