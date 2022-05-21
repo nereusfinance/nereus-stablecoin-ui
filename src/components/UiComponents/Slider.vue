@@ -25,7 +25,7 @@ export default {
     },
     step: {
       type: Number,
-      default: 1,
+      default: 0.01,
     },
     disabled: {
       type: Boolean,

@@ -12,3 +12,7 @@ export const decimalAdjust = (type, value, exp) => {
   value = value.toString().split("e");
   return +(value[0] + "e" + (value[1] ? +value[1] + exp : exp));
 };
+
+export const floorToFixed = (value, decimals) => {
+  return decimalAdjust("floor", value, -decimals);
+};

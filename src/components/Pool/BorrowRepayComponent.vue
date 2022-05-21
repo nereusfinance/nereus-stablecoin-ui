@@ -34,7 +34,7 @@
 
     <div class="input-wrap">
       <ValueInput
-        :max="maxValueAmount"
+        :max="maxPairValue"
         :showMax="showMax"
         :valueName="pairValueTokenName"
         @onchange="updatePairValue"
@@ -141,13 +141,13 @@
         <SlipageBlock :slipage="slipage" @update="updateSlipage" />
         <DeleverageBar
           :pool="pool"
-          :amountToRepay="this.mainValue"
-          :maxAmountToRepay="this.maxMainValue"
+          :amountToRepay="this.mainValue.toString()"
+          :maxAmountToRepay="this.maxMainValue.toString()"
           @updateAmountToRepay="updateMainValue"
-          :collateralToRemove="this.pairValue"
+          :collateralToRemove="this.pairValue.toString()"
           @updateCollateralToRemove="updatePairValue"
-          :maxCollateralToRemove="this.maxPairValue"
-          :minCollateralToRemove="this.minCollateralToRemove"
+          :maxCollateralToRemove="this.maxPairValue.toString()"
+          :minCollateralToRemove="this.minPairValue.toString()"
           :liquidationPrice="this.liquidationPrice"
           :mainTokenName="mainValueTokenName"
           :pairTokenName="pairValueTokenName"
@@ -202,6 +202,7 @@ const LiquidationRules = () => import("@/components/Pool/LiquidatonRules");
 const EstimationBlock = () => import("@/components/Pool/EstimationBlock");
 const SlipageBlock = () => import("@/components/Pool/SlipageBlock");
 const DeleverageBar = () => import("@/components/Pool/DeleverageBar");
+import { floorToFixed } from "@/utils/fiexdMath/fixedMath";
 
 export default {
   props: {
@@ -290,39 +291,16 @@ export default {
     actionType() {
       this.clearData();
     },
+    minPairValue(newMinValue) {
+      if (!this.pairValue || parseFloat(this.pairValue) < newMinValue) {
+        this.updatePairValue(newMinValue)
+      }
+    }
   },
   computed: {
     pool() {
       const poolId = Number(this.$route.params.id);
       return this.$store.getters.getPoolById(poolId);
-    },
-    maxValueAmount() {
-      const borrowedInDolarts =
-        this.$store.getters.getUserBorrowPart(this.poolId) /
-        this.tokenPairToUsd;
-      const collateralInDolarts =
-        this.$store.getters.getUserCollateralShare(this.poolId) /
-        this.tokenToUsd;
-      // const userHasDolars = collateralInDolarts - borrowedInDolarts;
-
-      let calcAmount;
-      if (this.mainValue) {
-        const collateralInUSDNeedToLeft =
-          ((borrowedInDolarts - this.mainValue) * 100) / this.ltv;
-        const collateralInUSDCanRemove =
-          collateralInDolarts - collateralInUSDNeedToLeft;
-        calcAmount =
-          (collateralInUSDCanRemove * this.userTotalCollateral) /
-          collateralInDolarts;
-      } else {
-        const collateralInUSDNeedToLeft = (borrowedInDolarts * 100) / this.ltv;
-        const collateralInUSDCanRemove =
-          collateralInDolarts - collateralInUSDNeedToLeft;
-        calcAmount =
-          (collateralInUSDCanRemove * this.userTotalCollateral) /
-          collateralInDolarts;
-      }
-      return calcAmount;
     },
     useAVAX() {
       return this.$store.getters.getUseAVAX;
@@ -331,11 +309,9 @@ export default {
       return (200 - this.ltv) / 100;
     },
     showMax() {
-      if (this.actionType === "borrow") return false;
-
-      return true;
+      return !(this.actionType === "borrow");
     },
-    maxMainValue() {
+    maxMainValueWithoutDeleverage() {
       const balance = this.getAVAXStatus()
         ? this.$ethers.utils.formatEther(
             this.$store.getters.getBalanceNativeToken(this.poolId).toString()
@@ -350,49 +326,55 @@ export default {
         const userBorrowPart = this.$store.getters.getUserBorrowPart(
           this.poolId
         );
-        let result =
-          parseFloat(userBorrowPart) > parseFloat(this.parsedPairBalance)
-            ? this.parsedPairBalance
-            : userBorrowPart;
-
-        if (this.showDeleverage) {
-          // TODO add collateral balance with slippage
-          result += 0;
-        }
-
-        return result;
+        return parseFloat(userBorrowPart) > parseFloat(this.parsedPairBalance)
+          ? this.parsedPairBalance
+          : userBorrowPart;
       }
 
       return 0;
     },
-    minCollateralToRemove() {
-      // TODO
-      return "0";
+    maxMainValue() {
+      if (!this.showDeleverage) {
+        return this.maxMainValueWithoutDeleverage;
+      }
+
+      const exchangeRateWithSlipage =
+        (100 - this.slipage) / 100 / this.exchangeRate;
+      return (
+        parseFloat(this.maxMainValueWithoutDeleverage) +
+        this.maxCollateralAvailableForDeleverage * exchangeRateWithSlipage
+      );
+    },
+    minPairValue() {
+      const parsedValue = parseFloat(this.mainValue);
+      const parsedMax = parseFloat(this.maxMainValueWithoutDeleverage);
+      if (parsedValue <= parsedMax) {
+        return "0";
+      }
+      const exchangeRateWithSlipage =
+        ((100 - this.slipage) * this.exchangeRate) / 100;
+      return (parsedValue - parsedMax) * exchangeRateWithSlipage || 0;
     },
     mainValueTokenName() {
       const tokenSymbol = this.getAVAXStatus() ? "AVAX" : this.tokenName;
       if (this.actionType === "borrow") return tokenSymbol;
       if (this.actionType === "repay") return this.tokenPairName;
-
       return "XX";
     },
     pairValueTokenName() {
       const tokenSymbol = this.getAVAXStatus() ? "AVAX" : this.tokenName;
       if (this.actionType === "borrow") return this.tokenPairName;
       if (this.actionType === "repay") return tokenSymbol;
-
       return "XX";
     },
     pairValueDecimals() {
       if (this.actionType === "borrow") return this.tokenPairDecimals;
       if (this.actionType === "repay") return this.tokenDecimals;
-
       return 18;
     },
     mainValueDecimals() {
       if (this.actionType === "borrow") return this.tokenDecimals;
       if (this.actionType === "repay") return this.tokenPairDecimals;
-
       return 18;
     },
     parsedPairBalance() {
@@ -424,7 +406,7 @@ export default {
             this.$store.getters.getUserBorrowPart(this.poolId);
         }
 
-        return this.toFixed(
+        return floorToFixed(
           maxPairValue *
             ((100 - this.$store.getters.getBorrowFee(this.poolId)) / 100),
           this.pairValueDecimals
@@ -438,11 +420,15 @@ export default {
         const collateralInDolarts =
           this.$store.getters.getUserCollateralShare(this.poolId) /
           this.tokenToUsd;
+
         let maxAmount;
 
         if (this.mainValue) {
           const collateralInUSDNeedToLeft =
-            ((borrowedInDolarts - this.mainValue) * 100) / this.ltv;
+            ((borrowedInDolarts -
+              Math.min(this.mainValue, this.maxMainValueWithoutDeleverage)) *
+              100) /
+            this.ltv;
           const collateralInUSDCanRemove =
             collateralInDolarts - collateralInUSDNeedToLeft;
           maxAmount =
@@ -457,10 +443,30 @@ export default {
             (collateralInUSDCanRemove * this.userTotalCollateral) /
             collateralInDolarts;
         }
-        return this.toFixed(maxAmount, this.pairValueDecimals - 3);
+
+        return floorToFixed(maxAmount, this.pairValueDecimals);
       }
 
       return 0;
+    },
+    maxCollateralAvailableForDeleverage() {
+      const borrowedInDolarts =
+        this.$store.getters.getUserBorrowPart(this.poolId) /
+        this.tokenPairToUsd;
+      const collateralInDolarts =
+        this.$store.getters.getUserCollateralShare(this.poolId) /
+        this.tokenToUsd;
+
+      const collateralInUSDNeedToLeft =
+        ((borrowedInDolarts - this.maxMainValueWithoutDeleverage) * 100) /
+        this.ltv;
+      const collateralInUSDCanRemove =
+        collateralInDolarts - collateralInUSDNeedToLeft;
+      const maxAmount =
+        (collateralInUSDCanRemove * this.userTotalCollateral) /
+        collateralInDolarts;
+
+      return floorToFixed(maxAmount, this.pairValueDecimals);
     },
     signer() {
       return this.$store.getters.getSigner;
@@ -471,18 +477,14 @@ export default {
       if (this.actionType === "borrow") {
         if (this.mainValue && this.pairValue && parseFloat(this.pairValue) > 0)
           return "Add collateral and borrow";
-
         if (this.mainValue) return "Add collateral";
-
         if (this.pairValue) return "Borrow";
       }
 
       if (this.actionType === "repay") {
         if (this.mainValue && this.pairValue && parseFloat(this.pairValue) > 0)
           return "Remove collateral and repay";
-
         if (this.mainValue) return "Repay";
-
         if (this.pairValue) return "Remove collateral";
       }
 
@@ -490,13 +492,6 @@ export default {
     },
 
     liquidationPrice() {
-      // if (this.pairValue) {
-      //   let percent = parseFloat(
-      //     (this.pairValue / this.maxPairValue) * 100
-      //   ).toFixed(4);
-      //
-      //   return ((1 / this.tokenToUsd / 100) * percent).toFixed(2);
-      // }
       if (this.actionType === "borrow") {
         const liquidationPrice =
           (+this.$store.getters.getUserBorrowPart(this.poolId) +
@@ -505,19 +500,21 @@ export default {
             +parseFloat(+this.mainValue)) *
             this.ltv) /
             100);
+
         return liquidationPrice;
+      } else {
+        const liquidationPrice =
+          (+this.$store.getters.getUserBorrowPart(this.poolId) -
+            +this.mainValue) /
+          (((+this.$store.getters.getUserCollateralShare(this.poolId) -
+            +parseFloat(+this.pairValue)) *
+            this.ltv) /
+            100);
+
+        return liquidationPrice === Infinity || liquidationPrice <= 0
+          ? "xxx.xx"
+          : liquidationPrice;
       }
-      const liquidationPrice =
-        (+this.$store.getters.getUserBorrowPart(this.poolId) -
-          +this.mainValue) /
-        (((+this.$store.getters.getUserCollateralShare(this.poolId) -
-          +parseFloat(+this.pairValue)) *
-          this.ltv) /
-          100);
-      if (liquidationPrice === Infinity || liquidationPrice <= 0) {
-        return "xxx.xx";
-      }
-      return liquidationPrice;
     },
   },
   methods: {
@@ -858,10 +855,6 @@ export default {
       }
     },
     async getUserBalance() {
-      // const balance = await this.signer.getBalance();
-
-      // const parsedBalance = this.$ethers.utils.formatUnits(balance.toString());
-
       const parsedBalance = this.$ethers.utils.formatUnits(
         this.balance.toString(),
         this.tokenDecimals
@@ -961,10 +954,6 @@ export default {
       cursor: pointer;
       transition: all 0.1s ease;
 
-      &:hover {
-        //border: 1px solid $clrBlue;
-      }
-
       &.active {
         .box {
           opacity: 1;
@@ -1019,7 +1008,6 @@ export default {
   .action-btn {
     color: #000000;
     margin-left: auto;
-    //width: auto;
     width: 200px;
     height: 32px;
   }
