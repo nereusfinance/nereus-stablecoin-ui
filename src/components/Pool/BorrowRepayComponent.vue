@@ -293,9 +293,9 @@ export default {
     },
     minPairValue(newMinValue) {
       if (!this.pairValue || parseFloat(this.pairValue) < newMinValue) {
-        this.updatePairValue(newMinValue)
+        this.updatePairValue(newMinValue);
       }
-    }
+    },
   },
   computed: {
     pool() {
@@ -340,10 +340,15 @@ export default {
 
       const exchangeRateWithSlipage =
         (100 - this.slipage) / 100 / this.exchangeRate;
-      return (
+      // Max value that can be repayed using the user collateral
+      const maxValueForCollateral =
         parseFloat(this.maxMainValueWithoutDeleverage) +
-        this.maxCollateralAvailableForDeleverage * exchangeRateWithSlipage
+        this.maxCollateralAvailableForDeleverage * exchangeRateWithSlipage;
+      // User can not repay more than he has borrowed
+      const maxValueUserBorrowed = parseFloat(
+        this.$store.getters.getUserBorrowPart(this.poolId)
       );
+      return Math.min(maxValueForCollateral, maxValueUserBorrowed);
     },
     minPairValue() {
       const parsedValue = parseFloat(this.mainValue);
