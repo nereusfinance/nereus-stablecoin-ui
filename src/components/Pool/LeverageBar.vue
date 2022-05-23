@@ -7,7 +7,7 @@
           <Slider
             :value="sliderValue"
             :step="0.25"
-            :min="0"
+            :min="1"
             :max="15"
             @changeValue="testOnChangeValue"
           />
