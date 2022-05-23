@@ -282,10 +282,6 @@ export default {
       return true;
     },
     maxMainValue() {
-      console.log("avax status", this.getAVAXStatus());
-      console.log("native token", this.$store.getters.getBalanceNativeToken(this.poolId));
-      console.log("token balance",  this.$store.getters.getBalanceToken(this.poolId));
-
       const balance = this.getAVAXStatus()
         ? this.$ethers.utils.formatEther(
             this.$store.getters.getBalanceNativeToken(this.poolId).toString()
