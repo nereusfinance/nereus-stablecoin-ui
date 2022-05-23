@@ -16,9 +16,9 @@
         class="splipage-item custom"
         :class="{
           error: customErr,
-          active: customValue == value && value !== '',
+          active: customValue == slipage && customValue !== '',
         }"
-        @click="setCustomState(true)"
+        @click="activateCustomState()"
       >
         <input
           v-if="isCustom"
@@ -34,15 +34,11 @@
 </template>
 
 <script>
-import { between } from "vuelidate/lib/validators";
-
 export default {
   props: {
     slipage: {
-      type: Number,
       required: true,
     },
-    value: {},
   },
   data() {
     return {
@@ -50,17 +46,8 @@ export default {
       isCustom: false,
       customValue: "",
       customErr: false,
+      maxValue: 100,
     };
-  },
-  watch: {
-    reset(value) {
-      if (value) this.resetData();
-    },
-  },
-  validations: {
-    customValue: {
-      between: between(0, 100),
-    },
   },
   methods: {
     setSlipage(item) {
@@ -69,30 +56,19 @@ export default {
       this.customValue = "";
       this.$emit("update", item);
     },
-    resetData() {
-      this.activePercent = null;
-      this.isCustom = false;
-      this.customValue = "";
-    },
     setCustomValue(value) {
       this.customErr = false;
-      if (value < 0 || value > this.maxValue) {
+      if (isNaN(value) || value < 0 || value > this.maxValue) {
         this.customErr = true;
-        this.emitValue("");
-        return false;
+        this.$emit("update", 0);
       }
 
-      if (value && value > 0 && value <= this.maxValue) this.emitValue(value);
-      if (!value) this.emitValue("");
+      this.$emit("update", value);
     },
-    setCustomState(bool) {
-      if (this.isCustom === bool) return false;
-      this.isCustom = bool;
-      if (bool) this.emitValue("");
+    activateCustomState() {
+      this.isCustom = true;
+      this.$emit("update", 0);
     },
-    emitValue(value) {
-      this.$emit("update", value || 0);
-    }
   },
 };
 </script>

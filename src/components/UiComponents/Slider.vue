@@ -90,6 +90,7 @@ export default {
     background: url("../../assets/images/sliderThumb.svg");
     background-repeat: no-repeat;
     background-size: 10px 20px;
+    margin-left: 1px;
   }
   .slider::-moz-range-progress {
     background-color: #e7fc6e;
