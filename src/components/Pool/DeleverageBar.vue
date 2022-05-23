@@ -16,15 +16,24 @@
 
     <p class="bar-title">Choose the amount of collateral you want to remove</p>
     <div class="slider-wrapper">
-      <Slider
+      <!-- Non-disabled slider with actual min value necessary for deleverage -->
+      <!-- <Slider
         :value="removeCollateralSliderValue"
         @changeValue="onRemoveCollateralSliderChange"
         :disabled="removeCollateralSliderMaxZero"
         :min="removeCollateralSliderMinValue"
+      /> -->
+      <Slider
+        :value="0"
+        @changeValue="onRemoveCollateralSliderChange"
+        :disabled="true"
+        :min="0"
       />
     </div>
     <p class="bar-conclusion">
-      {{ `${this.collateralToRemoveFormatted} ${this.pairTokenName}` }}
+      <!-- Non-disabled slider with actual min value necessary for deleverage -->
+      <!-- {{ `${this.collateralToRemoveFormatted} ${this.pairTokenName}` }} -->
+      {{ `0 ${this.pairTokenName}` }}
     </p>
 
     <div class="amount-to-repay">
@@ -134,7 +143,7 @@ export default {
     },
     removeCollateralSliderMinValue() {
       if (this.removeCollateralSliderMaxZero) {
-        return '0';
+        return "0";
       }
       return (
         (parseFloat(this.minCollateralToRemove) * 100) /

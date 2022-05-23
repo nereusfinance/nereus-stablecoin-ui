@@ -40,6 +40,7 @@
         @onchange="updatePairValue"
         :parentValue="pairValue"
         :error="pairValueError"
+        :disabled="showDeleverage"
       />
     </div>
 
@@ -144,7 +145,7 @@
           :amountToRepay="this.mainValue.toString()"
           :maxAmountToRepay="this.maxMainValue.toString()"
           @updateAmountToRepay="updateMainValue"
-          :collateralToRemove="this.pairValue.toString()"
+          :collateralToRemove="this.pairValue ? this.pairValue.toString() : '0'"
           @updateCollateralToRemove="updatePairValue"
           :maxCollateralToRemove="this.maxPairValue.toString()"
           :minCollateralToRemove="this.minPairValue.toString()"
@@ -291,9 +292,17 @@ export default {
     actionType() {
       this.clearData();
     },
+    /*
+    For active deleverage collateral slider
     minPairValue(newMinValue) {
       if (!this.pairValue || parseFloat(this.pairValue) < newMinValue) {
         this.updatePairValue(newMinValue);
+      }
+    },
+    */
+    showDeleverage(newVal) {
+      if (newVal) {
+        this.updatePairValue(undefined);
       }
     },
   },
@@ -512,7 +521,7 @@ export default {
           (+this.$store.getters.getUserBorrowPart(this.poolId) -
             +this.mainValue) /
           (((+this.$store.getters.getUserCollateralShare(this.poolId) -
-            +parseFloat(+this.pairValue)) *
+            +parseFloat(+this.pairValue || 0)) *
             this.ltv) /
             100);
 

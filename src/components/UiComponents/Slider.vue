@@ -25,15 +25,15 @@ export default {
     },
     step: {
       type: Number,
-      default: 0.01,
+      default: 0.001,
     },
     disabled: {
       type: Boolean,
       default: false,
     },
     min: {
-      default: '0',
-    }
+      default: "0",
+    },
   },
   data() {
     return {
@@ -76,6 +76,7 @@ export default {
     background-size: 10px 20px;
     cursor: pointer;
     border-radius: 6px;
+    margin-left: 1px;
   }
   .slider:disabled::-webkit-slider-thumb {
     cursor: not-allowed;
