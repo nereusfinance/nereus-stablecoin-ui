@@ -1,76 +1,116 @@
 <template>
   <div class="leverage-bar">
-    <p class="bar-title">Choose your leverage</p>
 
     <div class="bar-wrap">
-      <div class="multipliers-wrap">
-        <div
-          v-for="multiplierItem in multipliers"
-          :key="multiplierItem"
-          class="multiplier-item"
-          :class="{ active: multiplierItem === multiplier }"
-          @click="setActive(multiplierItem)"
-        >
-          <p>{{ multiplierItem }}x</p>
 
-          <!--          <transition name="fade">-->
-          <!--            <img-->
-          <!--              v-if="multiplierItem === 10 && multiplierItem === multiplier"-->
-          <!--              src="@/assets/images/dani-mac.svg"-->
-          <!--              alt=""-->
-          <!--              class="dani-mac"-->
-          <!--            />-->
-          <!--          </transition>-->
-        </div>
+      <div class="slider-wrapper">
+          <Slider
+            :value="sliderValue"
+            :step="0.25"
+            :min="1"
+            :max="15"
+            @changeValue="testOnChangeValue"
+          />
+      </div>
+      <div class="liquidation-price-text">Liquidation Price ~ {{ leverageData.liquidationPrice }}</div>
+
+      <div class="item-main">
+        <p>Expected NXUSD amount</p>
+        <p class="percent-text">
+          <span>~ </span>{{leverageData.expectedNXUSDAmount}}
+        </p>
       </div>
 
-      <div class="range-track">
-        <div
-          class="range"
-          :class="userRisk"
-          :style="{ width: `${rangeWidth}%` }"
-        ></div>
+      <div class="item-main">
+        <p>Expected leverage</p>
+        <p>~ {{ sliderValueFormatted }}x</p>
+      </div>
+
+      <div class="liquid-text">
+        The price of the collateral has to decrease approximately by
+          <span style="color: #FDD33F">{{ leverageData.liquidationRisk }}</span>
+          for you to get flagged for liquidation
+
       </div>
     </div>
   </div>
 </template>
 
 <script>
+const Slider = () => import("@/components/UiComponents/Slider");
 export default {
   props: {
     multiplier: {
       type: Number,
       required: true,
     },
+    pool: {
+      required: true,
+    },
+    tokentToNUSD: {
+      required: true,
+    },
+    mainValue: {
+      required: true,
+    },
+    pairValue: {
+      required: true,
+    }
   },
   data() {
     return {
-      multipliers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      //multipliers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      sliderValue: "1",
     };
   },
   computed: {
-    userRisk() {
-      if (this.multiplier > 7) return "hight";
-      if (this.multiplier > 3) return "medium";
-
-      return "safe";
+    sliderValueFormatted() {
+      let sliderValue = Number(this.sliderValue);
+      return sliderValue.toFixed(2);
     },
-    rangeWidth() {
-      if (this.multiplier === 1) {
-        return 0;
+    leverageData() {
+      const borrowPerc = (this.pool.ltv-this.$store.getters.getBorrowFee(this.pool.id))/100;
+      const inputAmount = +this.$store.getters.getUserCollateralShare(this.pool.id)*this.tokentToNUSD -
+      +this.$store.getters.getUserBorrowPart(this.pool.id)/borrowPerc;
+      let cycleAmount = inputAmount;
+      let resultAmount = 0;
+      let decimalPart = this.sliderValue - Math.floor(this.sliderValue)
+      for (let i = 0; i < this.sliderValue; i++) {
+        if ( this.sliderValue-i >= 1 ){
+          resultAmount+=cycleAmount;
+          cycleAmount=cycleAmount*borrowPerc;
+        } else {
+          cycleAmount=cycleAmount*decimalPart;
+          resultAmount+=cycleAmount;
+        }
       }
-
-      const max = this.multipliers.length - 1;
-      const value = this.multiplier - 1;
-
-      return (value / max) * 100;
+      const maxBorrowAmount=resultAmount*borrowPerc;
+      const availableBorrow = maxBorrowAmount-resultAmount+inputAmount;
+      let priceDecreaseToLiquidate = availableBorrow/resultAmount/
+          (1-this.$store.getters.getBorrowFee(this.pool.id)/100)*100;
+      if (priceDecreaseToLiquidate>100){
+        priceDecreaseToLiquidate=100
+      }
+      const expectedNXUSDAmount = resultAmount - inputAmount + +this.$store.getters.getUserBorrowPart(this.pool.id);
+      // console.log('maxBorrowAmount', maxBorrowAmount);
+      // console.log('borrowed', resultAmount-inputAmount);
+      // console.log('availiable to borrow', availableBorrow);
+      // console.log('liquidationDecreaseAmount', priceDecreaseToLiquidate, '%');
+      return {
+        liquidationRisk: parseFloat(priceDecreaseToLiquidate).toFixed(2),
+        expectedNXUSDAmount: expectedNXUSDAmount.toFixed(4),
+        liquidationPrice: parseFloat(this.tokentToNUSD*(100-priceDecreaseToLiquidate)/100).toFixed(4)
+      }
     },
   },
   methods: {
-    setActive(val) {
-      this.$emit("update", val);
+    testOnChangeValue(val) {
+      this.sliderValue = val;
     },
   },
+  components: {
+    Slider,
+  }
 };
 </script>
 
@@ -85,12 +125,11 @@ export default {
 }
 
 .leverage-bar {
-  .bar-title {
-    text-align: left;
-  }
 
   .bar-wrap {
     margin-top: 20px;
+    display: flex;
+    flex-direction: column;
   }
 
   .multipliers-wrap {
@@ -125,31 +164,32 @@ export default {
       }
     }
   }
-
-  .range-track {
-    background: #606060;
-    border-radius: 4px;
+  .slider-wrapper {
+    margin: 4px 0 4px;
+  }
+  .liquidation-price-text {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    text-align: left;
+    color: #FFFFFF;
+    margin-bottom: 24px;
+  }
+  .item-main {
     display: flex;
-    height: 12px;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    line-height: 20px;
+    margin-bottom: 16px;
+  }
 
-    .range {
-      height: 100%;
-      width: 39%;
-      border-radius: 39px;
-      transition: all 0.3s ease;
-
-      &.safe {
-        background: #fdd33f;
-      }
-
-      &.medium {
-        background: #fdd33f;
-      }
-
-      &.hight {
-        background: #fdd33f;
-      }
-    }
+  .liquid-text {
+    text-align: left;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    color: #FFFFFF;
   }
 }
 </style>
