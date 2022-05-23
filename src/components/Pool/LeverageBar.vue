@@ -12,12 +12,12 @@
             @changeValue="testOnChangeValue"
           />
       </div>
-      <div class="liquidation-price-text">Liquidation Price ~ {{ liquidityPriceFormatted }}</div>
+      <div class="liquidation-price-text">Liquidation Price ~ {{ leverageData.liquidationPrice }}</div>
 
       <div class="item-main">
         <p>Expected NXUSD amount</p>
         <p class="percent-text">
-          <span>~ </span>{{expectedNXUSDAmount}}
+          <span>~ </span>{{leverageData.expectedNXUSDAmount}}
         </p>
       </div>
 
@@ -28,7 +28,7 @@
 
       <div class="liquid-text">
         The price of the collateral has to decrease approximately by
-          <span style="color: #FDD33F">{{ liquidationRisk }}</span>
+          <span style="color: #FDD33F">{{ leverageData.liquidationRisk }}</span>
           for you to get flagged for liquidation
 
       </div>
@@ -68,58 +68,39 @@ export default {
       let sliderValue = Number(this.sliderValue);
       return sliderValue.toFixed(2);
     },
-    expectedNXUSDAmount() {
-      let nxusdAmount = this.sliderValue * this.pairValue;
-      return nxusdAmount.toFixed(4);
-    },
-    tokenPrice() {
-      const tokenToNUSD = 1 / this.$store.getters.getTokenPrice(this.pool.id);
-      return tokenToNUSD;
-    },
-    stableCoinMultiplyer() {
-      if (this.$store.getters.getPoolLtv(this.pool.id) === 90) {
-        return 10;
+    leverageData() {
+      const borrowPerc = (this.pool.ltv-this.$store.getters.getBorrowFee(this.pool.id))/100;
+      const inputAmount = +this.$store.getters.getUserCollateralShare(this.pool.id)*this.tokentToNUSD -
+      +this.$store.getters.getUserBorrowPart(this.pool.id)/borrowPerc;
+      let cycleAmount = inputAmount;
+      let resultAmount = 0;
+      let decimalPart = this.sliderValue - Math.floor(this.sliderValue)
+      for (let i = 0; i < this.sliderValue; i++) {
+        if ( this.sliderValue-i >= 1 ){
+          resultAmount+=cycleAmount;
+          cycleAmount=cycleAmount*borrowPerc;
+        } else {
+          cycleAmount=cycleAmount*decimalPart;
+          resultAmount+=cycleAmount;
+        }
       }
-      return 1;
-    },
-    priceDifference() {
-      const priceDifference = this.tokenPrice - this.liquidationPrice;
-      return priceDifference;
-    },
-    liquidationRisk() {
-      if (
-        +this.$store.getters.getUserBorrowPart(this.pool.id) +
-        parseFloat(this.expectedNXUSDAmount) ===
-        0 ||
-        isNaN(this.liquidationPrice)
-      )
-        return parseFloat("0").toFixed(2);
-
-      const riskPersent =
-        ((this.priceDifference * this.stableCoinMultiplyer) / this.tokenPrice) *
-        100;
-
-      if (riskPersent > 100) {
-        return 100;
+      const maxBorrowAmount=resultAmount*borrowPerc;
+      const availableBorrow = maxBorrowAmount-resultAmount+inputAmount;
+      let priceDecreaseToLiquidate = availableBorrow/resultAmount/
+          (1-this.$store.getters.getBorrowFee(this.pool.id)/100)*100;
+      if (priceDecreaseToLiquidate>100){
+        priceDecreaseToLiquidate=100
       }
-
-      return parseFloat(riskPersent).toFixed(2);
-    },
-    liquidationPrice() {
-      const liquidationPrice =
-        (+this.$store.getters.getUserBorrowPart(this.pool.id) +
-          +this.expectedNXUSDAmount) /
-        (((+this.$store.getters.getUserCollateralShare(this.pool.id) +
-            +this.mainValue) *
-            +this.pool.ltv) /
-          100);
-      return liquidationPrice;
-    },
-
-    liquidityPriceFormatted() {
-      return this.liquidationPrice === "xxx.xx" || !this.liquidationPrice
-        ? "xxx.xx"
-        : parseFloat(this.liquidationPrice).toFixed(4);
+      const expectedNXUSDAmount = resultAmount - inputAmount + +this.$store.getters.getUserBorrowPart(this.pool.id);
+      // console.log('maxBorrowAmount', maxBorrowAmount);
+      // console.log('borrowed', resultAmount-inputAmount);
+      // console.log('availiable to borrow', availableBorrow);
+      // console.log('liquidationDecreaseAmount', priceDecreaseToLiquidate, '%');
+      return {
+        liquidationRisk: parseFloat(priceDecreaseToLiquidate).toFixed(2),
+        expectedNXUSDAmount: expectedNXUSDAmount.toFixed(4),
+        liquidationPrice: parseFloat(this.tokentToNUSD*(100-priceDecreaseToLiquidate)/100).toFixed(4)
+      }
     },
   },
   methods: {
