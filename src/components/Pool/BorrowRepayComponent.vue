@@ -282,10 +282,6 @@ export default {
       return true;
     },
     maxMainValue() {
-      console.log("avax status", this.getAVAXStatus());
-      console.log("native token", this.$store.getters.getBalanceNativeToken(this.poolId));
-      console.log("token balance",  this.$store.getters.getBalanceToken(this.poolId));
-
       const balance = this.getAVAXStatus()
         ? this.$ethers.utils.formatEther(
             this.$store.getters.getBalanceNativeToken(this.poolId).toString()
@@ -350,22 +346,11 @@ export default {
       if (this.actionType === "borrow") {
         let maxPairValue;
 
-        console.log("DepositCollateral", this.mainValue);
-        console.log("ColateralDeposited", this.userTotalCollateral);
-        //console.log("tokenPrice", this.$store.getters.getTokenPrice(this.pool.id));
-        console.log("tokenPrice", this.tokentToNUSD);
-        console.log("mcr", this.pool.ltv);
-        console.log("ltv", this.percentValue);
-        console.log("borrowFee", this.$store.getters.getBorrowFee(this.poolId));
-
-        // ((((DepositCollateral + ColateralDeposited) * tokenPrice *(mcr-1) / 100) * ltv / mcr) - nxusdBorrowed) * (100 - borrowFee / 100)
         maxPairValue =
           ((((+this.mainValue + +this.userTotalCollateral)
               * +this.tokentToNUSD * (this.pool.ltv - 1) / 100)
-        * (+this.percentValue / +this.pool.ltv))
-            - +this.userTotalBorrowed)
+        * (+this.percentValue / +this.pool.ltv)) - +this.userTotalBorrowed)
           * ((100 - +this.$store.getters.getBorrowFee(this.poolId)) / 100) ;
-        console.log("VALUE",maxPairValue);
         return this.toFixed(
           maxPairValue,
           this.pairValueDecimals
@@ -773,13 +758,7 @@ export default {
 
       if (fromPair) return false;
 
-      if (this.mainValue && value) {
-        this.pairValue = this.maxPairValue;
-      }
-
-      if (value && !this.mainValue) {
-        this.pairValue = this.maxPairValue;
-      }
+      this.pairValue = this.maxPairValue;
     },
     async getUserBalance() {
       // const balance = await this.signer.getBalance();
