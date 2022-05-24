@@ -509,29 +509,29 @@ export default {
     },
 
     liquidationPrice() {
+      const userBorrowPart = +this.$store.getters.getUserBorrowPart(
+        this.poolId
+      );
+      const userCollateralShare = +this.$store.getters.getUserCollateralShare(
+        this.poolId
+      );
+      const parsedMainValue = parseFloat(this.mainValue);
+      const parsedPairValue = +this.pairValue || 0;
+
+      let liquidationPrice;
       if (this.actionType === "borrow") {
-        const liquidationPrice =
-          (+this.$store.getters.getUserBorrowPart(this.poolId) +
-            +this.pairValue) /
-          (((+this.$store.getters.getUserCollateralShare(this.poolId) +
-            +parseFloat(+this.mainValue)) *
-            this.ltv) /
-            100);
-
-        return liquidationPrice;
+        liquidationPrice =
+          (userBorrowPart + parsedPairValue) /
+          (((userCollateralShare + parsedMainValue) * this.ltv) / 100);
       } else {
-        const liquidationPrice =
-          (+this.$store.getters.getUserBorrowPart(this.poolId) -
-            +this.mainValue) /
-          (((+this.$store.getters.getUserCollateralShare(this.poolId) -
-            +parseFloat(+this.pairValue || 0)) *
-            this.ltv) /
-            100);
-
-        return liquidationPrice === Infinity || liquidationPrice <= 0
-          ? "xxx.xx"
-          : liquidationPrice;
+        liquidationPrice =
+          (userBorrowPart - parsedMainValue) /
+          (((userCollateralShare - Math.max(parsedPairValue, this.minPairValue)) * this.ltv) / 100);
       }
+
+      return liquidationPrice === Infinity || liquidationPrice <= 0
+        ? "xxx.xx"
+        : liquidationPrice;
     },
   },
   methods: {
