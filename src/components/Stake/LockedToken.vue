@@ -14,7 +14,12 @@
     </div>
     <div class="column">
       Tier 1 amount NXUSD
-      <div class="amount" v-for="amount in lockedTokenAmount" :key="amount">
+      <div
+        class="amount"
+        style="text-align: right"
+        v-for="amount in lockedTokenAmount"
+        :key="amount"
+      >
         {{amount}}
       </div>
     </div>

@@ -13,8 +13,20 @@
     {{ balance }} {{ pool.name }}
   </p>
   <div class="btns">
-    <button class="deposit-btn">Deposit</button>
-    <button class="withdraw-btn">Withdraw</button>
+    <button
+      class="deposit-btn"
+      :class="{ active: shortcutState === 'deposit' }"
+      @click="setShortcutType('deposit')"
+    >
+      Deposit
+    </button>
+    <button
+      class="withdraw-btn"
+      :class="{ active: shortcutState === 'withdraw' }"
+      @click="setShortcutType('withdraw')"
+    >
+      Withdraw
+    </button>
   </div>
 </div>
 </template>
@@ -23,10 +35,20 @@
 import TokenIcon from  "@/components/UiComponents/TokenIcon";
 export default {
   name: "TotalDeposit",
+  data() {
+    return {
+      shortcutState: "deposit",
+    }
+  },
   props: {
     pool: {
       type: Object,
       required: true,
+    },
+  },
+  methods: {
+    setShortcutType(type) {
+      if (type !== this.shortcutState) this.shortcutState = type;
     },
   },
   computed: {
@@ -90,12 +112,18 @@ export default {
     width: auto;
     height: 32px;
 
-    background: #E7FC6E;
+    background: #353535;
+    border: 1px solid #414141;
     border-radius: 16px;
-
     margin-right: 16px;
 
     font-size: 14px;
+    color: #8A8A8A;
+
+    &.active {
+      color: black;
+      background-color: $clrBg3;
+    }
   }
   .withdraw-btn {
     margin-top: 18px;
@@ -112,6 +140,10 @@ export default {
 
     font-size: 14px;
     color: #8A8A8A;
+    &.active {
+      color: black;
+      background-color: $clrBg3;
+    }
   }
 }
 </style>
