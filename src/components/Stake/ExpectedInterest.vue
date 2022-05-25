@@ -28,9 +28,9 @@
       </div>
     </div>
     <div style="flex-direction: row">
-      <p>Total</p>
+      <p style="text-align: left">Total</p>
       <div class="column-tier" v-for="digit in amount" :key="digit">
-        {{digit}}
+        <span style="color: white">{{digit}} <span>NXUSD</span></span>
       </div>
     </div>
   </div>
@@ -125,7 +125,6 @@ export default {
   }
   .column-tier:last-child {
     padding-top: 25px;
-    color: #8A8A8A;
   }
   hr {
     width: 544px;
