@@ -132,8 +132,8 @@ export default {
     margin-bottom: 12px;
     background: #363637;
     height: 1px;
-    position: absolute;
-    top: 715px;
+    position: relative;
+    top: -20.5%;
   }
   .info-icon {
     width: 13px;
