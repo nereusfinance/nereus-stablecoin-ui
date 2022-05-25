@@ -20,5 +20,8 @@ export default {
 
   margin-bottom: 20px;
   padding: 32px 24px 24px 24px;
+
+  display: flex;
+  flex-direction: column;
 }
 </style>

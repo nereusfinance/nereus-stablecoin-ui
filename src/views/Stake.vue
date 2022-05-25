@@ -9,6 +9,7 @@
         />
 
         <LockedToken
+          :pool="pool"
         />
       </div>
       <div class="container-mini">

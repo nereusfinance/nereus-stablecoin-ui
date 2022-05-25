@@ -55,7 +55,8 @@ export default {
   flex-direction: column;
 
   h1 {
-    font-size: 16px;
+    font-weight: 400;
+    font-size: 20px;
     text-align: left;
 
     margin-bottom: 24px;
@@ -86,7 +87,7 @@ export default {
     align-items: center;
     padding: 6px 53.5px;
 
-    width: 160px;
+    width: auto;
     height: 32px;
 
     background: #E7FC6E;
@@ -102,7 +103,7 @@ export default {
     align-items: center;
     padding: 6px 17px;
 
-    width: 100px;
+    width: auto;
     height: 32px;
 
     background: #353535;
