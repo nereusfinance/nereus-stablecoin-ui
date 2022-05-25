@@ -6,10 +6,11 @@
     <p>Please enter amount you would like to deposit. The maximum amount you can deposit is shown below.</p>
     <div class="available-amount">
       <h2>Available to deposit</h2>
-      <h3>3,710.07 <span>NXUSD</span></h3>
+      <h3>{{availableDeposit}}<span> NXUSD</span></h3>
     </div>
     <ValueInput
       :value-name="pool.name"
+      :max="availableDeposit"
     />
     <button class="continue">Continue</button>
   </div>
@@ -19,10 +20,11 @@
     <p>How much do you want to withdraw?</p>
     <div class="available-amount">
       <h2>Available to withdraw</h2>
-      <h3>3,710.07 <span>NXUSD</span></h3>
+      <h3>{{availableWithdraw}}<span> NXUSD</span></h3>
     </div>
     <ValueInput
       :value-name="pool.name"
+      :max="availableWithdraw"
     />
     <button class="continue">Continue</button>
   </div>
@@ -47,6 +49,14 @@ export default {
   methods: {
     toStake() {
       this.$router.push({ name: "Stand" });
+    },
+  },
+  computed: {
+    availableDeposit() {
+      return this.$store.getters.getUserBorrowPart(this.pool.id);
+    },
+    availableWithdraw() {
+      return this.$store.getters.getUserCollateralShare(this.pool.id);
     },
   },
   watch: {

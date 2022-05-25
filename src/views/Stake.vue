@@ -43,7 +43,7 @@ export default {
   data() {
     return {
       actionStatus: true,
-      actionType: "withdraw",
+      actionType: "deposit",
     }
   },
   methods: {
