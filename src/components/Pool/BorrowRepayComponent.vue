@@ -714,7 +714,7 @@ export default {
       }
 
       if (this.percentValue && value) {
-        this.pairValue = (this.maxPairValue * this.percentValue) / this.ltv;
+        this.pairValue = this.maxPairValue;
       }
     },
     updatePairValue(value) {
@@ -757,8 +757,10 @@ export default {
       this.percentValue = value;
 
       if (fromPair) return false;
-
-      this.pairValue = this.maxPairValue;
+      
+       if(value) {
+        this.pairValue = this.maxPairValue;
+      }
     },
     async getUserBalance() {
       // const balance = await this.signer.getBalance();
