@@ -5,6 +5,7 @@
     <div class="stake-content">
       <div class="container-mini">
         <TotalDeposit
+          :pool="pool"
         />
 
         <LockedToken
@@ -29,6 +30,17 @@ import InfoBlock from "@/components/Stake/InfoBlock";
 import ExpectedInterest from "@/components/Stake/ExpectedInterest";
 export default {
   name: "Stake",
+  data() {
+    return {
+    }
+  },
+  computed: {
+    pool() {
+      //const poolId = Number(this.$route.params.id);
+      const poolId = Number(6);
+      return this.$store.getters.getPoolById(poolId);
+    },
+  },
   components: { ExpectedInterest, InfoBlock, LockedToken, TotalDeposit }
 };
 </script>
