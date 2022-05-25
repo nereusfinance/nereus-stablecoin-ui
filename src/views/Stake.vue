@@ -3,17 +3,20 @@
   <div class="stake-container">
     <h1>Earn</h1>
     <div class="stake-content">
-      <TotalDeposit
-      />
+      <div class="container-mini">
+        <TotalDeposit
+        />
 
-      <InfoBlock
-      />
+        <LockedToken
+        />
+      </div>
+      <div class="container-mini">
+        <InfoBlock
+        />
 
-      <LockedToken
-      />
-
-      <ExpectedInterest
-      />
+        <ExpectedInterest
+        />
+      </div>
     </div>
   </div>
 </div>
@@ -52,6 +55,10 @@ export default {
     display: flex;
     flex-wrap: wrap;
     justify-content: left;
+  }
+  .container-mini {
+    display: flex;
+    flex-direction: column;
   }
 }
 </style>
