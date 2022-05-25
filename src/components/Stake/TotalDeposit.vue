@@ -15,14 +15,14 @@
   <div class="btns">
     <button
       class="deposit-btn"
-      :class="{ active: shortcutState === 'deposit' }"
+      :class="{ active: actionType === 'deposit' }"
       @click="setShortcutType('deposit')"
     >
       Deposit
     </button>
     <button
       class="withdraw-btn"
-      :class="{ active: shortcutState === 'withdraw' }"
+      :class="{ active: actionType === 'withdraw' }"
       @click="setShortcutType('withdraw')"
     >
       Withdraw
@@ -45,10 +45,19 @@ export default {
       type: Object,
       required: true,
     },
+    actionStatus: {
+      type: Boolean,
+      required: true,
+    },
+    actionType: {
+      type: String,
+      required: true,
+    }
   },
   methods: {
     setShortcutType(type) {
-      if (type !== this.shortcutState) this.shortcutState = type;
+      if (type !== this.actionType) this.actionType = type;
+      this.actionStatus = true;
     },
   },
   computed: {

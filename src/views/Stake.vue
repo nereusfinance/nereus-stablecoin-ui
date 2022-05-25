@@ -6,18 +6,25 @@
       <div class="container-mini">
         <TotalDeposit
           :pool="pool"
+          :actionStatus="actionStatus"
+          :actionType="actionType"
         />
 
         <LockedToken
           :pool="pool"
         />
       </div>
-      <div class="container-mini">
+      <div class="container-mini" v-if="actionStatus === false">
         <InfoBlock
           :pool="pool"
         />
-
         <ExpectedInterest
+        />
+      </div>
+      <div class="container-mini" v-else>
+        <DepositWithdraw
+          :actionType="actionType"
+          :pool="pool"
         />
       </div>
     </div>
@@ -30,11 +37,34 @@ import TotalDeposit from "@/components/Stake/TotalDeposit";
 import LockedToken from "@/components/Stake/LockedToken";
 import InfoBlock from "@/components/Stake/InfoBlock";
 import ExpectedInterest from "@/components/Stake/ExpectedInterest";
+import DepositWithdraw from "@/components/Stake/DepositWithdraw";
 export default {
   name: "Stake",
   data() {
     return {
+      actionStatus: true,
+      actionType: "withdraw",
     }
+  },
+  methods: {
+    // setActionType(type) {
+    //   if (type !== this.actionType) this.actionType = type;
+    // },
+    async created() {
+      const isConnected = this.$store.getters.getWalletIsConnected;
+
+      if (!isConnected) {
+        this.$router.push({ name: "Stand" });
+        return false;
+      }
+
+      if (
+        this.$route.query.actionType &&
+        (this.$route.query.actionType === "deposit" ||
+          this.$route.query.actionType === "withdraw")
+      )
+        this.setActionType(this.$route.query.actionType);
+    },
   },
   computed: {
     pool() {
@@ -43,7 +73,7 @@ export default {
       return this.$store.getters.getPoolById(poolId);
     },
   },
-  components: { ExpectedInterest, InfoBlock, LockedToken, TotalDeposit }
+  components: { DepositWithdraw, ExpectedInterest, InfoBlock, LockedToken, TotalDeposit }
 };
 </script>
 
