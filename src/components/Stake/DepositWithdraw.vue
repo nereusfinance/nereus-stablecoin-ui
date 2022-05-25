@@ -1,7 +1,11 @@
 <template>
 <div class="deposit-withdraw-block">
   <BackButton :text="'Back'" @click="toStake" />
-  <div v-if="actionType === 'deposit'" class="deposit-withdraw-container">
+  <div
+    v-if="actionType === 'deposit' && overview === false"
+    class="deposit-withdraw-container"
+  >
+
     <h1>How much would you like to deposit?</h1>
     <p>Please enter amount you would like to deposit. The maximum amount you can deposit is shown below.</p>
     <div class="available-amount">
@@ -12,7 +16,26 @@
       :value-name="pool.name"
       :max="availableDeposit"
     />
-    <button class="continue">Continue</button>
+    <button
+      class="continue"
+      @click="toOverview"
+    >
+      Continue
+    </button>
+  </div>
+
+  <div v-if="overview" class="deposit-withdraw-container">
+    <h1>Deposit overview</h1>
+    <p>These are your transaction details. Make sure to check if this is correct before submitting.</p>
+    <div class="currency-overview">
+      <h2>Currency</h2>
+      <TokenIcon :token="pool.name"/>
+      <div>
+        {{pool.userBalance}}
+        {{pool.name}}
+        <p style="margin: 0">$ {{pool.tokenPrice.toFixed(2)}}</p>
+      </div>
+    </div>
   </div>
 
   <div v-if="actionType === 'withdraw'" class="deposit-withdraw-container">
@@ -33,10 +56,16 @@
 
 <script>
 import ValueInput from "@/components/UiComponents/ValueInput";
+import TokenIcon from "@/components/UiComponents/TokenIcon";
 const BackButton = () => import("@/components/UiComponents/BackButton");
 
 export default {
   name: "DepositWithdraw",
+  data() {
+    return {
+      overview: false,
+    }
+  },
   props: {
     actionType: {
       type: String,
@@ -50,6 +79,9 @@ export default {
     toStake() {
       this.$router.push({ name: "Stand" });
     },
+    toOverview() {
+      this.overview = true;
+    }
   },
   computed: {
     availableDeposit() {
@@ -65,6 +97,7 @@ export default {
     },
   },
   components: {
+    TokenIcon,
     ValueInput,
     BackButton,
   }
@@ -126,6 +159,25 @@ export default {
     border-radius: 20px;
 
     margin-top: 24px;
+  }
+
+  .currency-overview {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 20px 16px 16.6px 16px;
+    border: 1px solid #606060;
+    border-radius: 4px;
+
+    .token-icon-wrap {
+      width: 16px;
+      height: 16px;
+      margin-left: auto;
+      margin-right: 4px;
+      margin-bottom: 16px;
+    }
   }
 }
 </style>
