@@ -5,7 +5,7 @@
     <img
       src="@/assets/images/i-icon.svg"
       alt=""
-      class="info-icon"
+      class="fist-info-icon"
       v-tooltip="'Some text'"
     />
   </h1>
@@ -15,19 +15,32 @@
         {{time}}
       </div>
     </div>
+    <div>
+      <p>Tier 1</p>
+      <div class="column-tier" v-for="digit in amount" :key="digit">
+        {{digit}}
+      </div>
+    </div>
+    <div>
+      <p>Tier 2</p>
+      <div class="column-tier" v-for="digit in amount" :key="digit">
+        {{digit}}
+      </div>
+    </div>
+    <div style="flex-direction: row">
+      <p>Total</p>
+      <div class="column-tier" v-for="digit in amount" :key="digit">
+        {{digit}}
+      </div>
+    </div>
   </div>
-
+  <img
+    src="@/assets/images/i-icon.svg"
+    alt=""
+    class="info-icon"
+    v-tooltip="'Some text'"
+  />
   <hr/>
-  <div class="column-interest" style="flex-direction: row; align-items: center">
-    Total earned
-    <img
-      src="@/assets/images/i-icon.svg"
-      alt=""
-      class="info-icon"
-      style="width: 13px; margin-left: 5px"
-      v-tooltip="'Some text'"
-    />
-  </div>
 </div>
 </template>
 
@@ -36,7 +49,8 @@ export default {
   name: "ExpectedInterest",
   data() {
     return {
-      period: ["Daily", "Weekly", "Monthly", "Yearly"],
+      period: ["Daily", "Weekly", "Monthly", "Yearly", "Total earned"],
+      amount: ["12", "22", "32", "42", "20"],
     };
   },
 };
@@ -56,7 +70,19 @@ export default {
     font-size: 20px;
     text-align: left;
 
-    margin-bottom: 24px;
+    margin-bottom: 16px;
+  }
+
+  p {
+    text-align: right;
+    align-items: center;
+
+    color: #8A8A8A;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+
+    margin-bottom: 8px;
   }
 
   .container-interest {
@@ -76,15 +102,46 @@ export default {
     padding-bottom: 8px;
   }
   .column-interest:last-child {
-    padding-bottom: 12px;
+    padding-top: 25px;
+  }
+  .column-interest:first-child {
+    margin-top: 28px;
   }
 
+  .column-tier {
+    display: flex;
+    flex-direction: column;
+
+    font-weight: 400;
+    font-size: 14px;
+    color: #FFFFFF;
+
+    text-align: right;
+    padding-bottom: 8px;
+
+    span {
+      color: #8A8A8A;
+    }
+  }
+  .column-tier:last-child {
+    padding-top: 25px;
+    color: #8A8A8A;
+  }
   hr {
     width: 544px;
     border-width: 0;
     margin-bottom: 12px;
     background: #363637;
     height: 1px;
+    position: absolute;
+    top: 715px;
+  }
+  .info-icon {
+    width: 13px;
+    position: relative;
+    left: 16.7%;
+    right: 8.34%;
+    top: -9.5%;
   }
 }
 </style>

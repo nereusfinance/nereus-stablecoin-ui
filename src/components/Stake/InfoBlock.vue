@@ -8,7 +8,7 @@
       </h2>
       <br>
       <p class="apy">
-        20% <span>APY</span>
+        20%<span>APY</span>
       </p>
     </div>
 
@@ -19,7 +19,7 @@
       </h2>
       <br>
       <p class="apy">
-        20%<span>APY</span>
+        4%<span>APY</span>
       </p>
     </div>
   </div>
