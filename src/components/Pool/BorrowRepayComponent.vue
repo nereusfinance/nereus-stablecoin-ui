@@ -268,7 +268,7 @@ export default {
           (collateralInUSDCanRemove * this.userTotalCollateral) /
           collateralInDolarts;
       }
-      return calcAmount.toFixed(6);
+      return this.toFixed(calcAmount, 6);
     },
     useAVAX() {
       return this.$store.getters.getUseAVAX;
