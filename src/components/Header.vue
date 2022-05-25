@@ -17,6 +17,9 @@
           <router-link :to="{ name: 'Stand' }" class="markets-btn"
             >Markets</router-link
           >
+          <router-link :to="{ name: 'Stake' }" class="stake-btn"
+          >Earn</router-link
+          >
           <router-link :to="{ name: 'Dashboard' }" class="dashboard-btn"
             >My Dashboard</router-link
           >
@@ -145,30 +148,44 @@ export default {
     z-index: 2;
   }
 
-  //.token-btn {
-  //  margin-left: 30px;
-  //  width: 36px;
-  //  height: 36px;
-  //  background: none;
-  //  border: none;
-  //  cursor: pointer;
-  //
-  //  img {
-  //    max-width: 100%;
-  //    height: auto;
-  //  }
-  //}
+  router-link:active {
+    background: rgba(28, 28, 28, 0.16);
+  }
 
   nav {
     display: flex;
     align-items: center;
     flex-direction: row;
     z-index: 2;
+    justify-content: space-between;
 
     .btn-margin {
       margin-left: 12px;
     }
   }
+  .stake-btn {
+    color: #ffffff;
+    font-size: 16px;
+    font-style: normal;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    padding: 8px 15px;
+    width: auto;
+    height: 32px;
+    border-radius: 21px;
+    margin-right: 12px;
+
+    &:active {
+      background: rgba(28, 28, 28, 0.16);
+    }
+
+    &:hover {
+      color: $clrNavHover;
+    }
+  }
+
   .dashboard-btn {
     color: #ffffff;
     font-size: 16px;
@@ -177,7 +194,6 @@ export default {
     text-decoration: none;
     transition: all 0.3s ease;
     cursor: pointer;
-    background: rgba(28, 28, 28, 0.16);
     padding: 8px 15px;
     width: auto;
     height: 32px;
@@ -185,6 +201,9 @@ export default {
 
     &:hover {
       color: $clrNavHover;
+    }
+    &:active {
+      background: rgba(28, 28, 28, 0.16);
     }
   }
   .markets-btn {
@@ -195,13 +214,15 @@ export default {
     text-decoration: none;
     transition: all 0.3s ease;
     cursor: pointer;
-    background: rgba(28, 28, 28, 0.16);
     padding: 8px 15px;
     width: auto;
     height: 32px;
     border-radius: 21px;
     margin-right: 12px;
 
+    a:active {
+      background: rgba(28, 28, 28, 0.16);
+    }
     &:hover {
       color: $clrNavHover;
     }

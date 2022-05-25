@@ -50,6 +50,14 @@ const routes = [
     },
     component: () => import("../views/Dashboard.vue"),
   },
+  {
+    path: "/stake",
+    name: "Stake",
+    meta: {
+      needConnection: true,
+    },
+    component: () => import("../views/Stake.vue"),
+  },
   // {
   //   path: "/transactions",
   //   name: "Transactions",
