@@ -550,6 +550,10 @@ export default {
     toggleShowLeverage() {
       if (this.showLeverage === true) {
         this.multiplier = 1;
+      } else {
+        console.log('this.pairValue', this.pairValue);
+        this.updatePairValue(this.maxPairValue);
+        console.log('this.pairValue', this.pairValue);
       }
 
       this.showLeverage = !this.showLeverage;

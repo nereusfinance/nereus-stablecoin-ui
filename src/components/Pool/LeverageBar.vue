@@ -69,9 +69,11 @@ export default {
       return sliderValue.toFixed(2);
     },
     leverageData() {
-      const borrowPerc = (this.pool.ltv-this.$store.getters.getBorrowFee(this.pool.id))/100;
-      const inputAmount = +this.$store.getters.getUserCollateralShare(this.pool.id)*this.tokentToNUSD -
-      +this.$store.getters.getUserBorrowPart(this.pool.id)/borrowPerc;
+      // const borrowPerc = (this.pool.ltv-this.$store.getters.getBorrowFee(this.pool.id))/100;
+      const borrowPerc = (100-this.$store.getters.getBorrowFee(this.pool.id))/100;
+      // const inputAmount = +this.$store.getters.getUserCollateralShare(this.pool.id)*this.tokentToNUSD -
+      // +this.$store.getters.getUserBorrowPart(this.pool.id)/borrowPerc;
+      const inputAmount = +this.pairValue/((this.pool.ltv-this.$store.getters.getBorrowFee(this.pool.id))/100);
       let cycleAmount = inputAmount;
       let resultAmount = 0;
       let decimalPart = this.sliderValue - Math.floor(this.sliderValue)
@@ -84,7 +86,8 @@ export default {
           resultAmount+=cycleAmount;
         }
       }
-      const maxBorrowAmount=resultAmount*borrowPerc;
+      // const maxBorrowAmount=resultAmount*borrowPerc;
+      const maxBorrowAmount=resultAmount*((this.pool.ltv-this.$store.getters.getBorrowFee(this.pool.id))/100);
       const availableBorrow = maxBorrowAmount-resultAmount+inputAmount;
       let priceDecreaseToLiquidate = availableBorrow/resultAmount/
           (1-this.$store.getters.getBorrowFee(this.pool.id)/100)*100;
