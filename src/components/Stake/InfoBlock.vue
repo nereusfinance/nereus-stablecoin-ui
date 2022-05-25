@@ -53,7 +53,7 @@ export default {
   background: #262626;
   border-radius: 4px;
 
-  margin-bottom: 20px;
+  margin-bottom: 8px;
   padding: 32px 24px 24px 24px;
 
   display: flex;
