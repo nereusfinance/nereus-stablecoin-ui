@@ -14,6 +14,7 @@
       </div>
       <div class="container-mini">
         <InfoBlock
+          :pool="pool"
         />
 
         <ExpectedInterest
