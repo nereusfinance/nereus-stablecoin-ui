@@ -19,8 +19,9 @@
     <h1>{{ statusText[1] }}</h1>
   </div>
 </div>
-  <hr>
 
+  <hr>
+  <div>
   <div class="action-info" v-if="transactionPending === 'wait for action'" >
     <h2>
       1/2 {{statusText[0]}}<br>
@@ -28,7 +29,8 @@
     </h2>
     <button @click="action(statusText[0])">{{statusText[0]}}</button>
   </div>
-  <div class="pending" v-if="transactionPending === 'pending'">
+
+  <div class="pending" v-else>
     <p>Transaction(s) Pending</p>
     <hr>
     <div class="bottom-text">
@@ -49,6 +51,9 @@
       </h1>
     </div>
   </div>
+  </div>
+
+
 </div>
 </template>
 
@@ -84,7 +89,7 @@ export default {
   height: 132px;
   background: #262626;
 
-  padding: 12px 12px 16px 12px;
+  padding: 12px 12px 12px 12px;
   border: 1px solid #606060;
   border-radius: 4px;
 
@@ -108,6 +113,7 @@ export default {
     gap: 12px;
     margin-right: auto;
     margin-left: auto;
+    margin-bottom: 11px;
 
     width: 179px;
     height: 16px;
@@ -130,7 +136,6 @@ export default {
   }
 
   hr {
-    margin-top: 11px;
     height: 1px;
     width: 385px;
     background: #1C1C1C;
@@ -143,6 +148,7 @@ export default {
     justify-content: space-between;
     width: 356px;
     margin-top: 38px;
+    margin-left: 16px;
 
     h2, h3 {
       font-weight: 400;
@@ -163,6 +169,7 @@ export default {
 
       background: #E7FC6E;
       border-radius: 16px;
+      margin-right: 16px;
     }
   }
   .pending {
@@ -174,7 +181,6 @@ export default {
       font-weight: 400;
       font-size: 14px;
       color: #FDD33F;
-      margin-bottom: 4px;
       padding-left: 12px;
       text-align: left;
     }
@@ -183,6 +189,7 @@ export default {
       text-align: left;
     }
     hr {
+      margin-top: 11px;
       margin-bottom: 12px;
     }
 
