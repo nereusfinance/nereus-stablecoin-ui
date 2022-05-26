@@ -637,23 +637,7 @@ export default {
             return false;
           }
 
-          if (this.showDeleverage) {
-            const localStorageRecord = localStorage.getItem(
-              "neverShowDeleveragePopup"
-            );
-            if (
-              !(localStorageRecord === "true") &&
-              localStorageRecord === null
-            ) {
-              this.$store.commit("setPopupState", {
-                type: "deleverage",
-                isShow: true,
-              });
-            }
-            this.$emit("removeAndRepayWithDeleverage", payload);
-          } else {
-            this.$emit("removeAndRepay", payload);
-          }
+          this.$emit("removeAndRepay", payload);
           this.clearData();
         }
         return false;
@@ -680,11 +664,28 @@ export default {
             this.mainValueDecimals
           );
 
-          const payload = {
-            amount: parsedAmount,
-            updatePrice: this.updatePrice,
-          };
-          this.$emit("repay", payload);
+          if (this.showDeleverage && parseFloat(this.minPairValue) > 0) {
+            this.$store.commit("setPopupState", {
+              type: "deleverage",
+              isShow: true,
+            });
+            const payload = {
+              amount: parsedAmount,
+              updatePrice: this.updatePrice,
+              collateralAmount: this.$ethers.utils.parseUnits(
+                floorToFixed(this.minPairValue, this.pairValueDecimals).toString(),
+                this.pairValueDecimals
+              ),
+            };
+            this.$emit("repayWithDeleverage", payload);
+          } else {
+            const payload = {
+              amount: parsedAmount,
+              updatePrice: this.updatePrice,
+            };
+            this.$emit("repay", payload);
+          }
+
           this.clearData();
         }
         return false;
@@ -868,6 +869,7 @@ export default {
       }
     },
     async getUserBalance() {
+      console.log(this.pool)
       const parsedBalance = this.$ethers.utils.formatUnits(
         this.balance.toString(),
         this.tokenDecimals

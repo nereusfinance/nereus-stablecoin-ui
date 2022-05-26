@@ -87,6 +87,12 @@ export default {
       //   this.signer
       // );
 
+      const reverseSwapContract = new this.$ethers.Contract(
+        pool.reverseSwapContractInfo.address,
+        JSON.stringify(pool.reverseSwapContractInfo.abi),
+        this.signer
+      );
+
       const oracleExchangeRate = await this.getOracleExchangeRate(
         pool.token.oracleId,
         pool.token.oracleDatas
@@ -258,6 +264,7 @@ export default {
           oracleExchangeRate: tokenPairRate,
         },
         // swapContract: swapContract,
+        reverseSwapContract: reverseSwapContract,
       };
     },
     async getContractExchangeRate(contract) {

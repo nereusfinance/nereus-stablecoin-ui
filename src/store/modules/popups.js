@@ -6,9 +6,17 @@ export default {
   },
   mutations: {
     setPopupState(state, { type, isShow, datas }) {
-      state.popupType = type;
-      state.showPopup = isShow;
-      state.popupData = datas;
+      let checksPassed = true;
+      // deleverage popup check
+      if (type === "deleverage" && isShow === true) {
+        checksPassed = checksPassed && canShowDeleverage();
+      }
+
+      if (checksPassed) {
+        state.popupType = type;
+        state.showPopup = isShow;
+        state.popupData = datas;
+      }
     },
     closePopups(state) {
       state.popupType = null;
@@ -22,3 +30,8 @@ export default {
     getPopupData: (state) => state.popupData,
   },
 };
+
+function canShowDeleverage() {
+  const localStorageRecord = localStorage.getItem("neverShowDeleveragePopup");
+  return !(localStorageRecord === "true") && localStorageRecord === null;
+}

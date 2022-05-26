@@ -37,7 +37,7 @@
           @addCollateral="addCollateralHandler"
           @borrow="borrowHandler"
           @removeAndRepay="removeAndRepayHandler"
-          @removeAndRepayWithDeleverage="removeAndRepayWithDeleverageHandler"
+          @repayWithDeleverage="repayWithDeleverageHandler"
           @removeAndRepayMax="removeAndRepayMaxHandler"
           @repay="repayHandler"
           @removeCollateral="removeCollateralHandler"
@@ -326,8 +326,25 @@ export default {
       );
       if (approveResult) this.cookRemoveAndRepay(data, isApprowed);
     },
-    async removeAndRepayWithDeleverageHandler(data) {
-      console.log("REMOVE & REPAY WITH DELEVERAGE HANDLER", data);
+    async repayWithDeleverageHandler(data) {
+      console.log("REPAY WITH DELEVERAGE HANDLER", data);
+      const isTokenApprowed = await this.isTokenApprowed(
+        this.pool.pairTokenContract,
+        this.pool.masterContractInstance.address
+      );
+
+      const isApprowed = await this.isApprowed();
+
+      if (isTokenApprowed) {
+        this.cookRepayWithDeleverage(data, isApprowed);
+        return false;
+      }
+
+      const approveResult = await this.approveToken(
+        this.pool.pairTokenContract,
+        this.pool.masterContractInstance.address
+      );
+      if (approveResult) this.cookRepayWithDeleverage(data, isApprowed);
     },
     async repayHandler(data) {
       console.log("REPAY HANDLER", data);
@@ -1183,6 +1200,57 @@ export default {
 
         console.log(result);
       }
+    },
+    async cookRepayWithDeleverage(
+      { amount, updatePrice, collateralAmount },
+      isApprowed
+    ) {
+      const events = [];
+      const values = [];
+      const datas = [];
+      console.log("\n\nTEST");
+      console.log("DELETE_ME", amount);
+      const gasPrice = await this.getGasPrice();
+      console.log("GAS PRICE:", gasPrice);
+
+      const removeCollateralData = this.$ethers.utils.defaultAbiCoder.encode(
+        ["int256", "address"],
+        [collateralAmount, this.account]
+      );
+      if (!isApprowed) {
+        // TODO: handle approve
+      }
+      if (updatePrice) {
+        events.push(11);
+        values.push(0);
+        datas.push(this.getUpdateRateEncode())
+      }
+      events.push(4);
+      values.push(0);
+      datas.push(removeCollateralData);
+
+      const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+        events,
+        values,
+        datas,
+        {
+          value: "0",
+        }
+      );
+      const gasLimit = this.gasLimitConst + +estimateGas.toString();
+
+      const result = await this.pool.contractInstance.cook(
+        events,
+        values,
+        datas,
+        {
+          value: "0",
+          gasLimit,
+        }
+      );
+
+      await this.wrapperStatusTx(result);
+      console.log(result);
     },
     async cookRemoveAndRepay(
       { amount, collateralAmount, updatePrice },
