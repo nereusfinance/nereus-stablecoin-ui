@@ -8,6 +8,7 @@
           :pool="pool"
           :actionStatus="actionStatus"
           :actionType="actionType"
+          :onClick="setActionStatus"
         />
 
         <LockedToken
@@ -24,6 +25,8 @@
       <div class="container-mini" v-else>
         <DepositWithdraw
           :actionType="actionType"
+          :actionStatus="actionStatus"
+          :onClick="setActionStatus"
           :pool="pool"
         />
       </div>
@@ -42,29 +45,35 @@ export default {
   name: "Stake",
   data() {
     return {
-      actionStatus: true,
-      actionType: "deposit",
+      actionStatus: false,
+      actionType: "Deposit",
     }
   },
   methods: {
-    setActionType(type) {
-      if (type !== this.actionType) this.actionType = type;
+    setActionStatus() {
+      if(this.actionStatus === false)
+        this.actionStatus = true;
+      else
+        this.actionStatus = false
     },
-    async created() {
-      const isConnected = this.$store.getters.getWalletIsConnected;
-
-      if (!isConnected) {
-        this.$router.push({ name: "Stand" });
-        return false;
-      }
-
-      if (
-        this.$route.query.actionType &&
-        (this.$route.query.actionType === "deposit" ||
-          this.$route.query.actionType === "withdraw")
-      )
-        this.setActionType(this.$route.query.actionType);
-    },
+  //   setActionType(type) {
+  //     if (type !== this.actionType) this.actionType = type;
+  //   },
+  //   async created() {
+  //     const isConnected = this.$store.getters.getWalletIsConnected;
+  //
+  //     if (!isConnected) {
+  //       this.$router.push({ name: "Stand" });
+  //       return false;
+  //     }
+  //
+  //     if (
+  //       this.$route.query.actionType &&
+  //       (this.$route.query.actionType === "Deposit" ||
+  //         this.$route.query.actionType === "Withdraw")
+  //     )
+  //       this.setActionType(this.$route.query.actionType);
+  //   },
   },
   computed: {
     pool() {

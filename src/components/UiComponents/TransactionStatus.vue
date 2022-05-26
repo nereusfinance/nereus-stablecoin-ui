@@ -25,7 +25,8 @@
   <div class="action-info" v-if="transactionPending === 'wait for action'" >
     <h2>
       1/2 {{statusText[0]}}<br>
-      <h3>Please submit not to deposit</h3>
+      <h3 v-if="statusText[0] === 'Deposit'">Please submit not to deposit</h3>
+      <h3 v-if="statusText[0] === 'Approve'">Please approve before withdrawal</h3>
     </h2>
     <button @click="action(statusText[0])">{{statusText[0]}}</button>
   </div>
@@ -76,7 +77,6 @@ export default {
         console.log(this.transactionPending);
         this.transactionPending = "pending";
         console.log(this.transactionPending);
-
       }
     }
   }
@@ -164,12 +164,13 @@ export default {
     button {
       gap: 10px;
 
-      width: 85px;
+      width: auto;
       height: 32px;
+      padding: 6px 16px;
 
       background: #E7FC6E;
       border-radius: 16px;
-      margin-right: 16px;
+      margin-right: 6px;
     }
   }
   .pending {

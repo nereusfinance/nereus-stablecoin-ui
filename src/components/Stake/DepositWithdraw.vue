@@ -1,8 +1,9 @@
 <template>
 <div class="deposit-withdraw-block">
-  <BackButton :text="'Back'" @click="toStake" />
+  <BackButton :text="'Back'" v-if="overview === true" @click="toStake" />
+  <BackButton :text="'Back'" v-else @click="onClick" />
   <div
-    v-if="actionType === 'deposit' && overview === false"
+    v-if="actionType === 'Deposit' && overview === false"
     class="deposit-withdraw-container"
   >
 
@@ -28,24 +29,7 @@
     </button>
   </div>
 
-  <div v-if="overview" class="deposit-withdraw-container">
-    <h1>Deposit overview</h1>
-    <p>These are your transaction details. Make sure to check if this is correct before submitting.</p>
-    <div class="currency-overview">
-      <h2>Currency</h2>
-      <TokenIcon :token="pool.name"/>
-      <div>
-        {{valueAmount}}
-        {{pool.name}}
-        <p style="margin: 0">$ {{valueInUsd}}</p>
-      </div>
-    </div>
-    <TransactionStatus
-      :status-text="statusText"
-    />
-  </div>
-
-  <div v-if="actionType === 'withdraw'" class="deposit-withdraw-container">
+  <div v-if="actionType === 'Withdraw' && overview === false" class="deposit-withdraw-container">
     <h1>Withdraw</h1>
     <p>How much do you want to withdraw?</p>
     <div class="available-amount">
@@ -60,12 +44,35 @@
       :parentValue="valueAmount"
       :error="valueError"
     />
+<!--
+      :disabled="actionBtnText === false"-->
     <button
       class="continue"
-      :disabled="actionBtnText === false"
+      v-if="overview === false"
+      @click="toOverview"
     >
       Continue
     </button>
+  </div>
+
+  <div v-if="overview" class="deposit-withdraw-container">
+    <h1>{{ actionType }} overview</h1>
+    <p>These are your transaction details. Make sure to check if this is correct before submitting.</p>
+    <div class="currency-overview">
+      <h2>Currency</h2>
+      <TokenIcon :token="pool.name"/>
+      <div>
+        {{valueAmount}}
+        {{pool.name}}
+        <p style="margin: 0">$ {{valueInUsd}}</p>
+      </div>
+    </div>
+    <TransactionStatus v-if="actionType === 'Deposit'"
+      :status-text="depositStatus"
+    />
+    <TransactionStatus v-if="actionType === 'Withdraw'"
+                       :status-text="withdrawStatus"
+    />
   </div>
 </div>
 </template>
@@ -84,22 +91,29 @@ export default {
       valueAmount: "",
       valueToUsd: "0",
       valueError: "",
-      statusText: ["Deposit", "Finished"],
+      depositStatus: ["Deposit", "Finished"],
+      withdrawStatus: ["Approve", "Withdraw", "Finished"],
     }
   },
   props: {
     actionType: {
       type: String,
     },
+    actionStatus: {
+      required: true,
+      type: Boolean,
+    },
     pool: {
       type: Object,
       required: true,
+    },
+    onClick: {
+      type: Function,
     },
   },
   methods: {
     toStake() {
       this.overview = false;
-     // this.$router.push({ name: "Stand" });
     },
     toOverview() {
       this.overview = true;
