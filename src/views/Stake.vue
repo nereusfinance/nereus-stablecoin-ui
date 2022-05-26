@@ -47,9 +47,9 @@ export default {
     }
   },
   methods: {
-    // setActionType(type) {
-    //   if (type !== this.actionType) this.actionType = type;
-    // },
+    setActionType(type) {
+      if (type !== this.actionType) this.actionType = type;
+    },
     async created() {
       const isConnected = this.$store.getters.getWalletIsConnected;
 
@@ -69,7 +69,7 @@ export default {
   computed: {
     pool() {
       //const poolId = Number(this.$route.params.id);
-      const poolId = Number(6);
+      const poolId = Number(7);
       return this.$store.getters.getPoolById(poolId);
     },
   },

@@ -13,8 +13,12 @@
       <h3>{{availableDeposit}}<span> NXUSD</span></h3>
     </div>
     <ValueInput
-      :value-name="pool.name"
       :max="availableDeposit"
+      :show-max="true"
+      :valueName="pool.name"
+      @onchange="updateValue"
+      :parentValue="valueAmount"
+      :error="valueError"
     />
     <button
       class="continue"
@@ -31,9 +35,9 @@
       <h2>Currency</h2>
       <TokenIcon :token="pool.name"/>
       <div>
-        {{pool.userBalance}}
+        {{valueAmount}}
         {{pool.name}}
-        <p style="margin: 0">$ {{pool.tokenPrice.toFixed(2)}}</p>
+        <p style="margin: 0">$ {{valueToUsd.toFixed(2)}}</p>
       </div>
     </div>
   </div>
@@ -46,10 +50,19 @@
       <h3>{{availableWithdraw}}<span> NXUSD</span></h3>
     </div>
     <ValueInput
-      :value-name="pool.name"
       :max="availableWithdraw"
+      :show-max="true"
+      :valueName="pool.name"
+      @onchange="updateValue"
+      :parentValue="valueAmount"
+      :error="valueError"
     />
-    <button class="continue">Continue</button>
+    <button
+      class="continue"
+      :disabled="actionBtnText === false"
+    >
+      Continue
+    </button>
   </div>
 </div>
 </template>
@@ -64,6 +77,9 @@ export default {
   data() {
     return {
       overview: false,
+      valueAmount: "",
+      valueToUsd: "0",
+      valueError: "",
     }
   },
   props: {
@@ -77,11 +93,47 @@ export default {
   },
   methods: {
     toStake() {
-      this.$router.push({ name: "Stand" });
+      this.overview = false;
+     // this.$router.push({ name: "Stand" });
     },
     toOverview() {
       this.overview = true;
-    }
+    },
+    updateValue(value) {
+      if (parseFloat(value) > parseFloat(this.maxPairValue)) {
+        this.valueError = `Insufficient amount. The value available ${this.maxPairValue}`;
+        return false;
+      } else {
+        this.valueAmount = value;
+        this.valueToUsd = value * this.tokenToUSD;
+        console.log("tokenPrice", this.tokenToUSD);
+      }
+    },
+    // actionHandler() {
+    //   if (this.valueAmount && parseFloat(this.valueAmount) > 0) {
+    //     if (this.actionType === "deposit") {
+    //       const parsedAmount = this.$ethers.utils.parseUnits(
+    //         this.valueAmount.toString(),
+    //         this.mainValueDecimals
+    //       );
+    //
+    //
+    //       const payload = {
+    //         collateralAmount: parsedAmount,
+    //         amount: parsedPair,
+    //         updatePrice: this.updatePrice,
+    //       };
+    //
+    //       if (this.multiplier > 1) {
+    //         payload.amount = this.toFixed(this.pairValue, 6);
+    //         this.multiplierHandle(payload, "addAndBorrowMultiple");
+    //         return false;
+    //       }
+    //       this.$emit("addAndBorrow", payload);
+    //       this.clearData();
+    //     }
+    //   }
+    // },
   },
   computed: {
     availableDeposit() {
@@ -89,6 +141,19 @@ export default {
     },
     availableWithdraw() {
       return this.$store.getters.getUserCollateralShare(this.pool.id);
+    },
+    actionBtnText() {
+      console.log(this.valueAmount);
+      if(this.valueAmount.toString === undefined || this.valueAmount < 0)
+        return false;
+      else
+        return true;
+    },
+    tokenToUSD() {
+      const tokenToNUSD = 1 / this.pool.tokenPrice;
+      // eslint-disable-next-line no-useless-escape
+      let re = new RegExp(`^-?\\d+(?:\.\\d{0,` + (4 || -1) + `})?`);
+      return tokenToNUSD.toString().match(re)[0];
     },
   },
   watch: {

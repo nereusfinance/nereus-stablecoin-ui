@@ -37,7 +37,6 @@ export default {
   name: "TotalDeposit",
   data() {
     return {
-      shortcutState: "deposit",
     }
   },
   props: {
@@ -52,7 +51,7 @@ export default {
     actionType: {
       type: String,
       required: true,
-    }
+    },
   },
   methods: {
     setShortcutType(type) {
