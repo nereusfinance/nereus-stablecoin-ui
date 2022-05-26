@@ -8,7 +8,7 @@
           :pool="pool"
           :actionStatus="actionStatus"
           :actionType="actionType"
-          :onClick="setActionStatus"
+          :onClick="setActionType"
         />
 
         <LockedToken
@@ -51,14 +51,13 @@ export default {
   },
   methods: {
     setActionStatus() {
-      if(this.actionStatus === false)
-        this.actionStatus = true;
-      else
-        this.actionStatus = false
+      this.actionStatus = this.actionStatus === false;
     },
-  //   setActionType(type) {
-  //     if (type !== this.actionType) this.actionType = type;
-  //   },
+    setActionType(type) {
+      if (type !== this.actionType)
+        this.actionType = type;
+      this.actionStatus = this.actionStatus === false;
+    },
   //   async created() {
   //     const isConnected = this.$store.getters.getWalletIsConnected;
   //

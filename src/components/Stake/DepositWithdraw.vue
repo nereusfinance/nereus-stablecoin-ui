@@ -2,11 +2,11 @@
 <div class="deposit-withdraw-block">
   <BackButton :text="'Back'" v-if="overview === true" @click="toStake" />
   <BackButton :text="'Back'" v-else @click="onClick" />
+
   <div
     v-if="actionType === 'Deposit' && overview === false"
     class="deposit-withdraw-container"
   >
-
     <h1>How much would you like to deposit?</h1>
     <p>Please enter amount you would like to deposit. The maximum amount you can deposit is shown below.</p>
     <div class="available-amount">
