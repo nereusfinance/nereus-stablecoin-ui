@@ -37,9 +37,12 @@
       <div>
         {{valueAmount}}
         {{pool.name}}
-        <p style="margin: 0">$ {{valueToUsd.toFixed(2)}}</p>
+        <p style="margin: 0">$ {{valueInUsd}}</p>
       </div>
     </div>
+    <TransactionStatus
+      :status-text="statusText"
+    />
   </div>
 
   <div v-if="actionType === 'withdraw'" class="deposit-withdraw-container">
@@ -70,6 +73,7 @@
 <script>
 import ValueInput from "@/components/UiComponents/ValueInput";
 import TokenIcon from "@/components/UiComponents/TokenIcon";
+import TransactionStatus from "@/components/UiComponents/TransactionStatus";
 const BackButton = () => import("@/components/UiComponents/BackButton");
 
 export default {
@@ -80,6 +84,7 @@ export default {
       valueAmount: "",
       valueToUsd: "0",
       valueError: "",
+      statusText: ["Deposit", "Finished"],
     }
   },
   props: {
@@ -103,39 +108,20 @@ export default {
       if (parseFloat(value) > parseFloat(this.maxPairValue)) {
         this.valueError = `Insufficient amount. The value available ${this.maxPairValue}`;
         return false;
-      } else {
-        this.valueAmount = value;
-        this.valueToUsd = value * this.tokenToUSD;
-        console.log("tokenPrice", this.tokenToUSD);
+      }
+      else {
+          this.valueAmount = value;
+          this.valueToUsd = value * this.tokenToUSD;
+          console.log("tokenPrice", this.valueToUsd);
+          return true;
       }
     },
-    // actionHandler() {
-    //   if (this.valueAmount && parseFloat(this.valueAmount) > 0) {
-    //     if (this.actionType === "deposit") {
-    //       const parsedAmount = this.$ethers.utils.parseUnits(
-    //         this.valueAmount.toString(),
-    //         this.mainValueDecimals
-    //       );
-    //
-    //
-    //       const payload = {
-    //         collateralAmount: parsedAmount,
-    //         amount: parsedPair,
-    //         updatePrice: this.updatePrice,
-    //       };
-    //
-    //       if (this.multiplier > 1) {
-    //         payload.amount = this.toFixed(this.pairValue, 6);
-    //         this.multiplierHandle(payload, "addAndBorrowMultiple");
-    //         return false;
-    //       }
-    //       this.$emit("addAndBorrow", payload);
-    //       this.clearData();
-    //     }
-    //   }
-    // },
   },
   computed: {
+    valueInUsd() {
+      let value = this.valueToUsd.toFixed(2);
+      return value;
+    },
     availableDeposit() {
       return this.$store.getters.getUserBorrowPart(this.pool.id);
     },
@@ -162,6 +148,7 @@ export default {
     },
   },
   components: {
+    TransactionStatus,
     TokenIcon,
     ValueInput,
     BackButton,
@@ -230,9 +217,9 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
 
     padding: 20px 16px 16.6px 16px;
+    margin-bottom: 16px;
     border: 1px solid #606060;
     border-radius: 4px;
 
