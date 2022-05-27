@@ -62,10 +62,24 @@
     <hr v-if="transactionPending === 'pending'">
     <div class="bottom-text">
       <h1>{{ statusText[0] }}</h1>
-      <h1>
+      <h1 v-if="transactionPending === 'pending'">
         Pending
         <img
           src="@/assets/images/icon-loading.svg"
+          alt=""
+          class="loading-icon"
+        />
+        Explorer
+        <img
+          src="@/assets/images/icon-explorer.svg"
+          alt=""
+          class="explorer-icon"
+        />
+      </h1>
+      <h1 v-if="transactionPending === 'finished'">
+        Completed
+        <img
+          src="@/assets/images/icon-completed.svg"
           alt=""
           class="loading-icon"
         />
