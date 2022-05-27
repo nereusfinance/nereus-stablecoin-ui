@@ -23,6 +23,7 @@
     />
     <button
       class="continue"
+      :disabled="!btnText"
       @click="toOverview"
     >
       Continue
@@ -44,11 +45,9 @@
       :parentValue="valueAmount"
       :error="valueError"
     />
-<!--
-      :disabled="actionBtnText === false"-->
     <button
       class="continue"
-      v-if="overview === false"
+      :disabled="!btnText"
       @click="toOverview"
     >
       Continue
@@ -79,6 +78,14 @@
       :transactionPending="transactionPending"
       :action="action"
     />
+    <div class="addAVAXToWallet" v-if="transactionPending === 'finished'">
+      <img
+        src="@/assets/images/icon-add.svg"
+        alt=""
+        class="add-icon"
+      />
+      Add AVAX to your browser wallet
+    </div>
   </div>
 </div>
 </template>
@@ -100,6 +107,7 @@ export default {
       depositStatus: ["Deposit", "Finished"],
       withdrawStatus: ["Approve", "Withdraw", "Finished"],
       transactionPending: "wait for action",
+      btnText: false,
     }
   },
   props: {
@@ -138,11 +146,12 @@ export default {
         this.valueError = `Insufficient amount. The value available ${this.maxPairValue}`;
         return false;
       }
-      else {
-          this.valueAmount = value;
-          this.valueToUsd = value * this.tokenToUSD;
-          console.log("tokenPrice", this.valueToUsd);
-          return true;
+      else if (value && value > 0.0) {
+        this.btnText = true;
+        this.valueAmount = value;
+        this.valueToUsd = value * this.tokenToUSD;
+        console.log("tokenPrice", this.valueToUsd);
+        return true;
       }
     },
   },
@@ -156,13 +165,6 @@ export default {
     },
     availableWithdraw() {
       return this.$store.getters.getUserCollateralShare(this.pool.id);
-    },
-    actionBtnText() {
-      console.log(this.valueAmount);
-      if(this.valueAmount.toString === undefined || this.valueAmount < 0)
-        return false;
-      else
-        return true;
     },
     tokenToUSD() {
       const tokenToNUSD = 1 / this.pool.tokenPrice;
@@ -259,6 +261,25 @@ export default {
       margin-right: 4px;
       margin-bottom: 16px;
     }
+  }
+
+  .addAVAXToWallet {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: center;
+    padding: 4px 16px 4px 4px;
+    gap: 4px;
+
+    width: 272px;
+    height: 32px;
+    font-weight: 400;
+    font-size: 14px;
+
+    margin: 18px 0 0 auto;
+
+    background: #353535;
+    border-radius: 16px;
   }
 }
 </style>

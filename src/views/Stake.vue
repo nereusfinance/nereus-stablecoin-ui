@@ -61,6 +61,14 @@ export default {
     async getData() {
      // const configArray = this.$ethers.;
     },
+    async borrowHandler(data) {
+      console.log("BORROW HANDLER", data);
+      const isApprowed = await this.isApprowed();
+
+      if (isApprowed) {
+        this.cookBorrow(data, isApprowed);
+      }
+    },
     async isApprowed() {
       try {
         const masterContract = await this.getMasterContract();
@@ -73,6 +81,226 @@ export default {
       } catch (e) {
         console.log("isApprowed err:", e);
       }
+    },
+    async cookBorrow({ amount, updatePrice }, isApprowed) {
+      const borrowEncode = this.getBorrowEncode(amount);
+      const bentoWithdrawEncode = this.getBentoWithdrawEncode(amount);
+
+      const gasPrice = await this.getGasPrice();
+      console.log("GAS PRICE:", gasPrice);
+
+      if (isApprowed) {
+        console.log("APPROWED");
+
+        if (updatePrice) {
+          const updateEncode = this.getUpdateRateEncode();
+
+          const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+            [11, 5, 21],
+            [0, 0, 0],
+            [updateEncode, borrowEncode, bentoWithdrawEncode],
+            {
+              value: 0,
+              // gasPrice,
+              // gasLimit: 1000000,
+            }
+          );
+
+          const gasLimit = this.gasLimitConst + +estimateGas.toString();
+
+          console.log("gasLimit:", gasLimit);
+
+          const result = await this.pool.contractInstance.cook(
+            [11, 5, 21],
+            [0, 0, 0],
+            [updateEncode, borrowEncode, bentoWithdrawEncode],
+            {
+              value: 0,
+              // gasPrice,
+              gasLimit,
+            }
+          );
+
+          await this.wrapperStatusTx(result);
+
+          console.log(result);
+          return false;
+        }
+
+        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+          [5, 21],
+          [0, 0],
+          [borrowEncode, bentoWithdrawEncode],
+          {
+            value: 0,
+            // gasPrice,
+            // gasLimit: 1000000,
+          }
+        );
+
+        const gasLimit = this.gasLimitConst + +estimateGas.toString();
+
+        console.log("gasLimit:", gasLimit);
+
+        const result = await this.pool.contractInstance.cook(
+          [5, 21],
+          [0, 0],
+          [borrowEncode, bentoWithdrawEncode],
+          {
+            value: 0,
+            // gasPrice,
+            gasLimit,
+          }
+        );
+
+        await this.wrapperStatusTx(result);
+
+        console.log(result);
+        return false;
+      }
+
+      console.log("NOT APPROWED");
+      const approvalEncode = await this.getApprovalEncode();
+
+      if (approvalEncode === "ledger") {
+        const approvalMaster = await this.approveMasterContract();
+
+        console.log("approveMasterContract resp: ", approvalMaster);
+
+        if (!approvalMaster) return false;
+
+        if (updatePrice) {
+          const updateEncode = this.getUpdateRateEncode();
+
+          const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+            [11, 5, 21],
+            [0, 0, 0],
+            [updateEncode, borrowEncode, bentoWithdrawEncode],
+            {
+              value: 0,
+              // gasPrice,
+              // gasLimit: 1000000,
+            }
+          );
+
+          const gasLimit = this.gasLimitConst + +estimateGas.toString();
+
+          console.log("gasLimit:", gasLimit);
+
+          const result = await this.pool.contractInstance.cook(
+            [11, 5, 21],
+            [0, 0, 0],
+            [updateEncode, borrowEncode, bentoWithdrawEncode],
+            {
+              value: 0,
+              // gasPrice,
+              gasLimit,
+            }
+          );
+
+          await this.wrapperStatusTx(result);
+
+          console.log(result);
+          return false;
+        }
+
+        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+          [5, 21],
+          [0, 0],
+          [borrowEncode, bentoWithdrawEncode],
+          {
+            value: 0,
+            // gasPrice,
+            // gasLimit: 1000000,
+          }
+        );
+
+        const gasLimit = this.gasLimitConst + +estimateGas.toString();
+
+        console.log("gasLimit:", gasLimit);
+
+        const result = await this.pool.contractInstance.cook(
+          [5, 21],
+          [0, 0],
+          [borrowEncode, bentoWithdrawEncode],
+          {
+            value: 0,
+            // gasPrice,
+            gasLimit,
+          }
+        );
+
+        await this.wrapperStatusTx(result);
+
+        console.log(result);
+
+        return false;
+      }
+
+      if (updatePrice) {
+        const updateEncode = this.getUpdateRateEncode();
+
+        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+          [24, 11, 5, 21],
+          [0, 0, 0, 0],
+          [approvalEncode, updateEncode, borrowEncode, bentoWithdrawEncode],
+          {
+            value: 0,
+            // gasPrice,
+            // gasLimit: 1000000,
+          }
+        );
+
+        const gasLimit = this.gasLimitConst + +estimateGas.toString();
+
+        console.log("gasLimit:", gasLimit);
+
+        const result = await this.pool.contractInstance.cook(
+          [24, 11, 5, 21],
+          [0, 0, 0, 0],
+          [approvalEncode, updateEncode, borrowEncode, bentoWithdrawEncode],
+          {
+            value: 0,
+            // gasPrice,
+            gasLimit,
+          }
+        );
+
+        await this.wrapperStatusTx(result);
+
+        console.log(result);
+        return false;
+      }
+
+      const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+        [24, 5, 21],
+        [0, 0, 0],
+        [approvalEncode, borrowEncode, bentoWithdrawEncode],
+        {
+          value: 0,
+          // gasPrice,
+          // gasLimit: 1000000,
+        }
+      );
+
+      const gasLimit = this.gasLimitConst + +estimateGas.toString();
+
+      console.log("gasLimit:", gasLimit);
+
+      const result = await this.pool.contractInstance.cook(
+        [24, 5, 21],
+        [0, 0, 0],
+        [approvalEncode, borrowEncode, bentoWithdrawEncode],
+        {
+          value: 0,
+          // gasPrice,
+          gasLimit,
+        }
+      );
+
+      await this.wrapperStatusTx(result);
+
+      console.log(result);
     },
     async getApprovalEncode() {
       const account = this.account;
