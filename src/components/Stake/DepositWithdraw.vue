@@ -130,8 +130,21 @@ export default {
     action(statusText) {
       if(statusText === "Deposit") {
         console.log(this.transactionPending);
-        //this.transactionPending = "pending";
-        this.transactionPending = "finished";
+        let tx = 2;
+        if (tx === 1)
+          this.transactionPending = "pending";
+        else if (tx === 2)
+          this.transactionPending = "finished";
+        console.log(this.transactionPending);
+      }
+      if(statusText === "Withdraw") {
+        let tx = 0;
+        if (tx === 0)
+          this.transactionPending = 'approved';
+        else if (tx === 1)
+          this.transactionPending = "pending";
+        else if (tx === 2)
+          this.transactionPending = "finished";
         console.log(this.transactionPending);
       }
     },

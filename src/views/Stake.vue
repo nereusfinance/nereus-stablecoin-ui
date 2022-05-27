@@ -46,7 +46,7 @@ export default {
   data() {
     return {
       actionStatus: false,
-      actionType: "Deposit",
+      actionType: "",
     }
   },
   methods: {

@@ -15,14 +15,14 @@
   <div class="btns">
     <button
       class="deposit-btn"
-      :class="{ active: actionType === 'Deposit' }"
+      :class="{ active: actionType === 'Deposit' && actionStatus === true}"
       @click="onClick('Deposit')"
     >
       Deposit
     </button>
     <button
       class="withdraw-btn"
-      :class="{ active: actionType === 'Withdraw' }"
+      :class="{ active: actionType === 'Withdraw' && actionStatus === true}"
       @click="onClick('Withdraw')"
     >
       Withdraw

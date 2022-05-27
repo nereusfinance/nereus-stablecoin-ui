@@ -18,6 +18,15 @@
     />
     <h1>{{ statusText[1] }}</h1>
   </div>
+  <hr v-if="statusText.length > 2">
+  <div class="icon-text" v-if="statusText.length > 2">
+    <img
+      src="@/assets/images/icon-three.svg"
+      alt=""
+      class="status-icon"
+    />
+    <h1>{{ statusText[2] }}</h1>
+  </div>
 </div>
   <div class="status-text" v-if="transactionPending === 'finished'">
     <div class="icon-text">
@@ -43,7 +52,8 @@
   <div>
   <div class="action-info" v-if="transactionPending === 'wait for action'" >
     <h2>
-      1/{{statusText.length}} {{statusText[0]}}<br>
+      1/{{statusText.length}} {{statusText[0]}}
+      <br>
       <h3 v-if="statusText[0] === 'Deposit'">Please submit not to deposit</h3>
       <h3 v-if="statusText[0] === 'Approve'">Please approve before withdrawal</h3>
     </h2>
@@ -155,7 +165,7 @@ export default {
     margin-left: auto;
     margin-bottom: 11px;
 
-    width: 179px;
+    width: auto;
     height: 16px;
 
     .icon-text {
@@ -197,7 +207,7 @@ export default {
       text-align: left;
 
       h3 {
-        margin-top: 2px;
+        margin-top: 4px;
         font-size: 14px;
       }
     }
@@ -251,7 +261,7 @@ export default {
       }
       .loading-icon {
         margin-left: 4px;
-        margin-right: 8px;
+        margin-right: 12px;
       }
       .explorer-icon {
         margin-left: 4px;
