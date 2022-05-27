@@ -129,7 +129,7 @@ export default {
   height: auto;
   background: #262626;
 
-  padding: 12px 12px 12px 12px;
+  padding: 12px 16px;
   border: 1px solid #606060;
   border-radius: 4px;
 
@@ -263,7 +263,7 @@ export default {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    margin: 9px 12px 0;
+    margin: 9px 16px 0;
 
     .dashboard-btn {
       align-items: center;
