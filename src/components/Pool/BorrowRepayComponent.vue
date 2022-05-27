@@ -670,10 +670,17 @@ export default {
               isShow: true,
             });
             const payload = {
+              walletAmount: this.$ethers.utils.parseUnits(
+                this.maxMainValueWithoutDeleverage.toString(),
+                this.mainValueDecimals
+              ),
               amount: parsedAmount,
               updatePrice: this.updatePrice,
               collateralAmount: this.$ethers.utils.parseUnits(
-                floorToFixed(this.minPairValue, this.pairValueDecimals).toString(),
+                floorToFixed(
+                  this.minPairValue,
+                  this.pairValueDecimals
+                ).toString(),
                 this.pairValueDecimals
               ),
             };
@@ -869,7 +876,6 @@ export default {
       }
     },
     async getUserBalance() {
-      console.log(this.pool)
       const parsedBalance = this.$ethers.utils.formatUnits(
         this.balance.toString(),
         this.tokenDecimals

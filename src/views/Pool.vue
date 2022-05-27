@@ -1201,34 +1201,95 @@ export default {
         console.log(result);
       }
     },
+    // @params
+    // updatePrice: update price or not
+    // collateralAmount: amount of collateral to swap
+    // walletAmount: amount user has to pay from his wallet
+    // isApproved: approval check result
+    // amount: total amount to repay
     async cookRepayWithDeleverage(
-      { amount, updatePrice, collateralAmount },
+      { updatePrice, collateralAmount, walletAmount, /*amount*/ },
       isApprowed
     ) {
+      const swapperAddress = this.pool.reverseSwapContract.address;
+      const userAddress = this.account;
+      const emptyAddress = "0x0000000000000000000000000000000000000000";
+
       const events = [];
       const values = [];
       const datas = [];
-      console.log("\n\nTEST");
-      console.log("DELETE_ME", amount);
       const gasPrice = await this.getGasPrice();
-      console.log("GAS PRICE:", gasPrice);
+      console.log("GAS PRICE:", gasPrice.toString());
 
-      const removeCollateralData = this.$ethers.utils.defaultAbiCoder.encode(
-        ["int256", "address"],
-        [collateralAmount, this.account]
-      );
       if (!isApprowed) {
-        // TODO: handle approve
+        const approvalEncode = await this.getApprovalEncode();
+        if (approvalEncode === "ledger") {
+          const approvalMaster = await this.approveMasterContract();
+          console.log("approveMasterContract resp: ", approvalMaster);
+          if (!approvalMaster) return false;
+        } else {
+          eventsArray.push(24);
+          valuesArray.push(0);
+          datasArray.push(approvalEncode);
+        }
       }
       if (updatePrice) {
         events.push(11);
         values.push(0);
-        datas.push(this.getUpdateRateEncode())
+        datas.push(this.getUpdateRateEncode());
       }
+
+      // Remove collateral from user address to swapper
+      const removeCollateralData = this.$ethers.utils.defaultAbiCoder.encode(
+        ["int256", "address"],
+        [collateralAmount, swapperAddress]
+      );
       events.push(4);
       values.push(0);
       datas.push(removeCollateralData);
 
+      // Swap collateral
+      const swapStaticTx =
+        await this.pool.reverseSwapContract.populateTransaction.swap(
+          emptyAddress,
+          emptyAddress,
+          userAddress,
+          "0",
+          collateralAmount,
+          {
+            gasLimit: 10000000,
+          }
+        );
+      const swapCallByte = swapStaticTx.data;
+      console.log("TX byte", swapCallByte);
+
+      const getCallEncode2 = this.$ethers.utils.defaultAbiCoder.encode(
+        ["address", "bytes", "bool", "bool", "uint8"],
+        [swapperAddress, swapCallByte, false, false, 2]
+      );
+      console.log("Call encode2: ", getCallEncode2);
+      events.push(30);
+      values.push(0);
+      datas.push(getCallEncode2);
+
+      // Repay
+      const depositEncode = this.$ethers.utils.defaultAbiCoder.encode(
+        ["address", "address", "int256", "int256"],
+        [this.pool.pairToken.address, userAddress, walletAmount, "0x0"]
+      );
+      const getRepayPartEncode = this.$ethers.utils.defaultAbiCoder.encode(
+        ["int256"],
+        ["-0x01"]
+      );
+      const repayEncode = this.$ethers.utils.defaultAbiCoder.encode(
+        ["int256", "address", "bool"],
+        ["-0x01", userAddress, false]
+      );
+      events.push(...[20, 7, 2]);
+      values.push(...[0, 0, 0]);
+      datas.push(...[depositEncode, getRepayPartEncode, repayEncode]);
+
+      // Send tx
       const estimateGas = await this.pool.contractInstance.estimateGas.cook(
         events,
         values,
@@ -1238,6 +1299,7 @@ export default {
         }
       );
       const gasLimit = this.gasLimitConst + +estimateGas.toString();
+      console.log("GAS LIMIT:", gasLimit.toString());
 
       const result = await this.pool.contractInstance.cook(
         events,

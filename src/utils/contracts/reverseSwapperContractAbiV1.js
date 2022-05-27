@@ -6,59 +6,7 @@ export default [
   },
   {
     inputs: [],
-    name: "MIM",
-    outputs: [
-      {
-        internalType: "contract IERC20",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "MIM3POOL",
-    outputs: [
-      {
-        internalType: "contract CurvePool",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "TETHER",
-    outputs: [
-      {
-        internalType: "contract TetherToken",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "WETH",
-    outputs: [
-      {
-        internalType: "contract IERC20",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "degenBox",
+    name: "DEGENBOX",
     outputs: [
       {
         internalType: "contract IBentoBoxV1",
@@ -70,15 +18,93 @@ export default [
     type: "function",
   },
   {
+    inputs: [],
+    name: "NXUSD",
+    outputs: [
+      {
+        internalType: "contract IERC20",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "NXUSD3POOL",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "USDCe",
+    outputs: [
+      {
+        internalType: "contract IERC20",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "WETHe",
+    outputs: [
+      {
+        internalType: "contract IERC20",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "WETHe_USDCe",
+    outputs: [
+      {
+        internalType: "contract IUniswapV2Pair",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "ZAP3POOL",
+    outputs: [
+      {
+        internalType: "contract Zap",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "contract IERC20",
-        name: "fromToken",
+        name: "",
         type: "address",
       },
       {
         internalType: "contract IERC20",
-        name: "toToken",
+        name: "",
         type: "address",
       },
       {
@@ -117,32 +143,32 @@ export default [
     inputs: [
       {
         internalType: "contract IERC20",
-        name: "fromToken",
+        name: "",
         type: "address",
       },
       {
         internalType: "contract IERC20",
-        name: "toToken",
+        name: "",
         type: "address",
       },
       {
         internalType: "address",
-        name: "recipient",
+        name: "",
         type: "address",
       },
       {
         internalType: "address",
-        name: "refundTo",
+        name: "",
         type: "address",
       },
       {
         internalType: "uint256",
-        name: "shareFromSupplied",
+        name: "",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "shareToExact",
+        name: "",
         type: "uint256",
       },
     ],
@@ -160,19 +186,6 @@ export default [
       },
     ],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "threecrypto",
-    outputs: [
-      {
-        internalType: "contract IThreeCrypto",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
 ];

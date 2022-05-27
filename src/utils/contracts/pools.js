@@ -323,7 +323,7 @@ export default [
       abi: swapContractAbi,
     },
     reverseSwapContractInfo: {
-      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      address: "0x9970a82D4fA705342237d609DBD562941aE16947",
       abi: reverseSwapperContractAbiV1,
     },
   },
