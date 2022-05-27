@@ -58,23 +58,94 @@ export default {
         this.actionType = type;
       this.actionStatus = this.actionStatus === false;
     },
-  //   async created() {
-  //     const isConnected = this.$store.getters.getWalletIsConnected;
-  //
-  //     if (!isConnected) {
-  //       this.$router.push({ name: "Stand" });
-  //       return false;
-  //     }
-  //
-  //     if (
-  //       this.$route.query.actionType &&
-  //       (this.$route.query.actionType === "Deposit" ||
-  //         this.$route.query.actionType === "Withdraw")
-  //     )
-  //       this.setActionType(this.$route.query.actionType);
-  //   },
+    async getData() {
+     // const configArray = this.$ethers.;
+    },
+    async isApprowed() {
+      try {
+        const masterContract = await this.getMasterContract();
+        const addressApprowed =
+          await this.pool.masterContractInstance.masterContractApproved(
+            masterContract,
+            this.account
+          );
+        return addressApprowed;
+      } catch (e) {
+        console.log("isApprowed err:", e);
+      }
+    },
+    async getApprovalEncode() {
+      const account = this.account;
+
+      const verifyingContract = await this.getVerifyingContract();
+      const masterContract = await this.getMasterContract();
+      const nonce = await this.getNonce();
+      const chainId = this.$store.getters.getActiveChain.code;
+
+      const domain = {
+        name: "BentoBox V1",
+        chainId,
+        verifyingContract,
+      };
+
+      // The named list of all type definitions
+      const types = {
+        SetMasterContractApproval: [
+          { name: "warning", type: "string" },
+          { name: "user", type: "address" },
+          { name: "masterContract", type: "address" },
+          { name: "approved", type: "bool" },
+          { name: "nonce", type: "uint256" },
+        ],
+      };
+
+      // The data to sign
+      const value = {
+        warning: "Give FULL access to funds in (and approved to) BentoBox?",
+        user: account,
+        masterContract,
+        approved: true,
+        nonce,
+      };
+      console.log(chainId);
+
+      let signature;
+
+      try {
+        signature = await this.signer._signTypedData(domain, types, value);
+      } catch (e) {
+        console.log("SIG ERR:", e.code);
+        if (e.code === -32603) {
+          return "ledger";
+
+          // this.$store.commit("setPopupState", {
+          //   type: "device-error",
+          //   isShow: true,
+          // });
+        }
+        return false;
+      }
+
+      const parsedSignature = this.parseSignature(signature);
+
+      return this.$ethers.utils.defaultAbiCoder.encode(
+        ["address", "address", "bool", "uint8", "bytes32", "bytes32"],
+        [
+          account,
+          masterContract,
+          true,
+          parsedSignature.v,
+          parsedSignature.r,
+          parsedSignature.s,
+        ]
+      );
+    },
   },
   computed: {
+    //address
+    account() {
+      return this.$store.getters.getAccount;
+    },
     pool() {
       //const poolId = Number(this.$route.params.id);
       const poolId = Number(7);

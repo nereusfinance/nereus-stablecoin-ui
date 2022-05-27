@@ -67,11 +67,17 @@
         <p style="margin: 0">$ {{valueInUsd}}</p>
       </div>
     </div>
-    <TransactionStatus v-if="actionType === 'Deposit'"
+    <TransactionStatus
+      v-if="actionType === 'Deposit'"
       :status-text="depositStatus"
+      :transactionPending="transactionPending"
+      :action="action"
     />
-    <TransactionStatus v-if="actionType === 'Withdraw'"
-                       :status-text="withdrawStatus"
+    <TransactionStatus
+      v-if="actionType === 'Withdraw'"
+      :statusText="withdrawStatus"
+      :transactionPending="transactionPending"
+      :action="action"
     />
   </div>
 </div>
@@ -93,6 +99,7 @@ export default {
       valueError: "",
       depositStatus: ["Deposit", "Finished"],
       withdrawStatus: ["Approve", "Withdraw", "Finished"],
+      transactionPending: "wait for action",
     }
   },
   props: {
@@ -112,6 +119,14 @@ export default {
     },
   },
   methods: {
+    action(statusText) {
+      if(statusText === "Deposit") {
+        console.log(this.transactionPending);
+        //this.transactionPending = "pending";
+        this.transactionPending = "finished";
+        console.log(this.transactionPending);
+      }
+    },
     toStake() {
       this.overview = false;
     },

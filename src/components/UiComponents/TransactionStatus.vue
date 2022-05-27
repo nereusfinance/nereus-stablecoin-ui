@@ -1,6 +1,6 @@
 <template>
 <div class="transaction-status-block">
-<div class="status-text">
+<div class="status-text" v-if="transactionPending !== 'finished'">
   <div class="icon-text">
     <img
       src="@/assets/images/icon-one.svg"
@@ -19,21 +19,47 @@
     <h1>{{ statusText[1] }}</h1>
   </div>
 </div>
+  <div class="status-text" v-if="transactionPending === 'finished'">
+    <div class="icon-text">
+      <img
+        src="@/assets/images/icon-done.svg"
+        alt=""
+        class="status-icon"
+      />
+      <h1>{{ statusText[0] }}</h1>
+    </div>
+    <hr>
+    <div class="icon-text">
+      <img
+        src="@/assets/images/icon-done.svg"
+        alt=""
+        class="status-icon"
+      />
+      <h1>{{ statusText[1] }}</h1>
+    </div>
+  </div>
 
   <hr>
   <div>
   <div class="action-info" v-if="transactionPending === 'wait for action'" >
     <h2>
-      1/2 {{statusText[0]}}<br>
+      1/{{statusText.length}} {{statusText[0]}}<br>
       <h3 v-if="statusText[0] === 'Deposit'">Please submit not to deposit</h3>
       <h3 v-if="statusText[0] === 'Approve'">Please approve before withdrawal</h3>
     </h2>
-    <button @click="action(statusText[0])">{{statusText[0]}}</button>
+    <button @click="action(statusText[0])" >{{statusText[0]}}</button>
   </div>
 
-  <div class="pending" v-else>
-    <p>Transaction(s) Pending</p>
-    <hr>
+  <div class="pending" v-else-if="transactionPending !== 'wait for action'">
+    <p v-if="transactionPending === 'pending'">Transaction(s) Pending</p>
+    <div class="finished" v-if="transactionPending === 'finished'">
+      <h1>
+        {{statusText.length}}/{{statusText.length}} Success!
+      </h1>
+      <router-link :to="{ name: 'Dashboard' }" class="dashboard-btn">Dashboard</router-link>
+    </div>
+    <hr v-if="transactionPending === 'finished'" style="margin-top: 9px">
+    <hr v-if="transactionPending === 'pending'">
     <div class="bottom-text">
       <h1>{{ statusText[0] }}</h1>
       <h1>
@@ -63,22 +89,22 @@ export default {
   name: "TransactionStatus",
   data() {
     return {
-      transactionPending: "wait for action",
+
     }
   },
   props: {
     statusText: {
       type: Array,
+    },
+    transactionPending: {
+      type: String,
+    },
+    action: {
+      type: Function,
     }
   },
   methods: {
-    action(statusText) {
-      if(statusText === "Deposit") {
-        console.log(this.transactionPending);
-        this.transactionPending = "pending";
-        console.log(this.transactionPending);
-      }
-    }
+
   }
 };
 </script>
@@ -86,7 +112,7 @@ export default {
 <style scoped lang="scss">
 .transaction-status-block {
   width: 388px;
-  height: 132px;
+  height: auto;
   background: #262626;
 
   padding: 12px 12px 12px 12px;
@@ -176,9 +202,9 @@ export default {
   .pending {
     display: flex;
     flex-direction: column;
-    margin-top: 16px;
 
     p {
+      margin-top: 16px;
       font-weight: 400;
       font-size: 14px;
       color: #FDD33F;
@@ -216,6 +242,26 @@ export default {
       .explorer-icon {
         margin-left: 4px;
       }
+    }
+  }
+  .finished {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin: 9px 12px 0;
+
+    .dashboard-btn {
+      align-items: center;
+      padding: 6px 16px;
+
+      width: auto;
+      background: #E7FC6E;
+      border-radius: 16px;
+      text-decoration: none;
+      color: black;
+      font-size: 16px;
+      font-style: normal;
     }
   }
 }
