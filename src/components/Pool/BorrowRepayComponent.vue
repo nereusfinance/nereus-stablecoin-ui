@@ -509,24 +509,28 @@ export default {
     },
 
     liquidationPrice() {
+      const userCollateralShare = +this.$store.getters.getUserCollateralShare(
+        this.poolId
+      );
+
       if (this.actionType === "borrow") {
         const liquidationPrice =
           (+this.$store.getters.getUserBorrowPart(this.poolId) +
             +this.pairValue) /
-          (((+this.$store.getters.getUserCollateralShare(this.poolId) +
-            +parseFloat(+this.mainValue)) *
-            this.ltv) /
+          (((userCollateralShare + +parseFloat(+this.mainValue)) * this.ltv) /
             100);
 
         return liquidationPrice;
       } else {
-        const liquidationPrice =
-          (+this.$store.getters.getUserBorrowPart(this.poolId) -
-            +this.mainValue) /
-          (((+this.$store.getters.getUserCollateralShare(this.poolId) -
-            +parseFloat(+this.pairValue || 0)) *
+        const numerator =
+          +this.$store.getters.getUserBorrowPart(this.poolId) - +this.mainValue;
+
+        const denominator =
+          ((userCollateralShare - +parseFloat(+this.pairValue || 0)) *
             this.ltv) /
-            100);
+          100;
+
+        const liquidationPrice = numerator / denominator;
 
         return liquidationPrice === Infinity || liquidationPrice <= 0
           ? "xxx.xx"
@@ -637,23 +641,7 @@ export default {
             return false;
           }
 
-          if (this.showDeleverage) {
-            const localStorageRecord = localStorage.getItem(
-              "neverShowDeleveragePopup"
-            );
-            if (
-              !(localStorageRecord === "true") &&
-              localStorageRecord === null
-            ) {
-              this.$store.commit("setPopupState", {
-                type: "deleverage",
-                isShow: true,
-              });
-            }
-            this.$emit("removeAndRepayWithDeleverage", payload);
-          } else {
-            this.$emit("removeAndRepay", payload);
-          }
+          this.$emit("removeAndRepay", payload);
           this.clearData();
         }
         return false;
@@ -680,11 +668,35 @@ export default {
             this.mainValueDecimals
           );
 
-          const payload = {
-            amount: parsedAmount,
-            updatePrice: this.updatePrice,
-          };
-          this.$emit("repay", payload);
+          if (this.showDeleverage && parseFloat(this.minPairValue) > 0) {
+            this.$store.commit("setPopupState", {
+              type: "deleverage",
+              isShow: true,
+            });
+            const payload = {
+              walletAmount: this.$ethers.utils.parseUnits(
+                this.maxMainValueWithoutDeleverage.toString(),
+                this.mainValueDecimals
+              ),
+              amount: parsedAmount,
+              updatePrice: this.updatePrice,
+              collateralAmount: this.$ethers.utils.parseUnits(
+                floorToFixed(
+                  this.minPairValue,
+                  this.pairValueDecimals
+                ).toString(),
+                this.pairValueDecimals
+              ),
+            };
+            this.$emit("repayWithDeleverage", payload);
+          } else {
+            const payload = {
+              amount: parsedAmount,
+              updatePrice: this.updatePrice,
+            };
+            this.$emit("repay", payload);
+          }
+
           this.clearData();
         }
         return false;
