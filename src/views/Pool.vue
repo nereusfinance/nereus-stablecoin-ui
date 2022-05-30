@@ -1208,7 +1208,7 @@ export default {
     // isApproved: approval check result
     // amount: total amount to repay
     async cookRepayWithDeleverage(
-      { updatePrice, collateralAmount, walletAmount, /*amount*/ },
+      { updatePrice, collateralAmount, walletAmount, amount },
       isApprowed
     ) {
       const swapperAddress = this.pool.reverseSwapContract.address;
@@ -1272,47 +1272,54 @@ export default {
       values.push(0);
       datas.push(getCallEncode2);
 
+      // Deposit if necessary
+      if (walletAmount && !walletAmount.isZero()) {
+        const depositEncode = this.$ethers.utils.defaultAbiCoder.encode(
+          ["address", "address", "int256", "int256"],
+          [this.pool.pairToken.address, userAddress, walletAmount, "0x0"]
+        );
+        events.push(20);
+        values.push(0);
+        datas.push(depositEncode);
+      }
+
       // Repay
-      const depositEncode = this.$ethers.utils.defaultAbiCoder.encode(
-        ["address", "address", "int256", "int256"],
-        [this.pool.pairToken.address, userAddress, walletAmount, "0x0"]
-      );
-      const getRepayPartEncode = this.$ethers.utils.defaultAbiCoder.encode(
-        ["int256"],
-        ["-0x01"]
-      );
       const repayEncode = this.$ethers.utils.defaultAbiCoder.encode(
         ["int256", "address", "bool"],
-        ["-0x01", userAddress, false]
+        [amount, userAddress, false]
       );
-      events.push(...[20, 7, 2]);
-      values.push(...[0, 0, 0]);
-      datas.push(...[depositEncode, getRepayPartEncode, repayEncode]);
+      events.push(2);
+      values.push(0);
+      datas.push(repayEncode);
 
       // Send tx
-      const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-        events,
-        values,
-        datas,
-        {
-          value: "0",
-        }
-      );
-      const gasLimit = this.gasLimitConst + +estimateGas.toString();
-      console.log("GAS LIMIT:", gasLimit.toString());
+      try {
+        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+          events,
+          values,
+          datas,
+          {
+            value: "0",
+          }
+        );
+        const gasLimit = this.gasLimitConst + +estimateGas.toString();
+        console.log("GAS LIMIT:", gasLimit.toString());
 
-      const result = await this.pool.contractInstance.cook(
-        events,
-        values,
-        datas,
-        {
-          value: "0",
-          gasLimit,
-        }
-      );
+        const result = await this.pool.contractInstance.cook(
+          events,
+          values,
+          datas,
+          {
+            value: "0",
+            gasLimit,
+          }
+        );
 
-      await this.wrapperStatusTx(result);
-      console.log(result);
+        await this.wrapperStatusTx(result);
+        console.log(result);
+      } catch (e) {
+        console.log(e);
+      }
     },
     async cookRemoveAndRepay(
       { amount, collateralAmount, updatePrice },

@@ -509,24 +509,28 @@ export default {
     },
 
     liquidationPrice() {
+      const userCollateralShare = +this.$store.getters.getUserCollateralShare(
+        this.poolId
+      );
+
       if (this.actionType === "borrow") {
         const liquidationPrice =
           (+this.$store.getters.getUserBorrowPart(this.poolId) +
             +this.pairValue) /
-          (((+this.$store.getters.getUserCollateralShare(this.poolId) +
-            +parseFloat(+this.mainValue)) *
-            this.ltv) /
+          (((userCollateralShare + +parseFloat(+this.mainValue)) * this.ltv) /
             100);
 
         return liquidationPrice;
       } else {
-        const liquidationPrice =
-          (+this.$store.getters.getUserBorrowPart(this.poolId) -
-            +this.mainValue) /
-          (((+this.$store.getters.getUserCollateralShare(this.poolId) -
-            +parseFloat(+this.pairValue || 0)) *
+        const numerator =
+          +this.$store.getters.getUserBorrowPart(this.poolId) - +this.mainValue;
+
+        const denominator =
+          ((userCollateralShare - +parseFloat(+this.pairValue || 0)) *
             this.ltv) /
-            100);
+          100;
+
+        const liquidationPrice = numerator / denominator;
 
         return liquidationPrice === Infinity || liquidationPrice <= 0
           ? "xxx.xx"
