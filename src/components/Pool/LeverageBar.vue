@@ -81,8 +81,12 @@ export default {
       let finalBorrowAmount = 0;
 
       for (let i = this.sliderValue; i > 0; i--) {
-        finalBorrowAmount += +startAmount;
-        startAmount = startAmount * amountMultiplyer;
+        if(i>1){
+          finalBorrowAmount += +startAmount;
+          startAmount = startAmount * amountMultiplyer;
+        } else {
+          finalBorrowAmount += +startAmount * i;
+        }
       }
       const resultCollateral = +this.$store.getters.getUserCollateralShare(this.pool.id)
           + finalBorrowAmount / this.tokentToNUSD;

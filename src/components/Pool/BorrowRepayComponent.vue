@@ -761,8 +761,12 @@ export default {
       let finalAmount = 0;
 
       for (let i = this.multiplier; i > 0; i--) {
-        finalAmount += +startAmount;
-        startAmount = startAmount * amountMultiplyer;
+        if( i > 1 ){
+          finalAmount += +startAmount;
+          startAmount = startAmount * amountMultiplyer;
+        } else {
+          finalAmount += +startAmount*i;
+        }
       }
 
       const mimAmount = this.$ethers.utils.parseUnits(

@@ -42,7 +42,7 @@ export default [
     },
     reverseSwapContractInfo: {
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
-      abi: swapContractAbi,
+      abi: reverseSwapperContractAbiV1,
     },
   },
   {
@@ -82,7 +82,7 @@ export default [
     },
     reverseSwapContractInfo: {
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
-      abi: swapContractAbi,
+      abi: reverseSwapperContractAbiV1,
     },
   },
   {
@@ -122,7 +122,7 @@ export default [
     },
     reverseSwapContractInfo: {
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
-      abi: swapContractAbi,
+      abi: reverseSwapperContractAbiV1,
     },
   },
   {
@@ -162,7 +162,7 @@ export default [
     },
     reverseSwapContractInfo: {
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
-      abi: swapContractAbi,
+      abi: reverseSwapperContractAbiV1,
     },
   },
   {
@@ -203,7 +203,7 @@ export default [
     },
     reverseSwapContractInfo: {
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
-      abi: swapContractAbi,
+      abi: reverseSwapperContractAbiV1,
     },
   },
   {
@@ -244,7 +244,7 @@ export default [
     },
     reverseSwapContractInfo: {
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
-      abi: swapContractAbi,
+      abi: reverseSwapperContractAbiV1,
     },
   },
   {
@@ -284,7 +284,7 @@ export default [
     },
     reverseSwapContractInfo: {
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
-      abi: swapContractAbi,
+      abi: reverseSwapperContractAbiV1,
     },
   },
   {
@@ -364,7 +364,7 @@ export default [
     },
     reverseSwapContractInfo: {
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
-      abi: swapContractAbi,
+      abi: reverseSwapperContractAbiV1,
     },
   },
   {
@@ -404,7 +404,7 @@ export default [
     },
     reverseSwapContractInfo: {
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
-      abi: swapContractAbi,
+      abi: reverseSwapperContractAbiV1,
     },
   },
 ];
