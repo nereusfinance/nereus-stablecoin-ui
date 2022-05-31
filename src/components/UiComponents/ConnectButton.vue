@@ -1,17 +1,20 @@
 <template>
   <div v-if="isConnected">
     <button
-      class="btn mini connected-btn"
       :class="{ load: connectLoader, connected: isConnected }"
-      @click="walletBtnHandler"
+      class="btn mini connected-btn"
+      @click="disconnect"
       @mouseenter="itsHover = true"
       @mouseleave="itsHover = false"
     >
       <ButtonLoader v-if="connectLoader" />
+      <template v-else-if="itsHover">Disconnect</template>
       <template v-else>
         <div>
           {{ walletBtnText }}
-          <p class="slicedAddress">{{ slicedAccountAddress }}</p>
+          <p class="slicedAddress" data-cy="account-address">
+            {{ slicedAccountAddress }}
+          </p>
         </div>
       </template>
     </button>
@@ -19,8 +22,8 @@
 
   <div v-else>
     <button
-      class="btn mini connect-btn"
       :class="{ load: connectLoader, connected: isConnected }"
+      class="btn mini connect-btn"
       @click="walletBtnHandler"
     >
       <ButtonLoader v-if="connectLoader" />
@@ -36,6 +39,7 @@
 // import binanceIcon from "@/assets/images/networks/binance-icon.svg";
 // import fantomIcon from "@/assets/images/networks/fantom-icon.svg";
 import avaxIcon from "@/assets/images/networks/avalanche-avax-icon.svg";
+import WalletConnectProvider from "@walletconnect/client";
 
 const ButtonLoader = () => import("@/components/UiComponents/ButtonLoader");
 
@@ -118,18 +122,21 @@ export default {
         type: "connectWallet",
         isShow: true,
       });
-      //
-      // if (!window.ethereum) return false;
-      //
-      // this.connectLoader = true;
-      // console.log(0)
-      // try {
-      //   await this.$store.dispatch("connectAccount", window.ethereum);
-      // } catch (e) {
-      //   console.log("e:", e);
-      // }
-      //
-      // this.connectLoader = false;
+    },
+    async disconnect() {
+      const walletType = localStorage.getItem("walletType");
+      if (walletType === "walletConnect") {
+        const walletConnectProvider = new WalletConnectProvider({
+          bridge: "https://bridge.walletconnect.org",
+          rpc: {
+            43113: "https://api.avax-test.network/ext/bc/C/rpc",
+            43114: "https://api.avax.network/ext/bc/C/rpc",
+          },
+        });
+        await walletConnectProvider.killSession();
+      }
+      delete window.localStorage.walletType;
+      window.location.reload();
     },
   },
   components: {
@@ -153,7 +160,7 @@ export default {
   height: 40px;
   width: 104px;
   border-radius: 100px;
-  margin: 24px 0px;
+  margin: 24px 0;
 
   //Typography
   font-family: Work Sans, sans-serif;
@@ -162,7 +169,7 @@ export default {
   font-weight: 400;
 
   line-height: 16px;
-  letter-spacing: 0em;
+  letter-spacing: 0;
   text-align: center;
   padding: 4px 12px;
   background: rgba(28, 28, 28, 0.16);

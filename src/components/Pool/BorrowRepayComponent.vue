@@ -3,17 +3,22 @@
     <h3 v-if="actionType === 'borrow'">Deposit collateral</h3>
     <h3 v-if="actionType === 'repay'">Repay {{ tokenPairName }}</h3>
 
-    <div class="checkbox-wrap" v-if="this.tokenName === 'WAVAX'">
-      <div class="box-wrap" @click="toggleUseAVAX" :class="{ active: useAVAX }">
-        <div class="checkbox" v-if="useAVAX">
+    <div v-if="this.tokenName === 'WAVAX'" class="checkbox-wrap">
+      <div
+        :class="{ active: useAVAX }"
+        class="box-wrap"
+        data-cy="use-avax"
+        @click="toggleUseAVAX"
+      >
+        <div v-if="useAVAX" class="checkbox">
           <img
+            alt=""
             class="checkbox-checked"
             src="@/assets/images/checkboxChecked.svg"
-            alt=""
           />
         </div>
-        <div class="checkbox" v-else>
-          <img src="@/assets/images/checkbox.svg" alt="" />
+        <div v-else class="checkbox">
+          <img alt="" src="@/assets/images/checkbox.svg" />
         </div>
       </div>
       <p class="label-text" @click="toggleUseAVAX">Use AVAX</p>
@@ -21,11 +26,12 @@
 
     <div class="input-wrap">
       <ValueInput
-        :max="maxMainValue"
-        @onchange="updateMainValue"
-        :parentValue="mainValue"
+        :cy-data="'main-input'"
         :error="mainValueError"
+        :max="maxMainValue"
+        :parentValue="mainValue"
         :valueName="mainValueTokenName"
+        @onchange="updateMainValue"
       />
     </div>
 
@@ -41,29 +47,30 @@
         :parentValue="pairValue"
         :error="pairValueError"
         :disabled="actionType === 'repay' && showDeleverage"
+        :cy-data="'pair-input'"
       />
     </div>
 
     <div class="estimate-box" v-if="!(showLeverage || showDeleverage)">
       <EstimationBlock
         :liquidityPrice="liquidationPrice"
+        :maxValue="ltv"
         :nxusdAmount="
           this.actionType === 'borrow' ? this.pairValue : -this.mainValue
         "
-        @onchange="updatePercentValue"
-        :maxValue="ltv"
-        :value="percentValue"
         :pool="pool"
         :tokentToNUSD="tokentToNUSD"
+        :value="percentValue"
+        @onchange="updatePercentValue"
       />
     </div>
 
     <div class="config-box" v-if="actionType === 'borrow' && !showLeverage">
       <LiquidationRules
         :liquidationPrice="liquidationPrice"
-        @onchange="updatePercentValue"
         :maxValue="ltv"
         :value="percentValue"
+        @onchange="updatePercentValue"
       />
     </div>
 
@@ -166,37 +173,38 @@
     <div class="action-wrap">
       <div class="checkbox-wrap">
         <div
+          :class="{ active: updatePrice }"
           class="box-wrap"
           @click="toggleUpdatePrice"
-          :class="{ active: updatePrice }"
         >
-          <div class="checkbox" v-if="updatePrice">
+          <div v-if="updatePrice" class="checkbox">
             <img
+              alt=""
               class="checkbox-checked"
               src="@/assets/images/checkboxChecked.svg"
-              alt=""
             />
           </div>
-          <div class="checkbox" v-else>
-            <img src="@/assets/images/checkbox.svg" alt="" />
+          <div v-else class="checkbox">
+            <img alt="" src="@/assets/images/checkbox.svg" />
           </div>
         </div>
         <p class="label-text" @click="toggleUpdatePrice">Update price</p>
 
         <img
-          src="@/assets/images/i-icon.svg"
-          alt=""
-          class="info-icon"
           v-tooltip="
             'Update Collateral price from the oracle, for a small gas fee!'
           "
+          alt=""
+          class="info-icon"
+          src="@/assets/images/i-icon.svg"
         />
       </div>
 
       <button
-        class="btn action-btn"
-        @click="actionHandler"
         :disabled="actionBtnText === 'Nothing to do'"
+        class="btn action-btn"
+        data-cy="borrow-repay"
+        @click="actionHandler"
       >
         {{ actionBtnText }}
       </button>
@@ -564,6 +572,8 @@ export default {
     toggleUseAVAX() {
       const AVAXStatus = this.$store.getters.getUseAVAX;
       this.$store.commit("setUseAVAX", !AVAXStatus);
+      this.updateMainValue(this.mainValue);
+      this.updatePairValue(this.pairValue);
     },
     toFixed(num, fixed) {
       // eslint-disable-next-line no-useless-escape
@@ -917,7 +927,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .deposit-borrow-block {
   padding: 0 24px;
   background: $clrBg2;

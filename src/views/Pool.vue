@@ -6,15 +6,16 @@
       <div class="pool-head-bar">
         <div class="btns-group">
           <button
-            class="btn mini borrow-btn"
             :class="{ active: actionType === 'borrow' }"
+            class="btn mini borrow-btn"
             @click="setActionType('borrow')"
           >
             Borrow
           </button>
           <button
-            class="btn mini replay-btn"
             :class="{ active: actionType === 'repay' }"
+            class="btn mini replay-btn"
+            data-cy="repay-button"
             @click="setActionType('repay')"
           >
             Repay
@@ -26,39 +27,39 @@
         </template>
       </div>
 
-      <div class="pool-content" v-if="pool">
+      <div v-if="pool" class="pool-content">
         <BorrowRepayComponent
-          :poolId="pool.id"
           :actionType="actionType"
           :balance="pool.userBalance"
           :balanceNativeToken="pool.userBalanceNativeToken"
+          :exchangeRate="pool.tokenPrice"
+          :isUpdatePrice="pool.askUpdatePrice"
+          :ltv="pool.ltv"
           :pairBalance="pool.userPairBalance"
+          :poolId="pool.id"
+          :tokenDecimals="pool.token.decimals"
+          :tokenName="pool.token.name"
+          :tokenPair="pool.tokenPairPrice"
+          :tokenPairDecimals="pool.pairToken.decimals"
+          :tokenPairName="pool.pairToken.name"
+          :tokenToUsd="pool.tokenPrice"
+          :userTotalBorrowed="pool.userBorrowPart"
+          :userTotalCollateral="pool.userCollateralShare"
           @addAndBorrow="addAndBorrowHandler"
+          @addAndBorrowMultiple="addMultiBorrowHandler"
           @addCollateral="addCollateralHandler"
           @borrow="borrowHandler"
+          @borrowMultiple="addMultiBorrowHandler"
           @removeAndRepay="removeAndRepayHandler"
           @repayWithDeleverage="repayWithDeleverageHandler"
           @removeAndRepayMax="removeAndRepayMaxHandler"
-          @repay="repayHandler"
           @removeCollateral="removeCollateralHandler"
-          @addAndBorrowMultiple="addMultiBorrowHandler"
-          @borrowMultiple="addMultiBorrowHandler"
-          :isUpdatePrice="pool.askUpdatePrice"
-          :tokenName="pool.token.name"
-          :tokenToUsd="pool.tokenPrice"
-          :tokenDecimals="pool.token.decimals"
-          :tokenPair="pool.tokenPairPrice"
-          :tokenPairName="pool.pairToken.name"
-          :tokenPairDecimals="pool.pairToken.decimals"
-          :userTotalCollateral="pool.userCollateralShare"
-          :userTotalBorrowed="pool.userBorrowPart"
-          :ltv="pool.ltv"
-          :exchangeRate="pool.tokenPrice"
+          @repay="repayHandler"
         />
 
         <CollateralParameters
-          :infoItems="collateralInfo"
           :exchangeRate="tokenPrice"
+          :infoItems="collateralInfo"
           :tokenName="pool.token.name"
         />
 
@@ -195,6 +196,8 @@ export default {
       if (type !== this.actionType) this.actionType = type;
     },
     toStand() {
+      const AVAXStatus = true;
+      this.$store.commit("setUseAVAX", !AVAXStatus);
       this.$router.push({ name: "Stand" });
     },
     async addMultiBorrowHandler(data) {
