@@ -127,9 +127,39 @@ export default {
     },
   },
   methods: {
-    action(statusText) {
+    async approveMasterContract() {
+      try {
+        const masterContract = await this.getMasterContract();
+
+        console.log(
+          "approveMasterContract",
+          this.account,
+          masterContract,
+          true,
+          this.$ethers.utils.formatBytes32String(""),
+          this.$ethers.utils.formatBytes32String(""),
+          this.$ethers.utils.formatBytes32String("")
+        );
+
+        const tx =
+          await this.pool.masterContractInstance.setMasterContractApproval(
+            this.account,
+            masterContract,
+            true,
+            this.$ethers.utils.formatBytes32String(""),
+            this.$ethers.utils.formatBytes32String(""),
+            this.$ethers.utils.formatBytes32String("")
+          );
+
+        const receipt = await tx.wait();
+        return receipt;
+      } catch (e) {
+        console.log("approveMasterContract err:", e);
+        return false;
+      }
+    },
+    async action(statusText) {
       if(statusText === "Deposit") {
-        console.log(this.transactionPending);
         let tx = 2;
         if (tx === 1)
           this.transactionPending = "pending";
@@ -137,13 +167,16 @@ export default {
           this.transactionPending = "finished";
         console.log(this.transactionPending);
       }
-      if(statusText === "Withdraw") {
-        let tx = 0;
-        if (tx === 0)
-          this.transactionPending = 'approved';
-        else if (tx === 1)
-          this.transactionPending = "pending";
+      if(statusText === "Approve") {
+        console.log(this.transactionPending);
+        let tx = 4;
+        if (tx === 1)
+          this.transactionPending = "pending approve";
         else if (tx === 2)
+          this.transactionPending = "pending withdraw";
+        else if (tx === 3)
+          this.transactionPending = "withdraw";
+        else if (tx === 4)
           this.transactionPending = "finished";
         console.log(this.transactionPending);
       }
