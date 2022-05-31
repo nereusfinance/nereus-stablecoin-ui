@@ -8,7 +8,9 @@
     class="deposit-withdraw-container"
   >
     <h1>How much would you like to deposit?</h1>
-    <p>Please enter amount you would like to deposit. The maximum amount you can deposit is shown below.</p>
+    <p>
+      Please enter amount you would like to deposit. The maximum amount you can deposit is shown below.
+    </p>
     <div class="available-amount">
       <h2>Available to deposit</h2>
       <h3>{{availableDeposit}}<span> NXUSD</span></h3>
@@ -55,41 +57,42 @@
   </div>
 
   <div v-if="overview" class="deposit-withdraw-container">
-    <h1>{{ actionType }} overview</h1>
-    <p>These are your transaction details. Make sure to check if this is correct before submitting.</p>
+    <h1 v-if="transactionPending !== 'finished'">{{ actionType }} overview</h1>
+    <p v-if="transactionPending !== 'finished'">
+      These are your transaction details. Make sure to check if this is correct before submitting.
+    </p>
+
+    <h1 v-if="transactionPending === 'finished'">Congrats!</h1>
+    <p v-if="transactionPending === 'finished'">Your action has been successfully executed</p>
     <div class="currency-overview">
       <h2>Currency</h2>
       <TokenIcon :token="pool.name"/>
       <div>
         {{valueAmount}}
         {{pool.name}}
-        <p style="margin: 0">$ {{valueInUsd}}</p>
+        <p
+          v-if="actionType === 'Deposit'"
+          style=
+            "margin: 0;
+            text-align: right;
+            font-size: 12px"
+        >
+          $ {{valueInUsd}}
+        </p>
       </div>
     </div>
-    <Status
+    <TransactionStatus
       v-if="actionType === 'Deposit'"
       :status-text="depositStatus"
       :transactionPending="transactionPending"
       :action="action"
     />
-    <Status
+    <TransactionStatus
       v-if="actionType === 'Withdraw'"
       :statusText="withdrawStatus"
       :transactionPending="transactionPending"
       :action="action"
     />
-<!--    <TransactionStatus-->
-<!--      v-if="actionType === 'Deposit'"-->
-<!--      :status-text="depositStatus"-->
-<!--      :transactionPending="transactionPending"-->
-<!--      :action="action"-->
-<!--    />-->
-<!--    <TransactionStatus-->
-<!--      v-if="actionType === 'Withdraw'"-->
-<!--      :statusText="withdrawStatus"-->
-<!--      :transactionPending="transactionPending"-->
-<!--      :action="action"-->
-<!--    />-->
     <div class="addAVAXToWallet" v-if="transactionPending === 'finished'">
       <img
         src="@/assets/images/icon-add.svg"
@@ -105,8 +108,7 @@
 <script>
 import ValueInput from "@/components/UiComponents/ValueInput";
 import TokenIcon from "@/components/UiComponents/TokenIcon";
-// import TransactionStatus from "@/components/UiComponents/TransactionStatus";
-import Status from "@/components/UiComponents/TransactionStatus";
+import TransactionStatus from "@/components/UiComponents/TransactionStatus";
 const BackButton = () => import("@/components/UiComponents/BackButton");
 
 export default {
@@ -173,7 +175,7 @@ export default {
     },
     async action(statusText) {
       if(statusText === "Deposit") {
-        let tx = 1;
+        let tx = 2;
         if (tx === 1)
           this.transactionPending = "pending";
         else if (tx === 2)
@@ -182,7 +184,7 @@ export default {
       }
       if(statusText === "Approve") {
         console.log(this.transactionPending);
-        let tx = 3;
+        let tx = 4;
         if (tx === 1)
           this.transactionPending = "pending approve";
         else if (tx === 2)
@@ -244,8 +246,7 @@ export default {
     },
   },
   components: {
-    Status,
-    //TransactionStatus,
+    TransactionStatus,
     TokenIcon,
     ValueInput,
     BackButton,
@@ -325,7 +326,7 @@ export default {
       height: 16px;
       margin-left: auto;
       margin-right: 4px;
-      margin-bottom: 16px;
+      //margin-bottom: 16px;
     }
   }
 
