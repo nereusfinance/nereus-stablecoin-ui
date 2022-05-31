@@ -112,6 +112,7 @@
           :tokentToNUSD="tokentToNUSD"
           :mainValue="mainValue"
           :pairValue="pairValue"
+          :maxPairValue="maxPairValue"
         />
       </template>
     </div>
@@ -531,7 +532,6 @@ export default {
           100;
 
         const liquidationPrice = numerator / denominator;
-
         return liquidationPrice === Infinity || liquidationPrice <= 0
           ? "xxx.xx"
           : liquidationPrice;
@@ -554,6 +554,8 @@ export default {
     toggleShowLeverage() {
       if (this.showLeverage === true) {
         this.multiplier = 1;
+      } else {
+        this.updatePairValue(this.maxPairValue);
       }
 
       this.showLeverage = !this.showLeverage;
@@ -591,7 +593,7 @@ export default {
             amount: parsedPair,
             updatePrice: this.updatePrice,
           };
-
+          console.log('this.multiplier', this.multiplier);
           if (this.multiplier > 1) {
             payload.amount = this.toFixed(this.pairValue, 6);
             this.multiplierHandle(payload, "addAndBorrowMultiple");
@@ -713,7 +715,7 @@ export default {
             amount: parsedPair,
             updatePrice: this.updatePrice,
           };
-
+          console.log('this.multiplier', this.multiplier);
           if (this.multiplier > 1) {
             payload.amount = this.toFixed(this.pairValue, 6);
             this.multiplierHandle(payload, "borrowMultiple");

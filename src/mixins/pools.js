@@ -81,11 +81,11 @@ export default {
         this.signer
       );
 
-      // const swapContract = new this.$ethers.Contract(
-      //   pool.swapContractInfo.address,
-      //   JSON.stringify(pool.swapContractInfo.abi),
-      //   this.signer
-      // );
+      const swapContract = new this.$ethers.Contract(
+        pool.swapContractInfo.address,
+        JSON.stringify(pool.swapContractInfo.abi),
+        this.signer
+      );
 
       const reverseSwapContract = new this.$ethers.Contract(
         pool.reverseSwapContractInfo.address,
@@ -263,7 +263,7 @@ export default {
           oracleDatas: pool.token.oracleDatas,
           oracleExchangeRate: tokenPairRate,
         },
-        // swapContract: swapContract,
+        swapContract: swapContract,
         reverseSwapContract: reverseSwapContract,
       };
     },

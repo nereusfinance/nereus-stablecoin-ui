@@ -28,7 +28,7 @@
 
       <div class="liquid-text">
         The price of the collateral has to decrease approximately by
-          <span style="color: #FDD33F">{{ leverageData.liquidationRisk }}</span>
+          <span style="color: #FDD33F">{{ leverageData.liquidationRisk }} %</span>
           for you to get flagged for liquidation
 
       </div>
@@ -55,7 +55,10 @@ export default {
     },
     pairValue: {
       required: true,
-    }
+    },
+    maxPairValue: {
+      required: true,
+    },
   },
   data() {
     return {
@@ -69,43 +72,67 @@ export default {
       return sliderValue.toFixed(2);
     },
     leverageData() {
-      const borrowPerc = (this.pool.ltv-this.$store.getters.getBorrowFee(this.pool.id))/100;
-      const inputAmount = +this.$store.getters.getUserCollateralShare(this.pool.id)*this.tokentToNUSD -
-      +this.$store.getters.getUserBorrowPart(this.pool.id)/borrowPerc;
-      let cycleAmount = inputAmount;
-      let resultAmount = 0;
-      let decimalPart = this.sliderValue - Math.floor(this.sliderValue)
-      for (let i = 0; i < this.sliderValue; i++) {
-        if ( this.sliderValue-i >= 1 ){
-          resultAmount+=cycleAmount;
-          cycleAmount=cycleAmount*borrowPerc;
-        } else {
-          cycleAmount=cycleAmount*decimalPart;
-          resultAmount+=cycleAmount;
-        }
+      // const borrowPerc = (this.pool.ltv-this.$store.getters.getBorrowFee(this.pool.id))/100;
+      const borrowPerc = (100-this.$store.getters.getBorrowFee(this.pool.id))/100;
+      // const inputAmount = +this.$store.getters.getUserCollateralShare(this.pool.id)*this.tokentToNUSD -
+      // +this.$store.getters.getUserBorrowPart(this.pool.id)/borrowPerc;
+      const amountMultiplyer = this.pairValue * this.pool.ltv / this.maxPairValue / 100;
+      let startAmount = this.pairValue * borrowPerc;
+      let finalBorrowAmount = 0;
+
+      for (let i = this.sliderValue; i > 0; i--) {
+        finalBorrowAmount += +startAmount;
+        startAmount = startAmount * amountMultiplyer;
       }
-      const maxBorrowAmount=resultAmount*borrowPerc;
-      const availableBorrow = maxBorrowAmount-resultAmount+inputAmount;
-      let priceDecreaseToLiquidate = availableBorrow/resultAmount/
-          (1-this.$store.getters.getBorrowFee(this.pool.id)/100)*100;
-      if (priceDecreaseToLiquidate>100){
-        priceDecreaseToLiquidate=100
-      }
-      const expectedNXUSDAmount = resultAmount - inputAmount + +this.$store.getters.getUserBorrowPart(this.pool.id);
+      const resultCollateral = +this.$store.getters.getUserCollateralShare(this.pool.id)
+          + finalBorrowAmount / this.tokentToNUSD;
+      const resultBorrow = +this.$store.getters.getUserBorrowPart(this.pool.id) + finalBorrowAmount;
+      const liquidationPrice = resultBorrow/(resultCollateral*this.pool.ltv/100);
+      const priceDifferens = this.tokentToNUSD - liquidationPrice;
+      const liquidationRisk = priceDifferens/this.tokentToNUSD*100;
+      // let cycleAmount = inputAmount;
+      // let resultAmount = 0;
+      // let decimalPart = this.sliderValue - Math.floor(this.sliderValue)
+      // for (let i = 0; i < this.sliderValue; i++) {
+      //   if ( this.sliderValue-i >= 1 ){
+      //     resultAmount+=cycleAmount;
+      //     cycleAmount=cycleAmount*borrowPerc;
+      //   } else {
+      //     cycleAmount=cycleAmount*decimalPart;
+      //     resultAmount+=cycleAmount;
+      //   }
+      // }
+      // // const maxBorrowAmount=resultAmount*borrowPerc;
+      // const maxBorrowAmount=resultAmount*borrowPerc+ +this.$store.getters.getUserCollateralShare(this.pool.id)
+      //     *this.tokentToNUSD*((this.pool.ltv-this.$store.getters.getBorrowFee(this.pool.id))/100);
+      // console.log('(1-this.$store.getters.getBorrowFee(this.pool.id)/100)*100', (this.pool.ltv-this.$store.getters.getBorrowFee(this.pool.id))/100);
+      // console.log('borrowPerc', borrowPerc);
+      // const availableBorrow = maxBorrowAmount-resultAmount+inputAmount-this.$store.getters.getUserBorrowPart(this.pool.id);
+      // let liquidationRisk = availableBorrow/maxBorrowAmount*100;
+      // if (liquidationRisk>100){
+      //   liquidationRisk=100
+      // }
+      // const expectedNXUSDAmount = resultAmount - inputAmount + +this.$store.getters.getUserBorrowPart(this.pool.id);
       // console.log('maxBorrowAmount', maxBorrowAmount);
-      // console.log('borrowed', resultAmount-inputAmount);
-      // console.log('availiable to borrow', availableBorrow);
-      // console.log('liquidationDecreaseAmount', priceDecreaseToLiquidate, '%');
+      // console.log('availableBorrow', availableBorrow);
+      // // console.log('availiable to borrow', availableBorrow);
+      // // console.log('liquidationDecreaseAmount', priceDecreaseToLiquidate, '%');
+      // return {
+      //   liquidationRisk: parseFloat(liquidationRisk).toFixed(2),
+      //   expectedNXUSDAmount: expectedNXUSDAmount.toFixed(4),
+      //   liquidationPrice: parseFloat(this.tokentToNUSD*(100-liquidationRisk)/100).toFixed(4)
+      // }
       return {
-        liquidationRisk: parseFloat(priceDecreaseToLiquidate).toFixed(2),
-        expectedNXUSDAmount: expectedNXUSDAmount.toFixed(4),
-        liquidationPrice: parseFloat(this.tokentToNUSD*(100-priceDecreaseToLiquidate)/100).toFixed(4)
+        liquidationRisk: liquidationRisk.toFixed(2),
+        expectedNXUSDAmount: (+finalBorrowAmount+ +this.$store.getters.getUserBorrowPart(this.pool.id)).toFixed(4),
+        liquidationPrice: liquidationPrice.toFixed(4)
       }
     },
   },
   methods: {
     testOnChangeValue(val) {
       this.sliderValue = val;
+      this.$emit("update", +val);
     },
   },
   components: {

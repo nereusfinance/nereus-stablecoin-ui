@@ -279,7 +279,7 @@ export default [
     ltv: 75,
     initialMax: 20,
     swapContractInfo: {
-      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      address: "0x80f9bb12cf020fb314a5dfb948558c26127998ea",
       abi: swapContractAbi,
     },
     reverseSwapContractInfo: {
