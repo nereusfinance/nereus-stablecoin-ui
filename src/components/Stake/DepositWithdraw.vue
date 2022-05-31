@@ -173,7 +173,7 @@ export default {
     },
     async action(statusText) {
       if(statusText === "Deposit") {
-        let tx = 2;
+        let tx = 1;
         if (tx === 1)
           this.transactionPending = "pending";
         else if (tx === 2)
@@ -182,7 +182,7 @@ export default {
       }
       if(statusText === "Approve") {
         console.log(this.transactionPending);
-        let tx = 4;
+        let tx = 1;
         if (tx === 1)
           this.transactionPending = "pending approve";
         else if (tx === 2)
