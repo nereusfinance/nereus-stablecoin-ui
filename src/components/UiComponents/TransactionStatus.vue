@@ -1,225 +1,153 @@
 <template>
   <div class="transaction-status-block">
-    <div class="status-text" v-if="transactionPending !== 'finished' && statusText[0] === 'Deposit'">
-      <div class="icon-text">
-        <img
-          src="@/assets/images/icon-one.svg"
-          alt=""
-          class="status-icon"
-        />
-        <h1 style="color: white">{{ statusText[0] }}</h1>
-      </div>
-      <hr>
-      <div class="icon-text">
-        <img
-          src="@/assets/images/icon-two.svg"
-          class="status-icon"
-          alt=""
-        />
-        <h1>{{ statusText[1] }}</h1>
-      </div>
-    </div>
-    <div class="status-text" v-if="transactionPending !== 'finished' && statusText[0] === 'Approve'">
-      <div class="icon-text">
-        <img
-          src="@/assets/images/icon-one.svg"
-          alt=""
-          class="status-icon"
-        />
-        <h1 style="color: white">{{ statusText[0] }}</h1>
-      </div>
-      <hr :class="{active: transactionPending === 'pending withdraw'}">
-      <div class="icon-text">
-        <img
-          src="@/assets/images/icon-two.svg"
-          class="status-icon"
-          :class="{active: transactionPending === 'pending withdraw'}"
-          alt=""
-        />
-        <h1 :class="{active: transactionPending === 'pending withdraw'}">{{ statusText[1] }}</h1>
-      </div>
-      <hr>
-      <div class="icon-text">
-        <img
-          src="@/assets/images/icon-three.svg"
-          alt=""
-          class="status-icon"
-        />
-        <h1>{{ statusText[2] }}</h1>
-      </div>
-    </div>
-    <!--//////////////////////////////////////////////////////////////////////////////////////////!-->
-
-    <div class="status-text" v-if="transactionPending === 'finished'">
-      <div class="icon-text">
-        <img
-          src="@/assets/images/icon-done.svg"
-          alt=""
-          class="status-icon"
-        />
-        <h1 style="color: white"> {{ statusText[0] }}</h1>
-      </div>
-      <hr :class="{active: transactionPending === 'finished'}">
-      <div class="icon-text">
-        <img
-          src="@/assets/images/icon-done.svg"
-          alt=""
-          class="status-icon"
-          :class="{ active: transactionPending === 'finished'}"
-        />
-        <h1 :class="{ active: transactionPending === 'finished'}">{{ statusText[1] }}</h1>
-      </div>
-      <hr v-if="statusText.length > 2" :class="{active: transactionPending === 'finished'}">
-      <div class="icon-text" v-if="statusText.length > 2">
-        <img
-          src="@/assets/images/icon-done.svg"
-          alt=""
-          class="status-icon"
-          :class="{ active: transactionPending === 'finished'}"
-        />
-        <h1 :class="{ active: transactionPending === 'finished'}">{{ statusText[2] }}</h1>
-      </div>
-    </div>
-    <!--//////////////////////////////////////////////////////////////////////////////////////////!-->
+    <StatusBlock
+      :transactionPending="transactionPending"
+      :statusText="statusText"
+    />
     <hr>
-    <div>
-      <div class="action-info" v-if="transactionPending === 'wait for action'" >
-        <h2>
-          1/{{statusText.length}} {{statusText[0]}}
-          <br>
-          <h3 v-if="statusText[0] === 'Deposit'">Please submit not to deposit</h3>
-          <h3 v-if="statusText[0] === 'Approve'">Please approve before withdrawal</h3>
-        </h2>
-        <button v-if="statusText[0]" @click="action(statusText[0])" >{{statusText[0]}}</button>
-      </div>
-
-      <div class="action-info" v-if="statusText[0] === 'Approve' && transactionPending === 'pending withdraw'" >
-        <h2>
-          2/{{statusText.length}} {{statusText[1]}}
-          <br>
-          <h3>Please submit to withdraw</h3>
-        </h2>
-        <button @click="action(statusText[1])" >{{statusText[1]}}</button>
-      </div>
-      <!--//////////////////////////////////////////////////////////////////////////////////////////!-->
-      <div class="pending" v-else-if="transactionPending !== 'wait for action' || transactionPending !== 'withdraw'">
-        <p v-if="transactionPending === 'pending' || transactionPending === 'pending approve'">Transaction(s) Pending</p>
-        <p v-if="transactionPending === 'withdraw'">Please submit to withdraw</p>
-
-        <div class="finished" v-if="transactionPending === 'finished'">
-          <h1>
-            {{statusText.length}}/{{statusText.length}} Success!
-          </h1>
-          <router-link :to="{ name: 'Dashboard' }" class="dashboard-btn">Dashboard</router-link>
-        </div>
-
-        <hr v-if="transactionPending === 'finished'" style="margin-top: 9px">
-        <hr v-else-if="transactionPending !== 'wait for action'">
-
-
-<!--        Bottom container-->
-        <div class="bottom-container">
-          <div class="bottom-text" v-if="transactionPending !== 'wait for action'">
-            <h1>{{ statusText[0] }}</h1>
-            <h1 v-if="transactionPending === 'pending' || transactionPending === 'pending approve'">
-              Pending
-              <img
-                src="@/assets/images/icon-loading.svg"
-                alt=""
-                class="loading-icon"
-              />
-              Explorer
-              <img
-                src="@/assets/images/icon-explorer.svg"
-                alt=""
-                class="explorer-icon"
-              />
-            </h1>
-
-            <div v-if="transactionPending === 'withdraw' || transactionPending === 'pending withdraw'">
-              <h1>
-                Confirmed
-                <img
-                  src="@/assets/images/icon-completed.svg"
-                  alt=""
-                  class="loading-icon"
-                />
-                Explorer
-                <img
-                  src="@/assets/images/icon-explorer.svg"
-                  alt=""
-                  class="explorer-icon"
-                />
-              </h1>
-            </div>
-
-            <h1 v-if="transactionPending === 'finished'">
-              Completed
-              <img
-                src="@/assets/images/icon-completed.svg"
-                alt=""
-                class="loading-icon"
-              />
-              Explorer
-              <img
-                src="@/assets/images/icon-explorer.svg"
-                alt=""
-                class="explorer-icon"
-              />
-            </h1>
-          </div>
-
-          <div class="bottom-text" v-if="transactionPending === 'withdraw'">
-            <h1>{{ statusText[1] }}</h1>
-
-            <div v-if="transactionPending === 'withdraw'">
-              <h1>
-                Pending
-                <img
-                  src="@/assets/images/icon-loading.svg"
-                  alt=""
-                  class="loading-icon"
-                />
-                Explorer
-                <img
-                  src="@/assets/images/icon-explorer.svg"
-                  alt=""
-                  class="explorer-icon"
-                />
-              </h1>
-            </div>
-
-            <h1 v-if="transactionPending === 'finished'">
-              Completed
-              <img
-                src="@/assets/images/icon-completed.svg"
-                alt=""
-                class="loading-icon"
-              />
-              Explorer
-              <img
-                src="@/assets/images/icon-explorer.svg"
-                alt=""
-                class="explorer-icon"
-              />
-            </h1>
-          </div>
-        </div>
-      </div>
+    <!--  Central block-->
+<!--    Withdraw-->
+    <div class="central-block-default" v-if="transactionPending === 'wait for action' && statusText[0] === 'Approve'">
+      <h2>
+        1/{{statusText.length}} {{statusText[0]}}
+        <br>
+        <h3>Please approve before withdrawal</h3>
+      </h2>
+      <button @click="action(statusText[0])" >{{statusText[0]}}</button>
+    </div>
+    <div
+      class="central-block-default"
+      style="padding-top: 16px; padding-bottom: 9px"
+      v-if="transactionPending === 'withdraw' && statusText[0] === 'Approve'"
+    >
+      <h2>
+        2/{{statusText.length}} {{statusText[1]}}
+        <br>
+        <h3>Please submit to withdraw</h3>
+      </h2>
+      <button @click="action('make withdraw')" >{{statusText[1]}}</button>
     </div>
 
+    <div class="central-block" v-if="transactionPending === 'pending withdraw'">
+      <p>Please submit to withdraw</p>
+    </div>
 
+<!--    Deposit-->
+    <div class="central-block" v-if="transactionPending === 'wait for action' && statusText[0] === 'Deposit'">
+      <h3 v-if="statusText[0] === 'Deposit'">Please submit not to deposit</h3>
+      <button @click="action(statusText[0])" >{{statusText[0]}}</button>
+    </div>
+
+<!--    Both-->
+    <div class="central-block" v-if="transactionPending === 'pending' || transactionPending === 'pending approve'">
+      <p>Transaction(s) Pending</p>
+    </div>
+
+    <div class="finished" v-if="transactionPending === 'finished'">
+      <h1>
+        {{statusText.length}}/{{statusText.length}} Success!
+      </h1>
+      <router-link :to="{ name: 'Dashboard' }" class="dashboard-btn">Dashboard</router-link>
+    </div>
+
+    <hr v-if="transactionPending !== 'wait for action'">
+<!--    Bottom block-->
+    <div class="bottom-block">
+      <div class="bottom-text" v-if="transactionPending !== 'wait for action'">
+        <h1>{{ statusText[0] }}</h1>
+        <h1 v-if="transactionPending === 'pending' || transactionPending === 'pending approve'">
+          Pending
+          <img
+            src="@/assets/images/icon-loading.svg"
+            alt=""
+            class="loading-icon"
+          />
+          Explorer
+          <img
+            src="@/assets/images/icon-explorer.svg"
+            alt=""
+            class="explorer-icon"
+          />
+        </h1>
+
+        <h1 v-if="transactionPending === 'finished' && statusText[0] === 'Deposit'">
+          Completed
+          <img
+            src="@/assets/images/icon-completed.svg"
+            alt=""
+            class="done-icon"
+          />
+          Explorer
+          <img
+            src="@/assets/images/icon-explorer.svg"
+            alt=""
+            class="explorer-icon"
+          />
+        </h1>
+
+<!--        withdraw & pending withdraw-->
+        <h1 v-if="transactionPending === 'withdraw' || transactionPending === 'pending withdraw'
+        || (transactionPending === 'finished' && statusText[0] === 'Approve')">
+          Confirmed
+          <img
+            src="@/assets/images/icon-completed.svg"
+            alt=""
+            class="done-icon"
+          />
+          Explorer
+          <img
+            src="@/assets/images/icon-explorer.svg"
+            alt=""
+            class="explorer-icon"
+          />
+        </h1>
+      </div>
+
+      <div class="bottom-text"
+           style="margin-top: 8px"
+           v-if="transactionPending === 'pending withdraw'
+           || (transactionPending === 'finished' && statusText[0] === 'Approve')"
+      >
+        <h1>{{ statusText[1] }}</h1>
+        <h1 v-if="transactionPending === 'pending withdraw'">
+          Pending
+          <img
+            src="@/assets/images/icon-loading.svg"
+            alt=""
+            class="loading-icon"
+          />
+          Explorer
+          <img
+            src="@/assets/images/icon-explorer.svg"
+            alt=""
+            class="explorer-icon"
+          />
+        </h1>
+
+        <h1 v-if="transactionPending === 'finished'">
+          Completed
+          <img
+            src="@/assets/images/icon-completed.svg"
+            alt=""
+            class="loading-icon"
+          />
+          Explorer
+          <img
+            src="@/assets/images/icon-explorer.svg"
+            alt=""
+            class="explorer-icon"
+          />
+        </h1>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import StatusBlock from "@/components/UiComponents/StatusBlock";
 export default {
-  name: "TransactionStatus",
-  data() {
-    return {
-
-    }
-  },
+  name: "Status",
+  components: { StatusBlock },
   props: {
     statusText: {
       type: Array,
@@ -231,9 +159,6 @@ export default {
       type: Function,
     }
   },
-  methods: {
-
-  }
 };
 </script>
 
@@ -251,80 +176,20 @@ export default {
   flex-direction: column;
   align-items: center;
 
-  h1 {
-    font-weight: 400;
-    font-size: 12px;
-
-    text-align: center;
-    color: #FFFFFF;
-  }
-
-  .status-text {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    margin-right: auto;
-    margin-left: auto;
-    margin-bottom: 11px;
-
-    width: auto;
-    height: 16px;
-
-    .icon-text {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      gap: 3px;
-
-      .status-icon {
-        &:active {
-          filter: invert(98%) sepia(2%) saturate(234%) hue-rotate(358deg) brightness(120%) contrast(100%);
-        }
-      }
-    }
-
-    hr {
-      width: 24px;
-      height: 1px;
-      background: #606060;
-      margin-top: 0;
-
-      border-width: 0;
-
-      &.active {
-        background: #FFFFFF;
-      }
-    }
-    h1 {
-      font-weight: 400;
-      font-size: 12px;
-
-      text-align: center;
-      color: #8A8A8A;
-
-
-      &.active {
-        color: #FFFFFF;
-      }
-    }
-  }
-
   hr {
     height: 1px;
     width: 385px;
     background: #1C1C1C;
-
     border-width: 0;
   }
-  .action-info {
+
+  //Central block
+  .central-block, .central-block-default{
+    padding: 38px 16px 0 16px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     width: 388px;
-    margin-top: 38px;
-    padding: 0 16px;
 
     h2, h3 {
       font-weight: 400;
@@ -345,60 +210,49 @@ export default {
 
       background: #E7FC6E;
       border-radius: 16px;
-      margin-right: 6px;
     }
   }
-  .pending {
+
+  .central-block {
+    padding-top: 16px;
     display: flex;
     flex-direction: column;
+    h3 {
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+    button {
+      gap: 10px;
 
+      padding: 8px 24px;
+      margin-bottom: 4px;
+      width: 356px;
+      height: 40px;
+
+      background: #E7FC6E;
+      border-radius: 20px;
+    }
     p {
-      margin-top: 16px;
+      margin-bottom: 16px;
       font-weight: 400;
       font-size: 14px;
       color: #FDD33F;
-      padding-left: 16px;
       text-align: left;
-    }
-
-    h1 {
-      text-align: left;
-    }
-    hr {
-      margin-top: 11px;
-      margin-bottom: 12px;
-    }
-
-    .bottom-text {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      height: 20px;
-      padding-right: 14px;
-      padding-left: 16px;
-
-      h1 {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-      }
-      .loading-icon {
-        margin-left: 4px;
-        margin-right: 12px;
-      }
-      .explorer-icon {
-        margin-left: 4px;
-      }
     }
   }
+
   .finished {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    margin: 9px 16px 0;
+    width: 388px;
+    padding: 10px 16px;
+
+    h1 {
+      font-weight: 400;
+      font-size: 12px;
+    }
 
     .dashboard-btn {
       align-items: center;
@@ -411,6 +265,50 @@ export default {
       color: black;
       font-size: 16px;
       font-style: normal;
+    }
+  }
+
+//  Bottom Block
+  .bottom-block {
+    display: flex;
+    flex-direction: column;
+
+    .bottom-text {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      width: 388px;
+      height: 20px;
+      margin-top: 12px;
+      padding: 0 14px 0 16px;
+
+      h1 {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+
+        font-weight: 400;
+        font-size: 12px;
+        color: #FFFFFF;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% {  transform: rotate(359deg); }
+      }
+      .loading-icon {
+        animation: spin 2s linear infinite;
+      }
+      .done-icon, .loading-icon {
+        margin-left: 4px;
+        margin-right: 12px;
+      }
+
+      .explorer-icon {
+        margin-left: 4px;
+      }
     }
   }
 }

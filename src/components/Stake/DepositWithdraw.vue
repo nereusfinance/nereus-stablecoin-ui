@@ -106,7 +106,7 @@
 import ValueInput from "@/components/UiComponents/ValueInput";
 import TokenIcon from "@/components/UiComponents/TokenIcon";
 // import TransactionStatus from "@/components/UiComponents/TransactionStatus";
-import Status from "@/components/UiComponents/Status";
+import Status from "@/components/UiComponents/TransactionStatus";
 const BackButton = () => import("@/components/UiComponents/BackButton");
 
 export default {
@@ -173,7 +173,7 @@ export default {
     },
     async action(statusText) {
       if(statusText === "Deposit") {
-        let tx = 2;
+        let tx = 1;
         if (tx === 1)
           this.transactionPending = "pending";
         else if (tx === 2)
@@ -182,7 +182,7 @@ export default {
       }
       if(statusText === "Approve") {
         console.log(this.transactionPending);
-        let tx = 4;
+        let tx = 3;
         if (tx === 1)
           this.transactionPending = "pending approve";
         else if (tx === 2)
