@@ -182,7 +182,7 @@ export default {
       }
       if(statusText === "Approve") {
         console.log(this.transactionPending);
-        let tx = 1;
+        let tx = 2;
         if (tx === 1)
           this.transactionPending = "pending approve";
         else if (tx === 2)

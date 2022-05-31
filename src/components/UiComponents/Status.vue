@@ -6,6 +6,7 @@
     />
     <hr>
     <!--  Central block-->
+<!--    Withdraw-->
     <div class="central-block-default" v-if="transactionPending === 'wait for action' && statusText[0] === 'Approve'">
       <h2>
         1/{{statusText.length}} {{statusText[0]}}
@@ -14,7 +15,20 @@
       </h2>
       <button @click="action(statusText[0])" >{{statusText[0]}}</button>
     </div>
+    <div
+      class="central-block-default"
+      style="padding-top: 16px; padding-bottom: 9px"
+      v-if="transactionPending === 'withdraw' && statusText[0] === 'Approve'"
+    >
+      <h2>
+        2/{{statusText.length}} {{statusText[1]}}
+        <br>
+        <h3>Please submit to withdraw</h3>
+      </h2>
+      <button @click="action(statusText[1])" >{{statusText[1]}}</button>
+    </div>
 
+<!--    Deposit-->
     <div class="central-block" v-if="transactionPending === 'wait for action' && statusText[0] === 'Deposit'">
       <h3 v-if="statusText[0] === 'Deposit'">Please submit not to deposit</h3>
       <button @click="action(statusText[0])" >{{statusText[0]}}</button>
@@ -28,13 +42,28 @@
 <!--    Bottom block-->
     <div class="bottom-block">
       <div class="bottom-text" v-if="transactionPending !== 'wait for action'">
-        <h1>{{ statusText[0] }}</h1>
+        <h1 v-if="transactionPending !== 'withdraw'">{{ statusText[0] }}</h1>
+        <h1 v-if="transactionPending === 'withdraw'">{{ statusText[1] }}</h1>
         <h1 v-if="transactionPending === 'pending' || transactionPending === 'pending approve'">
           Pending
           <img
             src="@/assets/images/icon-loading.svg"
             alt=""
             class="loading-icon"
+          />
+          Explorer
+          <img
+            src="@/assets/images/icon-explorer.svg"
+            alt=""
+            class="explorer-icon"
+          />
+        </h1>
+        <h1 v-if="transactionPending === 'withdraw'">
+          Confirmed
+          <img
+            src="@/assets/images/icon-completed.svg"
+            alt=""
+            class="done-icon"
           />
           Explorer
           <img
@@ -130,6 +159,7 @@ export default {
       gap: 10px;
 
       padding: 8px 24px;
+      margin-bottom: 4px;
       width: 356px;
       height: 40px;
 
@@ -172,9 +202,10 @@ export default {
         0% { transform: rotate(0deg); }
         100% {  transform: rotate(359deg); }
       }
-
       .loading-icon {
         animation: spin 2s linear infinite;
+      }
+      .done-icon, .loading-icon {
         margin-left: 4px;
         margin-right: 12px;
       }
