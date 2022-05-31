@@ -8,7 +8,7 @@
             alt=""
             class="info-icon"
             v-tooltip="
-              'This bar displays how healthy your position is. If it is empty, you will be flagged for liquidation. The bar is enlarged by 10x to allow better visual representation.'
+              'This bar displays how healthy your position is. If you have an open position and the bar becomes empty, you will be flagged for liquidation. The Stablecoins bar is enlarged by 10x to allow better visual representation.'
             "
           />
         </div>
