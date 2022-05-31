@@ -6,14 +6,18 @@
     />
     <hr>
     <!--  Central block-->
-    <div class="central-block-default" v-if="transactionPending === 'wait for action'">
+    <div class="central-block-default" v-if="transactionPending === 'wait for action' && statusText[0] === 'Approve'">
       <h2>
         1/{{statusText.length}} {{statusText[0]}}
         <br>
-        <h3 v-if="statusText[0] === 'Deposit'">Please submit not to deposit</h3>
-        <h3 v-if="statusText[0] === 'Approve'">Please approve before withdrawal</h3>
+        <h3>Please approve before withdrawal</h3>
       </h2>
-      <button v-if="statusText[0]" @click="action(statusText[0])" >{{statusText[0]}}</button>
+      <button @click="action(statusText[0])" >{{statusText[0]}}</button>
+    </div>
+
+    <div class="central-block" v-if="transactionPending === 'wait for action' && statusText[0] === 'Deposit'">
+      <h3 v-if="statusText[0] === 'Deposit'">Please submit not to deposit</h3>
+      <button @click="action(statusText[0])" >{{statusText[0]}}</button>
     </div>
 
     <div class="central-block" v-if="transactionPending === 'pending' || transactionPending === 'pending approve'">
@@ -116,7 +120,22 @@ export default {
 
   .central-block {
     padding-top: 16px;
+    display: flex;
+    flex-direction: column;
+    h3 {
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+    button {
+      gap: 10px;
 
+      padding: 8px 24px;
+      width: 356px;
+      height: 40px;
+
+      background: #E7FC6E;
+      border-radius: 20px;
+    }
     p {
       margin-bottom: 16px;
       font-weight: 400;
@@ -148,10 +167,12 @@ export default {
         font-size: 12px;
         color: #FFFFFF;
       }
+
       @keyframes spin {
         0% { transform: rotate(0deg); }
         100% {  transform: rotate(359deg); }
       }
+
       .loading-icon {
         animation: spin 2s linear infinite;
         margin-left: 4px;
