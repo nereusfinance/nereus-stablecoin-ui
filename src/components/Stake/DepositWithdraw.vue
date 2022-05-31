@@ -173,7 +173,7 @@ export default {
     },
     async action(statusText) {
       if(statusText === "Deposit") {
-        let tx = 1;
+        let tx = 2;
         if (tx === 1)
           this.transactionPending = "pending";
         else if (tx === 2)
@@ -182,7 +182,7 @@ export default {
       }
       if(statusText === "Approve") {
         console.log(this.transactionPending);
-        let tx = 2;
+        let tx = 4;
         if (tx === 1)
           this.transactionPending = "pending approve";
         else if (tx === 2)
@@ -191,6 +191,12 @@ export default {
           this.transactionPending = "pending withdraw";
         else if (tx === 4)
           this.transactionPending = "finished";
+        console.log(this.transactionPending);
+      }
+
+      if(statusText === "make withdraw") {
+        console.log(this.transactionPending);
+        this.transactionPending = "pending withdraw";
         console.log(this.transactionPending);
       }
     },

@@ -25,7 +25,11 @@
         <br>
         <h3>Please submit to withdraw</h3>
       </h2>
-      <button @click="action(statusText[1])" >{{statusText[1]}}</button>
+      <button @click="action('make withdraw')" >{{statusText[1]}}</button>
+    </div>
+
+    <div class="central-block" v-if="transactionPending === 'pending withdraw'">
+      <p>Please submit to withdraw</p>
     </div>
 
 <!--    Deposit-->
@@ -34,16 +38,23 @@
       <button @click="action(statusText[0])" >{{statusText[0]}}</button>
     </div>
 
+<!--    Both-->
     <div class="central-block" v-if="transactionPending === 'pending' || transactionPending === 'pending approve'">
       <p>Transaction(s) Pending</p>
+    </div>
+
+    <div class="finished" v-if="transactionPending === 'finished'">
+      <h1>
+        {{statusText.length}}/{{statusText.length}} Success!
+      </h1>
+      <router-link :to="{ name: 'Dashboard' }" class="dashboard-btn">Dashboard</router-link>
     </div>
 
     <hr v-if="transactionPending !== 'wait for action'">
 <!--    Bottom block-->
     <div class="bottom-block">
       <div class="bottom-text" v-if="transactionPending !== 'wait for action'">
-        <h1 v-if="transactionPending !== 'withdraw'">{{ statusText[0] }}</h1>
-        <h1 v-if="transactionPending === 'withdraw'">{{ statusText[1] }}</h1>
+        <h1>{{ statusText[0] }}</h1>
         <h1 v-if="transactionPending === 'pending' || transactionPending === 'pending approve'">
           Pending
           <img
@@ -58,12 +69,67 @@
             class="explorer-icon"
           />
         </h1>
-        <h1 v-if="transactionPending === 'withdraw'">
+
+        <h1 v-if="transactionPending === 'finished' && statusText[0] === 'Deposit'">
+          Completed
+          <img
+            src="@/assets/images/icon-completed.svg"
+            alt=""
+            class="done-icon"
+          />
+          Explorer
+          <img
+            src="@/assets/images/icon-explorer.svg"
+            alt=""
+            class="explorer-icon"
+          />
+        </h1>
+
+<!--        withdraw & pending withdraw-->
+        <h1 v-if="transactionPending === 'withdraw' || transactionPending === 'pending withdraw'
+        || (transactionPending === 'finished' && statusText[0] === 'Approve')">
           Confirmed
           <img
             src="@/assets/images/icon-completed.svg"
             alt=""
             class="done-icon"
+          />
+          Explorer
+          <img
+            src="@/assets/images/icon-explorer.svg"
+            alt=""
+            class="explorer-icon"
+          />
+        </h1>
+      </div>
+
+      <div class="bottom-text"
+           style="margin-top: 8px"
+           v-if="transactionPending === 'pending withdraw'
+           || (transactionPending === 'finished' && statusText[0] === 'Approve')"
+      >
+        <h1>{{ statusText[1] }}</h1>
+        <h1 v-if="transactionPending === 'pending withdraw'">
+          Pending
+          <img
+            src="@/assets/images/icon-loading.svg"
+            alt=""
+            class="loading-icon"
+          />
+          Explorer
+          <img
+            src="@/assets/images/icon-explorer.svg"
+            alt=""
+            class="explorer-icon"
+          />
+        </h1>
+
+        <h1 v-if="transactionPending === 'finished'">
+          Completed
+          <img
+            src="@/assets/images/icon-completed.svg"
+            alt=""
+            class="loading-icon"
           />
           Explorer
           <img
@@ -175,8 +241,38 @@ export default {
     }
   }
 
+  .finished {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 388px;
+    padding: 10px 16px;
+
+    h1 {
+      font-weight: 400;
+      font-size: 12px;
+    }
+
+    .dashboard-btn {
+      align-items: center;
+      padding: 6px 16px;
+
+      width: auto;
+      background: #E7FC6E;
+      border-radius: 16px;
+      text-decoration: none;
+      color: black;
+      font-size: 16px;
+      font-style: normal;
+    }
+  }
+
 //  Bottom Block
   .bottom-block {
+    display: flex;
+    flex-direction: column;
+
     .bottom-text {
       display: flex;
       flex-direction: row;
