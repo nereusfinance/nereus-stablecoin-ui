@@ -1,15 +1,15 @@
 <template>
   <div class="wrapper">
     <div
-      class="val-input"
       :class="{
         focus: isFocus,
         error,
       }"
+      class="val-input"
     >
       <div
-        class="value-type"
         :class="{ 'values-choose': values.length }"
+        class="value-type"
         @click="openSelect"
       >
         <TokenIcon :token="valueName" />
@@ -18,31 +18,32 @@
 
         <img
           v-if="values.length"
-          src="@/assets/images/select-pixel-arrow.svg"
           alt=""
           class="arrow-icon"
+          src="@/assets/images/select-pixel-arrow.svg"
         />
       </div>
 
       <input
-        type="text"
-        placeholder="0.0"
-        @focus="setFocus(true)"
-        @blur="setFocus(false)"
         v-model="value"
+        :data-cy="cyData"
         :disabled="disabled"
+        placeholder="0.0"
+        type="text"
+        @blur="setFocus(false)"
+        @focus="setFocus(true)"
       />
 
-      <div class="max-btn" v-if="parseFloat(max) && showMax" @click="setMax">
+      <div v-if="parseFloat(max) && showMax" class="max-btn" @click="setMax">
         <p>MAX</p>
       </div>
 
       <transition name="fade">
-        <div class="values-select" v-if="showSelect">
+        <div v-if="showSelect" class="values-select">
           <div
-            class="balance-item"
             v-for="(token, idx) in values"
             :key="idx"
+            class="balance-item"
             @click="changeValue(token.tokenIdx)"
           >
             <div class="value-select-type">
@@ -54,7 +55,7 @@
         </div>
       </transition>
     </div>
-    <p class="error-text" v-if="errorText">{{ errorText }}</p>
+    <p v-if="errorText" class="error-text">{{ errorText }}</p>
   </div>
 </template>
 
@@ -63,6 +64,10 @@ const TokenIcon = () => import("@/components/UiComponents/TokenIcon");
 
 export default {
   props: {
+    cyData: {
+      type: String,
+      default: "",
+    },
     showMax: {
       type: Boolean,
       default: true,

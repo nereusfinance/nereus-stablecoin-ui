@@ -3,7 +3,7 @@
     <div class="container mini">
       <h1>Dashboard</h1>
 
-      <div class="transaction-btn" @click="toTransactions" v-if="false">
+      <div v-if="false" class="transaction-btn" @click="toTransactions">
         <p>Transactions</p>
       </div>
 
@@ -12,31 +12,31 @@
 
         <div class="btns-group">
           <button
-            class="btn mini borrow-btn"
             :class="{ active: shortcutState === 'borrow' }"
+            class="btn mini borrow-btn"
             @click="setShortcutType('borrow')"
           >
             Borrow
           </button>
           <button
-            class="btn mini replay-btn"
             :class="{ active: shortcutState === 'repay' }"
+            class="btn mini replay-btn"
             @click="setShortcutType('repay')"
           >
             Repay
           </button>
         </div>
 
-        <div class="items-wrap" v-if="userPools.length">
+        <div v-if="userPools.length" class="items-wrap">
           <OpenPoolItem
             v-for="pool in userPools"
-            :pool="pool"
             :key="pool.id"
             :actionType="shortcutState"
+            :pool="pool"
           />
         </div>
 
-        <EmptyPoolsState :blockType="shortcutState" v-else />
+        <EmptyPoolsState v-else :blockType="shortcutState" />
       </template>
     </div>
   </div>
