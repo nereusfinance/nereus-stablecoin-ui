@@ -66,18 +66,30 @@
         <p style="margin: 0">$ {{valueInUsd}}</p>
       </div>
     </div>
-    <TransactionStatus
+    <Status
       v-if="actionType === 'Deposit'"
       :status-text="depositStatus"
       :transactionPending="transactionPending"
       :action="action"
     />
-    <TransactionStatus
+    <Status
       v-if="actionType === 'Withdraw'"
       :statusText="withdrawStatus"
       :transactionPending="transactionPending"
       :action="action"
     />
+<!--    <TransactionStatus-->
+<!--      v-if="actionType === 'Deposit'"-->
+<!--      :status-text="depositStatus"-->
+<!--      :transactionPending="transactionPending"-->
+<!--      :action="action"-->
+<!--    />-->
+<!--    <TransactionStatus-->
+<!--      v-if="actionType === 'Withdraw'"-->
+<!--      :statusText="withdrawStatus"-->
+<!--      :transactionPending="transactionPending"-->
+<!--      :action="action"-->
+<!--    />-->
     <div class="addAVAXToWallet" v-if="transactionPending === 'finished'">
       <img
         src="@/assets/images/icon-add.svg"
@@ -93,7 +105,8 @@
 <script>
 import ValueInput from "@/components/UiComponents/ValueInput";
 import TokenIcon from "@/components/UiComponents/TokenIcon";
-import TransactionStatus from "@/components/UiComponents/TransactionStatus";
+// import TransactionStatus from "@/components/UiComponents/TransactionStatus";
+import Status from "@/components/UiComponents/Status";
 const BackButton = () => import("@/components/UiComponents/BackButton");
 
 export default {
@@ -173,9 +186,9 @@ export default {
         if (tx === 1)
           this.transactionPending = "pending approve";
         else if (tx === 2)
-          this.transactionPending = "pending withdraw";
-        else if (tx === 3)
           this.transactionPending = "withdraw";
+        else if (tx === 3)
+          this.transactionPending = "pending withdraw";
         else if (tx === 4)
           this.transactionPending = "finished";
         console.log(this.transactionPending);
@@ -225,7 +238,8 @@ export default {
     },
   },
   components: {
-    TransactionStatus,
+    Status,
+    //TransactionStatus,
     TokenIcon,
     ValueInput,
     BackButton,
