@@ -312,4 +312,47 @@ export default {
     }
   }
 }
+
+@media screen and(max-width: 780px) {
+  .transaction-status-block {
+    width: 328px;
+
+    hr {
+      width: 326.18px;
+    }
+
+    .central-block-default {
+      width: 328px;
+      padding-top: 8px;
+
+      h3 {
+        line-height: 16px;
+        width: 180px;
+      }
+
+      button {
+        margin-top: 20px;
+        padding: 6px 12px;
+        width: 100px;
+        border-radius: 21px;
+        height: 28px;
+        border: 0;
+      }
+    }
+    .central-block {
+      width: 328px;
+      button {
+        width: 296px;
+      }
+    }
+    .bottom-block {
+      .bottom-text {
+        width: 328px;
+      }
+    }
+    .finished {
+      width: 328px;
+    }
+  }
+}
 </style>

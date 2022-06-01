@@ -175,7 +175,7 @@ export default {
     },
     async action(statusText) {
       if(statusText === "Deposit") {
-        let tx = 2;
+        let tx = 1;
         if (tx === 1)
           this.transactionPending = "pending";
         else if (tx === 2)
@@ -184,7 +184,7 @@ export default {
       }
       if(statusText === "Approve") {
         console.log(this.transactionPending);
-        let tx = 2;
+        let tx = 4;
         if (tx === 1)
           this.transactionPending = "pending approve";
         else if (tx === 2)
@@ -347,6 +347,28 @@ export default {
 
     background: #353535;
     border-radius: 16px;
+  }
+}
+
+@media screen and(max-width: 780px) {
+  .deposit-withdraw-block {
+    background-color: #1C1C1C;
+    width: 328px;
+    height: auto;
+    padding: 0;
+
+    margin-right: auto;
+    margin-left: auto;
+
+    p {
+      line-height: 16px;
+    }
+    .deposit-withdraw-container {
+      width: 328px;
+    }
+    .continue {
+      width: 328px;
+    }
   }
 }
 </style>

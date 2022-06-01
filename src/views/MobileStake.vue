@@ -1,7 +1,7 @@
 <template>
 <div class="stake-view">
   <div class="stake-container">
-    <div class="stake-text">
+    <div class="stake-text" v-if="actionStatus === false">
       <h1>Earn</h1>
     </div>
     <div class="stake-content">

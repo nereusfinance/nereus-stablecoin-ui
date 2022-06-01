@@ -184,4 +184,13 @@ export default {
     background: white;
   }
 }
+
+@media screen and(max-width: 780px) {
+  .status-block, .status-block-finished {
+    gap: 8px;
+    hr {
+      width: 4px;
+    }
+  }
+}
 </style>
