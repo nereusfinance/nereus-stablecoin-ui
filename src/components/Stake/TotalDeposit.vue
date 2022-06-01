@@ -151,4 +151,51 @@ export default {
     }
   }
 }
+
+@media screen and(max-width: 780px) {
+  .total-deposit-block {
+    width: 328px;
+    height: 248px;
+    padding: 24px 16px 20px 16px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 8px;
+
+    h1 {
+      font-weight: 400;
+      font-size: 18px;
+      margin-bottom: 16px;
+    }
+    p {
+      font-weight: 400;
+      font-size: 20px;
+    }
+
+    .token-icon-wrap {
+      width: 26px;
+      height: 26px;
+      margin-right: 6px;
+    }
+
+    .btns {
+      display: flex;
+      flex-direction: column;
+      align-content: center;
+    }
+    .deposit-btn {
+      margin-top: 28px;
+      width: 296px;
+      height: 48px;
+      margin-right: 0;
+      border-radius: 24px;
+    }
+    .withdraw-btn {
+      margin-top: 12px;
+      width: 296px;
+      height: 48px;
+      border-radius: 24px;
+    }
+  }
+}
+
 </style>

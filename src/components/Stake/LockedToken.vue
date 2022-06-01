@@ -100,7 +100,6 @@ export default {
   .column {
     font-weight: 400;
     font-size: 12px;
-    line-height: 16px;
     color: #8A8A8A;
 
     text-align: left;
@@ -108,7 +107,6 @@ export default {
   .amount {
     font-weight: 400;
     font-size: 16px;
-    line-height: 24px;
     color: #FFFFFF;
     margin-bottom: 16px;
   }
@@ -117,6 +115,63 @@ export default {
   }
   .amount:last-child {
     margin-bottom: 0;
+  }
+}
+
+@media screen and(max-width: 780px) {
+  .locked-token-block {
+    height: 316px;
+    width: 328px;
+
+    border-radius: 4px;
+
+    margin: 0 auto 8px auto;
+    padding: 24px 16px 16px 16px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    h1 {
+      font-weight: 400;
+      font-size: 18px;
+      text-align: left;
+
+      margin-bottom: 16px;
+    }
+
+    p {
+      font-weight: 400;
+      font-size: 20px;
+    }
+    .token-icon-wrap {
+      width: 32px;
+      height: 32px;
+      margin-right: 6px;
+    }
+
+    .columns {
+      display: flex;
+      flex-direction: row;
+      margin-top: 24px;
+    }
+    .column {
+      font-weight: 400;
+      font-size: 12px;
+      color: #8A8A8A;
+
+      text-align: left;
+    }
+    .amount {
+      font-weight: 400;
+      font-size: 16px;
+      margin-bottom: 24px;
+    }
+    .amount:first-child {
+      margin-top: 12px;
+    }
+    .amount:last-child {
+    }
   }
 }
 </style>

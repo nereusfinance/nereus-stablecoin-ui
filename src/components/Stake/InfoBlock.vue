@@ -6,7 +6,6 @@
       <h2>
         <span style="color: white">15.00K</span> NXUSD
       </h2>
-      <br>
       <p class="apy">
         20%<span>APY</span>
       </p>
@@ -17,7 +16,6 @@
       <h2>
         <span style="color: white">15.00K</span> NXUSD
       </h2>
-      <br>
       <p class="apy">
         4%<span>APY</span>
       </p>
@@ -25,7 +23,6 @@
   </div>
   <div class="column">
     Yearly earn
-
     <h1>
       20%<span>NXUSD</span>
     </h1>
@@ -68,7 +65,6 @@ export default {
     margin-bottom: 31px;
     font-weight: 400;
     font-size: 14px;
-    line-height: 16px;
     color: #8A8A8A;
 
     text-align: left;
@@ -97,7 +93,6 @@ export default {
     text-align: left;
     font-weight: 600;
     font-size: 96px;
-    line-height: 96px;
     color: #55BCC0;
     gap: 2px;
 
@@ -107,4 +102,52 @@ export default {
     }
   }
 }
+
+@media screen and(max-width: 780px) {
+  .info-block {
+    height: 230px;
+    width: 328px;
+    border-radius: 4px;
+
+    margin-left: auto;
+    margin-right: auto;
+    padding: 24px 16px 16px 16px;
+
+    .columns {
+      height: 110px;
+    }
+
+    .column {
+      display: flex;
+      flex-direction: column;
+      margin-right: 24px;
+
+      h1 {
+        font-weight: 600;
+        font-size: 64px;
+        margin: 0;
+        span {
+          font-weight: 600;
+          font-size: 16px;
+        }
+      }
+    }
+
+    h2 {
+      font-weight: 400;
+      font-size: 16px;
+      margin-bottom: 0;
+    }
+    p.apy {
+      font-weight: 600;
+      font-size: 48px;
+
+      span {
+        font-weight: 600;
+        font-size: 16px;
+      }
+    }
+  }
+}
+
 </style>

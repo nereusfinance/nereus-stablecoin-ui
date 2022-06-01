@@ -143,4 +143,16 @@ export default {
     top: -9.5%;
   }
 }
+
+@media screen and(max-width: 780px) {
+  .expected-interest-block {
+    height: auto;
+    width: 328px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 24px;
+
+    padding: 0;
+  }
+}
 </style>

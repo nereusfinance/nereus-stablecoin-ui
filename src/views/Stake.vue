@@ -1,7 +1,9 @@
 <template>
 <div class="stake-view">
   <div class="stake-container">
-    <h1>Earn</h1>
+    <div class="stake-text">
+      <h1>Earn</h1>
+    </div>
     <div class="stake-content">
       <div class="container-mini">
         <TotalDeposit
@@ -412,4 +414,37 @@ export default {
     flex-direction: column;
   }
 }
+
+@media screen and(max-width: 780px) {
+  .stake-view {
+    padding-top: 24px;
+  }
+  .stake-container {
+    .stake-text {
+      width: 328px;
+      height: 32px;
+
+      margin-right: auto;
+      margin-left: auto;
+      margin-bottom: 16px;
+
+      h1 {
+        font-weight: 400;
+        font-size: 28px;
+        text-align: left;
+      }
+    }
+  }
+  .stake-content {
+    flex-direction: column;
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+  }
+  .container-mini {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
 </style>
