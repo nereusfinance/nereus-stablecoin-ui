@@ -51,6 +51,7 @@
           @borrow="borrowHandler"
           @borrowMultiple="addMultiBorrowHandler"
           @removeAndRepay="removeAndRepayHandler"
+          @repayWithDeleverage="repayWithDeleverageHandler"
           @removeAndRepayMax="removeAndRepayMaxHandler"
           @removeCollateral="removeCollateralHandler"
           @repay="repayHandler"
@@ -327,6 +328,26 @@ export default {
         this.pool.masterContractInstance.address
       );
       if (approveResult) this.cookRemoveAndRepay(data, isApprowed);
+    },
+    async repayWithDeleverageHandler(data) {
+      console.log("REPAY WITH DELEVERAGE HANDLER", data);
+      const isTokenApprowed = await this.isTokenApprowed(
+        this.pool.pairTokenContract,
+        this.pool.masterContractInstance.address
+      );
+
+      const isApprowed = await this.isApprowed();
+
+      if (isTokenApprowed) {
+        this.cookRepayWithDeleverage(data, isApprowed);
+        return false;
+      }
+
+      const approveResult = await this.approveToken(
+        this.pool.pairTokenContract,
+        this.pool.masterContractInstance.address
+      );
+      if (approveResult) this.cookRepayWithDeleverage(data, isApprowed);
     },
     async repayHandler(data) {
       console.log("REPAY HANDLER", data);
@@ -1181,6 +1202,126 @@ export default {
         await this.wrapperStatusTx(result);
 
         console.log(result);
+      }
+    },
+    // @params
+    // updatePrice: update price or not
+    // collateralAmount: amount of collateral to swap
+    // walletAmount: amount user has to pay from his wallet
+    // isApproved: approval check result
+    // amount: total amount to repay
+    async cookRepayWithDeleverage(
+      { updatePrice, collateralAmount, walletAmount, amount },
+      isApprowed
+    ) {
+      const swapperAddress = this.pool.reverseSwapContract.address;
+      const userAddress = this.account;
+      const emptyAddress = "0x0000000000000000000000000000000000000000";
+
+      const events = [];
+      const values = [];
+      const datas = [];
+      const gasPrice = await this.getGasPrice();
+      console.log("GAS PRICE:", gasPrice.toString());
+
+      if (!isApprowed) {
+        const approvalEncode = await this.getApprovalEncode();
+        if (approvalEncode === "ledger") {
+          const approvalMaster = await this.approveMasterContract();
+          console.log("approveMasterContract resp: ", approvalMaster);
+          if (!approvalMaster) return false;
+        } else {
+          eventsArray.push(24);
+          valuesArray.push(0);
+          datasArray.push(approvalEncode);
+        }
+      }
+      if (updatePrice) {
+        events.push(11);
+        values.push(0);
+        datas.push(this.getUpdateRateEncode());
+      }
+
+      // Remove collateral from user address to swapper
+      const removeCollateralData = this.$ethers.utils.defaultAbiCoder.encode(
+        ["int256", "address"],
+        [collateralAmount, swapperAddress]
+      );
+      events.push(4);
+      values.push(0);
+      datas.push(removeCollateralData);
+
+      // Swap collateral
+      const swapStaticTx =
+        await this.pool.reverseSwapContract.populateTransaction.swap(
+          emptyAddress,
+          emptyAddress,
+          userAddress,
+          "0",
+          collateralAmount,
+          {
+            gasLimit: 10000000,
+          }
+        );
+      const swapCallByte = swapStaticTx.data;
+      console.log("TX byte", swapCallByte);
+
+      const getCallEncode2 = this.$ethers.utils.defaultAbiCoder.encode(
+        ["address", "bytes", "bool", "bool", "uint8"],
+        [swapperAddress, swapCallByte, false, false, 2]
+      );
+      console.log("Call encode2: ", getCallEncode2);
+      events.push(30);
+      values.push(0);
+      datas.push(getCallEncode2);
+
+      // Deposit if necessary
+      if (walletAmount && !walletAmount.isZero()) {
+        const depositEncode = this.$ethers.utils.defaultAbiCoder.encode(
+          ["address", "address", "int256", "int256"],
+          [this.pool.pairToken.address, userAddress, walletAmount, "0x0"]
+        );
+        events.push(20);
+        values.push(0);
+        datas.push(depositEncode);
+      }
+
+      // Repay
+      const repayEncode = this.$ethers.utils.defaultAbiCoder.encode(
+        ["int256", "address", "bool"],
+        [amount, userAddress, false]
+      );
+      events.push(2);
+      values.push(0);
+      datas.push(repayEncode);
+
+      // Send tx
+      try {
+        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+          events,
+          values,
+          datas,
+          {
+            value: "0",
+          }
+        );
+        const gasLimit = this.gasLimitConst + +estimateGas.toString();
+        console.log("GAS LIMIT:", gasLimit.toString());
+
+        const result = await this.pool.contractInstance.cook(
+          events,
+          values,
+          datas,
+          {
+            value: "0",
+            gasLimit,
+          }
+        );
+
+        await this.wrapperStatusTx(result);
+        console.log(result);
+      } catch (e) {
+        console.log(e);
       }
     },
     async cookRemoveAndRepay(

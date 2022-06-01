@@ -32,13 +32,32 @@ export default {
   },
   actions: {
     async connectProvider({ commit }) {
-      const walletType = localStorage.getItem("walletType");
-      if (walletType === "walletConnect") {
-        const walletConnectProvider = new WalletConnectProvider({
-          rpc: {
-            43113: "https://api.avax-test.network/ext/bc/C/rpc",
-            43114: "https://api.avax.network/ext/bc/C/rpc",
-          },
+      let provider = false;
+      const walletConnectProvider = new WalletConnectProvider({
+        rpc: {
+          43113: "https://api.avax-test.network/ext/bc/C/rpc",
+          43114: "https://api.avax.network/ext/bc/C/rpc",
+          // 43114: "https://rpc.tenderly.co/fork/2db64d6a-e1a8-4065-b5ea-2f5dc1eb19f8",
+        },
+      });
+      const connector = walletConnectProvider.connector;
+      if (connector.accounts > 0) {
+        const accounts = await walletConnectProvider.enable();
+        provider = new providers.Web3Provider(walletConnectProvider);
+        const chainId = utils.hexlify(connector.chainId);
+        const signer = provider.getSigner();
+        commit("setWalletProviderName", "WalletConnect");
+        commit("setChainId", chainId);
+        commit("setProvider", provider);
+        commit("setAccount", accounts[0]);
+        commit("setSigner", signer);
+        commit("setWalletConnection", true);
+        return signer;
+      }
+      if (window.ethereum) {
+        provider = await new providers.Web3Provider(window.ethereum);
+        const accounts = await window.ethereum.request({
+          method: "eth_accounts",
         });
         const connector = walletConnectProvider.connector;
         if (connector.accounts > 0) {
@@ -137,6 +156,7 @@ export default {
           rpc: {
             43113: "https://api.avax-test.network/ext/bc/C/rpc",
             43114: "https://api.avax.network/ext/bc/C/rpc",
+            // 43114: "https://rpc.tenderly.co/fork/2db64d6a-e1a8-4065-b5ea-2f5dc1eb19f8",
           },
         });
         const accounts = await walletConnectProvider.enable();

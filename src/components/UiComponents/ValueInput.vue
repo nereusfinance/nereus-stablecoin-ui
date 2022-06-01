@@ -34,7 +34,12 @@
         @focus="setFocus(true)"
       />
 
-      <div v-if="parseFloat(max) && showMax" class="max-btn" @click="setMax">
+      <div
+        class="max-btn"
+        v-if="parseFloat(max) && showMax"
+        @click="setMax"
+        :style="{ cursor: disabled ? 'not-allowed' : 'pointer' }"
+      >
         <p>MAX</p>
       </div>
 
@@ -61,6 +66,7 @@
 
 <script>
 const TokenIcon = () => import("@/components/UiComponents/TokenIcon");
+import { floorToFixed } from "@/utils/fiexdMath/fixedMath";
 
 export default {
   props: {
@@ -127,7 +133,9 @@ export default {
       this.isFocus = payload;
     },
     setMax() {
-      this.value = this.max;
+      if (!this.disabled) {
+        this.value = floorToFixed(this.max, 6);
+      }
     },
     openSelect() {
       if (this.values.length) {
@@ -208,10 +216,6 @@ export default {
   width: 100%;
   transition: border 0.3s ease;
 
-  //&.focus {
-  //  border: 1px solid #605ee8;
-  //}
-
   &.error {
     border: 1px solid $clrInputError;
   }
@@ -271,12 +275,15 @@ export default {
     &::placeholder {
       color: rgba(255, 255, 255, 0.6);
     }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
   }
 
   .max-btn {
     position: absolute;
     right: 12px;
-    cursor: pointer;
     display: flex;
     align-items: center;
     border-radius: 12px;
