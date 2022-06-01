@@ -27,7 +27,7 @@
       <router-link :to="{ name: 'Dashboard' }" class="nav-link"
         >My Dashboard</router-link
       >
-      <router-link :to="{ name: 'Stake' }" class="nav-link"
+      <router-link :to="{ name: 'MobileStake' }" class="nav-link"
       >Earn</router-link
       >
     </nav>

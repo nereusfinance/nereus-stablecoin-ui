@@ -5,7 +5,7 @@
       <h1>Earn</h1>
     </div>
     <div class="stake-content">
-      <div class="container-mini">
+      <div class="container-mini" v-if="actionStatus === false">
         <TotalDeposit
           :pool="pool"
           :actionStatus="actionStatus"
@@ -13,14 +13,14 @@
           :onClick="setActionType"
         />
 
-        <LockedToken
-          :pool="pool"
-        />
-      </div>
-      <div class="container-mini" v-if="actionStatus === false">
         <InfoBlock
           :pool="pool"
         />
+
+        <LockedToken
+          :pool="pool"
+        />
+
         <ExpectedInterest
         />
       </div>
@@ -44,7 +44,7 @@ import InfoBlock from "@/components/Stake/InfoBlock";
 import ExpectedInterest from "@/components/Stake/ExpectedInterest";
 import DepositWithdraw from "@/components/Stake/DepositWithdraw";
 export default {
-  name: "Stake",
+  name: "MobileStake",
   data() {
     return {
       actionStatus: false,
@@ -388,30 +388,40 @@ export default {
 
 <style scoped lang="scss">
 .stake-view {
-  padding-top: 40px;
-  padding-bottom: 40px;
+  padding-top: 24px;
+  padding-bottom: 29px;
   flex: 1;
 
   h1 {
-    font-size: 32px;
-    line-height: 36px;
-    margin-bottom: 20px;
+    font-weight: 400;
+    font-size: 28px;
     text-align: left;
+    margin-bottom: 20px;
   }
   .stake-container {
     max-width: 1000px;
     margin-left: auto;
     margin-right: auto;
+    .stake-text {
+      width: 328px;
+      height: 32px;
+
+      margin-right: auto;
+      margin-left: auto;
+      margin-bottom: 16px;
+    }
   }
 
   .stake-content {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: left;
+    flex-direction: column;
+    justify-content: center;
   }
   .container-mini {
     display: flex;
     flex-direction: column;
   }
 }
+
+
 </style>

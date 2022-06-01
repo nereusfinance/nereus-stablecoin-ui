@@ -1,14 +1,14 @@
 <template>
 <div class="expected-interest-block">
-  <h1>
+  <p class="expected-interest-title">
     Expected interest
-    <img
-      src="@/assets/images/i-icon.svg"
-      alt=""
-      class="fist-info-icon"
-      v-tooltip="'Some text'"
-    />
-  </h1>
+  </p>
+  <img
+    src="@/assets/images/icon-info.svg"
+    alt=""
+    class="fist-info-icon"
+    v-tooltip="'Some text'"
+  />
   <div class="container-interest">
     <div>
       <div class="column-interest" v-for="time in period" :key="time">
@@ -28,14 +28,14 @@
       </div>
     </div>
     <div style="flex-direction: row">
-      <p style="text-align: left">Total</p>
+      <p class="total-text">Total</p>
       <div class="column-tier" v-for="digit in amount" :key="digit">
-        <span style="color: white">{{digit}} <span>NXUSD</span></span>
+        <span style="color: white">{{digit}} <span class="value-text">NXUSD</span></span>
       </div>
     </div>
   </div>
   <img
-    src="@/assets/images/i-icon.svg"
+    src="@/assets/images/icon-info.svg"
     alt=""
     class="info-icon"
     v-tooltip="'Some text'"
@@ -69,10 +69,12 @@ export default {
     font-weight: 400;
     font-size: 20px;
     text-align: left;
-
-    margin-bottom: 16px;
   }
-
+  .expected-interest-title {
+    font-size: 20px;
+    gap: 9.33px;
+    margin-bottom: 8px;
+  }
   p {
     text-align: right;
     align-items: center;
@@ -85,6 +87,10 @@ export default {
     margin-bottom: 8px;
   }
 
+  .total-text {
+    text-align: left;
+    padding-right: 50px;
+  }
   .container-interest {
     display: flex;
     flex-direction: row;
@@ -153,6 +159,39 @@ export default {
     margin-top: 24px;
 
     padding: 0;
+
+    .total-text {
+      padding-right: 0;
+      text-align: right;
+    }
+    .value-text {
+      display: none;
+    }
+    .expected-interest-title {
+      font-size: 20px;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .column-interest:last-child {
+      padding-top: 10px;
+      width: 50px;
+    }
+    img {
+      width: 20px;
+    }
+    .info-icon {
+      width: 20px;
+      position: absolute;
+      top: 91.9% !important;
+      left: 95px;
+    }
+    hr {
+      position: absolute;
+      top: 90.2% !important;
+      align-content: center;
+      width: 328px;
+    }
   }
 }
 </style>

@@ -1,13 +1,13 @@
 <template>
 <div class="total-deposit-block">
-  <h1>Total deposit
+  <p class="container-top">Total deposit
     <img
-      src="@/assets/images/i-icon.svg"
+      src="@/assets/images/icon-info.svg"
       alt=""
       class="info-icon"
       v-tooltip="'Some text'"
     />
-  </h1>
+  </p>
   <p>
     <TokenIcon :token="pool.name" />
     {{ balance }} {{ pool.name }}
@@ -85,10 +85,15 @@ export default {
     font-weight: 400;
     font-size: 20px;
     text-align: left;
-
-    margin-bottom: 24px;
   }
-
+  .container-top {
+    display: flex;
+    flex-direction: row;
+    font-size: 20px;
+    height: 23px;
+    gap: 8px;
+    margin-bottom: 26px;
+  }
   p {
     font-size: 24px;
 
@@ -130,6 +135,9 @@ export default {
       background-color: $clrBg3;
     }
   }
+  .info-icon {
+    width: 13.3px;
+  }
   .withdraw-btn {
     margin-top: 18px;
     text-align: center;
@@ -160,7 +168,9 @@ export default {
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 8px;
-
+    .info-icon {
+      width: 20px;
+    }
     h1 {
       font-weight: 400;
       font-size: 18px;
@@ -194,6 +204,11 @@ export default {
       width: 296px;
       height: 48px;
       border-radius: 24px;
+    }
+    .container-top {;
+      gap: 6px;
+      font-size: 18px;
+      margin-bottom: 16px;
     }
   }
 }
