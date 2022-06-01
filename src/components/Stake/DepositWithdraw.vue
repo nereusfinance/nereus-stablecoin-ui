@@ -175,7 +175,7 @@ export default {
     },
     async action(statusText) {
       if(statusText === "Deposit") {
-        let tx = 1;
+        let tx = 2;
         if (tx === 1)
           this.transactionPending = "pending";
         else if (tx === 2)
@@ -184,7 +184,7 @@ export default {
       }
       if(statusText === "Approve") {
         console.log(this.transactionPending);
-        let tx = 4;
+        let tx = 2;
         if (tx === 1)
           this.transactionPending = "pending approve";
         else if (tx === 2)
@@ -221,6 +221,14 @@ export default {
         return true;
       }
     },
+    toFixed(num, fixed) {
+      // eslint-disable-next-line no-useless-escape
+      let re = new RegExp(`^-?\\d+(?:\.\\d{0,` + (fixed || -1) + `})?`);
+      if (!num.toString().match(re)) {
+        return "0";
+      }
+      return num.toString().match(re)[0];
+    },
   },
   computed: {
     valueInUsd() {
@@ -228,10 +236,12 @@ export default {
       return value;
     },
     availableDeposit() {
-      return this.$store.getters.getUserBorrowPart(this.pool.id);
+      let deposit = this.$store.getters.getUserBorrowPart(this.pool.id);
+      return this.toFixed(deposit,2);
     },
     availableWithdraw() {
-      return this.$store.getters.getUserCollateralShare(this.pool.id);
+      let withdraw = this.$store.getters.getUserCollateralShare(this.pool.id);
+      return this.toFixed(withdraw,2);
     },
     tokenToUSD() {
       const tokenToNUSD = 1 / this.pool.tokenPrice;

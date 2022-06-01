@@ -2,13 +2,13 @@
 <div class="expected-interest-block">
   <p class="expected-interest-title">
     Expected interest
+    <img
+      src="@/assets/images/icon-info.svg"
+      alt=""
+      class="fist-info-icon"
+      v-tooltip="'Some text'"
+    />
   </p>
-  <img
-    src="@/assets/images/icon-info.svg"
-    alt=""
-    class="fist-info-icon"
-    v-tooltip="'Some text'"
-  />
   <div class="container-interest">
     <div>
       <div class="column-interest" v-for="time in period" :key="time">
@@ -71,9 +71,13 @@ export default {
     text-align: left;
   }
   .expected-interest-title {
+    text-align: left;
     font-size: 20px;
     gap: 9.33px;
     margin-bottom: 8px;
+  }
+  .fist-info-icon {
+    width: 13.33px;
   }
   p {
     text-align: right;
