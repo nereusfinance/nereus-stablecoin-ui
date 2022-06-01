@@ -1,6 +1,7 @@
 <template>
   <div class="slider-container">
     <input
+        :data-cy="cyData"
       type="range"
       :min="min"
       :max="max"
@@ -19,6 +20,10 @@
 <script>
 export default {
   props: {
+    cyData: {
+      type: String,
+      default: ''
+    },
     // from 0 to 100
     value: {
       required: true,

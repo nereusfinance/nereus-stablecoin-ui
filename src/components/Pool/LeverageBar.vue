@@ -5,11 +5,13 @@
 
       <div class="slider-wrapper">
           <Slider
-            :value="sliderValue"
-            :step="0.25"
-            :min="1"
-            :max="15"
-            @changeValue="testOnChangeValue"
+              marks
+             :cyData="'leverage-slider'"
+              :value="sliderValue"
+              :step="0.25"
+              :min="1"
+              :max="15"
+              @changeValue="testOnChangeValue"
           />
       </div>
       <div class="liquidation-price-text">Liquidation Price ~ {{ leverageData.liquidationPrice }}</div>
@@ -17,7 +19,7 @@
       <div class="item-main">
         <p>Expected NXUSD amount</p>
         <p class="percent-text">
-          <span>~ </span>{{leverageData.expectedNXUSDAmount}}
+          <span>~ </span><span data-cy="expected-leverage">{{ leverageData.expectedNXUSDAmount }}</span>
         </p>
       </div>
 

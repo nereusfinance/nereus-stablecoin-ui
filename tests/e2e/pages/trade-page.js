@@ -28,8 +28,17 @@ export default class TradePage extends Page {
     cy.get("[data-cy=use-avax]").click();
   }
 
+  clickLeverageCheckBox() {
+    cy.get("[data-cy=leverage-checkbox]").click();
+  }
+
   clickRepay() {
     cy.get("[data-cy=repay-button]").click();
+  }
+
+  changeLeverageSlider() {
+    cy.get('[data-cy=leverage-slider]').invoke('val', 15) .trigger('input')
+        .click()
   }
 
   inputMain(value) {
@@ -40,7 +49,14 @@ export default class TradePage extends Page {
     cy.get("[data-cy=pair-input]").type(value);
   }
 
+  clearPairInput() {
+    for( let i=0;i<20;i++){
+      cy.get("[data-cy=pair-input]").type("{backspace}");
+    }
+  }
+
   clickBorrowRepay() {
     cy.get("[data-cy=borrow-repay]").click();
   }
+
 }

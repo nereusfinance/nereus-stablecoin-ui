@@ -83,6 +83,7 @@
     >
       <div class="checkbox-wrap">
         <div
+            data-cy="leverage-checkbox"
           class="box-wrap"
           @click="toggleShowLeverage"
           :class="{ active: showLeverage }"
