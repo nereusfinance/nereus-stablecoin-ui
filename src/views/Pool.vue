@@ -194,6 +194,8 @@ export default {
       if (type !== this.actionType) this.actionType = type;
     },
     toStand() {
+      const AVAXStatus = true;
+      this.$store.commit("setUseAVAX", !AVAXStatus);
       this.$router.push({ name: "Stand" });
     },
     async addMultiBorrowHandler(data) {

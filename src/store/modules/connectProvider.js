@@ -32,47 +32,53 @@ export default {
   },
   actions: {
     async connectProvider({ commit }) {
-      let provider = false;
-      const walletConnectProvider = new WalletConnectProvider({
-        rpc: {
-          43113: "https://api.avax-test.network/ext/bc/C/rpc",
-          43114: "https://api.avax.network/ext/bc/C/rpc",
-        },
-      });
-      const connector = walletConnectProvider.connector;
-      if (connector.accounts > 0) {
-        const accounts = await walletConnectProvider.enable();
-        provider = new providers.Web3Provider(walletConnectProvider);
-        const chainId = utils.hexlify(connector.chainId);
-        const signer = provider.getSigner();
-        commit("setWalletProviderName", "WalletConnect");
-        commit("setChainId", chainId);
-        commit("setProvider", provider);
-        commit("setAccount", accounts[0]);
-        commit("setSigner", signer);
-        commit("setWalletConnection", true);
-        return signer;
-      }
-      if (window.ethereum) {
-        provider = await new providers.Web3Provider(window.ethereum);
-        const accounts = await window.ethereum.request({
-          method: "eth_accounts",
+      const walletType = localStorage.getItem("walletType");
+      if (walletType === "walletConnect") {
+        const walletConnectProvider = new WalletConnectProvider({
+          rpc: {
+            43113: "https://api.avax-test.network/ext/bc/C/rpc",
+            43114: "https://api.avax.network/ext/bc/C/rpc",
+          },
         });
-        if (accounts.length > 0) {
+        const connector = walletConnectProvider.connector;
+        if (connector.accounts > 0) {
+          const accounts = await walletConnectProvider.enable();
+          const provider = new providers.Web3Provider(walletConnectProvider);
+          const chainId = utils.hexlify(connector.chainId);
           const signer = provider.getSigner();
-          const chainId = await window.ethereum.request({
-            method: "eth_chainId",
-          });
-          commit("setWalletProviderName", "Metamask");
+          commit("setWalletProviderName", "WalletConnect");
           commit("setChainId", chainId);
-          commit("setAccount", accounts[0]);
           commit("setProvider", provider);
+          commit("setAccount", accounts[0]);
           commit("setSigner", signer);
           commit("setWalletConnection", true);
           return signer;
         }
+        delete window.localStorage.walletType;
       }
-      return provider;
+      if (walletType === "Metamask") {
+        if (window.ethereum) {
+          const provider = await new providers.Web3Provider(window.ethereum);
+          const accounts = await window.ethereum.request({
+            method: "eth_accounts",
+          });
+          if (accounts.length > 0) {
+            const signer = provider.getSigner();
+            const chainId = await window.ethereum.request({
+              method: "eth_chainId",
+            });
+            commit("setWalletProviderName", "Metamask");
+            commit("setChainId", chainId);
+            commit("setAccount", accounts[0]);
+            commit("setProvider", provider);
+            commit("setSigner", signer);
+            commit("setWalletConnection", true);
+            return signer;
+          }
+        }
+        delete window.localStorage.walletType;
+      }
+      return false;
     },
 
     async fetchMetamaskChain({ commit }, provider) {
@@ -110,6 +116,7 @@ export default {
           commit("setSigner", signer);
           commit("setAccount", accounts[0]);
           commit("setWalletConnection", true);
+          localStorage.setItem("walletType", "Metamask");
           return true;
         }
         return false;
@@ -143,6 +150,7 @@ export default {
           commit("setWalletProviderName", "WalletConnect");
           commit("setWalletConnection", true);
           commit("setAccount", accounts[0]);
+          localStorage.setItem("walletType", "walletConnect");
           return true;
         }
         return false;
