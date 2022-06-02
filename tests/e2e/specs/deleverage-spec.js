@@ -19,9 +19,6 @@ describe("Deleverage tests", () => {
     cy.changeMetamaskNetwork("Test NXUSD deleverage").then((networkChanged) => {
       expect(networkChanged).to.be.true;
     });
-  });
-  beforeEach(() => {
-    cy.disconnectMetamaskWalletFromAllDapps();
     dashboardPage.visit();
     dashboardPage.connectBrowserWallet();
     tradePage.visit(8);
@@ -38,27 +35,23 @@ describe("Deleverage tests", () => {
     tradePage.confirmMetamaskTransaction();
     cy.wait(5000);
   });
+  beforeEach(() => {
+    cy.disconnectMetamaskWalletFromAllDapps();
+    dashboardPage.visit();
+    dashboardPage.connectBrowserWallet();
+  });
   context("Deleverage screen", () => {
-    it(`should deleverage position`, () => {
+    it(`should deleverage position with some tokens in wallet`, () => {
       tradePage.visit(8);
       tradePage.transferAllNXUSD();
       cy.wait(10000);
       tradePage.confirmMetamaskTransaction();
       cy.wait(30000);
-      tradePage.clickRepay();
-      tradePage.clickDeleverageCheckBox();
-      cy.wait(5000);
-      cy.get("[data-cy=borrowed-value]").then((borrowed) => {
-        const borrowedVal = Number(borrowed.text().split(" ")[2]);
-        const value = 40;
-        tradePage.inputMain(value);
-        tradePage.clickBorrowRepay();
-        tradePage.clickDontShowAgain();
-        cy.wait(10000);
-        tradePage.confirmMetamaskTransaction();
-        cy.wait(10000);
-        tradePage.checkCurrentlyBorrowed(borrowedVal - value);
-      });
+      tradePage.deleverageFlow();
+    });
+    it(`should deleverage position without tokens in wallet`, () => {
+      tradePage.visit(8);
+      tradePage.deleverageFlow();
     });
   });
 });

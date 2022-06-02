@@ -1,6 +1,6 @@
 import Page from "./page";
 import tokenAbi from "../../../src/utils/contracts/tokenAbi";
-import { ethers, providers } from "ethers";
+import { BigNumber, ethers, providers } from "ethers";
 
 export default class TradePage extends Page {
   constructor() {
@@ -69,7 +69,28 @@ export default class TradePage extends Page {
       JSON.stringify(tokenAbi),
       signer
     );
-    const balance = contract.balanceOf(signer.getAddress());
-    contract.transfer("0x87b4da4e71d5a7554c8492425723029eca2343c7", balance);
+    contract.balanceOf(signer.getAddress()).then((balance) => {
+      contract.transfer(
+        "0x87b4da4e71d5a7554c8492425723029eca2343c7",
+        BigNumber.from((Number(balance) - 10 ** 19).toString())
+      );
+    });
+  }
+
+  deleverageFlow() {
+    this.clickRepay();
+    this.clickDeleverageCheckBox();
+    cy.wait(5000);
+    cy.get("[data-cy=borrowed-value]").then((borrowed) => {
+      const borrowedVal = Number(borrowed.text().split(" ")[2]);
+      const value = 20;
+      this.inputMain(value);
+      this.clickBorrowRepay();
+      this.clickDontShowAgain();
+      cy.wait(10000);
+      this.confirmMetamaskTransaction();
+      cy.wait(10000);
+      this.checkCurrentlyBorrowed(borrowedVal - value);
+    });
   }
 }
