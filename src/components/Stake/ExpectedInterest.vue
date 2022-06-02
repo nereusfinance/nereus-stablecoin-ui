@@ -187,12 +187,12 @@ export default {
     .info-icon {
       width: 20px;
       position: absolute;
-      top: 91.9% !important;
+      top: 90.05% !important;
       left: 95px;
     }
     hr {
       position: absolute;
-      top: 90.2% !important;
+      top: 88.2% !important;
       align-content: center;
       width: 328px;
     }

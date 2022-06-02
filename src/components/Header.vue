@@ -163,6 +163,11 @@ export default {
       margin-left: 12px;
     }
   }
+
+  a:active {
+    background: rgba(28, 28, 28, 0.16);
+  }
+
   .stake-btn {
     color: #ffffff;
     font-size: 16px;
@@ -183,6 +188,7 @@ export default {
 
     &:hover {
       color: $clrNavHover;
+      background: rgba(28, 28, 28, 0.16);
     }
   }
 
@@ -199,13 +205,19 @@ export default {
     height: 32px;
     border-radius: 21px;
 
+    //&:active {
+    //  background: rgba(28, 28, 28, 0.16);
+    //}
+
     &:hover {
       color: $clrNavHover;
-    }
-    &:active {
       background: rgba(28, 28, 28, 0.16);
     }
   }
+  .dashboard-btn:active {
+    background: rgba(28, 28, 28, 0.16);
+  }
+
   .markets-btn {
     color: #ffffff;
     font-size: 16px;
@@ -220,11 +232,17 @@ export default {
     border-radius: 21px;
     margin-right: 12px;
 
-    a:active {
+    &:active {
       background: rgba(28, 28, 28, 0.16);
     }
     &:hover {
+      background: rgba(28, 28, 28, 0.16);
       color: $clrNavHover;
+    }
+  }
+  .markets-btn {
+    a:active {
+      background: rgba(28, 28, 28, 0.16);
     }
   }
 

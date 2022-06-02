@@ -1,5 +1,5 @@
 <template>
-<div class="stake-view">
+<div class="stake-view-mobile">
   <div class="stake-container">
     <div class="stake-text" v-if="actionStatus === false">
       <h1>Earn</h1>
@@ -387,7 +387,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.stake-view {
+.stake-view-mobile {
   padding-top: 24px;
   padding-bottom: 29px;
   flex: 1;
@@ -422,6 +422,4 @@ export default {
     flex-direction: column;
   }
 }
-
-
 </style>

@@ -1,40 +1,43 @@
 <template>
-<div class="stake-view">
-  <div class="stake-container">
-    <div class="stake-text">
-      <h1>Earn</h1>
-    </div>
-    <div class="stake-content">
-      <div class="container-mini">
-        <TotalDeposit
-          :pool="pool"
-          :actionStatus="actionStatus"
-          :actionType="actionType"
-          :onClick="setActionType"
-        />
+  <div class="stake">
+    <div class="stake-view">
+      <div class="stake-container">
+        <div class="stake-text">
+          <h1>Earn</h1>
+        </div>
+        <div class="stake-content">
+          <div class="container-mini">
+            <TotalDeposit
+              :pool="pool"
+              :actionStatus="actionStatus"
+              :actionType="actionType"
+              :onClick="setActionType"
+            />
 
-        <LockedToken
-          :pool="pool"
-        />
-      </div>
-      <div class="container-mini" v-if="actionStatus === false">
-        <InfoBlock
-          :pool="pool"
-        />
-        <ExpectedInterest
-        />
-      </div>
-      <div class="container-mini" v-else>
-        <DepositWithdraw
-          :actionType="actionType"
-          :actionStatus="actionStatus"
-          :onClick="setActionStatus"
-          :pool="pool"
-        />
+            <LockedToken
+              :pool="pool"
+            />
+          </div>
+          <div class="container-mini" v-if="actionStatus === false">
+            <InfoBlock
+              :pool="pool"
+            />
+            <ExpectedInterest
+            />
+          </div>
+          <div class="container-mini" v-else>
+            <DepositWithdraw
+              :actionType="actionType"
+              :actionStatus="actionStatus"
+              :onClick="setActionStatus"
+              :pool="pool"
+            />
+          </div>
+        </div>
       </div>
     </div>
+      <MobileStake class="mobile-ui"/>
   </div>
-</div>
 </template>
 
 <script>
@@ -43,6 +46,7 @@ import LockedToken from "@/components/Stake/LockedToken";
 import InfoBlock from "@/components/Stake/InfoBlock";
 import ExpectedInterest from "@/components/Stake/ExpectedInterest";
 import DepositWithdraw from "@/components/Stake/DepositWithdraw";
+import MobileStake from "@/views/MobileStake";
 export default {
   name: "Stake",
   data() {
@@ -382,12 +386,12 @@ export default {
       return this.$store.getters.getPoolById(poolId);
     },
   },
-  components: { DepositWithdraw, ExpectedInterest, InfoBlock, LockedToken, TotalDeposit }
+  components: { MobileStake, DepositWithdraw, ExpectedInterest, InfoBlock, LockedToken, TotalDeposit }
 };
 </script>
 
 <style scoped lang="scss">
-.stake-view {
+.stake, .stake-view {
   padding-top: 40px;
   padding-bottom: 40px;
   flex: 1;
@@ -412,6 +416,22 @@ export default {
   .container-mini {
     display: flex;
     flex-direction: column;
+  }
+}
+
+@media screen and(min-width: 800px) {
+  .mobile-ui {
+    display: none;
+  }
+}
+@media screen and(max-width: 780px) {
+  .stake {
+    padding-top: 24px;
+    padding-bottom: 29px;
+    flex: 1;
+  }
+  .stake-view {
+    display: none;
   }
 }
 </style>
