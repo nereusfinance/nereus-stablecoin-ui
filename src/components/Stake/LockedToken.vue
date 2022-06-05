@@ -8,8 +8,8 @@
   <div class="columns">
     <div class="column">
       Locked {{pool.name}}
-      <div class="amount" v-for="amount in lockedTokenAmount" :key="amount">
-        {{amount}}
+      <div class="amount" v-for="amount in lockedToken" :key="amount">
+        {{amount | formatNumber}}
       </div>
     </div>
     <div class="column">
@@ -17,7 +17,7 @@
       <div
         class="amount"
         style="text-align: right"
-        v-for="amount in lockedTokenAmount"
+        v-for="amount in tierOneAmount"
         :key="amount"
       >
         {{amount}}
@@ -32,11 +32,6 @@ import TokenIcon from  "@/components/UiComponents/TokenIcon";
 
 export default {
   name: "LockedToken",
-  data() {
-    return {
-      lockedTokenAmount: ["50K+", "500K+", "5M+", "50M+"],
-    };
-  },
   props: {
     pool: {
       type: Object,
@@ -44,9 +39,48 @@ export default {
     },
   },
   computed: {
+    tierOneAmount() {
+      let arr = this.$store.getters.getTierOne;
+      for(let i = 0; i < arr.length; i++) {
+        arr[i] = arr[i].toString().slice(0, (5 + i));
+        arr[i] = (arr[i].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+      }
+      return arr;
+    },
+    lockedToken() {
+      let arr = this.$store.getters.getLockedToken;
+      for(let i = 0; i < arr.length; i++) {
+        arr[i] = arr[i].toString().slice(0, (5 + i));
+      }
+      return arr;
+    },
     balance() {
       return this.$store.getters.getUserCollateralShare(this.pool.id);
     }
+  },
+  filters: {
+    formatNumber(value) {
+      if (!value) return value;
+      if (Number(value) === 0) return value;
+
+      const lookup = [
+        { value: 0, symbol: "" },
+        { value: 1, symbol: "" },
+        { value: 1e3, symbol: "k" },
+        { value: 1e6, symbol: "M" },
+      ];
+      const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+      let item = lookup
+        .slice()
+        .reverse()
+        .find(function(item) {
+          return parseFloat(value) >= item.value;
+        });
+      return (
+        (parseFloat(value) / item.value).toFixed(0).replace(rx, "$1") +
+        item.symbol
+      );
+    },
   },
   components: {
     TokenIcon,

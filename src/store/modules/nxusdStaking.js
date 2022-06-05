@@ -3,6 +3,9 @@ export default {
     userBalanceStaked: "0",
     userRewards: "0",
     apyDataConfig: {},
+    tierOne: [],
+    tierTwo: [],
+    lockedToken: [],
   },
   mutations: {
     setUserBalanceStaked(state, payload) {
@@ -12,10 +15,16 @@ export default {
       state.userRewards = payload.userRewards;
     },
     setAPYConfig(state, payload) {
-      state.apyDataConfig = {
-        ...state.apyDataConfig,
-        [payload.version]: payload.apyDataConfig,
-      };
+      state.apyDataConfig = payload;
+    },
+    setTierOne(state, payload) {
+      state.tierOne = payload;
+    },
+    setTierTwo(state, payload) {
+      state.tierTwo = payload;
+    },
+    setLockedToken(state, payload) {
+      state.lockedToken = payload;
     },
   },
   actions: {
@@ -27,20 +36,29 @@ export default {
       const userRewards = await getters.getProvider.getUserRewards(getters.getAccount);
       commit("setUserRewards", { userRewards, address });
     },
-    // async checkUserRewards({ getters, commit }, {address }) {
-    //   const userRewards = await contract.getUserRewards(getters.getAccount);
-    //   commit("setUserRewards", { userRewards, address });
-    // },
-    // async checkAPYDataConfig({ getters, commit }, { version }) {
-    //   //Set version in this file or set it in another and then call commit?
-    //   //What arguments? Need payload?
-    //   const apyDataConfig = await contract.getAPYDataConfig(version);
-    //   commit("setAPYDataConfig", { apyDataConfig, version });
-    // },
+    async checkAPYDataConfig({ getters, commit }, address) {
+      const apyDataConfig = await getters.getProvider.getAPYDataConfig(1);
+      commit("setAPYConfig", { apyDataConfig, address });
+    },
+    async checkTierOne({ getters, commit }, address) {
+      const tierOne = await getters.getProvider.getTierOne;
+      commit("setTierOne", { tierOne, address });
+    },
+    async checkTierTwo({ getters, commit }, address) {
+      const tierTwo = await getters.getProvider.getTierTwo;
+      commit("setTierTwo", { tierTwo, address });
+    },
+    async checkLockedToken({ getters, commit }, address) {
+      const lockedToken = await getters.getProvider.getLockedToken;
+      commit("setLockedToken", { lockedToken, address });
+    },
   },
   getters: {
     getUserBalanceStaked: (state) => state.userBalanceStaked,
     getUserRewards: (state) => state.userRewards,
-    getAPYDataConfig: (state) => (version) => state.apyDataConfig[version],
+    getAPYDataConfig: (state) => state.apyDataConfig,
+    getTierOne: (state) => state.tierOne,
+    getTierTwo: (state) => state.tierTwo,
+    getLockedToken: (state) => state.lockedToken,
   },
 };
