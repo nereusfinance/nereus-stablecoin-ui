@@ -90,7 +90,7 @@ export default {
       );
       return whitelistContract;
     },
-    async createPool(pool, masterContract) {
+    async createPool(pool, masterContract, nxusdStaking) {
       const poolContract = new this.$ethers.Contract(
         pool.contract.address,
         JSON.stringify(pool.contract.abi),
@@ -266,6 +266,7 @@ export default {
         userCollateralShare,
         contractInstance: poolContract,
         masterContractInstance: masterContract,
+        nxusdContractInstance: nxusdStaking,
         totalCollateralShare,
         totalBorrow,
         stabilityFee: pool.stabilityFee,

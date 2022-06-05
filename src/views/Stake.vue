@@ -65,8 +65,24 @@ export default {
         this.actionType = type;
       this.actionStatus = this.actionStatus === false;
     },
-    async getData() {
-     // const configArray = this.$ethers.;
+    ////////////////////////////////////////////////////////
+    getWithdrawEncode(amount) {
+      const pairToken = this.pool.pairToken.address;
+
+      return this.$ethers.utils.defaultAbiCoder.encode(
+        ["address", "address", "int256", "int256"],
+        [pairToken, this.account, amount, "0x0"]
+      );
+    },
+    getDepositEncode(amount) {
+      const depositAddressToken = this.getAVAXStatus()
+        ? "0x0000000000000000000000000000000000000000"
+        : this.pool.token.address;
+
+      return this.$ethers.utils.defaultAbiCoder.encode(
+        ["address", "address", "int256", "int256"],
+        [depositAddressToken, this.account, amount, "0"]
+      );
     },
     async borrowHandler(data) {
       console.log("BORROW HANDLER", data);
@@ -75,6 +91,21 @@ export default {
       if (isApprowed) {
         this.cookBorrow(data, isApprowed);
       }
+    },
+    async getMasterContract() {
+      try {
+        const masterContract =
+          await this.pool.contractInstance.masterContract();
+        return masterContract;
+      } catch (e) {
+        console.log("getMasterContract err:", e);
+      }
+    },
+    getUpdateRateEncode() {
+      return this.$ethers.utils.defaultAbiCoder.encode(
+        ["bool", "uint256", "uint256"],
+        [true, "0x00", "0x00"]
+      );
     },
     async isApprowed() {
       try {
@@ -90,8 +121,8 @@ export default {
       }
     },
     async cookBorrow({ amount, updatePrice }, isApprowed) {
-      const borrowEncode = this.getBorrowEncode(amount);
-      const bentoWithdrawEncode = this.getBentoWithdrawEncode(amount);
+      const depositEncode = this.getDepositEncode(amount);
+      const withdrawEncode = this.getWithdrawEncode(amount);
 
       const gasPrice = await this.getGasPrice();
       console.log("GAS PRICE:", gasPrice);
@@ -105,7 +136,7 @@ export default {
           const estimateGas = await this.pool.contractInstance.estimateGas.cook(
             [11, 5, 21],
             [0, 0, 0],
-            [updateEncode, borrowEncode, bentoWithdrawEncode],
+            [updateEncode, depositEncode, withdrawEncode],
             {
               value: 0,
               // gasPrice,

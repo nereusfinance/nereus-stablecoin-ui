@@ -22,6 +22,7 @@
       >
         {{amount}}
       </div>
+      <div class="selected-row"/>
     </div>
   </div>
 </div>
@@ -124,7 +125,16 @@ export default {
     height: 32px;
     margin-right: 6px;
   }
-
+  .selected-row {
+    position: absolute;
+    width: 364px;
+    height: 40px;
+    left: 110px;
+    top: 613px;
+    background: #F2F4FE;
+    opacity: 0.04;
+    border-radius: 4px;
+  }
   .columns {
     display: flex;
     flex-direction: row;
