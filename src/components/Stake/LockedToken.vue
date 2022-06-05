@@ -206,6 +206,12 @@ export default {
 
       text-align: left;
     }
+    .selected-row {
+      width: 312px;
+      height: 44px;
+      left: 49px;
+      top: 836px;
+    }
     .amount {
       font-weight: 400;
       font-size: 16px;
