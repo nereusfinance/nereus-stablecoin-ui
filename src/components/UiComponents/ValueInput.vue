@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper" v-if="!isStake">
     <div
       class="val-input"
       :class="{
@@ -56,6 +56,62 @@
     </div>
     <p class="error-text" v-if="errorText">{{ errorText }}</p>
   </div>
+  <div class="wrapper" v-else-if="isStake">
+    <div
+      class="val-input"
+      :class="{
+        focus: isFocus,
+        error,
+      }"
+    >
+      <div
+        class="value-type"
+        style="padding-left: 0"
+        :class="{ 'values-choose': values.length }"
+        @click="openSelect"
+      >
+        <TokenIcon :token="valueName" />
+        <img
+          v-if="values.length"
+          src="@/assets/images/select-pixel-arrow.svg"
+          alt=""
+          class="arrow-icon"
+        />
+      </div>
+
+      <input
+        type="text"
+        class="input-stake"
+        placeholder="0.0"
+        @focus="setFocus(true)"
+        @blur="setFocus(false)"
+        v-model="value"
+        :disabled="disabled"
+      />
+
+      <div class="max-btn" v-if="parseFloat(max) && showMax" @click="setMax">
+        <p class="max-btn-text">MAX</p>
+      </div>
+
+      <transition name="fade">
+        <div class="values-select" v-if="showSelect">
+          <div
+            class="balance-item"
+            v-for="(token, idx) in values"
+            :key="idx"
+            @click="changeValue(token.tokenIdx)"
+          >
+            <div class="value-select-type">
+              <TokenIcon :token="token.name" />
+              <p>{{ token.name }}</p>
+            </div>
+            <p class="value-text">{{ token.balance }}</p>
+          </div>
+        </div>
+      </transition>
+    </div>
+    <p class="error-text" v-if="errorText">{{ errorText }}</p>
+  </div>
 </template>
 
 <script>
@@ -89,6 +145,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isStake: {
+      type: Boolean,
+      default: false,
+    }
   },
   data() {
     return {
@@ -277,6 +337,18 @@ export default {
     border-radius: 12px;
     font-size: 14px;
   }
+  .max-btn-text {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: #55BCC0;
+  }
+  .input-stake {
+    font-weight: 400;
+    font-size: 16px;
+    text-align: left;
+    padding-left: 44px;
+  }
 }
 
 @media screen and(max-width: 780px) {
@@ -320,6 +392,17 @@ export default {
   .balance-item .value-select-type .type-icon {
     width: 35px;
     height: 35px;
+  }
+  .token-icon-wrap {
+    width: 19.5px;
+    height: 9.5px;
+    position: relative;
+
+    .bg {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
   }
 }
 </style>

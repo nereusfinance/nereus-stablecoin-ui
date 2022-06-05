@@ -60,6 +60,7 @@ export default {
       this.actionStatus = this.actionStatus === false;
     },
     setActionType(type) {
+      console.log(this.$store.getters.getUserRewards);
       if (type !== this.actionType)
         this.actionType = type;
       this.actionStatus = this.actionStatus === false;
@@ -382,7 +383,7 @@ export default {
     },
     pool() {
       //const poolId = Number(this.$route.params.id);
-      const poolId = Number(7);
+      const poolId = Number(6);
       return this.$store.getters.getPoolById(poolId);
     },
   },

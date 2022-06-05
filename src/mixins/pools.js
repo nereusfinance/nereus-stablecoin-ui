@@ -2,6 +2,7 @@ import poolsInfo from "@/utils/contracts/pools.js";
 import masterContractInfo from "@/utils/contracts/master.js";
 import oracleContractsInfo from "@/utils/contracts/oracle.js";
 import whitelistContractInfo from "@/utils/contracts/whitelistManager";
+import nxusdStakingContractInfo from "@/utils/contracts/NXUSDStaking";
 
 export default {
   computed: {
@@ -47,6 +48,45 @@ export default {
       provider.once("block", () => {
         this.createPools(masterContract);
       });
+
+      const nxusdStaking = new this.$ethers.Contract(
+        nxusdStakingContractInfo.address,
+        JSON.stringify(nxusdStakingContractInfo.abi),
+        this.signer
+      );
+      console.log("nxusdStaking", nxusdStaking);
+      let userBalance = (await nxusdStaking.userData(this.account)).balance.toString();
+      console.log("stakingToken", userBalance);
+      this.$store.commit("setUserBalanceStaked", userBalance);
+
+      let userRewards = (await nxusdStaking.getUserRewards(this.account).toString());
+      console.log("userRewards", userRewards);
+      this.$store.commit("setUserRewards", userRewards);
+
+      let apyDataConfig = (await nxusdStaking.getAPYDataConfig(1));
+      console.log("apyDataConfig", apyDataConfig);
+     // this.$store.commit("setAPYDataConfig", apyDataConfig);
+
+      // console.log(nxusdStaking.getAPYDataConfig(1));
+//????????????????????????????????????????????????????????????
+      // nxusdStaking.methods
+      //   .getAPYDataConfig()
+      //   .call(1)
+      //   .then((apyData) => {
+      //     console.log(apyData);
+      //     // set
+      //     this.$store.commit("setAPYDataConfig", {version: 1});
+      //   });
+      // console.log("nxusdStaking", this.$store.getters.getAPYDataConfig(1));
+
+    },
+    createNXUSDStaking(address) {
+      const nxusdStaking = new this.$ethers.Contract(
+        address,
+        JSON.stringify(nxusdStakingContractInfo.abi),
+        this.signer
+      );
+      return nxusdStaking;
     },
     createWhitelistManager(address) {
       const whitelistContract = new this.$ethers.Contract(
@@ -62,6 +102,7 @@ export default {
         JSON.stringify(pool.contract.abi),
         this.signer
       );
+
       pool.isEnabled = true;
       if (pool.name === "WXT") {
         const whitelistContract = this.createWhitelistManager(

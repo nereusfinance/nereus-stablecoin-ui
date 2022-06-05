@@ -9,13 +9,14 @@
     />
   </p>
   <p>
-    <TokenIcon :token="pool.name" />
-    {{ balance }} {{ pool.name }}
+    <TokenIcon :token="pool.pairToken.name" />
+    {{ balance }} {{ pool.pairToken.name}}
   </p>
   <div class="btns">
     <button
       class="deposit-btn"
       :class="{ active: actionType === 'Deposit' && actionStatus === true}"
+      :disabled="actionStatus === true"
       @click="onClick('Deposit')"
     >
       Deposit
@@ -23,6 +24,7 @@
     <button
       class="withdraw-btn"
       :class="{ active: actionType === 'Withdraw' && actionStatus === true}"
+      :disabled="actionStatus === true"
       @click="onClick('Withdraw')"
     >
       Withdraw
@@ -58,7 +60,8 @@ export default {
   },
   computed: {
     balance() {
-      return this.$store.getters.getUserCollateralShare(this.pool.id);
+      console.log(this.$store.getters.getUserBalanceStaked);
+      return this.$store.getters.getUserBalanceStaked;
     }
   },
   components: {

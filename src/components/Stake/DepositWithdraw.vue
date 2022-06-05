@@ -18,10 +18,11 @@
     <ValueInput
       :max="availableDeposit"
       :show-max="true"
-      :valueName="pool.name"
+      :valueName="pool.pairToken.name"
       @onchange="updateValue"
       :parentValue="valueAmount"
       :error="valueError"
+      :isStake="true"
     />
     <button
       class="continue"
@@ -46,6 +47,7 @@
       @onchange="updateValue"
       :parentValue="valueAmount"
       :error="valueError"
+      :isStake="true"
     />
     <button
       class="continue"
@@ -236,15 +238,16 @@ export default {
       return value;
     },
     availableDeposit() {
-      let deposit = this.$store.getters.getUserBorrowPart(this.pool.id);
+      let deposit = this.$store.getters.getBalancePairToken(this.pool.id) / 1000000000000000000;
       return this.toFixed(deposit,2);
     },
     availableWithdraw() {
-      let withdraw = this.$store.getters.getUserCollateralShare(this.pool.id);
+      let withdraw = this.pool.token.decimals.toString();
       return this.toFixed(withdraw,2);
     },
     tokenToUSD() {
-      const tokenToNUSD = 1 / this.pool.tokenPrice;
+      console.log(this.pool.tokenPairPrice);
+      const tokenToNUSD = 1 / this.pool.tokenPairPrice;
       // eslint-disable-next-line no-useless-escape
       let re = new RegExp(`^-?\\d+(?:\.\\d{0,` + (4 || -1) + `})?`);
       return tokenToNUSD.toString().match(re)[0];

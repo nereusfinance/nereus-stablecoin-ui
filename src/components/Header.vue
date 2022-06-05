@@ -14,15 +14,27 @@
 
       <nav>
         <div>
-          <router-link :to="{ name: 'Stand' }" class="markets-btn"
-            >Markets</router-link
+          <router-link
+            :to="{ name: 'Stand' }"
+            class="markets-btn"
+            active="onclick"
           >
-          <router-link :to="{ name: 'Stake' }" class="stake-btn"
-          >Earn</router-link
+            Markets
+          </router-link>
+          <router-link
+            :to="{ name: 'Stake' }"
+            class="stake-btn"
+            active="onclick"
           >
-          <router-link :to="{ name: 'Dashboard' }" class="dashboard-btn"
-            >My Dashboard</router-link
-          >
+            Earn
+          </router-link>
+          <router-link
+            :to="{ name: 'Dashboard' }"
+            class="dashboard-btn"
+            active="onclick"
+            >
+            My Dashboard
+          </router-link>
         </div>
         <div class="btn-margin">
           <ConnectButton />
@@ -164,15 +176,12 @@ export default {
     }
   }
 
-  a:active {
-    background: rgba(28, 28, 28, 0.16);
-  }
-
   .stake-btn {
     color: #ffffff;
     font-size: 16px;
     font-style: normal;
     text-align: center;
+    align-items: center;
     text-decoration: none;
     transition: all 0.3s ease;
     cursor: pointer;
@@ -182,14 +191,16 @@ export default {
     border-radius: 21px;
     margin-right: 12px;
 
-    &:active {
-      background: rgba(28, 28, 28, 0.16);
-    }
-
     &:hover {
       color: $clrNavHover;
       background: rgba(28, 28, 28, 0.16);
     }
+  }
+  a.stake-btn.router-link-exact-active.router-link-active,
+  a.markets-btn.router-link-exact-active.router-link-active,
+  a.dashboard-btn.router-link-exact-active.router-link-active
+  {
+    background: rgba(28, 28, 28, 0.16);
   }
 
   .dashboard-btn {
@@ -205,17 +216,10 @@ export default {
     height: 32px;
     border-radius: 21px;
 
-    //&:active {
-    //  background: rgba(28, 28, 28, 0.16);
-    //}
-
     &:hover {
       color: $clrNavHover;
       background: rgba(28, 28, 28, 0.16);
     }
-  }
-  .dashboard-btn:active {
-    background: rgba(28, 28, 28, 0.16);
   }
 
   .markets-btn {
@@ -232,17 +236,9 @@ export default {
     border-radius: 21px;
     margin-right: 12px;
 
-    &:active {
-      background: rgba(28, 28, 28, 0.16);
-    }
     &:hover {
       background: rgba(28, 28, 28, 0.16);
       color: $clrNavHover;
-    }
-  }
-  .markets-btn {
-    a:active {
-      background: rgba(28, 28, 28, 0.16);
     }
   }
 
