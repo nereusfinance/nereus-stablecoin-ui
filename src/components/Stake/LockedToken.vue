@@ -40,7 +40,7 @@ export default {
   },
   computed: {
     tierOneAmount() {
-      let arr = this.$store.getters.getTierOne;
+      const arr = this.$store.getters.getTierOne;
       for(let i = 0; i < arr.length; i++) {
         arr[i] = arr[i].toString().slice(0, (5 + i));
         arr[i] = (arr[i].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
@@ -48,7 +48,7 @@ export default {
       return arr;
     },
     lockedToken() {
-      let arr = this.$store.getters.getLockedToken;
+      const arr = this.$store.getters.getLockedToken;
       for(let i = 0; i < arr.length; i++) {
         arr[i] = arr[i].toString().slice(0, (5 + i));
       }

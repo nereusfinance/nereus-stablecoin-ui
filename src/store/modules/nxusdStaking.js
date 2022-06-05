@@ -5,6 +5,8 @@ export default {
     apyDataConfig: {},
     tierOne: [],
     tierTwo: [],
+    apyTierOne: "0",
+    apyTierTwo: "0",
     lockedToken: [],
   },
   mutations: {
@@ -20,8 +22,11 @@ export default {
     setTierOne(state, payload) {
       state.tierOne = payload;
     },
-    setTierTwo(state, payload) {
-      state.tierTwo = payload;
+    setAPYTierOne(state, payload) {
+      state.apyTierOne = payload;
+    },
+    setAPYTierTwo(state, payload) {
+      state.apyTierTwo = payload;
     },
     setLockedToken(state, payload) {
       state.lockedToken = payload;
@@ -48,6 +53,14 @@ export default {
       const tierTwo = await getters.getProvider.getTierTwo;
       commit("setTierTwo", { tierTwo, address });
     },
+    async checkAPYTierOne({ getters, commit }, address) {
+      const apy = await getters.getProvider.getAPYTierOne;
+      commit("setAPYTierOne", { apy, address });
+    },
+    async checkAPYTierTwo({ getters, commit }, address) {
+      const apy = await getters.getProvider.getAPYTierTwo;
+      commit("setAPYTierTwo", { apy, address });
+    },
     async checkLockedToken({ getters, commit }, address) {
       const lockedToken = await getters.getProvider.getLockedToken;
       commit("setLockedToken", { lockedToken, address });
@@ -60,5 +73,7 @@ export default {
     getTierOne: (state) => state.tierOne,
     getTierTwo: (state) => state.tierTwo,
     getLockedToken: (state) => state.lockedToken,
+    getAPYTierOne: (state) => state.apyTierOne,
+    getAPYTierTwo: (state) => state.apyTierTwo,
   },
 };

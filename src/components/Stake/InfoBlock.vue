@@ -7,7 +7,8 @@
         <span style="color: white">15.00K</span> NXUSD
       </h2>
       <p class="apy">
-        20%<span>APY</span>
+        {{apy}}
+        <span>APY</span>
       </p>
     </div>
 
@@ -17,14 +18,14 @@
         <span style="color: white">15.00K</span> NXUSD
       </h2>
       <p class="apy">
-        4%<span>APY</span>
+        {{apy}}<span>APY</span>
       </p>
     </div>
   </div>
   <div class="column">
     Yearly earn
     <h1>
-      20%<span>NXUSD</span>
+      {{apy}}<span>NXUSD</span>
     </h1>
   </div>
 </div>
@@ -39,6 +40,12 @@ export default {
       required: true,
     },
   },
+  computed: {
+    apy() {
+      let apy = this.$store.getters.getAPYTierOne.toString();
+      return parseFloat(apy.toString());
+    }
+  }
 };
 </script>
 

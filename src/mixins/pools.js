@@ -54,15 +54,12 @@ export default {
 
       console.log("nxusdStaking", nxusdStaking);
       let userBalance = (await nxusdStaking.userData(this.account)).balance.toString();
-      //console.log("stakingToken", userBalance);
       this.$store.commit("setUserBalanceStaked", userBalance);
 
       let userRewards = (await nxusdStaking.getUserRewards(this.account).toString());
-      //console.log("userRewards", userRewards);
       this.$store.commit("setUserRewards", userRewards);
 
       let apyDataConfig = (await nxusdStaking.getAPYDataConfig(1));
-      //console.log("apyDataConfig", apyDataConfig);
       this.$store.commit("setAPYConfig", apyDataConfig);
 
      let tierOne = [];
@@ -71,9 +68,11 @@ export default {
        tierOne[j] = apyDataConfig[i].NXUSDByTier1.toString();
        lockedToken[j] = apyDataConfig[i].WXTLocked.toString();
      }
-      console.log("tierOne", tierOne);
       this.$store.commit("setTierOne", tierOne);
       this.$store.commit("setLockedToken", lockedToken);
+
+      let apyTierOne = apyDataConfig[1].APYTier1;
+      this.$store.commit("setAPYTierOne", parseFloat(apyTierOne.toString()));
     },
     createNXUSDStaking() {
       const nxusdStaking = new this.$ethers.Contract(
