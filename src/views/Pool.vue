@@ -205,7 +205,7 @@ export default {
 
       let isTokenToCookApprove = await this.isTokenApprowed(
         this.pool.token.contract,
-        this.pool.masterContractInstance.address
+        this.pool.masterContractInstance.address.toLowerCase()
       );
 
       if (!isTokenToCookApprove) {
@@ -2397,10 +2397,9 @@ export default {
       { collateralAmount, amount, updatePrice, minExpected },
       isApprowed
     ) {
-      const tokenAddr = this.pool.token.address;
       const swapperAddres = this.pool.swapContract.address;
       const userAddr = this.account;
-
+      const depositAmount = this.getAVAXStatus() ? collateralAmount : 0;
       const eventsArray = [];
       const valuesArray = [];
       const datasArray = [];
@@ -2435,13 +2434,10 @@ export default {
 
       if (collateralAmount) {
         //20
-        const getDepositEncode1 = this.$ethers.utils.defaultAbiCoder.encode(
-          ["address", "address", "int256", "int256"],
-          [tokenAddr, userAddr, collateralAmount, "0"]
-        );
+        const getDepositEncode1 = this.getDepositEncode(collateralAmount);
 
         eventsArray.push(20);
-        valuesArray.push(0);
+        valuesArray.push(depositAmount);
         datasArray.push(getDepositEncode1);
 
         eventsArray.push(10);
@@ -2508,7 +2504,7 @@ export default {
           cookData.values,
           cookData.datas,
           {
-            value: 0,
+            value: depositAmount,
           }
         );
 
@@ -2521,7 +2517,7 @@ export default {
           cookData.values,
           cookData.datas,
           {
-            value: 0,
+            value: depositAmount,
             gasLimit,
           }
         );

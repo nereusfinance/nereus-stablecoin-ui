@@ -452,15 +452,13 @@ export default {
       if (this.actionType === "borrow") {
         let valueInDolars;
         let maxPairValue;
-
         valueInDolars =
-          (this.$store.getters.getUserCollateralShare(this.poolId) +
-            this.mainValue) /
+          (+this.$store.getters.getUserCollateralShare(this.poolId) +
+            +this.mainValue) /
           this.tokenToUsd;
         maxPairValue =
           (valueInDolars / 100) * (this.ltv - 1) -
           this.$store.getters.getUserBorrowPart(this.poolId);
-
         return floorToFixed(
           maxPairValue *
             ((100 - this.$store.getters.getBorrowFee(this.poolId)) / 100),
@@ -632,7 +630,6 @@ export default {
             amount: parsedPair,
             updatePrice: this.updatePrice,
           };
-          console.log('this.multiplier', this.multiplier);
           if (this.multiplier > 1) {
             payload.amount = this.toFixed(this.pairValue, 6);
             this.multiplierHandle(payload, "addAndBorrowMultiple");
@@ -754,7 +751,6 @@ export default {
             amount: parsedPair,
             updatePrice: this.updatePrice,
           };
-          console.log('this.multiplier', this.multiplier);
           if (this.multiplier > 1) {
             payload.amount = this.toFixed(this.pairValue, 6);
             this.multiplierHandle(payload, "borrowMultiple");
@@ -787,12 +783,9 @@ export default {
 
       if (!percentValue) return false;
 
-      console.log("percentValue", percentValue);
       console.log("DATA", data);
 
       const slipageMutiplier = (100 - this.slipage) / 100;
-
-      console.log("slipageMutiplier", slipageMutiplier);
 
       const amountMultiplyer = percentValue / 100;
 
@@ -800,11 +793,11 @@ export default {
       let finalAmount = 0;
 
       for (let i = this.multiplier; i > 0; i--) {
-        if( i > 1 ){
+        if (i > 1) {
           finalAmount += +startAmount;
           startAmount = startAmount * amountMultiplyer;
         } else {
-          finalAmount += +startAmount*i;
+          finalAmount += +startAmount * i;
         }
       }
 
@@ -819,9 +812,6 @@ export default {
         this.toFixed(minValue, this.mainValueDecimals),
         this.mainValueDecimals
       );
-
-      console.log("finalAmount", finalAmount);
-      console.log("minValue", minValue);
 
       const payload = {
         ...data,
