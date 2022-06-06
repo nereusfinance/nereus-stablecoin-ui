@@ -415,15 +415,13 @@ export default {
       if (this.actionType === "borrow") {
         let valueInDolars;
         let maxPairValue;
-
         valueInDolars =
-          (this.$store.getters.getUserCollateralShare(this.poolId) +
-            this.mainValue) /
+          (+this.$store.getters.getUserCollateralShare(this.poolId) +
+            +this.mainValue) /
           this.tokenToUsd;
         maxPairValue =
           (valueInDolars / 100) * (this.ltv - 1) -
           this.$store.getters.getUserBorrowPart(this.poolId);
-
         return floorToFixed(
           maxPairValue *
             ((100 - this.$store.getters.getBorrowFee(this.poolId)) / 100),

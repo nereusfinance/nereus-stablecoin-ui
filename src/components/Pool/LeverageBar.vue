@@ -86,7 +86,7 @@ export default {
         }
       }
       const resultCollateral =
-        +this.$store.getters.getUserCollateralShare(this.pool.id) +
+        +this.$store.getters.getUserCollateralShare(this.pool.id) + +this.mainValue +
         finalBorrowAmount / this.tokentToNUSD;
       const resultBorrow =
         +this.$store.getters.getUserBorrowPart(this.pool.id) +
