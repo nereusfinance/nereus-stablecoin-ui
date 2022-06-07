@@ -1,31 +1,41 @@
 <template>
-<div class="locked-token-block">
-  <h1>Locked {{pool.name}}</h1>
-  <p>
-    <TokenIcon :token="pool.name" />
-    {{ balance }} {{ pool.name }}
-  </p>
-  <div class="columns">
-    <div class="column">
-      Locked {{pool.name}}
-      <div class="amount" v-for="amount in lockedToken" :key="amount">
-        {{amount | formatNumber}}
-      </div>
+  <div class="locked-token-block">
+    <h1>Locked {{pool.name}}</h1>
+    <p>
+      <TokenIcon :token="pool.name" />
+      {{ balance }} {{ pool.name }}
+    </p>
+    <div class="row-selected">
+      <div v-if="balance < 500000"
+        class="row"/>
+      <div v-else-if="balance <= 5000000"
+           class="row1"/>
+      <div v-else-if="balance <= 50000000"
+           class="row2"/>
+      <div v-else-if="balance = 500000000"
+           class="row3"/>
     </div>
-    <div class="column">
-      Tier 1 amount NXUSD
-      <div
-        class="amount"
-        style="text-align: right"
-        v-for="amount in tierOneAmount"
-        :key="amount"
-      >
-        {{amount}}
+    <div class="columns">
+      <div class="column">
+        Locked {{pool.name}}
+        <div class="amount" v-for="amount in lockedToken" :key="amount">
+          {{amount | formatNumber}}
+        </div>
       </div>
-      <div class="selected-row"/>
+      <div class="column">
+        Tier 1 amount NXUSD
+        <div
+          class="amount"
+          style="text-align: right"
+          v-for="amount in tierOneAmount"
+          :key="amount"
+        >
+          {{amount}}
+        </div>
+<!--        <div class="selected-row"/>-->
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -117,6 +127,7 @@ export default {
     display: flex;
     flex-direction: row;
     align-items: center;
+    margin-bottom: 28px;
 
     gap: 2px;
   }
@@ -125,21 +136,31 @@ export default {
     height: 32px;
     margin-right: 6px;
   }
-  .selected-row {
-    position: absolute;
+  .row, .row1, .row2, .row3{
+    position: relative;
     width: 364px;
     height: 40px;
-    left: 110px;
-    top: 613px;
+    left: -10px;
+    top: 15px;
     background: #F2F4FE;
     opacity: 0.04;
     border-radius: 4px;
+  }
+  .row1 {
+    top: 50px;
+  }
+  .row2 {
+    top: 85px;
+  }
+  .row3 {
+    top: 118px;
   }
   .columns {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    margin-top: 30px;
+    position: relative;
+    top: -40px;
   }
   .column {
     font-weight: 400;

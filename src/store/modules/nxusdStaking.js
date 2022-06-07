@@ -4,7 +4,7 @@ export default {
     userRewards: "0",
     apyDataConfig: {},
     tierOne: [],
-    tierTwo: [],
+    tierTwo: "",
     apyTierOne: "0",
     apyTierTwo: "0",
     lockedToken: [],

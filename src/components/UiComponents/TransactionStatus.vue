@@ -35,7 +35,7 @@
 <!--    Deposit-->
     <div class="central-block" v-if="transactionPending === 'wait for action' && statusText[0] === 'Deposit'">
       <h3 v-if="statusText[0] === 'Deposit'">Please submit not to deposit</h3>
-      <button @click="action(statusText[0])" >{{statusText[0]}}</button>
+      <button @click="actionHandler" >{{statusText[0]}}</button>
     </div>
 
 <!--    Both-->
@@ -157,7 +157,49 @@ export default {
     },
     action: {
       type: Function,
+    },
+    value: {
+    },
+    pool: {
     }
+  },
+  methods: {
+    actionHandler() {
+      console.log("Value ", this.value);
+      if (this.statusText[0] === "Deposit") {
+        this.action("Deposit", 1);
+        const parsedAmount = this.$ethers.utils.parseUnits(
+          this.value.toString(),
+          this.pool.pairToken.decimals
+        );
+
+        const payload = {
+          amount: parsedAmount,
+          updatePrice: this.updatePrice,
+        };
+
+        this.$emit("addCollateral", payload);
+        //this.clearData();
+        return false;
+      }
+      if (this.statusText[0] === "Approve") {
+        //this.action("Approve", 1);
+        const parsedAmount = this.$ethers.utils.parseUnits(
+          this.value.toString(),
+          this.pool.token.decimals
+        );
+
+        const payload = {
+          amount: parsedAmount,
+          updatePrice: this.updatePrice,
+        };
+
+        this.$emit("addCollateral", payload);
+        //this.clearData();
+
+        return false;
+      }
+    },
   },
 };
 </script>

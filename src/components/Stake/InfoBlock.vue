@@ -4,28 +4,27 @@
     <div class="column">
         Tier 1 amount
       <h2>
-        <span style="color: white">15.00K</span> NXUSD
+        <span style="color: white">{{tierOne}}</span> NXUSD
       </h2>
       <p class="apy">
-        {{apy}}
-        <span>APY</span>
+        {{apyTierOne}}%<span>APY</span>
       </p>
     </div>
 
     <div class="column">
         Tier 2 amount
       <h2>
-        <span style="color: white">15.00K</span> NXUSD
+        <span style="color: white">{{tierOne}}</span> NXUSD
       </h2>
       <p class="apy">
-        {{apy}}<span>APY</span>
+        {{apyTierTwo}}%<span>APY</span>
       </p>
     </div>
   </div>
   <div class="column">
     Yearly earn
     <h1>
-      {{apy}}<span>NXUSD</span>
+      {{apyTierOne}}<span>NXUSD</span>
     </h1>
   </div>
 </div>
@@ -41,8 +40,20 @@ export default {
     },
   },
   computed: {
-    apy() {
+    apyTierOne() {
       let apy = this.$store.getters.getAPYTierOne.toString();
+      return parseFloat(apy.toString());
+    },
+    apyTierTwo() {
+      let apy = this.$store.getters.getAPYTierTwo.toString();
+      return parseFloat(apy.toString());
+    },
+    tierOne() {
+      let apy = this.$store.getters.getTierOne.toString();
+      return parseFloat(apy.toString());
+    },
+    tierTwo() {
+      let apy = this.$store.getters.getTierTwo.toString();
       return parseFloat(apy.toString());
     }
   }

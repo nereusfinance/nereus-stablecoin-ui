@@ -38,8 +38,11 @@ export default {
       const chainPools = poolsInfo.filter(
         (pool) => pool.contractChain === this.chainId
       );
+      //Staking
+      const nxusdStaking =  this.createNXUSDStaking();
+      //pools
       const pools = await Promise.all(
-        chainPools.map((pool) => this.createPool(pool, masterContract))
+        chainPools.map((pool) => this.createPool(pool, masterContract, nxusdStaking))
       );
 
       console.log("STAND CREATED POOLS:", pools);
@@ -49,8 +52,6 @@ export default {
         this.createPools(masterContract);
       });
 
-      //Staking
-      const nxusdStaking =  this.createNXUSDStaking();
 
       console.log("nxusdStaking", nxusdStaking);
       let userBalance = (await nxusdStaking.userData(this.account)).balance.toString();
@@ -59,20 +60,23 @@ export default {
       let userRewards = (await nxusdStaking.getUserRewards(this.account).toString());
       this.$store.commit("setUserRewards", userRewards);
 
-      let apyDataConfig = (await nxusdStaking.getAPYDataConfig(1));
-      this.$store.commit("setAPYConfig", apyDataConfig);
+      let getAPYDataConfig = (await nxusdStaking.getAPYDataConfig(1));
+      this.$store.commit("setAPYConfig", getAPYDataConfig);
 
      let tierOne = [];
      let lockedToken = [];
      for(let i = 1, j = 0; i < 5; i++, j++){
-       tierOne[j] = apyDataConfig[i].NXUSDByTier1.toString();
-       lockedToken[j] = apyDataConfig[i].WXTLocked.toString();
+       tierOne[j] = getAPYDataConfig[i].NXUSDByTier1.toString();
+       lockedToken[j] = getAPYDataConfig[i].WXTLocked.toString();
      }
       this.$store.commit("setTierOne", tierOne);
       this.$store.commit("setLockedToken", lockedToken);
 
-      let apyTierOne = apyDataConfig[1].APYTier1;
+      let apyTierOne = getAPYDataConfig[1].APYTier1;
       this.$store.commit("setAPYTierOne", parseFloat(apyTierOne.toString()));
+
+      let apyTierTwo = (await nxusdStaking.apyDataConfig(1)).APYTier2;
+      this.$store.commit("setAPYTierTwo", parseFloat(apyTierTwo.toString()));
     },
     createNXUSDStaking() {
       const nxusdStaking = new this.$ethers.Contract(
