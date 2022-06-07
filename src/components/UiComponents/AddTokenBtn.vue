@@ -25,8 +25,7 @@ export default {
     },
     tokenIcon() {
       const tokenImage = require(`@/assets/images/tokens-icon/Token_${this.tokenName}.svg`);
-      return tokenImage;
-      //return tokenImage || require("@/assets/images/tokens-icon/Token_ETH.svg");
+      return tokenImage || require("@/assets/images/tokens-icon/Token_ETH.svg");
     },
     tokenInfo() {
       return tokensInfo.find((token) => token.name === this.tokenName);
@@ -39,7 +38,7 @@ export default {
       }
 
       const { ethereum } = window;
-      if(this.tokenName) {
+      if(this.tokenName === 'NXUSD') {
         try {
           // wasAdded is a boolean. Like any RPC method, an error may be thrown.
           const wasAdded = await ethereum.request({
@@ -103,7 +102,7 @@ export default {
   padding: 4px 16px 4px 4px;
   gap: 4px;
 
-  width: 272px;
+  width: auto;
   height: 32px;
 
   margin: 18px 0 0 auto;

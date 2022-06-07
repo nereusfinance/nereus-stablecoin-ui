@@ -103,7 +103,7 @@
       @addCollateral="addCollateralHandler"
     />
     <add-token-btn v-if="transactionPending === 'finished'"
-      :token-name="pool.name"
+      :token-name="pool.pairToken.name"
     />
   </div>
 </div>
