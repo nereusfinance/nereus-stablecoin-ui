@@ -102,14 +102,9 @@
       :pool="pool"
       @addCollateral="addCollateralHandler"
     />
-    <div class="addAVAXToWallet" v-if="transactionPending === 'finished'">
-      <img
-        src="@/assets/images/icon-add.svg"
-        alt=""
-        class="add-icon"
-      />
-      Add AVAX to your browser wallet
-    </div>
+    <add-token-btn v-if="transactionPending === 'finished'"
+      :token-name="pool.name"
+    />
   </div>
 </div>
 </template>
@@ -118,6 +113,7 @@
 import ValueInput from "@/components/UiComponents/ValueInput";
 import TokenIcon from "@/components/UiComponents/TokenIcon";
 import TransactionStatus from "@/components/UiComponents/TransactionStatus";
+import AddTokenBtn from "@/components/UiComponents/AddTokenBtn";
 const BackButton = () => import("@/components/UiComponents/BackButton");
 
 export default {
@@ -765,6 +761,7 @@ export default {
     },
   },
   components: {
+    AddTokenBtn,
     TransactionStatus,
     TokenIcon,
     ValueInput,
@@ -847,25 +844,6 @@ export default {
       margin-right: 4px;
       //margin-bottom: 16px;
     }
-  }
-
-  .addAVAXToWallet {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    align-content: center;
-    padding: 4px 16px 4px 4px;
-    gap: 4px;
-
-    width: 272px;
-    height: 32px;
-    font-weight: 400;
-    font-size: 14px;
-
-    margin: 18px 0 0 auto;
-
-    background: #353535;
-    border-radius: 16px;
   }
 }
 

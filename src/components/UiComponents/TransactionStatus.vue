@@ -167,7 +167,7 @@ export default {
     actionHandler() {
       console.log("Value ", this.value);
       if (this.statusText[0] === "Deposit") {
-        this.action("Deposit", 1);
+        this.action("Deposit", 2);
         const parsedAmount = this.$ethers.utils.parseUnits(
           this.value.toString(),
           this.pool.pairToken.decimals
