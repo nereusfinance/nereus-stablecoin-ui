@@ -201,13 +201,14 @@ export default {
       font-weight: 400;
       font-size: 18px;
       text-align: left;
-
+      margin-top: 20px;
       margin-bottom: 16px;
     }
 
     p {
       font-weight: 400;
       font-size: 20px;
+      margin-bottom: 24px;
     }
     .token-icon-wrap {
       width: 32px;
@@ -218,7 +219,8 @@ export default {
     .columns {
       display: flex;
       flex-direction: row;
-      margin-top: 24px;
+      position: relative;
+      top: -40px;
     }
     .column {
       font-weight: 400;
@@ -226,12 +228,6 @@ export default {
       color: #8A8A8A;
 
       text-align: left;
-    }
-    .selected-row {
-      width: 312px;
-      height: 44px;
-      left: 49px;
-      top: 836px;
     }
     .amount {
       font-weight: 400;
@@ -242,6 +238,25 @@ export default {
       margin-top: 12px;
     }
     .amount:last-child {
+    }
+    .row, .row1, .row2, .row3{
+      position: relative;
+      width: 312px;
+      height: 40px;
+      left: -9px;
+      top: 15px;
+      background: #F2F4FE;
+      opacity: 0.04;
+      border-radius: 4px;
+    }
+    .row1 {
+      top: 57px;
+    }
+    .row2 {
+      top: 100px;
+    }
+    .row3 {
+      top: 143px;
     }
   }
 }
