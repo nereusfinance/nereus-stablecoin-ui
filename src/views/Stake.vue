@@ -47,6 +47,7 @@ import InfoBlock from "@/components/Stake/InfoBlock";
 import ExpectedInterest from "@/components/Stake/ExpectedInterest";
 import DepositWithdraw from "@/components/Stake/DepositWithdraw";
 import MobileStake from "@/views/MobileStake";
+import nxusdStakingContractInfo from "@/utils/contracts/NXUSDStaking";
 export default {
   name: "Stake",
   data() {
@@ -55,7 +56,51 @@ export default {
       actionType: "",
     }
   },
+  created() {
+    this.createNXUSDStaking();
+    this.checkStakingBalance();
+    this.setStakingInfo();
+    console.log("Balance",this.$store.getters.getUserBalanceStaked);
+    console.log("Instance", this.$store.getters.getNXUSDStakingContract);
+  },
   methods: {
+    async setStakingInfo() {
+      const nxusdStaking = this.$store.getters.getNXUSDStakingContract;
+      let userBalance = (await nxusdStaking.userData(this.account)).balance.toString();
+      this.$store.commit("setUserBalanceStaked", userBalance);
+
+      let userRewards = (await nxusdStaking.getUserRewards(this.account).toString());
+      this.$store.commit("setUserStoredRewards", userRewards);
+
+      let getAPYDataConfig = (await nxusdStaking.getAPYDataConfig(1));
+      this.$store.commit("setAPYConfig", getAPYDataConfig);
+
+      let tierOne = [];
+      let lockedToken = [];
+      for(let i = 1, j = 0; i < 5; i++, j++){
+        tierOne[j] = getAPYDataConfig[i].NXUSDByTier1.toString();
+        lockedToken[j] = getAPYDataConfig[i].WXTLocked.toString();
+      }
+      this.$store.commit("setTierOne", tierOne);
+      this.$store.commit("setLockedToken", lockedToken);
+
+      let apyTierOne = getAPYDataConfig[1].APYTier1;
+      this.$store.commit("setAPYTierOne", parseFloat(apyTierOne.toString()));
+
+      let apyTierTwo = (await nxusdStaking.apyDataConfig(1)).APYTier2;
+      this.$store.commit("setAPYTierTwo", parseFloat(apyTierTwo.toString()));
+    },
+    async checkStakingBalance() {
+      await this.$store.dispatch("checkUserBalance");
+    },
+    createNXUSDStaking() {
+      const nxusdStaking = new this.$ethers.Contract(
+        nxusdStakingContractInfo.address,
+        JSON.stringify(nxusdStakingContractInfo.abi),
+        this.signer
+      );
+      this.$store.commit("setNXUSDStakingContractInstance", nxusdStaking);
+    },
     setActionStatus() {
       this.actionStatus = this.actionStatus === false;
     },
@@ -65,349 +110,11 @@ export default {
         this.actionType = type;
       this.actionStatus = this.actionStatus === false;
     },
-    ////////////////////////////////////////////////////////
-    getWithdrawEncode(amount) {
-      const pairToken = this.pool.pairToken.address;
-
-      return this.$ethers.utils.defaultAbiCoder.encode(
-        ["address", "address", "int256", "int256"],
-        [pairToken, this.account, amount, "0x0"]
-      );
-    },
-    getDepositEncode(amount) {
-      const depositAddressToken = this.getAVAXStatus()
-        ? "0x0000000000000000000000000000000000000000"
-        : this.pool.token.address;
-
-      return this.$ethers.utils.defaultAbiCoder.encode(
-        ["address", "address", "int256", "int256"],
-        [depositAddressToken, this.account, amount, "0"]
-      );
-    },
-    async borrowHandler(data) {
-      console.log("BORROW HANDLER", data);
-      const isApprowed = await this.isApprowed();
-
-      if (isApprowed) {
-        this.cookBorrow(data, isApprowed);
-      }
-    },
-    async getMasterContract() {
-      try {
-        const masterContract =
-          await this.pool.contractInstance.masterContract();
-        return masterContract;
-      } catch (e) {
-        console.log("getMasterContract err:", e);
-      }
-    },
-    getUpdateRateEncode() {
-      return this.$ethers.utils.defaultAbiCoder.encode(
-        ["bool", "uint256", "uint256"],
-        [true, "0x00", "0x00"]
-      );
-    },
-    async isApprowed() {
-      try {
-        const masterContract = await this.getMasterContract();
-        const addressApprowed =
-          await this.pool.masterContractInstance.masterContractApproved(
-            masterContract,
-            this.account
-          );
-        return addressApprowed;
-      } catch (e) {
-        console.log("isApprowed err:", e);
-      }
-    },
-    async cookBorrow({ amount, updatePrice }, isApprowed) {
-      const depositEncode = this.getDepositEncode(amount);
-      const withdrawEncode = this.getWithdrawEncode(amount);
-
-      const gasPrice = await this.getGasPrice();
-      console.log("GAS PRICE:", gasPrice);
-
-      if (isApprowed) {
-        console.log("APPROWED");
-
-        if (updatePrice) {
-          const updateEncode = this.getUpdateRateEncode();
-
-          const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [11, 5, 21],
-            [0, 0, 0],
-            [updateEncode, depositEncode, withdrawEncode],
-            {
-              value: 0,
-              // gasPrice,
-              // gasLimit: 1000000,
-            }
-          );
-
-          const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-          console.log("gasLimit:", gasLimit);
-
-          const result = await this.pool.contractInstance.cook(
-            [11, 5, 21],
-            [0, 0, 0],
-            [updateEncode, borrowEncode, bentoWithdrawEncode],
-            {
-              value: 0,
-              // gasPrice,
-              gasLimit,
-            }
-          );
-
-          await this.wrapperStatusTx(result);
-
-          console.log(result);
-          return false;
-        }
-
-        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [5, 21],
-          [0, 0],
-          [borrowEncode, bentoWithdrawEncode],
-          {
-            value: 0,
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
-        );
-
-        const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-        console.log("gasLimit:", gasLimit);
-
-        const result = await this.pool.contractInstance.cook(
-          [5, 21],
-          [0, 0],
-          [borrowEncode, bentoWithdrawEncode],
-          {
-            value: 0,
-            // gasPrice,
-            gasLimit,
-          }
-        );
-
-        await this.wrapperStatusTx(result);
-
-        console.log(result);
-        return false;
-      }
-
-      console.log("NOT APPROWED");
-      const approvalEncode = await this.getApprovalEncode();
-
-      if (approvalEncode === "ledger") {
-        const approvalMaster = await this.approveMasterContract();
-
-        console.log("approveMasterContract resp: ", approvalMaster);
-
-        if (!approvalMaster) return false;
-
-        if (updatePrice) {
-          const updateEncode = this.getUpdateRateEncode();
-
-          const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [11, 5, 21],
-            [0, 0, 0],
-            [updateEncode, borrowEncode, bentoWithdrawEncode],
-            {
-              value: 0,
-              // gasPrice,
-              // gasLimit: 1000000,
-            }
-          );
-
-          const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-          console.log("gasLimit:", gasLimit);
-
-          const result = await this.pool.contractInstance.cook(
-            [11, 5, 21],
-            [0, 0, 0],
-            [updateEncode, borrowEncode, bentoWithdrawEncode],
-            {
-              value: 0,
-              // gasPrice,
-              gasLimit,
-            }
-          );
-
-          await this.wrapperStatusTx(result);
-
-          console.log(result);
-          return false;
-        }
-
-        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [5, 21],
-          [0, 0],
-          [borrowEncode, bentoWithdrawEncode],
-          {
-            value: 0,
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
-        );
-
-        const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-        console.log("gasLimit:", gasLimit);
-
-        const result = await this.pool.contractInstance.cook(
-          [5, 21],
-          [0, 0],
-          [borrowEncode, bentoWithdrawEncode],
-          {
-            value: 0,
-            // gasPrice,
-            gasLimit,
-          }
-        );
-
-        await this.wrapperStatusTx(result);
-
-        console.log(result);
-
-        return false;
-      }
-
-      if (updatePrice) {
-        const updateEncode = this.getUpdateRateEncode();
-
-        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [24, 11, 5, 21],
-          [0, 0, 0, 0],
-          [approvalEncode, updateEncode, borrowEncode, bentoWithdrawEncode],
-          {
-            value: 0,
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
-        );
-
-        const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-        console.log("gasLimit:", gasLimit);
-
-        const result = await this.pool.contractInstance.cook(
-          [24, 11, 5, 21],
-          [0, 0, 0, 0],
-          [approvalEncode, updateEncode, borrowEncode, bentoWithdrawEncode],
-          {
-            value: 0,
-            // gasPrice,
-            gasLimit,
-          }
-        );
-
-        await this.wrapperStatusTx(result);
-
-        console.log(result);
-        return false;
-      }
-
-      const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-        [24, 5, 21],
-        [0, 0, 0],
-        [approvalEncode, borrowEncode, bentoWithdrawEncode],
-        {
-          value: 0,
-          // gasPrice,
-          // gasLimit: 1000000,
-        }
-      );
-
-      const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-      console.log("gasLimit:", gasLimit);
-
-      const result = await this.pool.contractInstance.cook(
-        [24, 5, 21],
-        [0, 0, 0],
-        [approvalEncode, borrowEncode, bentoWithdrawEncode],
-        {
-          value: 0,
-          // gasPrice,
-          gasLimit,
-        }
-      );
-
-      await this.wrapperStatusTx(result);
-
-      console.log(result);
-    },
-    async getApprovalEncode() {
-      const account = this.account;
-
-      const verifyingContract = await this.getVerifyingContract();
-      const masterContract = await this.getMasterContract();
-      const nonce = await this.getNonce();
-      const chainId = this.$store.getters.getActiveChain.code;
-
-      const domain = {
-        name: "BentoBox V1",
-        chainId,
-        verifyingContract,
-      };
-
-      // The named list of all type definitions
-      const types = {
-        SetMasterContractApproval: [
-          { name: "warning", type: "string" },
-          { name: "user", type: "address" },
-          { name: "masterContract", type: "address" },
-          { name: "approved", type: "bool" },
-          { name: "nonce", type: "uint256" },
-        ],
-      };
-
-      // The data to sign
-      const value = {
-        warning: "Give FULL access to funds in (and approved to) BentoBox?",
-        user: account,
-        masterContract,
-        approved: true,
-        nonce,
-      };
-      console.log(chainId);
-
-      let signature;
-
-      try {
-        signature = await this.signer._signTypedData(domain, types, value);
-      } catch (e) {
-        console.log("SIG ERR:", e.code);
-        if (e.code === -32603) {
-          return "ledger";
-
-          // this.$store.commit("setPopupState", {
-          //   type: "device-error",
-          //   isShow: true,
-          // });
-        }
-        return false;
-      }
-
-      const parsedSignature = this.parseSignature(signature);
-
-      return this.$ethers.utils.defaultAbiCoder.encode(
-        ["address", "address", "bool", "uint8", "bytes32", "bytes32"],
-        [
-          account,
-          masterContract,
-          true,
-          parsedSignature.v,
-          parsedSignature.r,
-          parsedSignature.s,
-        ]
-      );
-    },
   },
   computed: {
+    signer() {
+      return this.$store.getters.getSigner;
+    },
     //address
     account() {
       return this.$store.getters.getAccount;

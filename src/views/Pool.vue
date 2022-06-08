@@ -364,7 +364,7 @@ export default {
 
       const isApprowed = await this.isApprowed();
 
-      if (isTokenApprowed) {
+      if (isTokenApprowed) {// (this.valueAmount < isTokenApprowed)
         this.cookRemoveAndRepayMax(data, isApprowed);
         return false;
       }

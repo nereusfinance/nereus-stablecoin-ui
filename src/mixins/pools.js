@@ -2,7 +2,6 @@ import poolsInfo from "@/utils/contracts/pools.js";
 import masterContractInfo from "@/utils/contracts/master.js";
 import oracleContractsInfo from "@/utils/contracts/oracle.js";
 import whitelistContractInfo from "@/utils/contracts/whitelistManager";
-import nxusdStakingContractInfo from "@/utils/contracts/NXUSDStaking";
 
 export default {
   computed: {
@@ -38,11 +37,9 @@ export default {
       const chainPools = poolsInfo.filter(
         (pool) => pool.contractChain === this.chainId
       );
-      //Staking
-      const nxusdStaking =  this.createNXUSDStaking();
       //pools
       const pools = await Promise.all(
-        chainPools.map((pool) => this.createPool(pool, masterContract, nxusdStaking))
+        chainPools.map((pool) => this.createPool(pool, masterContract))
       );
 
       console.log("STAND CREATED POOLS:", pools);
@@ -51,41 +48,8 @@ export default {
       provider.once("block", () => {
         this.createPools(masterContract);
       });
-
-
-      console.log("nxusdStaking", nxusdStaking);
-      let userBalance = (await nxusdStaking.userData(this.account)).balance.toString();
-      this.$store.commit("setUserBalanceStaked", userBalance);
-
-      let userRewards = (await nxusdStaking.getUserRewards(this.account).toString());
-      this.$store.commit("setUserRewards", userRewards);
-
-      let getAPYDataConfig = (await nxusdStaking.getAPYDataConfig(1));
-      this.$store.commit("setAPYConfig", getAPYDataConfig);
-
-     let tierOne = [];
-     let lockedToken = [];
-     for(let i = 1, j = 0; i < 5; i++, j++){
-       tierOne[j] = getAPYDataConfig[i].NXUSDByTier1.toString();
-       lockedToken[j] = getAPYDataConfig[i].WXTLocked.toString();
-     }
-      this.$store.commit("setTierOne", tierOne);
-      this.$store.commit("setLockedToken", lockedToken);
-
-      let apyTierOne = getAPYDataConfig[1].APYTier1;
-      this.$store.commit("setAPYTierOne", parseFloat(apyTierOne.toString()));
-
-      let apyTierTwo = (await nxusdStaking.apyDataConfig(1)).APYTier2;
-      this.$store.commit("setAPYTierTwo", parseFloat(apyTierTwo.toString()));
     },
-    createNXUSDStaking() {
-      const nxusdStaking = new this.$ethers.Contract(
-        nxusdStakingContractInfo.address,
-        JSON.stringify(nxusdStakingContractInfo.abi),
-        this.signer
-      );
-      return nxusdStaking;
-    },
+
     createWhitelistManager(address) {
       const whitelistContract = new this.$ethers.Contract(
         address,
@@ -94,7 +58,7 @@ export default {
       );
       return whitelistContract;
     },
-    async createPool(pool, masterContract, nxusdStaking) {
+    async createPool(pool, masterContract) {
       const poolContract = new this.$ethers.Contract(
         pool.contract.address,
         JSON.stringify(pool.contract.abi),
@@ -270,7 +234,6 @@ export default {
         userCollateralShare,
         contractInstance: poolContract,
         masterContractInstance: masterContract,
-        nxusdContractInstance: nxusdStaking,
         totalCollateralShare,
         totalBorrow,
         stabilityFee: pool.stabilityFee,

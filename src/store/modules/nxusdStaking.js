@@ -1,20 +1,24 @@
 export default {
   state: {
     userBalanceStaked: "0",
-    userRewards: "0",
+    userStoredRewards: "0",
     apyDataConfig: {},
     tierOne: [],
     tierTwo: "",
     apyTierOne: "0",
     apyTierTwo: "0",
     lockedToken: [],
+    NXUSDStakingContractInstance: {},
   },
   mutations: {
+    setNXUSDStakingContractInstance(state, payload) {
+      state.NXUSDStakingContractInstance = payload;
+    },
     setUserBalanceStaked(state, payload) {
       state.userBalanceStaked = payload;
     },
-    setUserRewards(state, payload) {
-      state.userRewards = payload.userRewards;
+    setUserStoredRewards(state, payload) {
+      state.userStoredRewards = payload;
     },
     setAPYConfig(state, payload) {
       state.apyDataConfig = payload;
@@ -33,16 +37,17 @@ export default {
     },
   },
   actions: {
-    async checkUserBalance({ getters, commit }, address) {
-      const userBalance = await getters.getProvider.getUserBalanceStaked(getters.getAccount);
-      commit("setUserBalanceStaked", { userBalance, address });
+
+    async checkUserBalance({ getters, commit }) { //add Staking to name
+      const userBalance = await getters.getNXUSDStakingContract.getUserBalanceStaked(getters.getAccount);
+      commit("setUserBalanceStaked", userBalance);
     },
     async checkUserRewards({ getters, commit }, address) {
-      const userRewards = await getters.getProvider.getUserRewards(getters.getAccount);
-      commit("setUserRewards", { userRewards, address });
+      const userRewards = await getters.getUserRewards(getters.getAccount);
+      commit("setUserStoredRewards", { userRewards, address });
     },
     async checkAPYDataConfig({ getters, commit }, address) {
-      const apyDataConfig = await getters.getProvider.getAPYDataConfig(1);
+      const apyDataConfig = await getters.getAPYDataConfig(1);
       commit("setAPYConfig", { apyDataConfig, address });
     },
     async checkTierOne({ getters, commit }, address) {
@@ -75,5 +80,8 @@ export default {
     getLockedToken: (state) => state.lockedToken,
     getAPYTierOne: (state) => state.apyTierOne,
     getAPYTierTwo: (state) => state.apyTierTwo,
+    getNXUSDStakingContract: (state) => state.NXUSDStakingContractInstance,
+
+
   },
 };
