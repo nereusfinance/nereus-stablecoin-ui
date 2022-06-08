@@ -128,6 +128,7 @@ export default {
       withdrawStatus: ["Approve", "Withdraw", "Finished"],
       transactionPending: "wait for action",
       btnText: false,
+      gasLimitConst: 1000,
     }
   },
   props: {
@@ -662,14 +663,17 @@ export default {
     getAVAXStatus() {
       return this.$store.getters.getUseAVAX;
     },
+
     async isApprowed() {
       try {
+        console.log("account", this.account);
         const masterContract = await this.getMasterContract();
         const addressApprowed =
           await this.pool.masterContractInstance.masterContractApproved(
             masterContract,
             this.account
           );
+        console.log("account", addressApprowed);
         return addressApprowed;
       } catch (e) {
         console.log("isApprowed err:", e);
@@ -735,6 +739,9 @@ export default {
     },
   },
   computed: {
+    account() {
+      return this.$store.getters.getAccount;
+    },
     valueInUsd() {
       let value = this.valueToUsd.toFixed(2);
       return value;
