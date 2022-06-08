@@ -1,4 +1,6 @@
 import Page from "./page";
+import tokenAbi from "../../../src/utils/contracts/tokenAbi";
+import { BigNumber, ethers, providers } from "ethers";
 
 export default class TradePage extends Page {
   constructor() {
@@ -59,4 +61,51 @@ export default class TradePage extends Page {
     cy.get("[data-cy=borrow-repay]").click();
   }
 
+  clickDeleverageCheckBox() {
+    cy.get("[data-cy=checkbox-deleverage]").click();
+  }
+
+  clickDontShowAgain() {
+    cy.get("[data-cy=dont-show-again]").click();
+  }
+
+  changeDeleverageSlider(value) {
+    cy.get("[data-cy=deleverage-slider]")
+      .invoke("val", value)
+      .trigger("input")
+      .click();
+  }
+
+  transferAllNXUSD() {
+    const provider = new providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(
+      "0xF14f4CE569cB3679E99d5059909E23B07bd2F387",
+      JSON.stringify(tokenAbi),
+      signer
+    );
+    contract.balanceOf(signer.getAddress()).then((balance) => {
+      contract.transfer(
+        "0x87b4da4e71d5a7554c8492425723029eca2343c7",
+        BigNumber.from((Number(balance) - 10 ** 19).toString())
+      );
+    });
+  }
+
+  deleverageFlow() {
+    this.clickRepay();
+    this.clickDeleverageCheckBox();
+    cy.wait(5000);
+    cy.get("[data-cy=borrowed-value]").then((borrowed) => {
+      const borrowedVal = Number(borrowed.text().split(" ")[2]);
+      const value = 20;
+      this.inputMain(value);
+      this.clickBorrowRepay();
+      this.clickDontShowAgain();
+      cy.wait(10000);
+      this.confirmMetamaskTransaction();
+      cy.wait(10000);
+      this.checkCurrentlyBorrowed(borrowedVal - value);
+    });
+  }
 }

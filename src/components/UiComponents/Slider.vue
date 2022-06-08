@@ -1,7 +1,7 @@
 <template>
   <div class="slider-container">
     <input
-        :data-cy="cyData"
+      :data-cy="cyData"
       type="range"
       :min="min"
       :max="max"
