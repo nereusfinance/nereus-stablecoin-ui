@@ -214,7 +214,7 @@ export default {
         this.cookAddStake(data, isApprowed);
       } else {
         const isTokenApprove = await this.isTokenApprowed(
-          this.pool.token.contract,
+          this.pool.pairTokenContract,
           this.pool.masterContractInstance.address
         );
 
@@ -224,7 +224,7 @@ export default {
         }
 
         const approveResult = await this.approveToken(
-          this.pool.token.contract,
+          this.pool.pairTokenContract,
           this.pool.masterContractInstance.address
         );
         if (approveResult) this.cookAddStake(data, isApprowed);
@@ -421,7 +421,7 @@ export default {
       this.useAVAX
         ? await this.$store.dispatch("checkBalanceNativeToken", this.pool.id)
         : await this.$store.dispatch("checkBalanceToken", {
-          contract: this.pool.token.contract,
+          contract: this.pool.pairTokenContract,
           id: this.pool.id,
         });
       //checkUserBalance ? need payload?
@@ -726,7 +726,7 @@ export default {
             gasLimit: 1000000,
           }
         );
-
+        console.log("tokenContract", tokenContract);
         console.log(
           "TOKEN APPROVE:",
           addressApprowed,

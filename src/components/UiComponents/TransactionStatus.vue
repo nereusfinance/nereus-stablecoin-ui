@@ -196,7 +196,6 @@ export default {
         };
 
         this.$emit("addStake", payload);
-        //this.clearData();
 
         return false;
       }
