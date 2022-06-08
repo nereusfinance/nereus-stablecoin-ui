@@ -167,7 +167,8 @@ export default {
     actionHandler() {
       console.log("Value ", this.value);
       if (this.statusText[0] === "Deposit") {
-        this.action("Deposit", 2);
+        this.action("Deposit", 1);
+
         const parsedAmount = this.$ethers.utils.parseUnits(
           this.value.toString(),
           this.pool.pairToken.decimals
@@ -178,7 +179,7 @@ export default {
           updatePrice: this.updatePrice,
         };
 
-        this.$emit("addCollateral", payload);
+        this.$emit("addStake", payload);
         //this.clearData();
         return false;
       }
@@ -194,7 +195,7 @@ export default {
           updatePrice: this.updatePrice,
         };
 
-        this.$emit("addCollateral", payload);
+        this.$emit("addStake", payload);
         //this.clearData();
 
         return false;

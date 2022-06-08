@@ -43,7 +43,7 @@
     <ValueInput
       :max="availableWithdraw"
       :show-max="true"
-      :valueName="pool.name"
+      :valueName="pool.pairToken.name"
       @onchange="updateValue"
       :parentValue="valueAmount"
       :error="valueError"
@@ -69,10 +69,9 @@
     <div class="currency-overview">
       <h2>Currency</h2>
       <TokenIcon v-if="actionType === 'Deposit'" :token="pool.pairToken.name"/>
-      <TokenIcon v-if="actionType === 'Withdraw'" :token="pool.name"/>
       <div>
         {{valueAmount}}
-        {{pool.name}}
+        {{pool.pairToken.name}}
         <p
           v-if="actionType === 'Deposit'"
           style=
@@ -91,7 +90,7 @@
       :action="action"
       :value="valueAmount"
       :pool="pool"
-      @addCollateral="addCollateralHandler"
+      @addStake="addStakeHandler"
     />
     <TransactionStatus
       v-if="actionType === 'Withdraw'"
@@ -100,7 +99,7 @@
       :action="action"
       :value="valueAmount"
       :pool="pool"
-      @addCollateral="addCollateralHandler"
+      @addStake="addStakeHandler"
     />
     <add-token-btn v-if="transactionPending === 'finished'"
       :token-name="pool.pairToken.name"
@@ -206,13 +205,13 @@ export default {
       return num.toString().match(re)[0];
     },
     ///////////////////////////////////////////////////////////////////////////////////////
-    async addCollateralHandler(data) {
-      console.log("ADD COL HANDLER", data);
+    async addStakeHandler(data) {
+      console.log("ADD STAKE HANDLER", data);
       const useAVAXStatus = this.getAVAXStatus();
       const isApprowed = await this.isApprowed();
 
       if (useAVAXStatus) {
-        this.cookAddCollateral(data, isApprowed);
+        this.cookAddStake(data, isApprowed);
       } else {
         const isTokenApprove = await this.isTokenApprowed(
           this.pool.token.contract,
@@ -220,7 +219,7 @@ export default {
         );
 
         if (isTokenApprove) {
-          this.cookAddCollateral(data, isApprowed);
+          this.cookAddStake(data, isApprowed);
           return false;
         }
 
@@ -228,7 +227,7 @@ export default {
           this.pool.token.contract,
           this.pool.masterContractInstance.address
         );
-        if (approveResult) this.cookAddCollateral(data, isApprowed);
+        if (approveResult) this.cookAddStake(data, isApprowed);
       }
     },
     /////////////////////////////////////////////////////////////////////
@@ -327,11 +326,6 @@ export default {
         console.log("SIG ERR:", e.code);
         if (e.code === -32603) {
           return "ledger";
-
-          // this.$store.commit("setPopupState", {
-          //   type: "device-error",
-          //   isShow: true,
-          // });
         }
         return false;
       }
@@ -403,12 +397,41 @@ export default {
         ]
       );
     },
+    parseSignature(signature) {
+      const parsedSignature = signature.substring(2);
+
+      var r = parsedSignature.substring(0, 64);
+      var s = parsedSignature.substring(64, 128);
+      var v = parsedSignature.substring(128, 130);
+
+      return {
+        r: "0x" + r,
+        s: "0x" + s,
+        v: parseInt(v, 16),
+      };
+    },
     async wrapperStatusTx(result) {
       const status = await result.wait();
       if (status) {
-        await this.updateBalancesAndCollateralInfo();
+        await this.updateBalancesAndStakeInfo();
       }
     },
+    //CHANGE DATA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    async updateBalancesAndStakeInfo() {
+      this.useAVAX
+        ? await this.$store.dispatch("checkBalanceNativeToken", this.pool.id)
+        : await this.$store.dispatch("checkBalanceToken", {
+          contract: this.pool.token.contract,
+          id: this.pool.id,
+        });
+      //checkUserBalance ? need payload?
+      await this.$store.dispatch("checkBalancePairToken", {
+        contract: this.pool.pairTokenContract,
+        id: this.pool.id,
+      });
+      await this.checkCollateralInfo();
+    },
+    //} (changeData)
     async getGasPrice() {
       try {
         const gasPrice = await this.signer.getGasPrice();
@@ -433,10 +456,16 @@ export default {
         [true, "0x00", "0x00"]
       );
     },
-    async cookAddCollateral({ amount, updatePrice }, isApprowed) {
+    getAddStakeEncode() {
+      return this.$ethers.utils.defaultAbiCoder.encode(
+        ["int256", "address", "bool"],
+        ["-2", this.account, false]
+      );
+    },
+    async cookAddStake({ amount, updatePrice }, isApprowed) {
       const depositEncode = this.getDepositEncode(amount);
 
-      const colateralEncode = this.getAddCollateralEncode();
+      const colateralEncode = this.getAddStakeEncode();
 
       const gasPrice = await this.getGasPrice();
       console.log("GAS PRICE:", gasPrice);
@@ -730,6 +759,10 @@ export default {
         const receipt = await tx.wait();
 
         console.log("APPROVE RESP:", receipt);
+        if(this.actionType === "Deposit")
+          this.action("Deposit", 2);
+        else
+          this.action("Withdraw", 4);
 
         return true;
       } catch (e) {
@@ -739,6 +772,9 @@ export default {
     },
   },
   computed: {
+    signer() {
+      return this.$store.getters.getSigner;
+    },
     account() {
       return this.$store.getters.getAccount;
     },
@@ -751,7 +787,7 @@ export default {
       return this.toFixed(deposit,2);
     },
     availableWithdraw() {
-      let withdraw = this.pool.token.decimals.toString();
+      let withdraw = this.$store.getters.getUserBalanceStaked;///!!!!!
       return this.toFixed(withdraw,2);
     },
     tokenToUSD() {
