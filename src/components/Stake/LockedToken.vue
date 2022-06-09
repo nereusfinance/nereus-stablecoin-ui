@@ -27,7 +27,7 @@
         <div
           class="amount"
           style="text-align: right"
-          v-for="amount in tierOneAmount"
+          v-for="amount in tier1"
           :key="amount"
         >
           {{amount}}
@@ -49,25 +49,39 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      tierOneArray: [],
+      lockedTokenArray: [""],
+      balance: this.$store.getters.getUserBalanceStaked,
+    }
+  },
   computed: {
-    tierOneAmount() {
-      const arr = this.$store.getters.getTierOne;
-      for(let i = 0; i < arr.length; i++) {
-        arr[i] = arr[i].toString().slice(0, (5 + i));
-        arr[i] = (arr[i].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-      }
-      return arr;
+    tier1() {
+      return this.tierOneAmount(this.tierOneArray);
     },
     lockedToken() {
-      const arr = this.$store.getters.getLockedToken;
+      return this.formatLockedToken(this.lockedTokenArray);
+    },
+  },
+  methods: {
+    tierOneAmount(arr) {
+      if(arr.length === 0) {
+        arr = this.$store.getters.getTierOne;
+        for (let i = 0; i < arr.length; i++) {
+          arr[i] = arr[i].toString().slice(0, (5 + i));
+          arr[i] = (arr[i].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        }
+      }
+      return arr;
+    },
+    formatLockedToken(arr) {
+      arr = this.$store.getters.getLockedToken;
       for(let i = 0; i < arr.length; i++) {
         arr[i] = arr[i].toString().slice(0, (5 + i));
       }
       return arr;
     },
-    balance() {
-      return this.$store.getters.getUserCollateralShare(this.pool.id);
-    }
   },
   filters: {
     formatNumber(value) {

@@ -38,42 +38,42 @@ export default {
   },
   actions: {
 
-    async checkUserBalance({ getters, commit }) { //add Staking to name
-      const userBalance = await getters.getNXUSDStakingContract.getUserBalanceStaked(getters.getAccount);
+    async checkUserBalanceStaked({ getters, commit }) { //add Staking to name
+      const userBalance = getters.getNXUSDStakingContract.getUserBalanceStaked(getters.getAccount);
       commit("setUserBalanceStaked", userBalance);
     },
-    async checkUserRewards({ getters, commit }, address) {
-      const userRewards = await getters.getUserRewards(getters.getAccount);
-      commit("setUserStoredRewards", { userRewards, address });
+    async checkUserRewards({ getters, commit }) {
+      const userRewards = await getters.getNXUSDStakingContract.getUserRewards(getters.getAccount);
+      commit("setUserStoredRewards", userRewards);
     },
-    async checkAPYDataConfig({ getters, commit }, address) {
-      const apyDataConfig = await getters.getAPYDataConfig(1);
-      commit("setAPYConfig", { apyDataConfig, address });
+    async checkAPYDataConfig({ getters, commit }) {
+      const apyDataConfig = getters.getNXUSDStakingContract.getAPYDataConfig(1);
+      commit("setAPYConfig", apyDataConfig );
     },
-    async checkTierOne({ getters, commit }, address) {
-      const tierOne = await getters.getProvider.getTierOne;
-      commit("setTierOne", { tierOne, address });
+    async checkTierOne({ getters, commit }) {
+      const tierOne = await getters.getNXUSDStakingContract.getProvider.getTierOne;
+      commit("setTierOne", tierOne);
     },
-    async checkTierTwo({ getters, commit }, address) {
-      const tierTwo = await getters.getProvider.getTierTwo;
-      commit("setTierTwo", { tierTwo, address });
+    async checkTierTwo({ getters, commit }) {
+      const tierTwo = await getters.getNXUSDStakingContract.getTierTwo;
+      commit("setTierTwo", tierTwo);
     },
-    async checkAPYTierOne({ getters, commit }, address) {
-      const apy = await getters.getProvider.getAPYTierOne;
-      commit("setAPYTierOne", { apy, address });
+    async checkAPYTierOne({ getters, commit }) {
+      const apy = await getters.getNXUSDStakingContract.getAPYTierOne;
+      commit("setAPYTierOne", apy);
     },
-    async checkAPYTierTwo({ getters, commit }, address) {
-      const apy = await getters.getProvider.getAPYTierTwo;
-      commit("setAPYTierTwo", { apy, address });
+    async checkAPYTierTwo({ getters, commit }) {
+      const apy = await getters.getNXUSDStakingContract.getAPYTierTwo;
+      commit("setAPYTierTwo", apy);
     },
-    async checkLockedToken({ getters, commit }, address) {
-      const lockedToken = await getters.getProvider.getLockedToken;
-      commit("setLockedToken", { lockedToken, address });
+    async checkLockedToken({ getters, commit }) {
+      const lockedToken = await getters.getNXUSDStakingContract.getLockedToken;
+      commit("setLockedToken", lockedToken);
     },
   },
   getters: {
     getUserBalanceStaked: (state) => state.userBalanceStaked,
-    getUserRewards: (state) => state.userRewards,
+    getUserRewards: (state) => state.userStoredRewards,
     getAPYDataConfig: (state) => state.apyDataConfig,
     getTierOne: (state) => state.tierOne,
     getTierTwo: (state) => state.tierTwo,

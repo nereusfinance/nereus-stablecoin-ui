@@ -45,7 +45,7 @@ export default {
       return parseFloat(apy.toString());
     },
     apyTierTwo() {
-      let apy = this.$store.getters.getAPYTierTwo.toString();
+      let apy = (this.$store.getters.getAPYTierTwo / 10000).toString(); ////!!!!!!!!!!!!!!!
       return parseFloat(apy.toString());
     },
     tierOne() {

@@ -2433,7 +2433,7 @@ export default {
         [pairToken, this.account, amount, "0x0"]
       );
     },
-    async getApprovalEncode() {
+    getApprovalEncode: async function() {
       const account = this.account;
 
       const verifyingContract = await this.getVerifyingContract();
@@ -2444,7 +2444,7 @@ export default {
       const domain = {
         name: "BentoBox V1",
         chainId,
-        verifyingContract,
+        verifyingContract
       };
 
       // The named list of all type definitions
@@ -2454,8 +2454,8 @@ export default {
           { name: "user", type: "address" },
           { name: "masterContract", type: "address" },
           { name: "approved", type: "bool" },
-          { name: "nonce", type: "uint256" },
-        ],
+          { name: "nonce", type: "uint256" }
+        ]
       };
 
       // The data to sign
@@ -2464,7 +2464,7 @@ export default {
         user: account,
         masterContract,
         approved: true,
-        nonce,
+        nonce
       };
       console.log(chainId);
 
@@ -2548,7 +2548,7 @@ export default {
           true,
           parsedSignature.v,
           parsedSignature.r,
-          parsedSignature.s,
+          parsedSignature.s
         ]
       );
     },

@@ -2,9 +2,7 @@
   <div class="stake">
     <div class="stake-view">
       <div class="stake-container">
-        <div class="stake-text">
-          <h1>Earn</h1>
-        </div>
+        <h1 class="stake-text">Earn</h1>
         <div class="stake-content">
           <div class="container-mini">
             <TotalDeposit
@@ -66,7 +64,7 @@ export default {
   methods: {
     async setStakingInfo() {
       const nxusdStaking = this.$store.getters.getNXUSDStakingContract;
-      let userBalance = (await nxusdStaking.userData(this.account)).balance.toString();
+      let userBalance = (await nxusdStaking.getUserBalanceStaked(this.account)).toString();
       this.$store.commit("setUserBalanceStaked", userBalance);
 
       let userRewards = (await nxusdStaking.getUserRewards(this.account).toString());
@@ -91,7 +89,7 @@ export default {
       this.$store.commit("setAPYTierTwo", parseFloat(apyTierTwo.toString()));
     },
     async checkStakingBalance() {
-      await this.$store.dispatch("checkUserBalance");
+      await this.$store.dispatch("checkUserBalanceStaked");
     },
     createNXUSDStaking() {
       const nxusdStaking = new this.$ethers.Contract(

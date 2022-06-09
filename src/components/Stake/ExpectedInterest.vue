@@ -53,6 +53,18 @@ export default {
       amount: ["12", "22", "32", "42", "20"],
     };
   },
+  computed: {
+    getAmountTier1(arr1) {
+      const timePeriod = [86400,]
+      const ratio = this.$store.getters.getAPYTierOne / 100;
+      //const principal = this.???? / (1 + ratio);
+      const nxusdStaking = this.$store.getters.getNXUSDStakingContract;
+      for(let i = 0; i < 4; i++) {
+        arr1 = nxusdStaking._compound(ratio, principal, timePeriod[i]);
+      }
+      return arr1;
+    }
+  }
 };
 </script>
 

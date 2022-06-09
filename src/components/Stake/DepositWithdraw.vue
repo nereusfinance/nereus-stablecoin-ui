@@ -99,7 +99,7 @@
       :action="action"
       :value="valueAmount"
       :pool="pool"
-      @addStake="addStakeHandler"
+      @addUnstake="addStakeHandler"
     />
     <add-token-btn v-if="transactionPending === 'finished'"
       :token-name="pool.pairToken.name"
@@ -225,9 +225,12 @@ export default {
 
       if (approveResult) await this.addStake();
     },
-    async sendTransact() {
+    async stake() {
       const contract = this.$store.getters.getNXUSDStakingContract;
-      await contract.stake(this.valueAmount);
+      let value = Number(
+        this.$ethers.utils.formatUnits(this.valueAmount, this.pool.pairToken.decimals)
+      );
+      await contract.stake(value);
     },
     /////////////////////////////////////////////////////////////////////
     async getNonce() {
@@ -251,9 +254,20 @@ export default {
         console.log("getVerifyingContract err:", e);
       }
     },
-    async approveMasterContract() {
+    async addStake() {
+      const approval = await this.getSignApproval();
+      console.log("approval result:", approval);
+      //instance bentobox {куда, кому, бул,в,р,с)
+      //перевести для
+      const approvalMaster = await this.approveMasterContract(approval);
+      console.log("approveMasterContract resp: ", approvalMaster);
+
+      if (!approvalMaster) return false;
+      else await this.stake();
+    },
+    async approveMasterContract(data) {
       try {
-        const masterContract = await this.getMasterContract();
+        const NXUSDStaking = await this.$store.getters.getNXUSDStakingContract;
 
         // console.log(
         //   "approveMasterContract",
@@ -267,15 +281,17 @@ export default {
 
         //instance bentobox {куда, кому, бул,в,р,с)
         //v r s from approve
+        //const r = this.$ethers.utils.hexZeroPad(data.r.toHexString(), 32)
         const tx =
           await this.pool.masterContractInstance.setMasterContractApproval(
             this.account,
-            masterContract,
+            NXUSDStaking,
             true,
-            this.$ethers.utils.formatBytes32String(""),
-            this.$ethers.utils.formatBytes32String(""),
-            this.$ethers.utils.formatBytes32String("")
+            this.$ethers.utils.formatBytes32String(data.v),
+            this.$ethers.utils.formatBytes32String(data.r),
+            this.$ethers.utils.formatBytes32String(data.s)
           );
+
 
         const receipt = await tx.wait();
         return receipt;
@@ -289,7 +305,6 @@ export default {
     async getSignApproval() {
       const account = this.account;
 
-      //check arguments
       const verifyingContract = await this.getVerifyingContract();
       const masterContract = await this.getMasterContract();
       const nonce = await this.getNonce();
@@ -301,9 +316,9 @@ export default {
         verifyingContract,
       };
 
-      //
+      // The named list of all type definitions
       const types = {
-        setMasterContractApproval: [
+        SetMasterContractApproval: [
           { name: "warning", type: "string" },
           { name: "user", type: "address" },
           { name: "masterContract", type: "address" },
@@ -317,7 +332,7 @@ export default {
         warning: "Give FULL access to funds in (and approved to) BentoBox?",
         user: account,
         masterContract,
-        approved: false,
+        approved: true,
         nonce,
       };
       console.log(chainId);
@@ -330,23 +345,10 @@ export default {
         console.log("SIG ERR:", e.code);
         return false;
       }
-
       const parsedSignature = this.parseSignature(signature);
 
-      return this.$ethers.utils.defaultAbiCoder.encode(
-        ["address", "address", "bool", "uint8", "bytes32", "bytes32"],
-        [
-          account,
-          masterContract,
-          true,
-          parsedSignature.v,
-          parsedSignature.r,
-          parsedSignature.s,
-        ]
-      );
+      return parsedSignature
     },
-
-
     parseSignature(signature) {
       const parsedSignature = signature.substring(2);
 
@@ -360,38 +362,29 @@ export default {
         v: parseInt(v, 16),
       };
     },
-    async wrapperStatusTx(result) {
-      const status = await result.wait();
-      if (status) {
-        await this.updateBalancesAndStakeInfo();
-      }
-    },
 
-
-    async addStake() {
-      const approval = await this.getSignApproval();
-      console.log("approval result:", approval);
-      //instance bentobox {куда, кому, бул,в,р,с)
-      //перевести для
-      const masterContractApprove = this.approveMasterContract();
-      console.log("masterContractApprove", masterContractApprove);
-    },
+    // async wrapperStatusTx(result) {
+    //   const status = await result.wait();
+    //   if (status) {
+    //     await this.updateBalancesAndStakeInfo();
+    //   }
+    // },
 
     //CHANGE DATA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    async updateBalancesAndStakeInfo() {
-      this.useAVAX
-        ? await this.$store.dispatch("checkBalanceNativeToken", this.pool.id)
-        : await this.$store.dispatch("checkBalanceToken", {
-          contract: this.pool.pairTokenContract,
-          id: this.pool.id,
-        });
-      //checkUserBalance ? need payload?
-      await this.$store.dispatch("checkBalancePairToken", {
-        contract: this.pool.pairTokenContract,
-        id: this.pool.id,
-      });
-      //await this.checkCollateralInfo();
-    },
+    // async updateBalancesAndStakeInfo() {
+    //   this.useAVAX
+    //     ? await this.$store.dispatch("checkBalanceNativeToken", this.pool.id)
+    //     : await this.$store.dispatch("checkBalanceToken", {
+    //       contract: this.pool.pairTokenContract,
+    //       id: this.pool.id,
+    //     });
+    //   //checkUserBalance ? need payload?
+    //   await this.$store.dispatch("checkBalancePairToken", {
+    //     contract: this.pool.pairTokenContract,
+    //     id: this.pool.id,
+    //   });
+    //   //await this.checkCollateralInfo();
+    // },
     //////////////////////////////////////////////////
     getAVAXStatus() {
       return this.$store.getters.getUseAVAX;
@@ -488,7 +481,8 @@ export default {
       return this.toFixed(deposit,2);
     },
     availableWithdraw() {
-      let withdraw = this.$store.getters.getUserBalanceStaked;///!!!!!
+      let withdraw = this.$store.getters.getBalancePairToken(this.pool.id) / 1000000000000000000;
+        //this.$store.getters.getUserBalanceStaked;///!!!!!
       return this.toFixed(withdraw,2);
     },
     tokenToUSD() {

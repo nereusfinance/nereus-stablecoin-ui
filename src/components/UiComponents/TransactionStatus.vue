@@ -13,7 +13,7 @@
         <br>
         <h3>Please approve before withdrawal</h3>
       </h2>
-      <button @click="action(statusText[0])" >{{statusText[0]}}</button>
+      <button @click="actionHandler" >{{statusText[0]}}</button>
     </div>
     <div
       class="central-block-default"
@@ -184,7 +184,7 @@ export default {
         return false;
       }
       if (this.statusText[0] === "Approve") {
-        //this.action("Approve", 1);
+        this.action("Approve", 1);
         const parsedAmount = this.$ethers.utils.parseUnits(
           this.value.toString(),
           this.pool.token.decimals
@@ -195,7 +195,7 @@ export default {
           updatePrice: this.updatePrice,
         };
 
-        this.$emit("addStake", payload);
+        this.$emit("addUnstake", payload);
 
         return false;
       }
