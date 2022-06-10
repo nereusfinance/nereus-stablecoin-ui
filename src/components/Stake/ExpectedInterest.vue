@@ -1,47 +1,47 @@
 <template>
-<div class="expected-interest-block">
-  <p class="expected-interest-title">
-    Expected interest
+  <div class="expected-interest-block">
+    <p class="expected-interest-title">
+      Expected interest
+      <img
+        src="@/assets/images/icon-info.svg"
+        alt=""
+        class="fist-info-icon"
+        v-tooltip="'Some text'"
+      />
+    </p>
+    <div class="container-interest">
+      <div>
+        <div class="column-interest" v-for="time in period" :key="time">
+          {{time}}
+        </div>
+      </div>
+      <div>
+        <p>Tier 1</p>
+        <div class="column-tier" v-for="digit in amount" :key="digit">
+          {{digit}}
+        </div>
+      </div>
+      <div>
+        <p>Tier 2</p>
+        <div class="column-tier" v-for="digit in amount" :key="digit">
+          {{digit}}
+        </div>
+      </div>
+      <div style="flex-direction: row">
+        <p class="total-text">Total</p>
+        <div class="column-tier" v-for="digit in amount" :key="digit">
+          <span style="color: white">{{digit}} <span class="value-text">NXUSD</span></span>
+        </div>
+      </div>
+    </div>
     <img
       src="@/assets/images/icon-info.svg"
       alt=""
-      class="fist-info-icon"
+      class="info-icon"
       v-tooltip="'Some text'"
     />
-  </p>
-  <div class="container-interest">
-    <div>
-      <div class="column-interest" v-for="time in period" :key="time">
-        {{time}}
-      </div>
-    </div>
-    <div>
-      <p>Tier 1</p>
-      <div class="column-tier" v-for="digit in amount" :key="digit">
-        {{digit}}
-      </div>
-    </div>
-    <div>
-      <p>Tier 2</p>
-      <div class="column-tier" v-for="digit in amount" :key="digit">
-        {{digit}}
-      </div>
-    </div>
-    <div style="flex-direction: row">
-      <p class="total-text">Total</p>
-      <div class="column-tier" v-for="digit in amount" :key="digit">
-        <span style="color: white">{{digit}} <span class="value-text">NXUSD</span></span>
-      </div>
-    </div>
+    <hr/>
   </div>
-  <img
-    src="@/assets/images/icon-info.svg"
-    alt=""
-    class="info-icon"
-    v-tooltip="'Some text'"
-  />
-  <hr/>
-</div>
 </template>
 
 <script>
@@ -54,17 +54,19 @@ export default {
     };
   },
   computed: {
-    getAmountTier1(arr1) {
-      const timePeriod = [86400,]
+    tier1() {
+      let array;
+      const timePeriod = [1,7, 31, 365];
       const ratio = this.$store.getters.getAPYTierOne / 100;
-      //const principal = this.???? / (1 + ratio);
+      const valueInterest = 1500;
+      const principal = valueInterest / (1 + ratio);
       const nxusdStaking = this.$store.getters.getNXUSDStakingContract;
       for(let i = 0; i < 4; i++) {
-        arr1 = nxusdStaking._compound(ratio, principal, timePeriod[i]);
+        array = nxusdStaking._compound(ratio, principal, timePeriod[i]);
       }
-      return arr1;
+      return array;
     }
-  }
+  },
 };
 </script>
 

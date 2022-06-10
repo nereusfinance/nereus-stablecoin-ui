@@ -1,6 +1,6 @@
 <template>
 <div class="deposit-withdraw-block">
-  <BackButton :text="'Back'" v-if="overview === true" @click="toStake" />
+  <BackButton :text="'Back'" v-if="overview === true" :disabled="transactionPending !== 'wait for action'" @click="toStake" />
   <BackButton :text="'Back'" v-else @click="onClick" />
 
   <div
@@ -85,21 +85,23 @@
     </div>
     <TransactionStatus
       v-if="actionType === 'Deposit'"
-      :status-text="depositStatus"
+      :statusType="depositStatus"
       :transactionPending="transactionPending"
       :action="action"
       :value="valueAmount"
       :pool="pool"
-      @addStake="addStakeHandler"
+      :tx="tx"
+      @addStake="stakeHandler"
     />
     <TransactionStatus
       v-if="actionType === 'Withdraw'"
-      :statusText="withdrawStatus"
+      :statusType="withdrawStatus"
       :transactionPending="transactionPending"
       :action="action"
       :value="valueAmount"
       :pool="pool"
-      @addUnstake="addStakeHandler"
+      :tx="tx"
+      @addUnstake="unstakeHandler"
     />
     <add-token-btn v-if="transactionPending === 'finished'"
       :token-name="pool.pairToken.name"
@@ -124,8 +126,9 @@ export default {
       valueToUsd: "0",
       valueError: "",
       depositStatus: ["Deposit", "Finished"],
-      withdrawStatus: ["Approve", "Withdraw", "Finished"],
+      withdrawStatus: ["Withdraw", "Finished"],
       transactionPending: "wait for action",
+      tx: "",
       btnText: false,
       gasLimitConst: 1000,
     }
@@ -147,34 +150,13 @@ export default {
     },
   },
   methods: {
-    async action(statusText, tx) {
-      if(statusText === "Deposit") {
+    async action(tx) {
         //let tx = 1;
         if (tx === 1)
           this.transactionPending = "pending";
         else if (tx === 2)
           this.transactionPending = "finished";
         console.log(this.transactionPending);
-      }
-      if(statusText === "Approve") {
-        console.log(this.transactionPending);
-        //let tx = 1;
-        if (tx === 1)
-          this.transactionPending = "pending approve";
-        else if (tx === 2)
-          this.transactionPending = "withdraw";
-        else if (tx === 3)
-          this.transactionPending = "pending withdraw";
-        else if (tx === 4)
-          this.transactionPending = "finished";
-        console.log(this.transactionPending);
-      }
-
-      if(statusText === "make withdraw") {
-        console.log(this.transactionPending);
-        this.transactionPending = "pending withdraw";
-        console.log(this.transactionPending);
-      }
     },
     toStake() {
       this.overview = false;
@@ -191,8 +173,6 @@ export default {
         this.btnText = true;
         this.valueAmount = value;
         this.valueToUsd = value * this.tokenToUSD;
-        console.log("tokenPrice", this.pool.tokenPairPrice);
-        console.log("valueAmount", this.valueAmount);
         return true;
       }
     },
@@ -204,10 +184,20 @@ export default {
       }
       return num.toString().match(re)[0];
     },
-    ///////////////////////////////////////////////////////////////////////////////////////
-    async addStakeHandler() {
+
+
+    async unstakeHandler() {
+      console.log("ADD UNSTAKE HANDLER");
+      const nxusdStaking = this.$store.getters.getNXUSDStakingContract;
+      let value = (this.$ethers.utils.parseUnits(this.valueAmount, this.pool.pairToken.decimals));
+      const tx = await nxusdStaking.unstake(value, false);
+      const receipt = await tx.wait();
+      this.tx = receipt.transactionHash;
+
+      await this.action(2);
+    },
+    async stakeHandler() {
       console.log("ADD STAKE HANDLER");
-      //const isApprowed = await this.isApprowed(); //transfer to addStake for what ? check in Pool.vue
 
       const isTokenApprove = await this.isTokenApprowed(
         this.pool.pairTokenContract,
@@ -227,19 +217,17 @@ export default {
     },
     async stake() {
       const contract = this.$store.getters.getNXUSDStakingContract;
-      let value = Number(
-        this.$ethers.utils.formatUnits(this.valueAmount, this.pool.pairToken.decimals)
-      );
-      await contract.stake(value);
+      let value = (this.$ethers.utils.parseUnits(this.valueAmount, this.pool.pairToken.decimals));
+      const tx = await contract.stake(value);
+      const receipt = await tx.wait();
+      this.tx = receipt.transactionHash;
+      this.action(2);
     },
-    /////////////////////////////////////////////////////////////////////
     async getNonce() {
       try {
         const nonces = await this.pool.masterContractInstance.nonces(
           this.account
         );
-
-        console.log("NONCE:", nonces.toString());
 
         return nonces.toString();
       } catch (e) {
@@ -255,19 +243,22 @@ export default {
       }
     },
     async addStake() {
-      const approval = await this.getSignApproval();
-      console.log("approval result:", approval);
-      //instance bentobox {куда, кому, бул,в,р,с)
-      //перевести для
-      const approvalMaster = await this.approveMasterContract(approval);
-      console.log("approveMasterContract resp: ", approvalMaster);
-
-      if (!approvalMaster) return false;
-      else await this.stake();
+      const isApprowed = await this.isApprowed();
+      if(!isApprowed) {
+        const approval = await this.getSignApproval();
+        console.log("approval result:", approval);
+        if(approval) {
+          const approvalMaster = await this.approveMasterContract();
+          console.log("approveMasterContract resp: ", approvalMaster);
+          if (!approvalMaster) return false;
+        } else return false
+      }
+      else
+        await this.stake();
     },
-    async approveMasterContract(data) {
+    async approveMasterContract() {
       try {
-        const NXUSDStaking = await this.$store.getters.getNXUSDStakingContract;
+        const NXUSDStaking = await this.$store.getters.getNXUSDStakingContract.address;
 
         // console.log(
         //   "approveMasterContract",
@@ -278,18 +269,15 @@ export default {
         //   this.$ethers.utils.formatBytes32String(approval.r),
         //   this.$ethers.utils.formatBytes32String(approval.s)
         // );
-
-        //instance bentobox {куда, кому, бул,в,р,с)
-        //v r s from approve
-        //const r = this.$ethers.utils.hexZeroPad(data.r.toHexString(), 32)
+        console.log(this.account, NXUSDStaking);
         const tx =
           await this.pool.masterContractInstance.setMasterContractApproval(
             this.account,
             NXUSDStaking,
             true,
-            this.$ethers.utils.formatBytes32String(data.v),
-            this.$ethers.utils.formatBytes32String(data.r),
-            this.$ethers.utils.formatBytes32String(data.s)
+            this.$ethers.utils.formatBytes32String(""),
+            this.$ethers.utils.formatBytes32String(""),
+            this.$ethers.utils.formatBytes32String("")
           );
 
 
@@ -300,8 +288,6 @@ export default {
         return false;
       }
     },
-
-    //for BentoBox approval
     async getSignApproval() {
       const account = this.account;
 
@@ -363,38 +349,16 @@ export default {
       };
     },
 
-    // async wrapperStatusTx(result) {
-    //   const status = await result.wait();
-    //   if (status) {
-    //     await this.updateBalancesAndStakeInfo();
-    //   }
-    // },
 
-    //CHANGE DATA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // async updateBalancesAndStakeInfo() {
-    //   this.useAVAX
-    //     ? await this.$store.dispatch("checkBalanceNativeToken", this.pool.id)
-    //     : await this.$store.dispatch("checkBalanceToken", {
-    //       contract: this.pool.pairTokenContract,
-    //       id: this.pool.id,
-    //     });
-    //   //checkUserBalance ? need payload?
-    //   await this.$store.dispatch("checkBalancePairToken", {
-    //     contract: this.pool.pairTokenContract,
-    //     id: this.pool.id,
-    //   });
-    //   //await this.checkCollateralInfo();
-    // },
-    //////////////////////////////////////////////////
     getAVAXStatus() {
       return this.$store.getters.getUseAVAX;
     },
     async isApprowed() {
       try {
-        const masterContract = await this.getMasterContract();
+        const nxusdStaking = await this.$store.getters.getNXUSDStakingContract.address;
         const addressApprowed =
           await this.pool.masterContractInstance.masterContractApproved(
-            masterContract,
+            nxusdStaking,
             this.account
           );
         return addressApprowed;
@@ -420,7 +384,6 @@ export default {
             gasLimit: 1000000,
           }
         );
-        console.log("tokenContract", tokenContract);
         console.log(
           "TOKEN APPROVE:",
           addressApprowed,
@@ -454,9 +417,9 @@ export default {
 
         console.log("APPROVE RESP:", receipt);
         if(this.actionType === "Deposit")
-          this.action("Deposit", 2);
+          this.action(2);
         else
-          this.action("Withdraw", 4);
+          this.action(2);
 
         return true;
       } catch (e) {
@@ -481,8 +444,7 @@ export default {
       return this.toFixed(deposit,2);
     },
     availableWithdraw() {
-      let withdraw = this.$store.getters.getBalancePairToken(this.pool.id) / 1000000000000000000;
-        //this.$store.getters.getUserBalanceStaked;///!!!!!
+      let withdraw = this.$store.getters.getUserBalanceStaked / 1000000000000000000;
       return this.toFixed(withdraw,2);
     },
     tokenToUSD() {

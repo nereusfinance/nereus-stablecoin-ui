@@ -2,50 +2,24 @@
   <div class="transaction-status-block">
     <StatusBlock
       :transactionPending="transactionPending"
-      :statusText="statusText"
+      :statusType="statusType"
     />
     <hr>
     <!--  Central block-->
-<!--    Withdraw-->
-    <div class="central-block-default" v-if="transactionPending === 'wait for action' && statusText[0] === 'Approve'">
-      <h2>
-        1/{{statusText.length}} {{statusText[0]}}
-        <br>
-        <h3>Please approve before withdrawal</h3>
-      </h2>
-      <button @click="actionHandler" >{{statusText[0]}}</button>
-    </div>
-    <div
-      class="central-block-default"
-      style="padding-top: 16px; padding-bottom: 9px"
-      v-if="transactionPending === 'withdraw' && statusText[0] === 'Approve'"
-    >
-      <h2>
-        2/{{statusText.length}} {{statusText[1]}}
-        <br>
-        <h3>Please submit to withdraw</h3>
-      </h2>
-      <button @click="action('make withdraw')" >{{statusText[1]}}</button>
-    </div>
-
-    <div class="central-block" v-if="transactionPending === 'pending withdraw'">
-      <p>Please submit to withdraw</p>
-    </div>
-
-<!--    Deposit-->
-    <div class="central-block" v-if="transactionPending === 'wait for action' && statusText[0] === 'Deposit'">
-      <h3 v-if="statusText[0] === 'Deposit'">Please submit not to deposit</h3>
-      <button @click="actionHandler" >{{statusText[0]}}</button>
+    <div class="central-block" v-if="transactionPending === 'wait for action'">
+      <h3 v-if="statusType[0] === 'Deposit'">Please submit not to deposit</h3>
+      <h3 v-if="statusType[0] === 'Withdraw'">Please submit to withdraw</h3>
+      <button @click="actionHandler" >{{statusType[0]}}</button>
     </div>
 
 <!--    Both-->
-    <div class="central-block" v-if="transactionPending === 'pending' || transactionPending === 'pending approve'">
+    <div class="central-block" v-if="transactionPending === 'pending'">
       <p>Transaction(s) Pending</p>
     </div>
 
     <div class="finished" v-if="transactionPending === 'finished'">
       <h1>
-        {{statusText.length}}/{{statusText.length}} Success!
+        {{statusType.length}}/{{statusType.length}} Success!
       </h1>
       <router-link :to="{ name: 'Dashboard' }" class="dashboard-btn">Dashboard</router-link>
     </div>
@@ -54,62 +28,8 @@
 <!--    Bottom block-->
     <div class="bottom-block">
       <div class="bottom-text" v-if="transactionPending !== 'wait for action'">
-        <h1>{{ statusText[0] }}</h1>
-        <h1 v-if="transactionPending === 'pending' || transactionPending === 'pending approve'">
-          Pending
-          <img
-            src="@/assets/images/icon-loading.svg"
-            alt=""
-            class="loading-icon"
-          />
-          Explorer
-          <img
-            src="@/assets/images/icon-explorer.svg"
-            alt=""
-            class="explorer-icon"
-          />
-        </h1>
-
-        <h1 v-if="transactionPending === 'finished' && statusText[0] === 'Deposit'">
-          Completed
-          <img
-            src="@/assets/images/icon-completed.svg"
-            alt=""
-            class="done-icon"
-          />
-          Explorer
-          <img
-            src="@/assets/images/icon-explorer.svg"
-            alt=""
-            class="explorer-icon"
-          />
-        </h1>
-
-<!--        withdraw & pending withdraw-->
-        <h1 v-if="transactionPending === 'withdraw' || transactionPending === 'pending withdraw'
-        || (transactionPending === 'finished' && statusText[0] === 'Approve')">
-          Confirmed
-          <img
-            src="@/assets/images/icon-completed.svg"
-            alt=""
-            class="done-icon"
-          />
-          Explorer
-          <img
-            src="@/assets/images/icon-explorer.svg"
-            alt=""
-            class="explorer-icon"
-          />
-        </h1>
-      </div>
-
-      <div class="bottom-text"
-           style="margin-top: 8px"
-           v-if="transactionPending === 'pending withdraw'
-           || (transactionPending === 'finished' && statusText[0] === 'Approve')"
-      >
-        <h1>{{ statusText[1] }}</h1>
-        <h1 v-if="transactionPending === 'pending withdraw'">
+        <h1>{{ statusType[0] }}</h1>
+        <h1 v-if="transactionPending === 'pending'">
           Pending
           <img
             src="@/assets/images/icon-loading.svg"
@@ -129,14 +49,16 @@
           <img
             src="@/assets/images/icon-completed.svg"
             alt=""
-            class="loading-icon"
+            class="done-icon"
           />
-          Explorer
-          <img
-            src="@/assets/images/icon-explorer.svg"
-            alt=""
-            class="explorer-icon"
-          />
+          <a target="_blank" class="showTX" :href="getTXLink">
+            Explorer
+            <img
+              src="@/assets/images/icon-explorer.svg"
+              alt=""
+              class="explorer-icon"
+            />
+          </a>
         </h1>
       </div>
     </div>
@@ -149,7 +71,7 @@ export default {
   name: "Status",
   components: { StatusBlock },
   props: {
-    statusText: {
+    statusType: {
       type: Array,
     },
     transactionPending: {
@@ -161,13 +83,27 @@ export default {
     value: {
     },
     pool: {
+    },
+    tx: {
+      type: String,
     }
+  },
+  data() {
+    return {
+      linkTX: "https://snowtrace.io/tx/",
+    }
+  },
+  computed: {
+    getTXLink() {
+      let link = this.linkTX + this.tx;
+      return link;
+    },
   },
   methods: {
     actionHandler() {
       console.log("Value ", this.value);
-      if (this.statusText[0] === "Deposit") {
-        this.action("Deposit", 1);
+      if (this.statusType[0] === "Deposit") {
+        this.action(1);
 
         const parsedAmount = this.$ethers.utils.parseUnits(
           this.value.toString(),
@@ -176,23 +112,21 @@ export default {
 
         const payload = {
           amount: parsedAmount,
-          updatePrice: this.updatePrice,
         };
 
         this.$emit("addStake", payload);
         //this.clearData();
         return false;
       }
-      if (this.statusText[0] === "Approve") {
-        this.action("Approve", 1);
+      if (this.statusType[0] === "Withdraw") {
+        this.action(1);
         const parsedAmount = this.$ethers.utils.parseUnits(
           this.value.toString(),
-          this.pool.token.decimals
+          this.pool.pairToken.decimals
         );
 
         const payload = {
           amount: parsedAmount,
-          updatePrice: this.updatePrice,
         };
 
         this.$emit("addUnstake", payload);
@@ -350,6 +284,14 @@ export default {
 
       .explorer-icon {
         margin-left: 4px;
+        cursor: pointer;
+      }
+      .showTX {
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 20px;
+        color: #FFFFFF;
+        text-decoration: none;
       }
     }
   }

@@ -58,10 +58,11 @@ export default {
       type: Function,
     }
   },
-  computed: {
+  computed:
+    {
     balance() {
       console.log(this.$store.getters.getUserBalanceStaked);
-      return this.$store.getters.getUserBalanceStaked;
+      return this.$store.getters.getUserBalanceStaked / Math.pow(10, this.pool.pairToken.decimals);
     }
   },
   components: {

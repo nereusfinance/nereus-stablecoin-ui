@@ -3,7 +3,7 @@
     <h1>Locked {{pool.name}}</h1>
     <p>
       <TokenIcon :token="pool.name" />
-      {{ balance }} {{ pool.name }}
+      {{ formatBalance }} {{ pool.name }}
     </p>
     <div class="row-selected">
       <div v-if="balance < 500000"
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import TokenIcon from  "@/components/UiComponents/TokenIcon";
+import TokenIcon from "@/components/UiComponents/TokenIcon";
 
 export default {
   name: "LockedToken",
@@ -63,16 +63,17 @@ export default {
     lockedToken() {
       return this.formatLockedToken(this.lockedTokenArray);
     },
+    formatBalance() {
+      return this.balance;
+    },
   },
   methods: {
     tierOneAmount(arr) {
-      if(arr.length === 0) {
         arr = this.$store.getters.getTierOne;
         for (let i = 0; i < arr.length; i++) {
           arr[i] = arr[i].toString().slice(0, (5 + i));
           arr[i] = (arr[i].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
         }
-      }
       return arr;
     },
     formatLockedToken(arr) {
