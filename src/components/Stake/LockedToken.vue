@@ -19,7 +19,7 @@
       <div class="column">
         Locked {{pool.name}}
         <div class="amount" v-for="amount in lockedToken" :key="amount">
-          {{amount | formatNumber}}
+          {{formatLockedToken(amount) | formatNumber}}+
         </div>
       </div>
       <div class="column">
@@ -30,7 +30,7 @@
           v-for="amount in tier1"
           :key="amount"
         >
-          {{amount}}
+          {{formatTierOne(amount)}}
         </div>
 <!--        <div class="selected-row"/>-->
       </div>
@@ -51,37 +51,29 @@ export default {
   },
   data() {
     return {
-      tierOneArray: [],
-      lockedTokenArray: [""],
       balance: this.$store.getters.getUserBalanceStaked,
     }
   },
   computed: {
     tier1() {
-      return this.tierOneAmount(this.tierOneArray);
+      return this.$store.getters.getTierOne;
     },
     lockedToken() {
-      return this.formatLockedToken(this.lockedTokenArray);
+      return this.$store.getters.getLockedToken;
     },
     formatBalance() {
       return this.balance;
     },
   },
   methods: {
-    tierOneAmount(arr) {
-        arr = this.$store.getters.getTierOne;
-        for (let i = 0; i < arr.length; i++) {
-          arr[i] = arr[i].toString().slice(0, (5 + i));
-          arr[i] = (arr[i].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-        }
-      return arr;
+    formatTierOne(item) {
+          item = item / 1000000000000000000;
+          item = (item.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+      return item;
     },
-    formatLockedToken(arr) {
-      arr = this.$store.getters.getLockedToken;
-      for(let i = 0; i < arr.length; i++) {
-        arr[i] = arr[i].toString().slice(0, (5 + i));
-      }
-      return arr;
+    formatLockedToken(item) {
+      item = item / 1000000000000000000;
+      return item;
     },
   },
   filters: {

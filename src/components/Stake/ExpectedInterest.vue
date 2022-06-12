@@ -45,28 +45,27 @@
 </template>
 
 <script>
+
 export default {
   name: "ExpectedInterest",
   data() {
     return {
       period: ["Daily", "Weekly", "Monthly", "Yearly", "Total earned"],
       amount: ["12", "22", "32", "42", "20"],
+      tier1Array: [],
+      principal: this.$store.getters.getUserStoredRewards,
+      ratio: this.$store.getters.getAPYTierOne * 1e21 / 3155695,
+      timePeriod: [86400, 604800, (31556952 / 12), 31556952],
     };
   },
-  computed: {
-    tier1() {
-      let array;
-      const timePeriod = [1,7, 31, 365];
-      const ratio = this.$store.getters.getAPYTierOne / 100;
-      const valueInterest = 1500;
-      const principal = valueInterest / (1 + ratio);
-      const nxusdStaking = this.$store.getters.getNXUSDStakingContract;
-      for(let i = 0; i < 4; i++) {
-        array = nxusdStaking._compound(ratio, principal, timePeriod[i]);
-      }
-      return array;
-    }
-  },
+//   mounted() {
+//       const nxusdStaking = this.$store.getters.getNXUSDStakingContract;
+//       console.log(this.ratio, this.principal, this.timePeriod);
+//       for(let i = 0; i < 4; i++) {
+//         this.tier1Array = nxusdStaking._compound(20, this.ratio, this.timePeriod[i]);
+//       }
+//       console.log(this.tier1Array);
+//   },
 };
 </script>
 

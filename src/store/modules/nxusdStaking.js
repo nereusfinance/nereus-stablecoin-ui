@@ -42,7 +42,7 @@ export default {
       commit("setUserBalanceStaked", userBalance);
     },
     async checkUserRewards({ getters, commit }) {
-      const userRewards = await getters.getNXUSDStakingContract.getUserRewards(getters.getAccount);
+      const userRewards = await getters.getNXUSDStakingContract.getUserStoredRewards(getters.getAccount);
       commit("setUserStoredRewards", userRewards);
     },
     async checkAPYDataConfig({ getters, commit }) {
@@ -72,7 +72,7 @@ export default {
   },
   getters: {
     getUserBalanceStaked: (state) => state.userBalanceStaked,
-    getUserRewards: (state) => state.userStoredRewards,
+    getUserStoredRewards: (state) => state.userStoredRewards,
     getAPYDataConfig: (state) => state.apyDataConfig,
     getTierOne: (state) => state.tierOne,
     getTierTwo: (state) => state.tierTwo,
