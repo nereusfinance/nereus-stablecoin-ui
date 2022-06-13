@@ -37,8 +37,8 @@ export default {
     },
   },
   actions: {
-    async checkUserBalanceStaked({ getters, commit }) { //add Staking to name
-      const userBalance = getters.getNXUSDStakingContract.getUserBalanceStaked(getters.getAccount);
+    async checkUserBalanceStaked({ getters, commit }, contract) { //add Staking to name
+      const userBalance = await contract.getUserBalanceStaked(getters.getAccount);
       commit("setUserBalanceStaked", userBalance);
     },
     async checkUserRewards({ getters, commit }) {

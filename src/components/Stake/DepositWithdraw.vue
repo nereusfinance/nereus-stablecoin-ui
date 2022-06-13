@@ -185,15 +185,23 @@ export default {
       return num.toString().match(re)[0];
     },
 
-
+    async wrapperStatusTx(result) {
+      const status = await result.wait();
+      if (status) {
+        console.log("IT WORKS");
+        await this.updateStakedBalance();
+      }
+    },
+    async updateStakedBalance() {
+      await this.$store.dispatch("checkUserBalanceStaked", this.$store.getters.getNXUSDStakingContract);
+    },
     async unstakeHandler() {
       console.log("ADD UNSTAKE HANDLER");
       const nxusdStaking = this.$store.getters.getNXUSDStakingContract;
       let value = (this.$ethers.utils.parseUnits(this.valueAmount, this.pool.pairToken.decimals));
       const tx = await nxusdStaking.unstake(value, false);
-      const receipt = await tx.wait();
-      this.tx = receipt.transactionHash;
-
+      await this.wrapperStatusTx(tx);
+      this.tx = (await tx.wait().transactionHash);
       await this.action(2);
     },
     async stakeHandler() {
@@ -215,12 +223,26 @@ export default {
 
       if (approveResult) await this.addStake();
     },
+    async addStake() {
+      const isApprowed = await this.isApprowed();
+      if(!isApprowed) {
+        const approval = await this.getSignApproval();
+        console.log("approval result:", approval);
+        if(approval) {
+          const approvalMaster = await this.approveMasterContract();
+          console.log("approveMasterContract resp: ", approvalMaster);
+          if (!approvalMaster) return false;
+        } else return false
+      }
+      else
+        await this.stake();
+    },
     async stake() {
       const contract = this.$store.getters.getNXUSDStakingContract;
       let value = (this.$ethers.utils.parseUnits(this.valueAmount, this.pool.pairToken.decimals));
       const tx = await contract.stake(value);
-      const receipt = await tx.wait();
-      this.tx = receipt.transactionHash;
+      await this.wrapperStatusTx(tx);
+      this.tx = (await tx.wait().transactionHash);
       this.action(2);
     },
     async getNonce() {
@@ -241,20 +263,6 @@ export default {
       } catch (e) {
         console.log("getVerifyingContract err:", e);
       }
-    },
-    async addStake() {
-      const isApprowed = await this.isApprowed();
-      if(!isApprowed) {
-        const approval = await this.getSignApproval();
-        console.log("approval result:", approval);
-        if(approval) {
-          const approvalMaster = await this.approveMasterContract();
-          console.log("approveMasterContract resp: ", approvalMaster);
-          if (!approvalMaster) return false;
-        } else return false
-      }
-      else
-        await this.stake();
     },
     async approveMasterContract() {
       try {
@@ -347,11 +355,6 @@ export default {
         s: "0x" + s,
         v: parseInt(v, 16),
       };
-    },
-
-
-    getAVAXStatus() {
-      return this.$store.getters.getUseAVAX;
     },
     async isApprowed() {
       try {

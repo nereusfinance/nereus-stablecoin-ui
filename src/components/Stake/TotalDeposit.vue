@@ -1,36 +1,36 @@
 <template>
-<div class="total-deposit-block">
-  <p class="container-top">Total deposit
-    <img
-      src="@/assets/images/icon-info.svg"
-      alt=""
-      class="info-icon"
-      v-tooltip="'Some text'"
-    />
-  </p>
-  <p>
-    <TokenIcon :token="pool.pairToken.name" />
-    {{ balance }} {{ pool.pairToken.name}}
-  </p>
-  <div class="btns">
-    <button
-      class="deposit-btn"
-      :class="{ active: actionType === 'Deposit' && actionStatus === true}"
-      :disabled="actionStatus === true"
-      @click="onClick('Deposit')"
-    >
-      Deposit
-    </button>
-    <button
-      class="withdraw-btn"
-      :class="{ active: actionType === 'Withdraw' && actionStatus === true}"
-      :disabled="actionStatus === true"
-      @click="onClick('Withdraw')"
-    >
-      Withdraw
-    </button>
+  <div class="total-deposit-block">
+    <p class="container-top">Total deposit
+      <img
+        src="@/assets/images/icon-info.svg"
+        alt=""
+        class="info-icon"
+        v-tooltip="'Some text'"
+      />
+    </p>
+    <p>
+      <TokenIcon :token="pool.pairToken.name" />
+      {{ balance }} {{ pool.pairToken.name}}
+    </p>
+    <div class="btns">
+      <button
+        class="deposit-btn"
+        :class="{ active: actionType === 'Deposit' && actionStatus === true}"
+        :disabled="actionStatus === true"
+        @click="onClick('Deposit')"
+      >
+        Deposit
+      </button>
+      <button
+        class="withdraw-btn"
+        :class="{ active: actionType === 'Withdraw' && actionStatus === true}"
+        :disabled="actionStatus === true"
+        @click="onClick('Withdraw')"
+      >
+        Withdraw
+      </button>
+    </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -58,11 +58,13 @@ export default {
       type: Function,
     }
   },
-  computed:
-    {
+  computed: {
     balance() {
       console.log(this.$store.getters.getUserBalanceStaked);
-      return this.$store.getters.getUserBalanceStaked / Math.pow(10, this.pool.pairToken.decimals);
+      if (this.$store.getters.getUserBalanceStaked !== 0) {
+        return this.$store.getters.getUserBalanceStaked / Math.pow(10, this.pool.pairToken.decimals);
+      } else
+        return 0.0;
     }
   },
   components: {
