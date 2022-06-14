@@ -189,25 +189,26 @@ export default {
       //на бенто бокс в стор единоразово: по умолчанию фолс в сторе, при входе на страницу при креэйте проверять апрув
       //апрув на никсюсд перед каждой транзой
       console.log("Value ", this.value);
-      if (this.statusType[0] === "Deposit" || this.statusType[0] === "Approve") {
-        if(this.transactionPending === "wait for action" && this.transactionPending !== '3')
+      if (this.statusType[0] === "Deposit") {
+        if(this.transactionPending === "wait for action")
           this.action(1);
+        this.$emit("stakeHandler");
+      }
 
-
-        if(this.statusType.length === 2 || this.transactionPending === '3')
-          this.$emit("stake");
-        else
+      if( this.statusType[0] === "Approve") {
+        if(this.transactionPending === "wait for action" && this.transactionPending !== '3') {
+          this.action(1);
           this.$emit("stakeHandler");
-        //this.clearData();
-        return false;
+        }
+        if(this.transactionPending === '2') {
+          this.$emit("stakeHandler");
+          this.action(3);
+        }
       }
       if (this.statusType[0] === "Withdraw") {
         this.action(1);
 
-
         this.$emit("addUnstake");
-
-        return false;
       }
     },
   },

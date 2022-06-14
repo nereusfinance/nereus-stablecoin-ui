@@ -54,7 +54,7 @@ export default {
       amount: ["12", "22", "32", "42", "20"],
       tier1Array: [],
       principal: this.$store.getters.getUserStoredRewards,
-      ratio: this.$store.getters.getAPYTierOne.mul("1e16").div(3155695),
+      //ratio: this.$store.getters.getAPYTierOne.mul("1e16").div(3155695),
       timePeriod: [86400, 604800, (31556952 / 12), 31556952],
     };
   },

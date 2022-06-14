@@ -94,7 +94,6 @@
       :action-amount = actionAmount
       :txApprove="txApprove"
       @stakeHandler="stakeHandler"
-      @stake="stake"
     />
     <TransactionStatus
       v-if="actionType === 'Withdraw'"
@@ -184,6 +183,7 @@ export default {
     //   this.overview = false;
     // },
     async toOverview() {
+      this.transactionPending = "wait for action";
       this.approwed = await this.isApprowed();
       if(!this.approwed) {
         this.depositStatus = ["Approve", "Deposit", "Finished"];
@@ -236,14 +236,17 @@ export default {
     },
 
     async stakeHandler() {
-      await this.action(1);
+      if(this.transactionPending === "wait for action")
+        await this.action(1);
       console.log("ADD STAKE HANDLER");
 
       const approveInBento = await this.checkAndApproveInBentobox();
       const tokenApprove = await this.stakingTokenApprove();
       console.log("approveInBento", approveInBento);
       console.log("tokenApprove", tokenApprove);
-      if(approveInBento && tokenApprove) {
+      if(this.depositStatus.length > 2 && this.transactionPending !== '3')
+        await this.action(2);
+      if(approveInBento && tokenApprove && ((this.transactionPending === '3') || (this.transactionPending < 2))) {
         await this.stake();
       }
     },
@@ -271,16 +274,12 @@ export default {
         if(signApproval) {
           const approvalMaster = await this.approveMasterContract(signApproval);
           console.log("approveMasterContract resp: ", approvalMaster);
-
-          if(this.depositStatus.length > 2 && this.transactionPending !== '3')
-            await this.action(2);
           return approvalMaster;
         } else return false
       }
       return isApproved;
     },
     async stake() {
-      this.action(3);
       const contract = this.$store.getters.getNXUSDStakingContract;
       let value = this.$ethers.utils.parseUnits(this.valueAmount, this.pool.pairToken.decimals);
       console.log("222222222");
@@ -289,7 +288,7 @@ export default {
       console.log("3333333333333");
       const receipt = await tx.wait();
       console.log("444444444444444444444");
-      this.tx = receipt;
+      this.tx = receipt.transactionHash;
       console.log(this.tx);
       console.log("55555555555555555");
 
@@ -476,10 +475,6 @@ export default {
         const receipt = await tx.wait();
 
         console.log("APPROVE RESP:", receipt);
-        if(this.actionType === "Deposit")
-          this.action(2);
-        else
-          this.action(2);
 
         return true;
       } catch (e) {
