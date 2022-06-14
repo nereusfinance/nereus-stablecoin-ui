@@ -54,21 +54,11 @@ export default {
       amount: ["12", "22", "32", "42", "20"],
       tier1Array: [],
       principal: this.$store.getters.getUserStoredRewards,
-      ratio: this.$store.getters.getAPYTierOne * 1e21 / 3155695,
+      ratio: this.$store.getters.getAPYTierOne.mul("1e16").div(3155695),
       timePeriod: [86400, 604800, (31556952 / 12), 31556952],
     };
   },
-  // mounted() {
-  //     const nxusdStaking = this.$store.getters.getNXUSDStakingContract;
-  //     let sum = 0;
-  //     console.log(this.ratio, this.principal, this.timePeriod);
-  //     for(let i = 0; i < 4; i++) {
-  //       this.tier1Array[i] = nxusdStaking._compound(20, this.ratio, this.timePeriod[i]);
-  //       sum += this.tier1Array[i];
-  //     }
-  //     this.tier1Array.push(sum);
-  //     console.log(this.tier1Array);
-  // },
+
 };
 </script>
 

@@ -35,7 +35,7 @@
           <br>
           <h3>Please submit to deposit</h3>
         </h2>
-        <button @click="stakeHandler" >{{statusType[1]}}</button>
+        <button @click="actionHandler" >{{statusType[1]}}</button>
     </div>
 
     <div class="central-block" v-if="transactionPending === '3'">
@@ -143,6 +143,7 @@ import StatusBlock from "@/components/UiComponents/StatusBlock";
 export default {
   name: "Status",
   components: { StatusBlock },
+
   props: {
     statusType: {
       type: Array,
@@ -183,51 +184,28 @@ export default {
     },
   },
   methods: {
-    stakeHandler() {
-      this.action(3);
-      const parsedAmount = this.$ethers.utils.parseUnits(
-        this.value.toString(),
-        this.pool.pairToken.decimals
-      );
-
-      const payload = {
-        amount: parsedAmount,
-      };
-
-      this.$emit("stake", payload);
-    },
     actionHandler() {
-      this.action(1);
+      //approve handler
+      //на бенто бокс в стор единоразово: по умолчанию фолс в сторе, при входе на страницу при креэйте проверять апрув
+      //апрув на никсюсд перед каждой транзой
       console.log("Value ", this.value);
       if (this.statusType[0] === "Deposit" || this.statusType[0] === "Approve") {
+        if(this.transactionPending === "wait for action" && this.transactionPending !== '3')
+          this.action(1);
 
-        const parsedAmount = this.$ethers.utils.parseUnits(
-          this.value.toString(),
-          this.pool.pairToken.decimals
-        );
 
-        const payload = {
-          amount: parsedAmount,
-        };
-
-        if(this.statusType.length === 2)
-          this.$emit("stake", payload);
+        if(this.statusType.length === 2 || this.transactionPending === '3')
+          this.$emit("stake");
         else
-          this.$emit("addStake", payload);
+          this.$emit("stakeHandler");
         //this.clearData();
         return false;
       }
       if (this.statusType[0] === "Withdraw") {
-        const parsedAmount = this.$ethers.utils.parseUnits(
-          this.value.toString(),
-          this.pool.pairToken.decimals
-        );
+        this.action(1);
 
-        const payload = {
-          amount: parsedAmount,
-        };
 
-        this.$emit("addUnstake", payload);
+        this.$emit("addUnstake");
 
         return false;
       }

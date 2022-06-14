@@ -12,7 +12,7 @@
         src="@/assets/images/icon-one.svg"
         alt=""
         class="status-icon"
-        v-if="transactionPending === '1' && statusType.length === 2"
+        v-if="transactionPending === '1'"
       />
       <img
         src="@/assets/images/icon-done.svg"

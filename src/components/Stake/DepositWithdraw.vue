@@ -93,7 +93,7 @@
       :tx="tx"
       :action-amount = actionAmount
       :txApprove="txApprove"
-      @addStake="stakeHandler"
+      @stakeHandler="stakeHandler"
       @stake="stake"
     />
     <TransactionStatus
@@ -158,8 +158,11 @@ export default {
   methods: {
     async action(tx) {
         //let tx = 1;
+      if(tx === 'finished') {
+        this.transactionPending = "finished"
+      }
       console.log("action amount", this.actionAmount);
-      if(this.actionAmount.length > 3) {
+      if(this.actionAmount.length > 2) {
         if (tx === 1)
           this.transactionPending = "1";
         else if (tx === 2)
@@ -169,7 +172,7 @@ export default {
         else if (tx === 4)
           this.transactionPending = "finished";
       }
-      if(this.actionAmount.length < 3) {
+      if(this.actionAmount.length === 2) {
         if (tx === 1)
           this.transactionPending = "1";
         else if (tx === 2)
@@ -181,13 +184,13 @@ export default {
     //   this.overview = false;
     // },
     async toOverview() {
-      this.overview = true;
       this.approwed = await this.isApprowed();
       if(!this.approwed) {
         this.depositStatus = ["Approve", "Deposit", "Finished"];
         this.actionAmount = [1, 2, 3, 4, 5]; //approve, pending approve, deposit, pending deposit, finished
         this.approved = false;
       }
+      this.overview = true;
     },
     updateValue(value) {
       if (parseFloat(value) > parseFloat(this.maxPairValue)) {
@@ -214,6 +217,7 @@ export default {
       const status = await result.wait();
       if (status) {
         console.log("IT WORKS");
+        this.action("finished");
         await this.updateStakedBalance();
       }
     },
@@ -230,51 +234,67 @@ export default {
       this.tx = (receipt.transactionHash);
       await this.action(2);
     },
+
     async stakeHandler() {
       await this.action(1);
       console.log("ADD STAKE HANDLER");
 
+      const approveInBento = await this.checkAndApproveInBentobox();
+      const tokenApprove = await this.stakingTokenApprove();
+      console.log("approveInBento", approveInBento);
+      console.log("tokenApprove", tokenApprove);
+      if(approveInBento && tokenApprove) {
+        await this.stake();
+      }
+    },
+    async stakingTokenApprove() {
       const isTokenApprove = await this.isTokenApprowed(
         this.pool.pairTokenContract,
         this.pool.masterContractInstance.address
       );
-      if (isTokenApprove) {
-        await this.addStake();
-        return false;
-      }
-
-      const approveResult = await this.approveToken(
-        this.pool.pairTokenContract,
-        this.pool.masterContractInstance.address
-      );
-
-      if (approveResult) await this.addStake();
+      if (isTokenApprove < this.valueAmount) {
+        const approveResult = await this.approveToken(
+          this.pool.pairTokenContract,
+          this.pool.masterContractInstance.address
+        );
+        console.log("11111111111111111111111111");
+        return approveResult;
+      } else
+        return true;
     },
-    async addStake() {
-      const isApprowed = await this.isApprowed();
-      if(!isApprowed) {
-        const approval = await this.getSignApproval();
-        console.log("approval result:", approval);
-        if(approval) {
-          const approvalMaster = await this.approveMasterContract();
-          const receipt = await approvalMaster.wait();
-          this.txApprove = (receipt.transactionHash);
+
+    async checkAndApproveInBentobox() {
+      const isApproved = await this.isApprowed();
+      if(!isApproved) {
+        const signApproval = await this.getSignApproval();
+        console.log("approval result:", signApproval);
+        if(signApproval) {
+          const approvalMaster = await this.approveMasterContract(signApproval);
           console.log("approveMasterContract resp: ", approvalMaster);
-          if (!approvalMaster) return false;
+
+          if(this.depositStatus.length > 2 && this.transactionPending !== '3')
+            await this.action(2);
+          return approvalMaster;
         } else return false
       }
-      else
-        await this.stake();
+      return isApproved;
     },
     async stake() {
+      this.action(3);
       const contract = this.$store.getters.getNXUSDStakingContract;
-      let value = (this.$ethers.utils.parseUnits(this.valueAmount, this.pool.pairToken.decimals));
+      let value = this.$ethers.utils.parseUnits(this.valueAmount, this.pool.pairToken.decimals);
+      console.log("222222222");
+      console.log(contract);
       const tx = await contract.stake(value);
-      await this.wrapperStatusTx(tx);
+      console.log("3333333333333");
       const receipt = await tx.wait();
-      this.tx = (receipt.transactionHash);
+      console.log("444444444444444444444");
+      this.tx = receipt;
       console.log(this.tx);
-      await this.action(this.actionAmount[(this.actionAmount.length - 1)]);
+      console.log("55555555555555555");
+
+      await this.wrapperStatusTx(tx);
+      await this.action("finished");
     },
     async getNonce() {
       try {
@@ -295,7 +315,7 @@ export default {
         console.log("getVerifyingContract err:", e);
       }
     },
-    async approveMasterContract() {
+    async approveMasterContract(approval) {
       try {
         const NXUSDStaking = await this.$store.getters.getNXUSDStakingContract.address;
 
@@ -314,15 +334,14 @@ export default {
             this.account,
             NXUSDStaking,
             true,
-            this.$ethers.utils.formatBytes32String(""),
-            this.$ethers.utils.formatBytes32String(""),
-            this.$ethers.utils.formatBytes32String("")
+            approval.v,
+            approval.r,
+            approval.s
           );
 
 
         const receipt = await tx.wait();
-        if(this.depositStatus.length > 2)
-          await this.action(2);
+        this.txApprove = (receipt.transactionHash);
         return receipt;
       } catch (e) {
         console.log("approveMasterContract err:", e);
@@ -331,11 +350,17 @@ export default {
     },
     async getSignApproval() {
       const account = this.account;
+      console.log("account", this.account);
 
       const verifyingContract = await this.getVerifyingContract();
+      console.log("verifyingContract", verifyingContract);
+
       const masterContract = await this.getMasterContract();
+      console.log("masterContract", masterContract);
+
       const nonce = await this.getNonce();
       const chainId = this.$store.getters.getActiveChain.code;
+      console.log("chainId", chainId);
 
       const domain = {
         name: "BentoBox V1",
@@ -373,7 +398,6 @@ export default {
         return false;
       }
       const parsedSignature = this.parseSignature(signature);
-
       return parsedSignature
     },
     parseSignature(signature) {
@@ -405,8 +429,7 @@ export default {
     },
     async getMasterContract() {
       try {
-        const masterContract =
-          await this.pool.contractInstance.masterContract();
+        const masterContract = this.$store.getters.getNXUSDStakingContract.address;
         return masterContract;
       } catch (e) {
         console.log("getMasterContract err:", e);
@@ -418,7 +441,7 @@ export default {
           this.account,
           spenderAddress,
           {
-            gasLimit: 1000000,
+            gasLimit: 10000000,
           }
         );
         console.log(
@@ -426,7 +449,7 @@ export default {
           addressApprowed,
           parseFloat(addressApprowed.toString()) > 0
         );
-        return parseFloat(addressApprowed.toString()) > 0;
+        return parseFloat(addressApprowed.toString());
       } catch (e) {
         console.log("isApprowed err:", e);
         return false;
