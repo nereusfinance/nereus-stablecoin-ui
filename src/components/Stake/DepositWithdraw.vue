@@ -236,18 +236,22 @@ export default {
     },
 
     async stakeHandler() {
-      if(this.transactionPending === "wait for action")
-        await this.action(1);
-      console.log("ADD STAKE HANDLER");
+      try {
+        if (this.transactionPending === "wait for action")
+          await this.action(1);
+        console.log("ADD STAKE HANDLER");
 
-      const approveInBento = await this.checkAndApproveInBentobox();
-      const tokenApprove = await this.stakingTokenApprove();
-      console.log("approveInBento", approveInBento);
-      console.log("tokenApprove", tokenApprove);
-      if(this.depositStatus.length > 2 && this.transactionPending !== '3')
-        await this.action(2);
-      if(approveInBento && tokenApprove && ((this.transactionPending === '3') || (this.transactionPending < 2))) {
-        await this.stake();
+        const approveInBento = await this.checkAndApproveInBentobox();
+        const tokenApprove = await this.stakingTokenApprove();
+        console.log("approveInBento", approveInBento);
+        console.log("tokenApprove", tokenApprove);
+        if (this.depositStatus.length > 2 && this.transactionPending !== '3')
+          await this.action(2);
+        if (approveInBento && tokenApprove && ((this.transactionPending === '3') || (this.transactionPending < 2))) {
+          await this.stake();
+        }
+      } catch (e) {
+        console.log("stake handler error: ", e);
       }
     },
     async stakingTokenApprove() {
@@ -284,16 +288,20 @@ export default {
       let value = this.$ethers.utils.parseUnits(this.valueAmount, this.pool.pairToken.decimals);
       console.log("222222222");
       console.log(contract);
-      const tx = await contract.stake(value);
-      console.log("3333333333333");
-      const receipt = await tx.wait();
-      console.log("444444444444444444444");
-      this.tx = receipt.transactionHash;
-      console.log(this.tx);
-      console.log("55555555555555555");
+      try {
+        const tx = await contract.stake(value);
+        console.log("3333333333333");
+        const receipt = await tx.wait();
+        console.log("444444444444444444444");
+        this.tx = receipt.transactionHash;
+        console.log(this.tx);
+        console.log("55555555555555555");
 
-      await this.wrapperStatusTx(tx);
-      await this.action("finished");
+        await this.wrapperStatusTx(tx);
+        await this.action("finished");
+      } catch (e) {
+        console.log("stake err:", e);
+      }
     },
     async getNonce() {
       try {
