@@ -297,7 +297,19 @@ export default {
   }
 }
 
-@media screen and(max-width: 780px) {
+@media screen and(min-width: 768px) and(max-width: 1000px) {
+  .transaction-status-block {
+    .central-block {
+      button {
+        width: 360px;
+        height: 48px;
+        border-radius: 24px;
+
+      }
+    }
+  }
+}
+@media screen and(max-width: 767px) {
   .transaction-status-block {
     width: 328px;
 

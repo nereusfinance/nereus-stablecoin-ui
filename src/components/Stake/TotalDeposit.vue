@@ -166,7 +166,38 @@ export default {
   }
 }
 
-@media screen and(max-width: 780px) {
+@media screen and(min-width: 768px) and(max-width: 1000px) {
+  .total-deposit-block {
+    width: 280px;
+    height: 186px;
+    padding: 24px 16px 24px 16px;
+    margin: 0 8px 8px 0;
+
+    p {
+      font-size: 20px;
+    }
+    .token-icon-wrap {
+      width: 26px;
+      height: 26px;
+      margin-right: 6px;
+    }
+    .deposit-btn {
+      width: 140px;
+      margin-right: 8px;
+      border-radius: 20px;
+      height: 40px;
+      padding: 0 0 3px 0;
+    }
+    .withdraw-btn {
+      width: 100px;
+      height: 40px;
+      border-radius: 20px;
+      padding: 0 0 3px 0;
+    }
+  }
+}
+
+@media screen and(max-width: 767px) {
   .total-deposit-block {
     width: 328px;
     height: 248px;

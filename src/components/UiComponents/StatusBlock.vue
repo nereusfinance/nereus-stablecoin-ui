@@ -125,7 +125,16 @@ export default {
   }
 }
 
-@media screen and(max-width: 780px) {
+@media screen and(min-width: 768px) and(max-width: 1000px) {
+  .status-block, .status-block-finished {
+    gap: 8px;
+    hr {
+      width: 4px;
+    }
+  }
+}
+
+@media screen and(max-width: 767px) {
   .status-block, .status-block-finished {
     gap: 8px;
     hr {

@@ -1,37 +1,35 @@
 <template>
 <div class="stake-view-mobile">
-  <div class="stake-container">
-    <div class="stake-text" v-if="actionStatus === false">
-      <h1>Earn</h1>
+  <div class="stake-text" v-if="actionStatus === false">
+    <h1>Earn</h1>
+  </div>
+  <div class="stake-content">
+    <div class="container-mini" v-if="actionStatus === false">
+      <TotalDeposit
+        :pool="pool"
+        :actionStatus="actionStatus"
+        :actionType="actionType"
+        :onClick="setActionType"
+      />
+
+      <InfoBlock
+        :pool="pool"
+      />
+
+      <LockedToken
+        :pool="pool"
+      />
+
+      <ExpectedInterest
+      />
     </div>
-    <div class="stake-content">
-      <div class="container-mini" v-if="actionStatus === false">
-        <TotalDeposit
-          :pool="pool"
-          :actionStatus="actionStatus"
-          :actionType="actionType"
-          :onClick="setActionType"
-        />
-
-        <InfoBlock
-          :pool="pool"
-        />
-
-        <LockedToken
-          :pool="pool"
-        />
-
-        <ExpectedInterest
-        />
-      </div>
-      <div class="container-mini" v-else>
-        <DepositWithdraw
-          :actionType="actionType"
-          :actionStatus="actionStatus"
-          :onClick="setActionStatus"
-          :pool="pool"
-        />
-      </div>
+    <div class="container-mini" v-else>
+      <DepositWithdraw
+        :actionType="actionType"
+        :actionStatus="actionStatus"
+        :onClick="setActionStatus"
+        :pool="pool"
+      />
     </div>
   </div>
 </div>
@@ -390,6 +388,8 @@ export default {
 .stake-view-mobile {
   padding-top: 24px;
   padding-bottom: 29px;
+  margin-left: auto;
+  margin-right: auto;
   flex: 1;
 
   h1 {
@@ -398,18 +398,14 @@ export default {
     text-align: left;
     margin-bottom: 20px;
   }
-  .stake-container {
-    max-width: 1000px;
-    margin-left: auto;
-    margin-right: auto;
-    .stake-text {
-      width: 328px;
-      height: 32px;
 
-      margin-right: auto;
-      margin-left: auto;
-      margin-bottom: 16px;
-    }
+  .stake-text {
+    width: 328px;
+    height: 32px;
+
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 16px;
   }
 
   .stake-content {

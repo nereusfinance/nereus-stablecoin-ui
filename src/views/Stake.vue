@@ -1,36 +1,34 @@
 <template>
   <div class="stake">
     <div class="stake-view">
-      <div class="stake-container">
-        <h1 class="stake-text">Earn</h1>
-        <div class="stake-content">
-          <div class="container-mini">
-            <TotalDeposit
-              :pool="pool"
-              :actionStatus="actionStatus"
-              :actionType="actionType"
-              :onClick="setActionType"
-            />
+      <h1 class="stake-text">Earn</h1>
+      <div class="stake-content">
+        <div class="container-mini">
+          <TotalDeposit
+            :pool="pool"
+            :actionStatus="actionStatus"
+            :actionType="actionType"
+            :onClick="setActionType"
+          />
 
-            <LockedToken
-              :pool="pool"
-            />
-          </div>
-          <div class="container-mini" v-if="actionStatus === false">
-            <InfoBlock
-              :pool="pool"
-            />
-            <ExpectedInterest
-            />
-          </div>
-          <div class="container-mini" v-else>
-            <DepositWithdraw
-              :actionType="actionType"
-              :actionStatus="actionStatus"
-              :onClick="setActionStatus"
-              :pool="pool"
-            />
-          </div>
+          <LockedToken
+            :pool="pool"
+          />
+        </div>
+        <div class="container-mini" v-if="actionStatus === false">
+          <InfoBlock
+            :pool="pool"
+          />
+          <ExpectedInterest
+          />
+        </div>
+        <div class="container-mini" v-else>
+          <DepositWithdraw
+            :actionType="actionType"
+            :actionStatus="actionStatus"
+            :onClick="setActionStatus"
+            :pool="pool"
+          />
         </div>
       </div>
     </div>
@@ -128,9 +126,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.stake, .stake-view {
+.stake {
+  margin-left: auto;
+  margin-right: auto;
+  flex: 1;
+}
+.stake-view {
   padding-top: 40px;
   padding-bottom: 40px;
+  margin-left: auto;
+  margin-right: auto;
   flex: 1;
 
   h1 {
@@ -138,11 +143,6 @@ export default {
     line-height: 36px;
     margin-bottom: 20px;
     text-align: left;
-  }
-  .stake-container {
-    max-width: 1000px;
-    margin-left: auto;
-    margin-right: auto;
   }
 
   .stake-content {
@@ -156,17 +156,19 @@ export default {
   }
 }
 
-@media screen and(min-width: 800px) {
+@media screen and(min-width: 768px) {
   .mobile-ui {
     display: none;
   }
 }
-@media screen and(max-width: 780px) {
-  .stake {
-    padding-top: 24px;
-    padding-bottom: 29px;
+@media screen and(min-width: 768px) and(max-width: 1000px) {
+  .stake-view {
+    margin-left: auto;
+    margin-right: auto;
     flex: 1;
   }
+}
+@media screen and(max-width: 767px) {
   .stake-view {
     display: none;
   }

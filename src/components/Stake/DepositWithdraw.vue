@@ -1,7 +1,7 @@
 <template>
 <div class="deposit-withdraw-block">
   <BackButton :text="'Back'" v-if="overview === true" :disabled="transactionPending !== 'wait for action'" @click="toStake" />
-  <BackButton :text="'Back'" v-else @click="onClick" />
+  <BackButton :text="'Back'" @click="onClick" v-else-if="transactionPending !== 'finished'" />
 
   <div
     v-if="actionType === 'Deposit' && overview === false"
@@ -550,7 +550,26 @@ export default {
   }
 }
 
-@media screen and(max-width: 780px) {
+@media screen and(min-width: 768px) and(max-width: 1000px) {
+  .deposit-withdraw-block {
+    width: 424px;
+    height: 524px;
+    padding: 24px 16px;
+
+    .deposit-withdraw-container {
+      margin-top: 28px;
+    }
+    h1 {
+      font-size: 20px;
+    }
+    .continue {
+      width: 392px;
+      height: 48px;
+      border-radius: 24px;
+    }
+  }
+}
+@media screen and(max-width: 767px) {
   .deposit-withdraw-block {
     background-color: #1C1C1C;
     width: 328px;

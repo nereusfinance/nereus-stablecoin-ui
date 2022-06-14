@@ -7,7 +7,7 @@
     </p>
     <div class="row-selected">
       <div v-if="balance < 500000"
-        class="row"/>
+           class="row"/>
       <div v-else-if="balance <= 5000000"
            class="row1"/>
       <div v-else-if="balance <= 50000000"
@@ -19,7 +19,7 @@
       <div class="column">
         Locked {{pool.name}}
         <div class="amount" v-for="amount in lockedToken" :key="amount">
-          {{formatLockedToken(amount) | formatNumber}}+
+          {{amount | formatNumber}}+
         </div>
       </div>
       <div class="column">
@@ -32,7 +32,7 @@
         >
           {{formatTierOne(amount)}}
         </div>
-<!--        <div class="selected-row"/>-->
+        <!--        <div class="selected-row"/>-->
       </div>
     </div>
   </div>
@@ -51,7 +51,7 @@ export default {
   },
   data() {
     return {
-      balance: this.$store.getters.getUserBalanceStaked,
+      balance:  this.$store.getters.getUserBalanceStaked,
     }
   },
   computed: {
@@ -59,7 +59,11 @@ export default {
       return this.$store.getters.getTierOne;
     },
     lockedToken() {
-      return this.$store.getters.getLockedToken;
+      const arr = this.$store.getters.getLockedToken;
+      for(let i = 0; i < arr.length; i++) {
+        arr[i] = arr[i].toString().slice(0, (5 + i));
+      }
+      return arr;
     },
     formatBalance() {
       return this.balance;
@@ -67,12 +71,8 @@ export default {
   },
   methods: {
     formatTierOne(item) {
-          item = item / 1000000000000000000;
-          item = (item.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-      return item;
-    },
-    formatLockedToken(item) {
       item = item / 1000000000000000000;
+      item = (item.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
       return item;
     },
   },
@@ -189,8 +189,39 @@ export default {
     margin-bottom: 0;
   }
 }
+@media screen and(min-width: 768px) and(max-width: 1000px) {
+  .locked-token-block {
+    height: 330px;
+    width: 280px;
+    border-radius: 4px;
+    padding: 32px 16px 16px 16px;
+    margin-right: 8px;
 
-@media screen and(max-width: 780px) {
+    p {
+      font-size: 20px;
+    }
+    .row, .row1, .row2, .row3{
+      position: relative;
+      width: 264px;
+      height: 40px;
+      left: -9.5px;
+      top: 15px;
+      background: #F2F4FE;
+      opacity: 0.04;
+      border-radius: 4px;
+    }
+    .row1 {
+      top: 48px;
+    }
+    .row2 {
+      top: 83px;
+    }
+    .row3 {
+      top: 117px;
+    }
+  }
+}
+@media screen and(max-width: 767px) {
   .locked-token-block {
     height: 316px;
     width: 328px;

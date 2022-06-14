@@ -167,7 +167,23 @@ export default {
   }
 }
 
-@media screen and(max-width: 780px) {
+@media screen and(min-width: 768px) and(max-width: 1000px) {
+  .expected-interest-block {
+    width: 424px;
+    height: 280px;
+    padding: 35px 16px 16px 16px;
+
+    .info-icon {
+      width: 13px;
+      position: relative;
+      left: 22.4%;
+      right: 8.34%;
+      top: -9.1%;
+    }
+  }
+}
+
+@media screen and(max-width: 767px) {
   .expected-interest-block {
     height: auto;
     width: 328px;

@@ -120,8 +120,23 @@ export default {
     }
   }
 }
+@media screen and(min-width: 768px) and(max-width: 1000px) {
+  .info-block {
+    width: 424px;
+    height: 280px;
+    padding: 24px 16px 16px 16px;
 
-@media screen and(max-width: 780px) {
+    .columns {
+      height: 136px;
+    }
+
+    h1 {
+      font-size: 80px;
+    }
+  }
+}
+
+@media screen and(max-width: 767px) {
   .info-block {
     height: 230px;
     width: 328px;
