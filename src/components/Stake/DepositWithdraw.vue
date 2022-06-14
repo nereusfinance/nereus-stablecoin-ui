@@ -1,7 +1,7 @@
 <template>
 <div class="deposit-withdraw-block">
-  <BackButton :text="'Back'" v-if="overview === true" :disabled="transactionPending !== 'wait for action'" @click="toStake" />
-  <BackButton :text="'Back'" @click="onClick" v-else-if="transactionPending !== 'finished'" />
+  <BackButton :text="'Back'" :disabled="transactionPending !== 'wait for action'" @click="onClick" />
+<!--  <BackButton :text="'Back'" @click="onClick" v-else-if="transactionPending !== 'finished'" />-->
 
   <div
     v-if="actionType === 'Deposit' && overview === false"
@@ -91,7 +91,10 @@
       :value="valueAmount"
       :pool="pool"
       :tx="tx"
+      :action-amount = actionAmount
+      :txApprove="txApprove"
       @addStake="stakeHandler"
+      @stake="stake"
     />
     <TransactionStatus
       v-if="actionType === 'Withdraw'"
@@ -129,6 +132,9 @@ export default {
       withdrawStatus: ["Withdraw", "Finished"],
       transactionPending: "wait for action",
       tx: "",
+      txApprove: "",
+      actionAmount: [1, 2],
+      approved: true,
       btnText: false,
       gasLimitConst: 1000,
     }
@@ -152,17 +158,36 @@ export default {
   methods: {
     async action(tx) {
         //let tx = 1;
+      console.log("action amount", this.actionAmount);
+      if(this.actionAmount.length > 3) {
         if (tx === 1)
-          this.transactionPending = "pending";
+          this.transactionPending = "1";
+        else if (tx === 2)
+          this.transactionPending = "2";
+        else if (tx === 3)
+          this.transactionPending = "3";
+        else if (tx === 4)
+          this.transactionPending = "finished";
+      }
+      if(this.actionAmount.length < 3) {
+        if (tx === 1)
+          this.transactionPending = "1";
         else if (tx === 2)
           this.transactionPending = "finished";
-        console.log(this.transactionPending);
+        console.log("transaction pending", this.transactionPending);
+      }
     },
-    toStake() {
-      this.overview = false;
-    },
-    toOverview() {
+    // toStake() {
+    //   this.overview = false;
+    // },
+    async toOverview() {
       this.overview = true;
+      this.approwed = await this.isApprowed();
+      if(!this.approwed) {
+        this.depositStatus = ["Approve", "Deposit", "Finished"];
+        this.actionAmount = [1, 2, 3, 4, 5]; //approve, pending approve, deposit, pending deposit, finished
+        this.approved = false;
+      }
     },
     updateValue(value) {
       if (parseFloat(value) > parseFloat(this.maxPairValue)) {
@@ -201,10 +226,12 @@ export default {
       let value = (this.$ethers.utils.parseUnits(this.valueAmount, this.pool.pairToken.decimals));
       const tx = await nxusdStaking.unstake(value, false);
       await this.wrapperStatusTx(tx);
-      this.tx = (await tx.wait().transactionHash);
+      const receipt = await tx.wait();
+      this.tx = (receipt.transactionHash);
       await this.action(2);
     },
     async stakeHandler() {
+      await this.action(1);
       console.log("ADD STAKE HANDLER");
 
       const isTokenApprove = await this.isTokenApprowed(
@@ -230,6 +257,8 @@ export default {
         console.log("approval result:", approval);
         if(approval) {
           const approvalMaster = await this.approveMasterContract();
+          const receipt = await approvalMaster.wait();
+          this.txApprove = (receipt.transactionHash);
           console.log("approveMasterContract resp: ", approvalMaster);
           if (!approvalMaster) return false;
         } else return false
@@ -242,8 +271,10 @@ export default {
       let value = (this.$ethers.utils.parseUnits(this.valueAmount, this.pool.pairToken.decimals));
       const tx = await contract.stake(value);
       await this.wrapperStatusTx(tx);
-      this.tx = (await tx.wait().transactionHash);
-      this.action(2);
+      const receipt = await tx.wait();
+      this.tx = (receipt.transactionHash);
+      console.log(this.tx);
+      await this.action(this.actionAmount[(this.actionAmount.length - 1)]);
     },
     async getNonce() {
       try {
@@ -290,6 +321,8 @@ export default {
 
 
         const receipt = await tx.wait();
+        if(this.depositStatus.length > 2)
+          await this.action(2);
         return receipt;
       } catch (e) {
         console.log("approveMasterContract err:", e);
@@ -367,6 +400,7 @@ export default {
         return addressApprowed;
       } catch (e) {
         console.log("isApprowed err:", e);
+        return false;
       }
     },
     async getMasterContract() {

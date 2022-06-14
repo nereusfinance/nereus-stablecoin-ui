@@ -66,7 +66,7 @@ export default {
       return arr;
     },
     formatBalance() {
-      return this.balance;
+      return this.balance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
   },
   methods: {
