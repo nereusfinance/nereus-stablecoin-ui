@@ -6,13 +6,13 @@
       {{ formatBalance }} {{ pool.name }}
     </p>
     <div class="row-selected">
-      <div v-if="balance < 500000"
+      <div v-if="formatBalance < 500000"
            class="row"/>
-      <div v-else-if="balance <= 5000000"
+      <div v-else-if="formatBalance <= 5000000"
            class="row1"/>
-      <div v-else-if="balance <= 50000000"
+      <div v-else-if="formatBalance <= 50000000"
            class="row2"/>
-      <div v-else-if="balance = 500000000"
+      <div v-else-if="formatBalance >= 500000000"
            class="row3"/>
     </div>
     <div class="columns">
@@ -51,7 +51,6 @@ export default {
   },
   data() {
     return {
-      balance:  this.$store.getters.getUserBalanceStaked,
     }
   },
   computed: {
@@ -66,7 +65,11 @@ export default {
       return arr;
     },
     formatBalance() {
-      return this.balance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      console.log(this.$store.getters.getLockedToken);
+      if (this.$store.getters.getUserBalanceStaked !== 0) {
+        return this.$store.getters.getUserBalanceStaked / Math.pow(10, this.pool.pairToken.decimals);
+      } else
+        return 0.0;
     },
   },
   methods: {

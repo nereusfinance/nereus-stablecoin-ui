@@ -4,7 +4,7 @@
     <div class="column">
         Tier 1 amount
       <h2>
-        <span style="color: white">{{tierOne}}</span> NXUSD
+        <span style="color: white">{{tierOne | formatNumber}}</span> NXUSD
       </h2>
       <p class="apy">
         {{apyTierOne}}%<span>APY</span>
@@ -39,6 +39,30 @@ export default {
       required: true,
     },
   },
+  filters: {
+    formatNumber(value) {
+      if (!value) return value;
+      if (Number(value) === 0) return value;
+
+      const lookup = [
+        { value: 0, symbol: "" },
+        { value: 1, symbol: "" },
+        { value: 1e3, symbol: "k" },
+        { value: 1e6, symbol: "M" },
+      ];
+      const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+      let item = lookup
+        .slice()
+        .reverse()
+        .find(function(item) {
+          return parseFloat(value) >= item.value;
+        });
+      return (
+        (parseFloat(value) / item.value).toFixed(0).replace(rx, "$1") + ".00" +
+        item.symbol
+      );
+    },
+  },
   computed: {
     apyTierOne() {
       let apy = this.$store.getters.getAPYTierOne.toString();
@@ -49,8 +73,19 @@ export default {
       return parseFloat(apy.toString());
     },
     tierOne() {
-      let tierOne = this.$store.getters.getTierOne.toString();
-      return parseFloat(tierOne.toString());
+      let lockedToken = (this.$store.getters.getUserBalanceStaked / 1000000000000000000);
+      let value;
+        if(lockedToken < 500000)
+          value = 1000;
+        else if(lockedToken <= 5000000)
+          value = 15000;
+        else if(lockedToken <= 50000000)
+          value = 300000;
+        else if(lockedToken >= 500000000)
+          value = 5000000;
+      return value;
+      // let tierOne = (this.$store.getters.getUserBalanceStaked / 1000000000000000000).toString();
+      // return parseFloat(tierOne.toString());
     },
     tierTwo() {
       let apy = this.$store.getters.getTierTwo.toString();

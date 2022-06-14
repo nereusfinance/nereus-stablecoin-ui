@@ -62,6 +62,9 @@ export default {
   methods: {
     async setStakingInfo() {
       const nxusdStaking = this.$store.getters.getNXUSDStakingContract;
+      let userData = (await nxusdStaking.userData(this.account));
+      this.$store.commit("setUserData", userData);
+
       let userBalance = (await nxusdStaking.getUserBalanceStaked(this.account)).toString();
       this.$store.commit("setUserBalanceStaked", userBalance);
 
@@ -101,7 +104,7 @@ export default {
       this.actionStatus = this.actionStatus === false;
     },
     setActionType(type) {
-      console.log(this.$store.getters.getUserRewards);
+      console.log(this.$store.getters.getUserStoredRewards);
       if (type !== this.actionType)
         this.actionType = type;
       this.actionStatus = this.actionStatus === false;

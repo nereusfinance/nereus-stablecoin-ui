@@ -245,7 +245,10 @@ export default {
         const tokenApprove = await this.stakingTokenApprove();
         console.log("approveInBento", approveInBento);
         console.log("tokenApprove", tokenApprove);
-        if (this.depositStatus.length > 2 && this.transactionPending !== '3')
+        if(!approveInBento || !tokenApprove) {
+          this.transactionPending = "wait for action";
+        }
+        if (approveInBento && tokenApprove && this.depositStatus.length > 2 && this.transactionPending !== '3')
           await this.action(2);
         if (approveInBento && tokenApprove && ((this.transactionPending === '3') || (this.transactionPending < 2))) {
           await this.stake();

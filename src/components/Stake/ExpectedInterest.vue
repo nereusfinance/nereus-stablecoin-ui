@@ -80,7 +80,7 @@ export default {
     text-align: left;
     font-size: 20px;
     gap: 9.33px;
-    margin-bottom: 8px;
+    margin-bottom: 16px;
   }
   .fist-info-icon {
     width: 13.33px;

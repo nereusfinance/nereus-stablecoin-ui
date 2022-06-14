@@ -3,6 +3,7 @@ export default {
     userBalanceStaked: "0",
     userStoredRewards: "0",
     apyDataConfig: {},
+    userData: {},
     tierOne: [],
     tierTwo: "",
     apyTierOne: "0",
@@ -13,6 +14,9 @@ export default {
   mutations: {
     setNXUSDStakingContractInstance(state, payload) {
       state.NXUSDStakingContractInstance = payload;
+    },
+    setUserData(state, payload) {
+      state.userData = payload;
     },
     setUserBalanceStaked(state, payload) {
       state.userBalanceStaked = payload;
@@ -40,6 +44,10 @@ export default {
     async checkUserBalanceStaked({ getters, commit }) { //add Staking to name
       const userBalance = await getters.getNXUSDStakingContract.getUserBalanceStaked(getters.getAccount);
       commit("setUserBalanceStaked", userBalance);
+    },
+    async checkUserData({ getters, commit }) {
+      const userData = await getters.getNXUSDStakingContract.getUserData(getters.getAccount);
+      commit("setUserData", userData);
     },
     async checkUserRewards({ getters, commit }) {
       const userRewards = await getters.getNXUSDStakingContract.getUserStoredRewards(getters.getAccount);
@@ -73,6 +81,7 @@ export default {
   getters: {
     getUserBalanceStaked: (state) => state.userBalanceStaked,
     getUserStoredRewards: (state) => state.userStoredRewards,
+    getUserData: (state) => state.userData,
     getAPYDataConfig: (state) => state.apyDataConfig,
     getTierOne: (state) => state.tierOne,
     getTierTwo: (state) => state.tierTwo,
@@ -80,7 +89,5 @@ export default {
     getAPYTierOne: (state) => state.apyTierOne,
     getAPYTierTwo: (state) => state.apyTierTwo,
     getNXUSDStakingContract: (state) => state.NXUSDStakingContractInstance,
-
-
   },
 };
