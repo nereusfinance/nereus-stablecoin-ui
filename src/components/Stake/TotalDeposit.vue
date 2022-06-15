@@ -60,7 +60,6 @@ export default {
   },
   computed: {
     balance() {
-      console.log(this.$store.getters.getUserBalanceStaked);
       if (this.$store.getters.getUserBalanceStaked !== 0) {
         return this.$store.getters.getUserBalanceStaked / Math.pow(10, this.pool.pairToken.decimals);
       } else

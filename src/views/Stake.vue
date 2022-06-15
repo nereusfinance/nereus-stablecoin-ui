@@ -54,7 +54,7 @@ export default {
   },
   created() {
     this.createNXUSDStaking();
-    this.checkStakingBalance();
+    this.checkUserBalanceStaked();
     this.setStakingInfo();
     console.log("Balance",this.$store.getters.getUserBalanceStaked);
     console.log("Instance", this.$store.getters.getNXUSDStakingContract);
@@ -65,10 +65,11 @@ export default {
       let userData = (await nxusdStaking.userData(this.account));
       this.$store.commit("setUserData", userData);
 
-      let userBalance = (await nxusdStaking.getUserBalanceStaked(this.account)).toString();
+      //console.log("userDATA", userData.APYData.WXTLocked);
+      let userBalance = userData.balance;
       this.$store.commit("setUserBalanceStaked", userBalance);
 
-      let userRewards = (await nxusdStaking.getUserRewards(this.account).toString());
+      let userRewards = (await nxusdStaking.userData.storedReward);
       this.$store.commit("setUserStoredRewards", userRewards);
 
       let getAPYDataConfig = (await nxusdStaking.getAPYDataConfig(1));
@@ -86,10 +87,10 @@ export default {
       let apyTierOne = getAPYDataConfig[1].APYTier1;
       this.$store.commit("setAPYTierOne", parseFloat(apyTierOne.toString()));
 
-      let apyTierTwo = (await nxusdStaking.apyDataConfig(1)).APYTier2;
+      let apyTierTwo = (await nxusdStaking.config(1)).APYTier2;
       this.$store.commit("setAPYTierTwo", parseFloat(apyTierTwo.toString()));
     },
-    async checkStakingBalance() {
+    async checkUserBalanceStaked() {
       await this.$store.dispatch("checkUserBalanceStaked");
     },
     createNXUSDStaking() {

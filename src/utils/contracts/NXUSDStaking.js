@@ -1,14 +1,9 @@
 export default {
   name: "NXUSDStaking",
-  address: "0x9aee994F2d1b59B086C2a1998AdD9477DE0BcBc3",
+  address: "0x4e66Cf2DD4f8DbA8716D15D9BE450986c0c77b68",
   abi:  [
     {
       inputs: [
-        {
-          internalType: "address",
-          name: "_owner",
-          type: "address"
-        },
         {
           internalType: "contract IBentoBoxMinimal",
           name: "_bentoBox",
@@ -82,7 +77,7 @@ export default {
           type: "uint256"
         },
         {
-          "components": [
+          components: [
             {
               internalType: "uint256",
               name: "WXTLocked",
@@ -111,7 +106,7 @@ export default {
           type: "uint256"
         }
       ],
-      name: "SetAPYDataConfig",
+      name: "SetConfig",
       type: "event"
     },
     {
@@ -145,7 +140,7 @@ export default {
         {
           indexed: false,
           internalType: "uint256",
-          name: "userBalance",
+          name: "amount",
           type: "uint256"
         }
       ],
@@ -164,82 +159,6 @@ export default {
       ],
       name: "WithdrawedTreasury",
       type: "event"
-    },
-    {
-      inputs: [],
-      name: "APYDataConfigCurrentVersion",
-      outputs: [
-        {
-          internalType: "uint256",
-          name: "",
-          type: "uint256"
-        }
-      ],
-      stateMutability: "view",
-      type: "function"
-    },
-    {
-      inputs: [
-        {
-          internalType: "uint256",
-          name: "principal",
-          type: "uint256"
-        },
-        {
-          internalType: "uint256",
-          name: "ratio",
-          type: "uint256"
-        },
-        {
-          internalType: "uint256",
-          name: "n",
-          type: "uint256"
-        }
-      ],
-      name: "_compound",
-      outputs: [
-        {
-          internalType: "uint256",
-          name: "result",
-          type: "uint256"
-        },
-        {
-          internalType: "int128",
-          name: "ratioResult",
-          type: "int128"
-        }
-      ],
-      stateMutability: "pure",
-      type: "function"
-    },
-    {
-      inputs: [
-        {
-          internalType: "uint256",
-          name: "",
-          type: "uint256"
-        }
-      ],
-      name: "apyDataConfig",
-      outputs: [
-        {
-          internalType: "uint256",
-          name: "version",
-          type: "uint256"
-        },
-        {
-          internalType: "uint256",
-          name: "timestamp",
-          type: "uint256"
-        },
-        {
-          internalType: "uint256",
-          name: "APYTier2",
-          type: "uint256"
-        }
-      ],
-      stateMutability: "view",
-      type: "function"
     },
     {
       inputs: [
@@ -271,6 +190,82 @@ export default {
       inputs: [
         {
           internalType: "uint256",
+          name: "principal",
+          type: "uint256"
+        },
+        {
+          internalType: "uint256",
+          name: "ratio",
+          type: "uint256"
+        },
+        {
+          internalType: "uint256",
+          name: "n",
+          type: "uint256"
+        }
+      ],
+      name: "compound",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "result",
+          type: "uint256"
+        },
+        {
+          internalType: "int128",
+          name: "ratioResult",
+          type: "int128"
+        }
+      ],
+      stateMutability: "pure",
+      type: "function"
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256"
+        }
+      ],
+      name: "config",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "version",
+          type: "uint256"
+        },
+        {
+          internalType: "uint256",
+          name: "timestamp",
+          type: "uint256"
+        },
+        {
+          internalType: "uint256",
+          name: "APYTier2",
+          type: "uint256"
+        }
+      ],
+      stateMutability: "view",
+      type: "function"
+    },
+    {
+      inputs: [],
+      name: "configCurrentVersion",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256"
+        }
+      ],
+      stateMutability: "view",
+      type: "function"
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint256",
           name: "version",
           type: "uint256"
         }
@@ -278,7 +273,7 @@ export default {
       name: "getAPYDataConfig",
       outputs: [
         {
-          "components": [
+          components: [
             {
               internalType: "uint256",
               name: "WXTLocked",
@@ -311,30 +306,11 @@ export default {
           type: "address"
         }
       ],
-      name: "getUserBalanceStaked",
-      outputs: [
-        {
-          internalType: "uint256",
-          name: "",
-          type: "uint256"
-        }
-      ],
-      stateMutability: "view",
-      type: "function"
-    },
-    {
-      inputs: [
-        {
-          internalType: "address",
-          name: "user",
-          type: "address"
-        }
-      ],
       name: "getUserRewards",
       outputs: [
         {
           internalType: "uint256",
-          name: "amount",
+          name: "",
           type: "uint256"
         }
       ],
@@ -452,7 +428,7 @@ export default {
           type: "uint256"
         }
       ],
-      name: "setAPYDataConfig",
+      name: "setConfig",
       outputs: [],
       stateMutability: "nonpayable",
       type: "function"
@@ -564,7 +540,7 @@ export default {
       name: "userData",
       outputs: [
         {
-          "components": [
+          components: [
             {
               internalType: "uint256",
               name: "WXTLocked",

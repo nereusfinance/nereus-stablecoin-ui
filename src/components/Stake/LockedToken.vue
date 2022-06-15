@@ -65,7 +65,6 @@ export default {
       return arr;
     },
     formatBalance() {
-      console.log(this.$store.getters.getLockedToken);
       if (this.$store.getters.getUserBalanceStaked !== 0) {
         return this.$store.getters.getUserBalanceStaked / Math.pow(10, this.pool.pairToken.decimals);
       } else
