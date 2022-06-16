@@ -92,13 +92,13 @@ export default {
       this.$store.commit("setLockedToken", lockedToken);
 
       const nxusdStakingCalculation = this.createNXUSDStakingCalculation();
-      let tableRewards = nxusdStakingCalculation.calculateTableRewards(this.account, [86400, 604800, 2629746, 31556952]);
+      let tableRewards = await nxusdStakingCalculation.calculateTableRewards(this.account, [86400, 604800, 2629746, 31556952]);
       this.$store.commit("setTableRewards", tableRewards);
       console.log(this.$store.getters.getTableRewards);
 
       for(let i = 0; i < 4; i++) {
-        this.tier1Array[i] = tableRewards.rewardsTier1;
-        this.tier2Array[i] = tableRewards.rewardsTier2;
+        this.tier1Array[i] = tableRewards[i].rewardsTier1.toString();
+        this.tier2Array[i] = tableRewards[i].rewardsTier2;
       }
       console.log(this.tier1Array);
       console.log(this.tier2Array);
