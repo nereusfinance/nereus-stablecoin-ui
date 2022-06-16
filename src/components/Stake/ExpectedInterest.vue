@@ -17,30 +17,36 @@
       </div>
       <div>
         <p>Tier 1</p>
-        <div class="column-tier" v-for="digit in tier1Array" :key="digit">
-          {{digit}}
+        <div class="column-tier" v-for="digit in rewardsForPeriod" :key="digit.rewardsTier1.toString()">
+          {{new Intl.NumberFormat('en-EN', { minimumFractionDigits: 2 }).format(parseFloat((digit.rewardsTier1.toString() / 1e18).toFixed(2)))}}
         </div>
       </div>
       <div>
         <p>Tier 2</p>
-        <div class="column-tier" v-for="digit in amount" :key="digit">
-          {{digit}}
+        <div class="column-tier" v-for="digit in rewardsForPeriod" :key="digit.rewardsTier2.toString()">
+          {{new Intl.NumberFormat('en-EN', { minimumFractionDigits: 2 }).format(parseFloat((digit.rewardsTier2.toString() / 1e18).toFixed(2)))}}
         </div>
       </div>
       <div style="flex-direction: row">
         <p class="total-text">Total</p>
-        <div class="column-tier" v-for="digit in amount" :key="digit">
-          <span style="color: white">{{digit}} <span class="value-text">NXUSD</span></span>
+        <div class="column-tier total" v-for="digit in rewardsForPeriod" :key="digit.rewardsTier2.toString()">
+          <span style="color: white">
+            {{new Intl.NumberFormat('en-EN', { minimumFractionDigits: 2 }).format(parseFloat(((digit.rewardsTier1.add(digit.rewardsTier2)).toString() / 1e18).toFixed(2)))}}
+            <span class="value-text"> NXUSD</span></span>
         </div>
       </div>
     </div>
-    <img
-      src="@/assets/images/icon-info.svg"
-      alt=""
-      class="info-icon"
-      v-tooltip="'Some text'"
-    />
     <hr/>
+<!--    <img-->
+<!--      src="@/assets/images/icon-info.svg"-->
+<!--      alt=""-->
+<!--      class="info-icon"-->
+<!--      v-tooltip="'Some text'"-->
+<!--    />-->
+    <div class="total-earned-rewards">
+      <div class="total-title">Total earned</div>
+      <div class="total-amount">{{ new Intl.NumberFormat('en-EN', { minimumFractionDigits: 2 }).format(parseFloat(((totalEarnedRewards / 1e18).toFixed(2)))) }} <span>NXUSD</span></div>
+    </div>
   </div>
 </template>
 
@@ -50,31 +56,42 @@ export default {
   name: "ExpectedInterest",
   data() {
     return {
-      period: ["Daily", "Weekly", "Monthly", "Yearly", "Total earned"],
-      amount: ["12", "22", "32", "42", "20"],
+      period: ["Daily", "Weekly", "Monthly", "Yearly"],
     };
   },
   props: {
-    tier1Array: {
+    rewardsForPeriod: {
       type: Array,
     },
-    tier2Array: {
-      type: Array,
+    totalEarnedRewards: {
+      type: String,
     }
   },
   computed: {
-  }
+    // formattingRewards() {
+    //   const formattedRewards = this.rewardsForPeriod.map((reward) => {
+    //
+    //   });
+    // },
+  },
+  methods: {
+  },
 };
 </script>
 
 <style scoped lang="scss">
 .expected-interest-block {
-  width: 592px;
-  height: 315px;
+  //width: 592px;
+  //height: 315px;
   padding: 32px 24px 24px 24px;
 
   display: flex;
   flex-direction: column;
+
+  .total-earned-rewards {
+    display: flex;
+    justify-content: space-between;
+  }
 
   h1 {
     font-weight: 400;
@@ -84,12 +101,22 @@ export default {
   .expected-interest-title {
     text-align: left;
     font-size: 20px;
+    line-height: 28px;
     gap: 9.33px;
     margin-bottom: 16px;
   }
   .fist-info-icon {
     width: 13.33px;
   }
+
+  .total-earned-rewards {
+    font-size: 14px;
+    line-height: 20px;
+    span, .total-title {
+      color: #8A8A8A;
+    }
+  }
+
   p {
     text-align: right;
     align-items: center;
@@ -103,8 +130,8 @@ export default {
   }
 
   .total-text {
-    text-align: left;
-    padding-right: 50px;
+    //text-align: left;
+    padding-right: 53px;
   }
   .container-interest {
     display: flex;
@@ -117,13 +144,15 @@ export default {
 
     font-weight: 400;
     font-size: 14px;
+    line-height: 20px;
     color: #8A8A8A;
 
     text-align: left;
-    padding-bottom: 8px;
+    margin-bottom: 8px;
   }
   .column-interest:last-child {
-    padding-top: 25px;
+    //padding-top: 25px;
+    margin-bottom: 12px;
   }
   .column-interest:first-child {
     margin-top: 28px;
@@ -135,33 +164,34 @@ export default {
 
     font-weight: 400;
     font-size: 14px;
+    line-height: 20px;
     color: #FFFFFF;
 
     text-align: right;
-    padding-bottom: 8px;
+    margin-bottom: 8px;
 
     span {
       color: #8A8A8A;
     }
   }
   .column-tier:last-child {
-    padding-top: 25px;
+    //padding-top: 25px;
   }
   hr {
-    width: 544px;
+    width: 100%;
     border-width: 0;
     margin-bottom: 12px;
     background: #363637;
     height: 1px;
-    position: relative;
-    top: -20.5%;
+    //position: relative;
+    //top: -20.5%;
   }
   .info-icon {
     width: 13px;
-    position: relative;
-    left: 16.7%;
-    right: 8.34%;
-    top: -9.5%;
+    //position: relative;
+    //left: 16.7%;
+    //right: 8.34%;
+    //top: -9.5%;
   }
 }
 

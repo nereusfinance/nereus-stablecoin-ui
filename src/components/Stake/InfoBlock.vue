@@ -4,7 +4,7 @@
     <div class="column">
         Tier 1 amount
       <h2>
-        <span style="color: white">{{tierOne | formatNumber}}</span> NXUSD
+        <span style="color: white">{{tierOne}}</span> NXUSD
       </h2>
       <p class="apy">
         {{apyTierOne}}%<span>APY</span>
@@ -14,7 +14,7 @@
     <div class="column">
         Tier 2 amount
       <h2>
-        <span style="color: white">{{tierOne}}</span> NXUSD
+        <span style="color: white">{{tierTwo}}</span> NXUSD
       </h2>
       <p class="apy">
         {{apyTierTwo}}%<span>APY</span>
@@ -24,7 +24,7 @@
   <div class="column">
     Yearly earn
     <h1>
-      {{apyTierOne}}<span>NXUSD</span>
+      {{yearlyEarn | formatNumber}}<span>NXUSD</span>
     </h1>
   </div>
 </div>
@@ -47,7 +47,7 @@ export default {
       const lookup = [
         { value: 0, symbol: "" },
         { value: 1, symbol: "" },
-        { value: 1e3, symbol: "k" },
+        { value: 1e3, symbol: "K" },
         { value: 1e6, symbol: "M" },
       ];
       const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
@@ -64,32 +64,79 @@ export default {
     },
   },
   computed: {
+    yearlyEarn() {
+      const yearlyRewards = this.$store.getters.getYearlyEarn;
+      if(yearlyRewards) {
+        return parseFloat((yearlyRewards / 1e18).toFixed(2));
+      } else {
+        return 0;
+      }
+    },
     apyTierOne() {
-      let apy = this.$store.getters.getAPYTierOne.toString();
-      return parseFloat(apy.toString());
+      // let apy = (this.$store.getters.getAPYTierOne / 1e16).toString();
+      // return parseFloat(apy.toString());
+      let apy = this.$store.getters.getAPYTierOne;
+      if (apy) {
+        return this.$store.getters.getAPYTierOne / 1e16;
+      } else {
+        return 0;
+      }
     },
     apyTierTwo() {
-      let apy = this.$store.getters.getAPYTierTwo.toString();
-      return parseFloat(apy.toString());
+      // let apy = (this.$store.getters.getAPYTierTwo / 1e16).toString();
+      // return parseFloat(apy.toString());
+      let apy = this.$store.getters.getAPYTierTwo;
+      if (apy) {
+        return this.$store.getters.getAPYTierTwo / 1e16;
+      } else {
+        return 0;
+      }
     },
     tierOne() {
-      let lockedToken = (this.$store.getters.getUserBalanceStaked / 1000000000000000000);
-      let value;
-        if(lockedToken < 500000)
-          value = 1000;
-        else if(lockedToken <= 5000000)
-          value = 15000;
-        else if(lockedToken <= 50000000)
-          value = 300000;
-        else if(lockedToken >= 500000000)
-          value = 5000000;
-      return value;
+      // let lockedToken = (this.$store.getters.getUserBalanceStaked / 1000000000000000000);
+      // let value;
+      //   if(lockedToken < 500000)
+      //     value = 1000;
+      //   else if(lockedToken <= 5000000)
+      //     value = 15000;
+      //   else if(lockedToken <= 50000000)
+      //     value = 300000;
+      //   else if(lockedToken >= 500000000)
+      //     value = 5000000;
+      // return value;
+      const userData = this.$store.getters.getUserData;
+      if (userData.storedReward) {
+        const userStoredReward = parseInt(userData.storedReward.toString() / 1e18);
+        const NXUSDByTier1 = parseInt(userData.apyData.NXUSDByTier1.toString() / 1e18);
+        console.log('NXUSDByTier1', NXUSDByTier1);
+        if (userStoredReward > NXUSDByTier1) {
+          return (NXUSDByTier1 / 1000).toFixed(2) + "K";
+        } else {
+          return (userStoredReward / 1000).toFixed(2) + "K";
+        }
+      } else {
+        return 0;
+      }
+
       // let tierOne = (this.$store.getters.getUserBalanceStaked / 1000000000000000000).toString();
       // return parseFloat(tierOne.toString());
     },
     tierTwo() {
-      let apy = this.$store.getters.getTierTwo.toString();
-      return parseFloat(apy.toString());
+      // let apy = this.$store.getters.getTierTwo.toString();
+      // return parseFloat(apy.toString());
+      const userData = this.$store.getters.getUserData;
+      if (userData) {
+        const userStoredReward = parseInt(userData.storedReward.toString() / 1e18);
+        const NXUSDByTier1 = parseInt(userData.apyData.NXUSDByTier1.toString() / 1e18);
+        console.log('NXUSDByTier1', NXUSDByTier1);
+        if (userStoredReward > NXUSDByTier1) {
+          return ((userStoredReward - NXUSDByTier1) / 1000).toFixed(2) + "K";
+        } else {
+          return 0;
+        }
+      } else {
+        return 0;
+      }
     }
   }
 };

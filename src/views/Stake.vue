@@ -18,10 +18,11 @@
         <div class="container-mini" v-if="actionStatus === false">
           <InfoBlock
             :pool="pool"
+            :yearlyEarn="yearlyEarn"
           />
           <ExpectedInterest
-            :tier1Array="tier1Array"
-            :tier2Array="tier2Array"
+            :rewardsForPeriod="rewardsForPeriod"
+            :totalEarnedRewards="totalEarnedRewards"
           />
         </div>
         <div class="container-mini" v-else>
@@ -45,8 +46,9 @@ import InfoBlock from "@/components/Stake/InfoBlock";
 import ExpectedInterest from "@/components/Stake/ExpectedInterest";
 import DepositWithdraw from "@/components/Stake/DepositWithdraw";
 import MobileStake from "@/views/MobileStake";
-import nxusdStakingContractInfo from "@/utils/contracts/NXUSDStaking";
-import nxusdStakingCalculationInfo from "@/utils/contracts/NXUSDStakingCalculation";
+import NXUSDStakingContractInfo from "@/utils/contracts/NXUSDStaking";
+import NXUSDStakingCalculationInfo from "@/utils/contracts/NXUSDStakingCalculation";
+import MultiFeeDistributionInfo from "@/utils/contracts/MultiFeeDistribution";
 export default {
   name: "Stake",
   data() {
@@ -55,15 +57,16 @@ export default {
       actionType: "",
       tier1Array: [""],
       tier2Array: [""],
+      rewardsForPeriod: [],
+      totalEarnedRewards: "",
+      yearlyEarn: "",
     }
   },
   created() {
     this.createNXUSDStaking();
-    this.createNXUSDStakingCalculation();
+    // this.createNXUSDStakingCalculation();
     this.checkUserBalanceStaked();
     this.setStakingInfo();
-    console.log("Balance",this.$store.getters.getUserBalanceStaked);
-    console.log("Instance", this.$store.getters.getNXUSDStakingContract);
   },
   methods: {
     async setStakingInfo() {
@@ -71,15 +74,26 @@ export default {
       let userData = (await nxusdStaking.userData(this.account));
       this.$store.commit("setUserData", userData);
 
+      const configCurrentVersion = await nxusdStaking.configCurrentVersion();
 
       let userBalance = userData.balance;
       this.$store.commit("setUserBalanceStaked", userBalance);
 
+      const multiFeeDistributionInstance = this.createMultiFeeDistributionInstance();
+      console.log('multiFeeDistributionInstance', multiFeeDistributionInstance);
+      const WXTLock = await multiFeeDistributionInstance.lockedBalances(this.account);
+      this.$store.commit("setUserWXTLock", parseFloat((WXTLock.total.toString() / 1e18).toFixed(2)));
+      console.log("WXTLock", parseFloat((WXTLock.total.toString() / 1e18).toFixed(2)));
 
       let userRewards = (await nxusdStaking.getUserRewards(this.account));
       this.$store.commit("setUserStoredRewards", userRewards);
 
-      let getAPYDataConfig = (await nxusdStaking.getAPYDataConfig(1));
+      this.totalEarnedRewards = (userRewards.sub(userData.balance)).toString();
+
+      console.log("userRewards", userRewards.toString());
+
+      let getAPYDataConfig = await nxusdStaking.getAPYDataConfig(configCurrentVersion);
+      console.log("getAPYDataConfig", getAPYDataConfig);
       this.$store.commit("setAPYConfig", getAPYDataConfig);
 
       let tierOne = [];
@@ -89,19 +103,24 @@ export default {
         lockedToken[j] = getAPYDataConfig[i].WXTLocked.toString();
       }
       this.$store.commit("setTierOne", tierOne);
+      console.log("tierOne", tierOne);
       this.$store.commit("setLockedToken", lockedToken);
+      console.log("lockedToken", lockedToken);
 
       const nxusdStakingCalculation = this.createNXUSDStakingCalculation();
       let tableRewards = await nxusdStakingCalculation.calculateTableRewards(this.account, [86400, 604800, 2629746, 31556952]);
       this.$store.commit("setTableRewards", tableRewards);
-      console.log(this.$store.getters.getTableRewards);
-
-      for(let i = 0; i < 4; i++) {
-        this.tier1Array[i] = tableRewards[i].rewardsTier1.toString();
-        this.tier2Array[i] = tableRewards[i].rewardsTier2;
-      }
-      console.log(this.tier1Array);
-      console.log(this.tier2Array);
+      this.rewardsForPeriod = tableRewards;
+      console.log("tableRewards", this.$store.getters.getTableRewards);
+      const yearlyEarnRewards = tableRewards[tableRewards.length - 1].rewardsTier1.add(tableRewards[tableRewards.length - 1].rewardsTier2);
+      this.$store.commit("setYearlyEarnReward", yearlyEarnRewards.toString());
+      this.yearlyEarn = yearlyEarnRewards.toString();
+      // for(let i = 0; i < 4; i++) {
+      //   this.tier1Array[i] = tableRewards[i].rewardsTier1.toString();
+      //   this.tier2Array[i] = tableRewards[i].rewardsTier2;
+      // }
+      // console.log(this.tier1Array);
+      // console.log(this.tier2Array);
 
 
       let apyTierOne = getAPYDataConfig[1].APYTier1;
@@ -115,19 +134,28 @@ export default {
     },
     createNXUSDStaking() {
       const nxusdStaking = new this.$ethers.Contract(
-        nxusdStakingContractInfo.address,
-        JSON.stringify(nxusdStakingContractInfo.abi),
+        NXUSDStakingContractInfo.address,
+        JSON.stringify(NXUSDStakingContractInfo.abi),
         this.signer
       );
       this.$store.commit("setNXUSDStakingContractInstance", nxusdStaking);
     },
     createNXUSDStakingCalculation() {
       const nxusdStakingCalculation = new this.$ethers.Contract(
-        nxusdStakingCalculationInfo.address,
-        JSON.stringify(nxusdStakingCalculationInfo.abi),
+        NXUSDStakingCalculationInfo.address,
+        JSON.stringify(NXUSDStakingCalculationInfo.abi),
         this.signer
       );
       return nxusdStakingCalculation;
+      //this.$store.commit("setNXUSDStakingContractInstance", nxusdStaking);
+    },
+    createMultiFeeDistributionInstance() {
+      const multiFeeDistribution = new this.$ethers.Contract(
+        MultiFeeDistributionInfo.address,
+        JSON.stringify(MultiFeeDistributionInfo.abi),
+        this.signer
+      );
+      return multiFeeDistribution;
       //this.$store.commit("setNXUSDStakingContractInstance", nxusdStaking);
     },
     setActionStatus() {
@@ -154,7 +182,14 @@ export default {
       return this.$store.getters.getPoolById(poolId);
     },
   },
-  components: { MobileStake, DepositWithdraw, ExpectedInterest, InfoBlock, LockedToken, TotalDeposit }
+  components: {
+    MobileStake,
+    DepositWithdraw,
+    ExpectedInterest,
+    InfoBlock,
+    LockedToken,
+    TotalDeposit,
+  },
 };
 </script>
 

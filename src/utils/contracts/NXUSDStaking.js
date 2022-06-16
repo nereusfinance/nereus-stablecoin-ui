@@ -1,6 +1,6 @@
 export default {
   name: "NXUSDStaking",
-  address: "0x73e27b59333cc40F63d4F6F9393a566B6474D43f",
+  address: "0xa0f3b348998a766664e7a1372c1db7ba1628753e",
   abi: [
     {
       inputs: [
@@ -593,5 +593,5 @@ export default {
       stateMutability: "nonpayable",
       type: "function"
     }
-  ]
+  ],
 };

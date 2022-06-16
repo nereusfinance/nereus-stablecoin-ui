@@ -2,7 +2,7 @@ export default {
   state: {
     userBalanceStaked: "0",
     userStoredRewards: "0",
-    tableRewards: {},
+    tableRewards: [],
     apyDataConfig: {},
     userData: {},
     tierOne: [],
@@ -11,8 +11,16 @@ export default {
     apyTierTwo: "0",
     lockedToken: [],
     NXUSDStakingContractInstance: {},
+    userWXTLock: 0,
+    yearlyEarn: "0",
   },
   mutations: {
+    setYearlyEarnReward(state, payload) {
+      state.yearlyEarn = payload;
+    },
+    setUserWXTLock(state, payload) {
+      state.userWXTLock = payload;
+    },
     setNXUSDStakingContractInstance(state, payload) {
       state.NXUSDStakingContractInstance = payload;
     },
@@ -87,6 +95,8 @@ export default {
     },
   },
   getters: {
+    getYearlyEarn: (state) => state.yearlyEarn,
+    getUserWXTLock: (state) => state.userWXTLock,
     getUserBalanceStaked: (state) => state.userBalanceStaked,
     getTableRewards: (state) => state.tableRewards,
     getUserStoredRewards: (state) => state.userStoredRewards,

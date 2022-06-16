@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import TokenIcon from  "@/components/UiComponents/TokenIcon";
+import TokenIcon from "@/components/UiComponents/TokenIcon";
 export default {
   name: "TotalDeposit",
   data() {
@@ -60,10 +60,11 @@ export default {
   },
   computed: {
     balance() {
-      if (this.$store.getters.getUserBalanceStaked !== 0) {
-        return this.$store.getters.getUserBalanceStaked / Math.pow(10, this.pool.pairToken.decimals);
-      } else
-        return 0.0;
+      // if (this.$store.getters.getUserBalanceStaked !== 0) {
+      //   return this.$store.getters.getUserBalanceStaked / Math.pow(10, this.pool.pairToken.decimals);
+      // } else
+      //   return 0.0;
+      return new Intl.NumberFormat('en-EN').format(parseFloat((this.$store.getters.getUserBalanceStaked / 1e18).toFixed(2)));
     }
   },
   components: {

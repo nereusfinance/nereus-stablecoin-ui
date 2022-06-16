@@ -3,7 +3,7 @@
     <h1>Locked {{pool.name}}</h1>
     <p>
       <TokenIcon :token="pool.name" />
-      {{ formatBalance }} {{ pool.name }}
+      {{ new Intl.NumberFormat('en-EN').format(formatBalance) }} {{ pool.name }}
     </p>
     <div class="row-selected">
       <div v-if="formatBalance < 500000"
@@ -65,10 +65,11 @@ export default {
       return arr;
     },
     formatBalance() {
-      if (this.$store.getters.getUserStoredRewards !== 0) {
-        return this.$store.getters.getUserStoredRewards / Math.pow(10, this.pool.pairToken.decimals);
-      } else
-        return 0.0;
+      // if (this.$store.getters.getUserStoredRewards !== 0) {
+      //   return this.$store.getters.getUserStoredRewards / Math.pow(10, this.pool.pairToken.decimals);
+      // } else
+      //   return 0.0;
+      return this.$store.getters.getUserWXTLock;
     },
   },
   methods: {
@@ -86,7 +87,7 @@ export default {
       const lookup = [
         { value: 0, symbol: "" },
         { value: 1, symbol: "" },
-        { value: 1e3, symbol: "k" },
+        { value: 1e3, symbol: "K" },
         { value: 1e6, symbol: "M" },
       ];
       const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
