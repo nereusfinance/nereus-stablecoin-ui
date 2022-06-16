@@ -17,7 +17,7 @@
       </div>
       <div>
         <p>Tier 1</p>
-        <div class="column-tier" v-for="digit in amount" :key="digit">
+        <div class="column-tier" v-for="digit in tier1Array" :key="digit">
           {{digit}}
         </div>
       </div>
@@ -52,13 +52,18 @@ export default {
     return {
       period: ["Daily", "Weekly", "Monthly", "Yearly", "Total earned"],
       amount: ["12", "22", "32", "42", "20"],
-      tier1Array: [],
-      principal: this.$store.getters.getUserStoredRewards,
-      //ratio: this.$store.getters.getAPYTierOne.mul("1e16").div(3155695),
-      timePeriod: [86400, 604800, (31556952 / 12), 31556952],
     };
   },
-
+  props: {
+    tier1Array: {
+      type: Array,
+    },
+    tier2Array: {
+      type: Array,
+    }
+  },
+  computed: {
+  }
 };
 </script>
 

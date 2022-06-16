@@ -20,6 +20,8 @@
             :pool="pool"
           />
           <ExpectedInterest
+            :tier1Array="tier1Array"
+            :tier2Array="tier2Array"
           />
         </div>
         <div class="container-mini" v-else>
@@ -44,16 +46,20 @@ import ExpectedInterest from "@/components/Stake/ExpectedInterest";
 import DepositWithdraw from "@/components/Stake/DepositWithdraw";
 import MobileStake from "@/views/MobileStake";
 import nxusdStakingContractInfo from "@/utils/contracts/NXUSDStaking";
+import nxusdStakingCalculationInfo from "@/utils/contracts/NXUSDStakingCalculation";
 export default {
   name: "Stake",
   data() {
     return {
       actionStatus: false,
       actionType: "",
+      tier1Array: [""],
+      tier2Array: [""],
     }
   },
   created() {
     this.createNXUSDStaking();
+    this.createNXUSDStakingCalculation();
     this.checkUserBalanceStaked();
     this.setStakingInfo();
     console.log("Balance",this.$store.getters.getUserBalanceStaked);
@@ -65,11 +71,12 @@ export default {
       let userData = (await nxusdStaking.userData(this.account));
       this.$store.commit("setUserData", userData);
 
-      //console.log("userDATA", userData.APYData.WXTLocked);
+
       let userBalance = userData.balance;
       this.$store.commit("setUserBalanceStaked", userBalance);
 
-      let userRewards = (await nxusdStaking.userData.storedReward);
+
+      let userRewards = (await nxusdStaking.getUserRewards(this.account));
       this.$store.commit("setUserStoredRewards", userRewards);
 
       let getAPYDataConfig = (await nxusdStaking.getAPYDataConfig(1));
@@ -83,6 +90,19 @@ export default {
       }
       this.$store.commit("setTierOne", tierOne);
       this.$store.commit("setLockedToken", lockedToken);
+
+      const nxusdStakingCalculation = this.createNXUSDStakingCalculation();
+      let tableRewards = nxusdStakingCalculation.calculateTableRewards(this.account, [86400, 604800, 2629746, 31556952]);
+      this.$store.commit("setTableRewards", tableRewards);
+      console.log(this.$store.getters.getTableRewards);
+
+      for(let i = 0; i < 4; i++) {
+        this.tier1Array[i] = tableRewards.rewardsTier1;
+        this.tier2Array[i] = tableRewards.rewardsTier2;
+      }
+      console.log(this.tier1Array);
+      console.log(this.tier2Array);
+
 
       let apyTierOne = getAPYDataConfig[1].APYTier1;
       this.$store.commit("setAPYTierOne", parseFloat(apyTierOne.toString()));
@@ -100,6 +120,15 @@ export default {
         this.signer
       );
       this.$store.commit("setNXUSDStakingContractInstance", nxusdStaking);
+    },
+    createNXUSDStakingCalculation() {
+      const nxusdStakingCalculation = new this.$ethers.Contract(
+        nxusdStakingCalculationInfo.address,
+        JSON.stringify(nxusdStakingCalculationInfo.abi),
+        this.signer
+      );
+      return nxusdStakingCalculation;
+      //this.$store.commit("setNXUSDStakingContractInstance", nxusdStaking);
     },
     setActionStatus() {
       this.actionStatus = this.actionStatus === false;

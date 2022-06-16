@@ -2,6 +2,7 @@ export default {
   state: {
     userBalanceStaked: "0",
     userStoredRewards: "0",
+    tableRewards: {},
     apyDataConfig: {},
     userData: {},
     tierOne: [],
@@ -17,6 +18,9 @@ export default {
     },
     setUserData(state, payload) {
       state.userData = payload;
+    },
+    setTableRewards(state, payload) {
+      state.tableRewards = payload;
     },
     setUserBalanceStaked(state, payload) {
       state.userBalanceStaked = payload;
@@ -44,6 +48,10 @@ export default {
     async checkUserBalanceStaked({ getters, commit }) {
       const userBalance = await getters.getNXUSDStakingContract.getUserBalanceStaked;
       commit("setUserBalanceStaked", userBalance);
+    },
+    async checkTableRewards({ getters, commit }) {
+      const tableRewards = await getters.getNXUSDStakingContract.getTableRewards;
+      commit("setTableRewards", tableRewards);
     },
     async checkUserData({ getters, commit }) {
       const userData = await getters.getNXUSDStakingContract.getUserData(getters.getAccount);
@@ -80,6 +88,7 @@ export default {
   },
   getters: {
     getUserBalanceStaked: (state) => state.userBalanceStaked,
+    getTableRewards: (state) => state.tableRewards,
     getUserStoredRewards: (state) => state.userStoredRewards,
     getUserData: (state) => state.userData,
     getAPYDataConfig: (state) => state.apyDataConfig,

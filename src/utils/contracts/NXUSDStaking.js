@@ -1,7 +1,7 @@
 export default {
   name: "NXUSDStaking",
-  address: "0x4e66Cf2DD4f8DbA8716D15D9BE450986c0c77b68",
-  abi:  [
+  address: "0x73e27b59333cc40F63d4F6F9393a566B6474D43f",
+  abi: [
     {
       inputs: [
         {
@@ -77,7 +77,7 @@ export default {
           type: "uint256"
         },
         {
-          components: [
+          "components": [
             {
               internalType: "uint256",
               name: "WXTLocked",
@@ -273,7 +273,7 @@ export default {
       name: "getAPYDataConfig",
       outputs: [
         {
-          components: [
+          "components": [
             {
               internalType: "uint256",
               name: "WXTLocked",
@@ -540,7 +540,7 @@ export default {
       name: "userData",
       outputs: [
         {
-          components: [
+          "components": [
             {
               internalType: "uint256",
               name: "WXTLocked",

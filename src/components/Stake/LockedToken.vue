@@ -65,8 +65,8 @@ export default {
       return arr;
     },
     formatBalance() {
-      if (this.$store.getters.getUserBalanceStaked !== 0) {
-        return this.$store.getters.getUserBalanceStaked / Math.pow(10, this.pool.pairToken.decimals);
+      if (this.$store.getters.getUserStoredRewards !== 0) {
+        return this.$store.getters.getUserStoredRewards / Math.pow(10, this.pool.pairToken.decimals);
       } else
         return 0.0;
     },
