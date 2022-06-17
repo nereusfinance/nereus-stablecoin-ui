@@ -35,7 +35,7 @@
         </div>
       </div>
     </div>
-      <MobileStake class="mobile-ui"/>
+    <MobileStake class="mobile-ui"/>
   </div>
 </template>
 

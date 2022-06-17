@@ -24,7 +24,7 @@
   <div class="column">
     Yearly earn
     <h1>
-      {{yearlyEarn | formatNumber}}<span>NXUSD</span>
+      {{yearlyEarn}}<span>NXUSD</span>
     </h1>
   </div>
 </div>
@@ -66,8 +66,9 @@ export default {
   computed: {
     yearlyEarn() {
       const yearlyRewards = this.$store.getters.getYearlyEarn;
+      console.log("yearlyRewards", yearlyRewards);
       if(yearlyRewards) {
-        return parseFloat((yearlyRewards / 1e18).toFixed(2));
+        return parseFloat((yearlyRewards / 1e18 / 1000).toFixed(2)) + "K";
       } else {
         return 0;
       }
@@ -76,6 +77,7 @@ export default {
       // let apy = (this.$store.getters.getAPYTierOne / 1e16).toString();
       // return parseFloat(apy.toString());
       let apy = this.$store.getters.getAPYTierOne;
+      console.log('apyTierOne', apy);
       if (apy) {
         return this.$store.getters.getAPYTierOne / 1e16;
       } else {
@@ -86,6 +88,7 @@ export default {
       // let apy = (this.$store.getters.getAPYTierTwo / 1e16).toString();
       // return parseFloat(apy.toString());
       let apy = this.$store.getters.getAPYTierTwo;
+      console.log('apyTierTwo', apy);
       if (apy) {
         return this.$store.getters.getAPYTierTwo / 1e16;
       } else {
@@ -105,7 +108,7 @@ export default {
       //     value = 5000000;
       // return value;
       const userData = this.$store.getters.getUserData;
-      if (userData.storedReward) {
+      if (Object.keys(userData).length) {
         const userStoredReward = parseInt(userData.storedReward.toString() / 1e18);
         const NXUSDByTier1 = parseInt(userData.apyData.NXUSDByTier1.toString() / 1e18);
         console.log('NXUSDByTier1', NXUSDByTier1);
@@ -125,7 +128,7 @@ export default {
       // let apy = this.$store.getters.getTierTwo.toString();
       // return parseFloat(apy.toString());
       const userData = this.$store.getters.getUserData;
-      if (userData) {
+      if (Object.keys(userData).length) {
         const userStoredReward = parseInt(userData.storedReward.toString() / 1e18);
         const NXUSDByTier1 = parseInt(userData.apyData.NXUSDByTier1.toString() / 1e18);
         console.log('NXUSDByTier1', NXUSDByTier1);

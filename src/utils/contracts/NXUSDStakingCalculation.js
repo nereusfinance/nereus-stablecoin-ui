@@ -1,6 +1,6 @@
 export default {
   name: "NXUSDStakingCalculation",
-  address: "0x66cf88bccd6151bdedb861ca294a033518225891",
+  address: "0xd9b5eccdf532a2d89d184ed39d367d14ecd5b8bd",
   abi: [
     {
       "inputs": [

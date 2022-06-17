@@ -7,12 +7,12 @@ export default {
     userData: {},
     tierOne: [],
     tierTwo: "",
-    apyTierOne: "0",
-    apyTierTwo: "0",
+    apyTierOne: 0,
+    apyTierTwo: 0,
     lockedToken: [],
     NXUSDStakingContractInstance: {},
     userWXTLock: 0,
-    yearlyEarn: "0",
+    yearlyEarn: 0,
   },
   mutations: {
     setYearlyEarnReward(state, payload) {

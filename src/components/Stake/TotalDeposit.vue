@@ -10,7 +10,7 @@
     </p>
     <p>
       <TokenIcon :token="pool.pairToken.name" />
-      {{ balance }} {{ pool.pairToken.name}}
+      {{ balance }} {{ pool.pairToken.name }}
     </p>
     <div class="btns">
       <button

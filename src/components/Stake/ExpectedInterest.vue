@@ -17,19 +17,19 @@
       </div>
       <div>
         <p>Tier 1</p>
-        <div class="column-tier" v-for="digit in rewardsForPeriod" :key="digit.rewardsTier1.toString()">
+        <div class="column-tier" v-for="(digit, i) in rewardsForPeriod" :key="digit.rewardsTier1.toString() + i">
           {{new Intl.NumberFormat('en-EN', { minimumFractionDigits: 2 }).format(parseFloat((digit.rewardsTier1.toString() / 1e18).toFixed(2)))}}
         </div>
       </div>
       <div>
         <p>Tier 2</p>
-        <div class="column-tier" v-for="digit in rewardsForPeriod" :key="digit.rewardsTier2.toString()">
+        <div class="column-tier" v-for="(digit, i) in rewardsForPeriod" :key="digit.rewardsTier2.toString() + i">
           {{new Intl.NumberFormat('en-EN', { minimumFractionDigits: 2 }).format(parseFloat((digit.rewardsTier2.toString() / 1e18).toFixed(2)))}}
         </div>
       </div>
       <div style="flex-direction: row">
         <p class="total-text">Total</p>
-        <div class="column-tier total" v-for="digit in rewardsForPeriod" :key="digit.rewardsTier2.toString()">
+        <div class="column-tier total" v-for="(digit, i) in rewardsForPeriod" :key="digit.rewardsTier2.toString() + i">
           <span style="color: white">
             {{new Intl.NumberFormat('en-EN', { minimumFractionDigits: 2 }).format(parseFloat(((digit.rewardsTier1.add(digit.rewardsTier2)).toString() / 1e18).toFixed(2)))}}
             <span class="value-text"> NXUSD</span></span>
@@ -37,14 +37,19 @@
       </div>
     </div>
     <hr/>
-<!--    <img-->
-<!--      src="@/assets/images/icon-info.svg"-->
-<!--      alt=""-->
-<!--      class="info-icon"-->
-<!--      v-tooltip="'Some text'"-->
-<!--    />-->
     <div class="total-earned-rewards">
-      <div class="total-title">Total earned</div>
+      <div class="total-title">
+        <div>Total earned</div>
+        <div>
+          <img
+            src="@/assets/images/icon-info.svg"
+            alt=""
+            class="info-icon"
+            v-tooltip="'Some text'"
+          />
+        </div>
+
+      </div>
       <div class="total-amount">{{ new Intl.NumberFormat('en-EN', { minimumFractionDigits: 2 }).format(parseFloat(((totalEarnedRewards / 1e18).toFixed(2)))) }} <span>NXUSD</span></div>
     </div>
   </div>
@@ -80,6 +85,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.total_title {
+  display: flex !important;
+}
 .expected-interest-block {
   //width: 592px;
   //height: 315px;
