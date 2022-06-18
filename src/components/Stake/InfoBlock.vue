@@ -4,7 +4,7 @@
       <div class="column">
         Tier 1 amount
         <h2>
-          <span style="color: white">{{ tierOne }}</span> NXUSD
+          <span style="color: white">{{ tierOne | formatNumber }}</span> NXUSD
         </h2>
         <p class="apy">{{ apyTierOne }}%<span>APY</span></p>
       </div>
@@ -12,12 +12,12 @@
       <div class="column">
         Tier 2 amount
         <h2>
-          <span style="color: white">{{ tierTwo }}</span> NXUSD
+          <span style="color: white">{{ tierTwo | formatNumber }}</span> NXUSD
         </h2>
         <p class="apy">{{ apyTierTwo }}%<span>APY</span></p>
       </div>
     </div>
-    <div class="column">
+    <div class="column last-column">
       Yearly earn
       <h1>{{ yearlyEarn | formatNumber }}<span>NXUSD</span></h1>
     </div>
@@ -46,94 +46,102 @@ export default {
           return parseFloat(value) >= item.value;
         });
       return (
-        (parseFloat(value) / item.value).toFixed(0).replace(rx, "$1") +
-        ".00" +
+        (parseFloat(value) / item.value).toFixed(2).replace(rx, "$1") +
         item.symbol
       );
     },
   },
   computed: {
     yearlyEarn() {
-      const yearlyRewards = this.$store.getters.getYearlyEarn;
-      if (yearlyRewards) {
-        return parseFloat((yearlyRewards / 1e18).toFixed(2));
-      } else {
-        return 0;
-      }
+      const yearlyRewards = this.$store.getters.getTotalTableRewards;
+      return this.normalizeBNValues(yearlyRewards[yearlyRewards.length - 1]);
+      // console.log("yearlyRewards array", yearlyRewards);
+      // if (yearlyRewards[0]) {
+      //   console.log("yearlyRewards", yearlyRewards[yearlyRewards.length - 1]);
+      //   return this.normalizeBNValues(yearlyRewards[yearlyRewards.length - 1]);
+      // } else {
+      //   return 0;
+      // }
     },
     apyTierOne() {
-      // let apy = (this.$store.getters.getAPYTierOne / 1e16).toString();
-      // return parseFloat(apy.toString());
-      let apy = this.$store.getters.getAPYTierOne;
-      if (apy) {
-        return this.$store.getters.getAPYTierOne / 1e16;
+      let APYTier1 = this.$store.getters.getUserData[0][2];
+      if (APYTier1) {
+        return parseFloat(this.normalizeBNValuesToUnits(APYTier1)).toFixed();
       } else {
         return 0;
       }
     },
     apyTierTwo() {
-      // let apy = (this.$store.getters.getAPYTierTwo / 1e16).toString();
-      // return parseFloat(apy.toString());
-      let apy = this.$store.getters.getAPYTierTwo;
+      let apy = this.$store.getters.getConfig.APYTier2;
       if (apy) {
-        return this.$store.getters.getAPYTierTwo / 1e16;
+        return parseFloat(this.normalizeBNValuesToUnits(apy)).toFixed();
       } else {
         return 0;
       }
     },
     tierOne() {
-      // let lockedToken = (this.$store.getters.getUserBalanceStaked / 1000000000000000000);
-      // let value;
-      //   if(lockedToken < 500000)
-      //     value = 1000;
-      //   else if(lockedToken <= 5000000)
-      //     value = 15000;
-      //   else if(lockedToken <= 50000000)
-      //     value = 300000;
-      //   else if(lockedToken >= 500000000)
-      //     value = 5000000;
-      // return value;
       const userData = this.$store.getters.getUserData;
-      if (userData.storedReward) {
-        const userStoredReward = parseInt(
-          userData.storedReward.toString() / 1e18
-        );
-        const NXUSDByTier1 = parseInt(
-          userData.apyData.NXUSDByTier1.toString() / 1e18
-        );
-        console.log("NXUSDByTier1", NXUSDByTier1);
-        if (userStoredReward > NXUSDByTier1) {
-          return (NXUSDByTier1 / 1000).toFixed(2) + "K";
-        } else {
-          return (userStoredReward / 1000).toFixed(2) + "K";
-        }
+      const userStoredReward = this.normalizeBNValues(userData[2]);
+      const NXUSDByTier1 = this.normalizeBNValues(userData[0][1]);
+      if (parseFloat(userStoredReward) > parseFloat(NXUSDByTier1)) {
+        return NXUSDByTier1;
       } else {
-        return 0;
+        return userStoredReward;
       }
-
-      // let tierOne = (this.$store.getters.getUserBalanceStaked / 1000000000000000000).toString();
-      // return parseFloat(tierOne.toString());
+      // if (userData.storedReward) {
+      //   const userStoredReward = parseInt(
+      //     userData.storedReward.toString() / 1e18
+      //   );
+      //   const NXUSDByTier1 = parseInt(
+      //     userData.apyData.NXUSDByTier1.toString() / 1e18
+      //   );
+      //   console.log("NXUSDByTier1", NXUSDByTier1);
+      //   if (userStoredReward > NXUSDByTier1) {
+      //     return (NXUSDByTier1 / 1000).toFixed(2) + "K";
+      //   } else {
+      //     return (userStoredReward / 1000).toFixed(2) + "K";
+      //   }
+      // } else {
+      //   return 0;
+      // }
     },
     tierTwo() {
       // let apy = this.$store.getters.getTierTwo.toString();
       // return parseFloat(apy.toString());
       const userData = this.$store.getters.getUserData;
-      if (userData) {
-        const userStoredReward = parseInt(
-          userData.storedReward.toString() / 1e18
-        );
-        const NXUSDByTier1 = parseInt(
-          userData.apyData.NXUSDByTier1.toString() / 1e18
-        );
-        console.log("NXUSDByTier1", NXUSDByTier1);
-        if (userStoredReward > NXUSDByTier1) {
-          return ((userStoredReward - NXUSDByTier1) / 1000).toFixed(2) + "K";
-        } else {
-          return 0;
-        }
+      const userStoredReward = this.normalizeBNValues(userData[2]);
+      const NXUSDByTier1 = this.normalizeBNValues(userData[0][1]);
+      if (parseFloat(userStoredReward) > parseFloat(NXUSDByTier1)) {
+        return this.normalizeBNValues(userData[2].sub(userData[0][1]));
       } else {
         return 0;
       }
+      // if (userData) {
+      //   const userStoredReward = parseInt(
+      //     userData.storedReward.toString() / 1e18
+      //   );
+      //   const NXUSDByTier1 = parseInt(
+      //     userData.apyData.NXUSDByTier1.toString() / 1e18
+      //   );
+      //   if (userStoredReward > NXUSDByTier1) {
+      //     return ((userStoredReward - NXUSDByTier1) / 1000).toFixed(2) + "K";
+      //   } else {
+      //     return 0;
+      //   }
+      // } else {
+      //   return 0;
+      // }
+    },
+  },
+  methods: {
+    normalizeBNValues(value) {
+      return this.$ethers.utils.formatEther(value);
+    },
+    normalizeBNValuesToUnits(value) {
+      return this.$ethers.utils.formatUnits(value, "16");
+    },
+    formatBNValues(value) {
+      return (value / 1000).toFixed(2) + "K";
     },
   },
 };
@@ -172,6 +180,9 @@ export default {
       font-size: 16px;
       color: #8a8a8a;
     }
+  }
+  .last-column {
+    margin-bottom: 0;
   }
 
   p.apy {
