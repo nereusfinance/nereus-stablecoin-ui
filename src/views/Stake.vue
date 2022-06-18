@@ -3,7 +3,7 @@
     <div class="stake-view">
       <h1 class="stake-text">Earn</h1>
       <div class="stake-wrapper">
-        <div class="stake-item">
+        <div class="stake-item" v-if="!actionStatus">
           <TotalDeposit :actionType="actionType" :onClick="setActionType" />
           <LockedToken />
         </div>
@@ -37,12 +37,14 @@ export default {
   name: "Stake",
   data() {
     return {
+      actionStatus: false,
       actionType: "",
       tier1Array: [""],
       tier2Array: [""],
       rewardsForPeriod: [],
       totalEarnedRewards: "",
       yearlyEarn: "",
+      windowWidth: 0,
     };
   },
   components: {
@@ -53,10 +55,23 @@ export default {
     TotalDeposit,
   },
   async created() {
+    window.addEventListener("resize", this.handleResize);
+    this.handleResize();
     await this.getAllParameters();
   },
+  destroyed() {
+    window.removeEventListener("resize", this.handleResize);
+  },
   methods: {
+    handleResize() {
+      this.windowWidth = window.innerWidth;
+    },
     setActionType(selectedType) {
+      if (!selectedType) {
+        this.actionStatus = false;
+      } else {
+        this.actionStatus = this.windowWidth < 768 && true;
+      }
       this.actionType = selectedType;
     },
   },
@@ -91,13 +106,15 @@ export default {
     justify-content: flex-start;
     align-items: flex-start;
   }
-}
-
-@media screen and(min-width: 768px) and(max-width: 1000px) {
-  .stake-view {
-    margin-left: auto;
-    margin-right: auto;
-    flex: 1;
+  @media screen and(min-width: 768px) and(max-width: 1000px) {
+    .stake-text {
+      margin-left: 28px;
+    }
+  }
+  @media screen and(max-width: 767px) {
+    .stake-text {
+      margin-left: 16px;
+    }
   }
 }
 </style>
