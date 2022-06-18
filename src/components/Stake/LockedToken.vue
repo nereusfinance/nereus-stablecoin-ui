@@ -10,7 +10,12 @@
       <div class="locked-table-header-item">Locked {{ lockedTokenName }}</div>
       <div class="locked-table-header-item">Tier 1 amount NXUSD</div>
     </div>
-    <div class="locked-table-row" v-for="(item, index) in config" :key="index">
+    <div
+      class="locked-table-row"
+      :class="{ selected: isActive(config, index) }"
+      v-for="(item, index) in config"
+      :key="index"
+    >
       <div class="locked-table-item" v-if="index > 0">
         {{ normalizeBNValues(item[0]) | formatNumber }}
       </div>
@@ -39,19 +44,29 @@ export default {
     balance() {
       return this.$store.getters.getUserWXTLock;
     },
+    userTier1() {
+      return this.$store.getters.getUserData[0][2];
+    },
   },
   methods: {
+    isActive(config, currentIndex) {
+      const currentValue = config[currentIndex][0];
+      const nextValue = config[currentIndex + 1]?.[0];
+      if (!nextValue && this.balance.lt(currentValue)) {
+        return false;
+      }
+      if (!nextValue || currentValue.eq(this.balance)) {
+        return true;
+      }
+
+      return !!(this.balance.gt(currentValue) && this.balance.lt(nextValue));
+    },
     normalizeBNValues(value) {
       return ethers.utils.formatEther(value);
     },
     formatBNValues(value) {
       const normalizedValue = this.normalizeBNValues(value);
       return new Intl.NumberFormat("en-EN").format(parseFloat(normalizedValue));
-    },
-    formatTierOne(item) {
-      item = item / 1000000000000000000;
-      item = item.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      return item;
     },
   },
   filters: {
