@@ -1,44 +1,32 @@
 <template>
-<div class="info-block">
-  <div class="columns">
-    <div class="column">
+  <div class="info-block">
+    <div class="columns">
+      <div class="column">
         Tier 1 amount
-      <h2>
-        <span style="color: white">{{tierOne}}</span> NXUSD
-      </h2>
-      <p class="apy">
-        {{apyTierOne}}%<span>APY</span>
-      </p>
-    </div>
+        <h2>
+          <span style="color: white">{{ tierOne }}</span> NXUSD
+        </h2>
+        <p class="apy">{{ apyTierOne }}%<span>APY</span></p>
+      </div>
 
-    <div class="column">
+      <div class="column">
         Tier 2 amount
-      <h2>
-        <span style="color: white">{{tierTwo}}</span> NXUSD
-      </h2>
-      <p class="apy">
-        {{apyTierTwo}}%<span>APY</span>
-      </p>
+        <h2>
+          <span style="color: white">{{ tierTwo }}</span> NXUSD
+        </h2>
+        <p class="apy">{{ apyTierTwo }}%<span>APY</span></p>
+      </div>
+    </div>
+    <div class="column">
+      Yearly earn
+      <h1>{{ yearlyEarn | formatNumber }}<span>NXUSD</span></h1>
     </div>
   </div>
-  <div class="column">
-    Yearly earn
-    <h1>
-      {{yearlyEarn | formatNumber}}<span>NXUSD</span>
-    </h1>
-  </div>
-</div>
 </template>
 
 <script>
 export default {
   name: "InfoBlock",
-  props: {
-    pool: {
-      type: Object,
-      required: true,
-    },
-  },
   filters: {
     formatNumber(value) {
       if (!value) return value;
@@ -54,11 +42,12 @@ export default {
       let item = lookup
         .slice()
         .reverse()
-        .find(function(item) {
+        .find(function (item) {
           return parseFloat(value) >= item.value;
         });
       return (
-        (parseFloat(value) / item.value).toFixed(0).replace(rx, "$1") + ".00" +
+        (parseFloat(value) / item.value).toFixed(0).replace(rx, "$1") +
+        ".00" +
         item.symbol
       );
     },
@@ -66,7 +55,7 @@ export default {
   computed: {
     yearlyEarn() {
       const yearlyRewards = this.$store.getters.getYearlyEarn;
-      if(yearlyRewards) {
+      if (yearlyRewards) {
         return parseFloat((yearlyRewards / 1e18).toFixed(2));
       } else {
         return 0;
@@ -106,9 +95,13 @@ export default {
       // return value;
       const userData = this.$store.getters.getUserData;
       if (userData.storedReward) {
-        const userStoredReward = parseInt(userData.storedReward.toString() / 1e18);
-        const NXUSDByTier1 = parseInt(userData.apyData.NXUSDByTier1.toString() / 1e18);
-        console.log('NXUSDByTier1', NXUSDByTier1);
+        const userStoredReward = parseInt(
+          userData.storedReward.toString() / 1e18
+        );
+        const NXUSDByTier1 = parseInt(
+          userData.apyData.NXUSDByTier1.toString() / 1e18
+        );
+        console.log("NXUSDByTier1", NXUSDByTier1);
         if (userStoredReward > NXUSDByTier1) {
           return (NXUSDByTier1 / 1000).toFixed(2) + "K";
         } else {
@@ -126,9 +119,13 @@ export default {
       // return parseFloat(apy.toString());
       const userData = this.$store.getters.getUserData;
       if (userData) {
-        const userStoredReward = parseInt(userData.storedReward.toString() / 1e18);
-        const NXUSDByTier1 = parseInt(userData.apyData.NXUSDByTier1.toString() / 1e18);
-        console.log('NXUSDByTier1', NXUSDByTier1);
+        const userStoredReward = parseInt(
+          userData.storedReward.toString() / 1e18
+        );
+        const NXUSDByTier1 = parseInt(
+          userData.apyData.NXUSDByTier1.toString() / 1e18
+        );
+        console.log("NXUSDByTier1", NXUSDByTier1);
         if (userStoredReward > NXUSDByTier1) {
           return ((userStoredReward - NXUSDByTier1) / 1000).toFixed(2) + "K";
         } else {
@@ -137,8 +134,8 @@ export default {
       } else {
         return 0;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -160,12 +157,13 @@ export default {
     display: flex;
     flex-direction: row;
   }
+
   .column {
     margin-right: 70px;
     margin-bottom: 31px;
     font-weight: 400;
     font-size: 14px;
-    color: #8A8A8A;
+    color: #8a8a8a;
 
     text-align: left;
 
@@ -173,19 +171,19 @@ export default {
       margin-top: 4px;
       margin-bottom: 8px;
       font-size: 16px;
-      color: #8A8A8A;
+      color: #8a8a8a;
     }
   }
 
   p.apy {
     font-weight: 600;
     font-size: 60px;
-    color: #55BCC0;
+    color: #55bcc0;
 
     span {
       font-weight: 600;
       font-size: 24px;
-      color: #55BCC0;
+      color: #55bcc0;
     }
   }
 
@@ -193,15 +191,16 @@ export default {
     text-align: left;
     font-weight: 600;
     font-size: 96px;
-    color: #55BCC0;
+    color: #55bcc0;
     gap: 2px;
 
     span {
       font-size: 24px;
-      color: #55BCC0;
+      color: #55bcc0;
     }
   }
 }
+
 @media screen and(min-width: 768px) and(max-width: 1000px) {
   .info-block {
     width: 424px;
@@ -241,6 +240,7 @@ export default {
         font-weight: 600;
         font-size: 64px;
         margin: 0;
+
         span {
           font-weight: 600;
           font-size: 16px;
@@ -253,6 +253,7 @@ export default {
       font-size: 16px;
       margin-bottom: 0;
     }
+
     p.apy {
       font-weight: 600;
       font-size: 48px;
@@ -264,5 +265,4 @@ export default {
     }
   }
 }
-
 </style>

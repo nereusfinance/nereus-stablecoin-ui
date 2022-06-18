@@ -2,243 +2,97 @@
   <div class="stake">
     <div class="stake-view">
       <h1 class="stake-text">Earn</h1>
-      <div class="stake-content">
-        <div class="container-mini">
-          <TotalDeposit
-            :pool="pool"
-            :actionStatus="actionStatus"
-            :actionType="actionType"
-            :onClick="setActionType"
-          />
-
-          <LockedToken
-            :pool="pool"
-          />
+      <div class="stake-wrapper">
+        <div class="stake-item">
+          <TotalDeposit :actionType="actionType" :onClick="setActionType" />
+          <LockedToken />
         </div>
-        <div class="container-mini" v-if="actionStatus === false">
-          <InfoBlock
-            :pool="pool"
-            :yearlyEarn="yearlyEarn"
-          />
-          <ExpectedInterest
-            :rewardsForPeriod="rewardsForPeriod"
-            :totalEarnedRewards="totalEarnedRewards"
-          />
-        </div>
-        <div class="container-mini" v-else>
-          <DepositWithdraw
-            :actionType="actionType"
-            :actionStatus="actionStatus"
-            :onClick="setActionStatus"
-            :pool="pool"
-          />
+        <div class="stake-item">
+          <!--          <DepositWithdraw-->
+          <!--            v-if="actionType"-->
+          <!--            :actionType="actionType"-->
+          <!--            :onClick="setActionStatus"-->
+          <!--          />-->
+          <!--          <InfoBlock v-if="!actionType"/>-->
+          <!--          <ExpectedInterest-->
+          <!--            v-if="!actionType"-->
+          <!--            :rewardsForPeriod="rewardsForPeriod"-->
+          <!--            :totalEarnedRewards="totalEarnedRewards"-->
+          <!--          />-->
         </div>
       </div>
     </div>
-      <MobileStake class="mobile-ui"/>
   </div>
 </template>
 
 <script>
 import TotalDeposit from "@/components/Stake/TotalDeposit";
 import LockedToken from "@/components/Stake/LockedToken";
-import InfoBlock from "@/components/Stake/InfoBlock";
-import ExpectedInterest from "@/components/Stake/ExpectedInterest";
-import DepositWithdraw from "@/components/Stake/DepositWithdraw";
-import MobileStake from "@/views/MobileStake";
-import NXUSDStakingContractInfo from "@/utils/contracts/NXUSDStaking";
-import NXUSDStakingCalculationInfo from "@/utils/contracts/NXUSDStakingCalculation";
-import MultiFeeDistributionInfo from "@/utils/contracts/MultiFeeDistribution";
+// import InfoBlock from "@/components/Stake/InfoBlock";
+// import ExpectedInterest from "@/components/Stake/ExpectedInterest";
+// import DepositWithdraw from "@/components/Stake/DepositWithdraw";
 export default {
   name: "Stake",
   data() {
     return {
-      actionStatus: false,
       actionType: "",
       tier1Array: [""],
       tier2Array: [""],
       rewardsForPeriod: [],
       totalEarnedRewards: "",
       yearlyEarn: "",
-    }
-  },
-  created() {
-    this.createNXUSDStaking();
-    // this.createNXUSDStakingCalculation();
-    this.checkUserBalanceStaked();
-    this.setStakingInfo();
-  },
-  methods: {
-    async setStakingInfo() {
-      const nxusdStaking = this.$store.getters.getNXUSDStakingContract;
-      let userData = (await nxusdStaking.userData(this.account));
-      this.$store.commit("setUserData", userData);
-
-      const configCurrentVersion = await nxusdStaking.configCurrentVersion();
-
-      let userBalance = userData.balance;
-      this.$store.commit("setUserBalanceStaked", userBalance);
-
-      const multiFeeDistributionInstance = this.createMultiFeeDistributionInstance();
-      console.log('multiFeeDistributionInstance', multiFeeDistributionInstance);
-      const WXTLock = await multiFeeDistributionInstance.lockedBalances(this.account);
-      this.$store.commit("setUserWXTLock", parseFloat((WXTLock.total.toString() / 1e18).toFixed(2)));
-      console.log("WXTLock", parseFloat((WXTLock.total.toString() / 1e18).toFixed(2)));
-
-      let userRewards = (await nxusdStaking.getUserRewards(this.account));
-      this.$store.commit("setUserStoredRewards", userRewards);
-
-      this.totalEarnedRewards = (userRewards.sub(userData.balance)).toString();
-
-      console.log("userRewards", userRewards.toString());
-
-      let getAPYDataConfig = await nxusdStaking.getAPYDataConfig(configCurrentVersion);
-      console.log("getAPYDataConfig", getAPYDataConfig);
-      this.$store.commit("setAPYConfig", getAPYDataConfig);
-
-      let tierOne = [];
-      let lockedToken = [];
-      for(let i = 1, j = 0; i < 5; i++, j++){
-        tierOne[j] = getAPYDataConfig[i].NXUSDByTier1.toString();
-        lockedToken[j] = getAPYDataConfig[i].WXTLocked.toString();
-      }
-      this.$store.commit("setTierOne", tierOne);
-      console.log("tierOne", tierOne);
-      this.$store.commit("setLockedToken", lockedToken);
-      console.log("lockedToken", lockedToken);
-
-      const nxusdStakingCalculation = this.createNXUSDStakingCalculation();
-      let tableRewards = await nxusdStakingCalculation.calculateTableRewards(this.account, [86400, 604800, 2629746, 31556952]);
-      this.$store.commit("setTableRewards", tableRewards);
-      this.rewardsForPeriod = tableRewards;
-      console.log("tableRewards", this.$store.getters.getTableRewards);
-      const yearlyEarnRewards = tableRewards[tableRewards.length - 1].rewardsTier1.add(tableRewards[tableRewards.length - 1].rewardsTier2);
-      this.$store.commit("setYearlyEarnReward", yearlyEarnRewards.toString());
-      this.yearlyEarn = yearlyEarnRewards.toString();
-      // for(let i = 0; i < 4; i++) {
-      //   this.tier1Array[i] = tableRewards[i].rewardsTier1.toString();
-      //   this.tier2Array[i] = tableRewards[i].rewardsTier2;
-      // }
-      // console.log(this.tier1Array);
-      // console.log(this.tier2Array);
-
-
-      let apyTierOne = getAPYDataConfig[1].APYTier1;
-      this.$store.commit("setAPYTierOne", parseFloat(apyTierOne.toString()));
-
-      let apyTierTwo = (await nxusdStaking.config(1)).APYTier2;
-      this.$store.commit("setAPYTierTwo", parseFloat(apyTierTwo.toString()));
-    },
-    async checkUserBalanceStaked() {
-      await this.$store.dispatch("checkUserBalanceStaked");
-    },
-    createNXUSDStaking() {
-      const nxusdStaking = new this.$ethers.Contract(
-        NXUSDStakingContractInfo.address,
-        JSON.stringify(NXUSDStakingContractInfo.abi),
-        this.signer
-      );
-      this.$store.commit("setNXUSDStakingContractInstance", nxusdStaking);
-    },
-    createNXUSDStakingCalculation() {
-      const nxusdStakingCalculation = new this.$ethers.Contract(
-        NXUSDStakingCalculationInfo.address,
-        JSON.stringify(NXUSDStakingCalculationInfo.abi),
-        this.signer
-      );
-      return nxusdStakingCalculation;
-      //this.$store.commit("setNXUSDStakingContractInstance", nxusdStaking);
-    },
-    createMultiFeeDistributionInstance() {
-      const multiFeeDistribution = new this.$ethers.Contract(
-        MultiFeeDistributionInfo.address,
-        JSON.stringify(MultiFeeDistributionInfo.abi),
-        this.signer
-      );
-      return multiFeeDistribution;
-      //this.$store.commit("setNXUSDStakingContractInstance", nxusdStaking);
-    },
-    setActionStatus() {
-      this.actionStatus = this.actionStatus === false;
-    },
-    setActionType(type) {
-      console.log(this.$store.getters.getUserStoredRewards);
-      if (type !== this.actionType)
-        this.actionType = type;
-      this.actionStatus = this.actionStatus === false;
-    },
-  },
-  computed: {
-    signer() {
-      return this.$store.getters.getSigner;
-    },
-    //address
-    account() {
-      return this.$store.getters.getAccount;
-    },
-    pool() {
-      //const poolId = Number(this.$route.params.id);
-      const poolId = Number(6);
-      return this.$store.getters.getPoolById(poolId);
-    },
+    };
   },
   components: {
-    MobileStake,
-    DepositWithdraw,
-    ExpectedInterest,
-    InfoBlock,
+    // DepositWithdraw,
+    // ExpectedInterest,
+    // InfoBlock,
     LockedToken,
     TotalDeposit,
+  },
+  methods: {
+    setActionType(selectedType) {
+      this.actionType = selectedType;
+    },
   },
 };
 </script>
 
 <style scoped lang="scss">
-.stake {
-  margin-left: auto;
-  margin-right: auto;
-  flex: 1;
-}
 .stake-view {
+  max-width: 1000px;
   padding-top: 40px;
   padding-bottom: 40px;
-  margin-left: auto;
-  margin-right: auto;
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
 
   h1 {
     font-size: 32px;
     line-height: 36px;
-    margin-bottom: 20px;
     text-align: left;
   }
 
-  .stake-content {
+  .stake-wrapper {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: left;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
   }
-  .container-mini {
+
+  .stake-item {
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
   }
 }
 
-@media screen and(min-width: 768px) {
-  .mobile-ui {
-    display: none;
-  }
-}
 @media screen and(min-width: 768px) and(max-width: 1000px) {
   .stake-view {
     margin-left: auto;
     margin-right: auto;
     flex: 1;
-  }
-}
-@media screen and(max-width: 767px) {
-  .stake-view {
-    display: none;
   }
 }
 </style>

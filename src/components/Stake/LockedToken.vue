@@ -1,38 +1,21 @@
 <template>
-  <div class="locked-token-block">
-    <h1>Locked {{pool.name}}</h1>
-    <p>
-      <TokenIcon :token="pool.name" />
-      {{ new Intl.NumberFormat('en-EN').format(formatBalance) }} {{ pool.name }}
-    </p>
-    <div class="row-selected">
-      <div v-if="formatBalance < 500000"
-           class="row"/>
-      <div v-else-if="formatBalance <= 5000000"
-           class="row1"/>
-      <div v-else-if="formatBalance <= 50000000"
-           class="row2"/>
-      <div v-else-if="formatBalance >= 500000000"
-           class="row3"/>
+  <div class="locked-wrapper">
+    <span class="locked-header">Locked {{ lockedTokenName }}</span>
+    <div class="locked-balance">
+      <TokenIcon :token="lockedTokenName" />
+      {{ formatBNValues(balance) }}
+      {{ lockedTokenName }}
     </div>
-    <div class="columns">
-      <div class="column">
-        Locked {{pool.name}}
-        <div class="amount" v-for="amount in lockedToken" :key="amount">
-          {{amount | formatNumber}}+
-        </div>
+    <div class="locked-table-header">
+      <div class="locked-table-header-item">Locked {{ lockedTokenName }}</div>
+      <div class="locked-table-header-item">Tier 1 amount NXUSD</div>
+    </div>
+    <div class="locked-table-row" v-for="(item, index) in config" :key="index">
+      <div class="locked-table-item" v-if="index > 0">
+        {{ normalizeBNValues(item[0]) | formatNumber }}
       </div>
-      <div class="column">
-        Tier 1 amount NXUSD
-        <div
-          class="amount"
-          style="text-align: right"
-          v-for="amount in tier1"
-          :key="amount"
-        >
-          {{formatTierOne(amount)}}
-        </div>
-        <!--        <div class="selected-row"/>-->
+      <div class="locked-table-item" v-if="index > 0">
+        {{ formatBNValues(item[1]) }}
       </div>
     </div>
   </div>
@@ -40,42 +23,60 @@
 
 <script>
 import TokenIcon from "@/components/UiComponents/TokenIcon";
+import { BigNumber, ethers } from "ethers";
 
 export default {
   name: "LockedToken",
-  props: {
-    pool: {
-      type: Object,
-      required: true,
-    },
-  },
   data() {
     return {
-    }
+      lockedTokenName: "WXT",
+    };
   },
   computed: {
-    tier1() {
-      return this.$store.getters.getTierOne;
+    config() {
+      return [
+        [BigNumber.from("0"), BigNumber.from("0"), BigNumber.from("0")],
+        [
+          BigNumber.from("50000000000000000000000"),
+          BigNumber.from("1000000000000000000000"),
+          BigNumber.from("200000000000000000"),
+        ],
+        [
+          BigNumber.from("500000000000000000000000"),
+          BigNumber.from("15000000000000000000000"),
+          BigNumber.from("200000000000000000"),
+        ],
+        [
+          BigNumber.from("5000000000000000000000000"),
+          BigNumber.from("300000000000000000000000"),
+          BigNumber.from("200000000000000000"),
+        ],
+        [
+          BigNumber.from("50000000000000000000000000"),
+          BigNumber.from("5000000000000000000000000"),
+          BigNumber.from("200000000000000000"),
+        ],
+      ];
+      // return this.$store.getters.apyDataConfig;
     },
-    lockedToken() {
-      const arr = this.$store.getters.getLockedToken;
-      for(let i = 0; i < arr.length; i++) {
-        arr[i] = arr[i].toString().slice(0, (5 + i));
-      }
-      return arr;
-    },
-    formatBalance() {
-      // if (this.$store.getters.getUserStoredRewards !== 0) {
-      //   return this.$store.getters.getUserStoredRewards / Math.pow(10, this.pool.pairToken.decimals);
-      // } else
-      //   return 0.0;
-      return this.$store.getters.getUserWXTLock;
+    balance() {
+      return ethers.utils.parseEther(
+        this.$store.getters.getUserWXTLock.toString()
+      );
+      // return this.$store.getters.getUserWXTLock;
     },
   },
   methods: {
+    normalizeBNValues(value) {
+      return ethers.utils.formatEther(value);
+    },
+    formatBNValues(value) {
+      const normalizedValue = this.normalizeBNValues(value);
+      return new Intl.NumberFormat("en-EN").format(parseFloat(normalizedValue));
+    },
     formatTierOne(item) {
       item = item / 1000000000000000000;
-      item = (item.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+      item = item.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       return item;
     },
   },
@@ -94,7 +95,7 @@ export default {
       let item = lookup
         .slice()
         .reverse()
-        .find(function(item) {
+        .find(function (item) {
           return parseFloat(value) >= item.value;
         });
       return (
@@ -105,91 +106,56 @@ export default {
   },
   components: {
     TokenIcon,
-  }
+  },
 };
 </script>
 
 <style scoped lang="scss">
-.locked-token-block {
-  height: 338px;
-  width: 388px;
-
+.locked-wrapper {
+  width: 100%;
   background: #262626;
   border-radius: 4px;
-
-  margin: 0 20px 0 0;
-  padding: 32px 24px 24px 24px;
-
+  padding: 32px 12px 12px 16px;
   display: flex;
   flex-direction: column;
 
-  h1 {
+  .locked-header {
+    padding: 0 12px;
     font-weight: 400;
     font-size: 20px;
     text-align: left;
-
-    margin-bottom: 24px;
   }
 
-  p {
+  .locked-balance {
+    padding: 0 12px;
     font-size: 24px;
-
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin-bottom: 28px;
-
+    margin-top: 22px;
     gap: 2px;
   }
-  .token-icon-wrap {
-    width: 32px;
-    height: 32px;
-    margin-right: 6px;
-  }
-  .row, .row1, .row2, .row3{
-    position: relative;
-    width: 364px;
-    height: 40px;
-    left: -10px;
-    top: 15px;
-    background: #F2F4FE;
-    opacity: 0.04;
-    border-radius: 4px;
-  }
-  .row1 {
-    top: 50px;
-  }
-  .row2 {
-    top: 85px;
-  }
-  .row3 {
-    top: 118px;
-  }
-  .columns {
+  .locked-table-header {
+    padding: 0 12px;
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
-    position: relative;
-    top: -40px;
-  }
-  .column {
     font-weight: 400;
     font-size: 12px;
-    color: #8A8A8A;
-
-    text-align: left;
+    color: #8a8a8a;
+    margin-top: 28px;
+    margin-bottom: 4px;
   }
-  .amount {
+  .locked-table-row {
+    display: flex;
+    justify-content: space-between;
     font-weight: 400;
     font-size: 16px;
-    color: #FFFFFF;
-    margin-bottom: 16px;
+    color: #ffffff;
+    padding: 8px 12px;
   }
-  .amount:first-child {
-    margin-top: 12px;
-  }
-  .amount:last-child {
-    margin-bottom: 0;
+  .locked-table-row.selected {
+    background: #2e2e2f;
+    border-radius: 4px;
   }
 }
 @media screen and(min-width: 768px) and(max-width: 1000px) {
@@ -203,13 +169,16 @@ export default {
     p {
       font-size: 20px;
     }
-    .row, .row1, .row2, .row3{
+    .row,
+    .row1,
+    .row2,
+    .row3 {
       position: relative;
       width: 264px;
       height: 40px;
       left: -9.5px;
       top: 15px;
-      background: #F2F4FE;
+      background: #f2f4fe;
       opacity: 0.04;
       border-radius: 4px;
     }
@@ -266,7 +235,7 @@ export default {
     .column {
       font-weight: 400;
       font-size: 12px;
-      color: #8A8A8A;
+      color: #8a8a8a;
 
       text-align: left;
     }
@@ -280,13 +249,16 @@ export default {
     }
     .amount:last-child {
     }
-    .row, .row1, .row2, .row3{
+    .row,
+    .row1,
+    .row2,
+    .row3 {
       position: relative;
       width: 312px;
       height: 40px;
       left: -9px;
       top: 15px;
-      background: #F2F4FE;
+      background: #f2f4fe;
       opacity: 0.04;
       border-radius: 4px;
     }

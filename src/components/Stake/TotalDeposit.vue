@@ -1,30 +1,29 @@
 <template>
   <div class="total-deposit-block">
-    <p class="container-top">Total deposit
+    <p class="container-top">
+      Total deposit
       <img
         src="@/assets/images/icon-info.svg"
         alt=""
         class="info-icon"
-        v-tooltip="'Some text'"
+        v-tooltip="'Your deposited NXUSD'"
       />
     </p>
     <p>
-      <TokenIcon :token="pool.pairToken.name" />
-      {{ balance }} {{ pool.pairToken.name}}
+      <TokenIcon token="NXUSD" />
+      {{ balance }} NXUSD
     </p>
     <div class="btns">
       <button
         class="deposit-btn"
-        :class="{ active: actionType === 'Deposit' && actionStatus === true}"
-        :disabled="actionStatus === true"
+        :class="{ active: actionType === 'Deposit' }"
         @click="onClick('Deposit')"
       >
         Deposit
       </button>
       <button
         class="withdraw-btn"
-        :class="{ active: actionType === 'Withdraw' && actionStatus === true}"
-        :disabled="actionStatus === true"
+        :class="{ active: actionType === 'Withdraw' }"
         @click="onClick('Withdraw')"
       >
         Withdraw
@@ -38,25 +37,16 @@ import TokenIcon from "@/components/UiComponents/TokenIcon";
 export default {
   name: "TotalDeposit",
   data() {
-    return {
-    }
+    return {};
   },
   props: {
-    pool: {
-      type: Object,
-      required: true,
-    },
-    actionStatus: {
-      type: Boolean,
-      required: true,
-    },
     actionType: {
       type: String,
       required: true,
     },
     onClick: {
       type: Function,
-    }
+    },
   },
   computed: {
     balance() {
@@ -64,19 +54,20 @@ export default {
       //   return this.$store.getters.getUserBalanceStaked / Math.pow(10, this.pool.pairToken.decimals);
       // } else
       //   return 0.0;
-      return new Intl.NumberFormat('en-EN').format(parseFloat((this.$store.getters.getUserBalanceStaked / 1e18).toFixed(2)));
-    }
+      return new Intl.NumberFormat("en-EN").format(
+        parseFloat((this.$store.getters.getUserBalanceStaked / 1e18).toFixed(2))
+      );
+    },
   },
   components: {
     TokenIcon,
-  }
+  },
 };
 </script>
 
 <style scoped lang="scss">
 .total-deposit-block {
-  width: 388px;
-  height: 186px;
+  width: 100%;
 
   background: #262626;
   border-radius: 4px;
@@ -134,7 +125,7 @@ export default {
     margin-right: 16px;
 
     font-size: 14px;
-    color: #8A8A8A;
+    color: #8a8a8a;
 
     &.active {
       color: black;
@@ -158,7 +149,7 @@ export default {
     border-radius: 16px;
 
     font-size: 14px;
-    color: #8A8A8A;
+    color: #8a8a8a;
     &.active {
       color: black;
       background-color: $clrBg3;
@@ -242,12 +233,11 @@ export default {
       height: 48px;
       border-radius: 24px;
     }
-    .container-top {;
+    .container-top {
       gap: 6px;
       font-size: 18px;
       margin-bottom: 16px;
     }
   }
 }
-
 </style>

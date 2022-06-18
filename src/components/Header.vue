@@ -32,7 +32,7 @@
             :to="{ name: 'Dashboard' }"
             class="dashboard-btn"
             active="onclick"
-            >
+          >
             My Dashboard
           </router-link>
         </div>
@@ -198,8 +198,7 @@ export default {
   }
   a.stake-btn.router-link-exact-active.router-link-active,
   a.markets-btn.router-link-exact-active.router-link-active,
-  a.dashboard-btn.router-link-exact-active.router-link-active
-  {
+  a.dashboard-btn.router-link-exact-active.router-link-active {
     background: rgba(28, 28, 28, 0.16);
   }
 

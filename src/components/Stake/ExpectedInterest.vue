@@ -12,46 +12,83 @@
     <div class="container-interest">
       <div>
         <div class="column-interest" v-for="time in period" :key="time">
-          {{time}}
+          {{ time }}
         </div>
       </div>
       <div>
         <p>Tier 1</p>
-        <div class="column-tier" v-for="digit in rewardsForPeriod" :key="digit.rewardsTier1.toString()">
-          {{new Intl.NumberFormat('en-EN', { minimumFractionDigits: 2 }).format(parseFloat((digit.rewardsTier1.toString() / 1e18).toFixed(2)))}}
-        </div>
+        <!--        <div-->
+        <!--          class="column-tier"-->
+        <!--          v-for="digit in rewardsForPeriod"-->
+        <!--          :key="digit.rewardsTier1.toString()"-->
+        <!--        >-->
+        <!--          {{-->
+        <!--            new Intl.NumberFormat("en-EN", { minimumFractionDigits: 2 }).format(-->
+        <!--              parseFloat((digit.rewardsTier1.toString() / 1e18).toFixed(2))-->
+        <!--            )-->
+        <!--          }}-->
+        <!--        </div>-->
       </div>
       <div>
         <p>Tier 2</p>
-        <div class="column-tier" v-for="digit in rewardsForPeriod" :key="digit.rewardsTier2.toString()">
-          {{new Intl.NumberFormat('en-EN', { minimumFractionDigits: 2 }).format(parseFloat((digit.rewardsTier2.toString() / 1e18).toFixed(2)))}}
-        </div>
+        <!--        <div-->
+        <!--          class="column-tier"-->
+        <!--          v-for="digit in rewardsForPeriod"-->
+        <!--          :key="digit.rewardsTier2.toString()"-->
+        <!--        >-->
+        <!--          {{-->
+        <!--            new Intl.NumberFormat("en-EN", { minimumFractionDigits: 2 }).format(-->
+        <!--              parseFloat((digit.rewardsTier2.toString() / 1e18).toFixed(2))-->
+        <!--            )-->
+        <!--          }}-->
+        <!--        </div>-->
       </div>
       <div style="flex-direction: row">
         <p class="total-text">Total</p>
-        <div class="column-tier total" v-for="digit in rewardsForPeriod" :key="digit.rewardsTier2.toString()">
-          <span style="color: white">
-            {{new Intl.NumberFormat('en-EN', { minimumFractionDigits: 2 }).format(parseFloat(((digit.rewardsTier1.add(digit.rewardsTier2)).toString() / 1e18).toFixed(2)))}}
-            <span class="value-text"> NXUSD</span></span>
-        </div>
+        <!--        <div-->
+        <!--          class="column-tier total"-->
+        <!--          v-for="digit in rewardsForPeriod"-->
+        <!--          :key="digit.rewardsTier2.toString()"-->
+        <!--        >-->
+        <!--          <span style="color: white">-->
+        <!--            {{-->
+        <!--              new Intl.NumberFormat("en-EN", {-->
+        <!--                minimumFractionDigits: 2,-->
+        <!--              }).format(-->
+        <!--                parseFloat(-->
+        <!--                  (-->
+        <!--                    digit.rewardsTier1.add(digit.rewardsTier2).toString() / 1e18-->
+        <!--                  ).toFixed(2)-->
+        <!--                )-->
+        <!--              )-->
+        <!--            }}-->
+        <!--            <span class="value-text"> NXUSD</span></span-->
+        <!--          >-->
+        <!--        </div>-->
       </div>
     </div>
-    <hr/>
-<!--    <img-->
-<!--      src="@/assets/images/icon-info.svg"-->
-<!--      alt=""-->
-<!--      class="info-icon"-->
-<!--      v-tooltip="'Some text'"-->
-<!--    />-->
+    <hr />
+    <!--    <img-->
+    <!--      src="@/assets/images/icon-info.svg"-->
+    <!--      alt=""-->
+    <!--      class="info-icon"-->
+    <!--      v-tooltip="'Some text'"-->
+    <!--    />-->
     <div class="total-earned-rewards">
       <div class="total-title">Total earned</div>
-      <div class="total-amount">{{ new Intl.NumberFormat('en-EN', { minimumFractionDigits: 2 }).format(parseFloat(((totalEarnedRewards / 1e18).toFixed(2)))) }} <span>NXUSD</span></div>
+      <div class="total-amount">
+        {{
+          new Intl.NumberFormat("en-EN", { minimumFractionDigits: 2 }).format(
+            parseFloat((totalEarnedRewards / 1e18).toFixed(2))
+          )
+        }}
+        <span>NXUSD</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-
 export default {
   name: "ExpectedInterest",
   data() {
@@ -65,7 +102,7 @@ export default {
     },
     totalEarnedRewards: {
       type: String,
-    }
+    },
   },
   computed: {
     // formattingRewards() {
@@ -74,8 +111,7 @@ export default {
     //   });
     // },
   },
-  methods: {
-  },
+  methods: {},
 };
 </script>
 
@@ -112,8 +148,9 @@ export default {
   .total-earned-rewards {
     font-size: 14px;
     line-height: 20px;
-    span, .total-title {
-      color: #8A8A8A;
+    span,
+    .total-title {
+      color: #8a8a8a;
     }
   }
 
@@ -121,7 +158,7 @@ export default {
     text-align: right;
     align-items: center;
 
-    color: #8A8A8A;
+    color: #8a8a8a;
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
@@ -145,7 +182,7 @@ export default {
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
-    color: #8A8A8A;
+    color: #8a8a8a;
 
     text-align: left;
     margin-bottom: 8px;
@@ -165,13 +202,13 @@ export default {
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
-    color: #FFFFFF;
+    color: #ffffff;
 
     text-align: right;
     margin-bottom: 8px;
 
     span {
-      color: #8A8A8A;
+      color: #8a8a8a;
     }
   }
   .column-tier:last-child {

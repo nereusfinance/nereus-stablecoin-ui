@@ -27,9 +27,7 @@
       <router-link :to="{ name: 'Dashboard' }" class="nav-link"
         >My Dashboard</router-link
       >
-      <router-link :to="{ name: 'Stake' }" class="nav-link"
-      >Earn</router-link
-      >
+      <router-link :to="{ name: 'Stake' }" class="nav-link">Earn</router-link>
     </nav>
   </div>
 </template>

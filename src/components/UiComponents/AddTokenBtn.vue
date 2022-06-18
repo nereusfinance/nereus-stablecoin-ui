@@ -1,10 +1,6 @@
 <template>
   <button class="token-btn" @click="addToken">
-    <img
-      src="@/assets/images/icon-add.svg"
-      alt=""
-      class="add-icon"
-    />
+    <img src="@/assets/images/icon-add.svg" alt="" class="add-icon" />
     Add {{ tokenName }} to your browser wallet
   </button>
 </template>
@@ -38,7 +34,7 @@ export default {
       }
 
       const { ethereum } = window;
-      if(this.tokenName === 'NXUSD') {
+      if (this.tokenName === "NXUSD") {
         try {
           // wasAdded is a boolean. Like any RPC method, an error may be thrown.
           const wasAdded = await ethereum.request({
@@ -46,8 +42,8 @@ export default {
             params: {
               type: "ERC20", // Initially only supports ERC20, but eventually more!
               options: {
-                address: '0xF14f4CE569cB3679E99d5059909E23B07bd2F387', // The address that the token is at.
-                symbol: 'NXUSD', // A ticker symbol or shorthand, up to 5 chars.
+                address: "0xF14f4CE569cB3679E99d5059909E23B07bd2F387", // The address that the token is at.
+                symbol: "NXUSD", // A ticker symbol or shorthand, up to 5 chars.
                 decimals: 18, // The number of decimals in the token
                 image: require(`@/assets/images/tokens-icon/Token_NXUSD.svg`), // A string url of the token logo
               },
@@ -62,8 +58,7 @@ export default {
         } catch (error) {
           console.log(error);
         }
-      }
-      else {
+      } else {
         try {
           // wasAdded is a boolean. Like any RPC method, an error may be thrown.
           const wasAdded = await ethereum.request({
@@ -109,14 +104,14 @@ export default {
 
   background: #353535;
   border-radius: 16px;
-  border:none;
+  border: none;
   cursor: pointer;
 
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
   text-align: center;
-  color: #FFFFFF;
+  color: #ffffff;
 
   img {
     max-width: 100%;

@@ -5,53 +5,63 @@
       :statusType="statusType"
       :actionAmount="actionAmount"
     />
-    <hr>
+    <hr />
     <!--  Central block-->
-    <div class="central-block" v-if="transactionPending === 'wait for action' && statusType.length === 2">
+    <div
+      class="central-block"
+      v-if="transactionPending === 'wait for action' && statusType.length === 2"
+    >
       <h3 v-if="statusType[0] === 'Deposit'">Please submit not to deposit</h3>
       <h3 v-if="statusType[0] === 'Withdraw'">Please submit to withdraw</h3>
-      <button @click="actionHandler">{{statusType[0]}}</button>
+      <button @click="actionHandler">{{ statusType[0] }}</button>
     </div>
 
     <!--  Central block for approve-->
-    <div class="central-block-default" v-if="transactionPending === 'wait for action' && statusType.length > 2">
+    <div
+      class="central-block-default"
+      v-if="transactionPending === 'wait for action' && statusType.length > 2"
+    >
       <h2>
-        1/{{statusType.length}} {{statusType[0]}}
-        <br>
+        1/{{ statusType.length }} {{ statusType[0] }}
+        <br />
         <h3>Please approve before deposit</h3>
       </h2>
-      <button @click="actionHandler">{{statusType[0]}}</button>
+      <button @click="actionHandler">{{ statusType[0] }}</button>
     </div>
 
-<!--    Both-->
+    <!--    Both-->
     <div class="central-block" v-if="transactionPending === '1'">
       <p>Transaction(s) Pending</p>
     </div>
 
-<!--    Deposit approved-->
-    <div class="central-block-default" style="padding-top: 16px; padding-bottom: 9px" v-if="transactionPending === '2' && statusType[0] === 'Approve'">
-        <h2>
-          2/{{statusType.length}} {{statusType[1]}}
-          <br>
-          <h3>Please submit to deposit</h3>
-        </h2>
-        <button @click="actionHandler" >{{statusType[1]}}</button>
+    <!--    Deposit approved-->
+    <div
+      class="central-block-default"
+      style="padding-top: 16px; padding-bottom: 9px"
+      v-if="transactionPending === '2' && statusType[0] === 'Approve'"
+    >
+      <h2>
+        2/{{ statusType.length }} {{ statusType[1] }}
+        <br />
+        <h3>Please submit to deposit</h3>
+      </h2>
+      <button @click="actionHandler">{{ statusType[1] }}</button>
     </div>
 
     <div class="central-block" v-if="transactionPending === '3'">
       <p>Please submit to deposit</p>
     </div>
 
-<!--    Finished-->
+    <!--    Finished-->
     <div class="finished" v-if="transactionPending === 'finished'">
-      <h1>
-        {{statusType.length}}/{{statusType.length}} Success!
-      </h1>
-      <router-link :to="{ name: 'Dashboard' }" class="dashboard-btn">Dashboard</router-link>
+      <h1>{{ statusType.length }}/{{ statusType.length }} Success!</h1>
+      <router-link :to="{ name: 'Dashboard' }" class="dashboard-btn"
+        >Dashboard</router-link
+      >
     </div>
 
-    <hr v-if="transactionPending !== 'wait for action'">
-<!--    Bottom block-->
+    <hr v-if="transactionPending !== 'wait for action'" />
+    <!--    Bottom block-->
     <div class="bottom-block">
       <div class="bottom-text" v-if="transactionPending !== 'wait for action'">
         <h1>{{ statusType[0] }}</h1>
@@ -103,7 +113,13 @@
           </a>
         </h1>
       </div>
-      <div class="bottom-text" v-if="transactionPending === '3' || (statusType.length > 2 && transactionPending === 'finished')">
+      <div
+        class="bottom-text"
+        v-if="
+          transactionPending === '3' ||
+          (statusType.length > 2 && transactionPending === 'finished')
+        "
+      >
         <h1>{{ statusType[1] }}</h1>
         <h1 v-if="transactionPending === '3'">
           Pending
@@ -157,10 +173,7 @@ export default {
     actionAmount: {
       type: Array,
     },
-    value: {
-    },
-    pool: {
-    },
+    value: {},
     tx: {
       type: String,
     },
@@ -171,7 +184,7 @@ export default {
   data() {
     return {
       linkTX: "https://snowtrace.io/tx/",
-    }
+    };
   },
   computed: {
     getTXLink() {
@@ -190,17 +203,19 @@ export default {
       //апрув на никсюсд перед каждой транзой
       console.log("Value ", this.value);
       if (this.statusType[0] === "Deposit") {
-        if(this.transactionPending === "wait for action")
-          this.action(1);
+        if (this.transactionPending === "wait for action") this.action(1);
         this.$emit("stakeHandler");
       }
 
-      if( this.statusType[0] === "Approve") {
-        if(this.transactionPending === "wait for action" && this.transactionPending !== '3') {
+      if (this.statusType[0] === "Approve") {
+        if (
+          this.transactionPending === "wait for action" &&
+          this.transactionPending !== "3"
+        ) {
           this.action(1);
           this.$emit("stakeHandler");
         }
-        if(this.transactionPending === '2') {
+        if (this.transactionPending === "2") {
           this.$emit("stakeHandler");
           this.action(3);
         }
@@ -232,22 +247,24 @@ export default {
   hr {
     height: 1px;
     width: 385px;
-    background: #1C1C1C;
+    background: #1c1c1c;
     border-width: 0;
   }
 
   //Central block
-  .central-block, .central-block-default{
+  .central-block,
+  .central-block-default {
     padding: 38px 16px 0 16px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     width: 388px;
 
-    h2, h3 {
+    h2,
+    h3 {
       font-weight: 400;
       font-size: 12px;
-      color: #FFFFFF;
+      color: #ffffff;
       text-align: left;
 
       h3 {
@@ -261,7 +278,7 @@ export default {
       width: auto;
       padding: 6px 16px;
 
-      background: #E7FC6E;
+      background: #e7fc6e;
       border-radius: 16px;
     }
   }
@@ -282,14 +299,14 @@ export default {
       width: 356px;
       height: 40px;
 
-      background: #E7FC6E;
+      background: #e7fc6e;
       border-radius: 20px;
     }
     p {
       margin-bottom: 16px;
       font-weight: 400;
       font-size: 14px;
-      color: #FDD33F;
+      color: #fdd33f;
       text-align: left;
     }
   }
@@ -312,7 +329,7 @@ export default {
       padding: 6px 16px;
 
       width: auto;
-      background: #E7FC6E;
+      background: #e7fc6e;
       border-radius: 16px;
       text-decoration: none;
       color: black;
@@ -321,7 +338,7 @@ export default {
     }
   }
 
-//  Bottom Block
+  //  Bottom Block
   .bottom-block {
     display: flex;
     flex-direction: column;
@@ -343,17 +360,22 @@ export default {
 
         font-weight: 400;
         font-size: 12px;
-        color: #FFFFFF;
+        color: #ffffff;
       }
 
       @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% {  transform: rotate(359deg); }
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(359deg);
+        }
       }
       .loading-icon {
         animation: spin 2s linear infinite;
       }
-      .done-icon, .loading-icon {
+      .done-icon,
+      .loading-icon {
         margin-left: 4px;
         margin-right: 12px;
       }
@@ -366,7 +388,7 @@ export default {
         font-weight: 400;
         font-size: 12px;
         line-height: 20px;
-        color: #FFFFFF;
+        color: #ffffff;
         text-decoration: none;
       }
     }
@@ -380,7 +402,6 @@ export default {
         width: 360px;
         height: 48px;
         border-radius: 24px;
-
       }
     }
   }

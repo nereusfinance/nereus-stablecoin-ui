@@ -148,7 +148,7 @@ export default {
     isStake: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   data() {
     return {
@@ -341,7 +341,7 @@ export default {
     font-weight: 400;
     font-size: 16px;
     line-height: 24px;
-    color: #55BCC0;
+    color: #55bcc0;
   }
   .input-stake {
     font-weight: 400;

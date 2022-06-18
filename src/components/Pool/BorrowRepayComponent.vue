@@ -478,7 +478,7 @@ export default {
     toggleUseAVAX() {
       const AVAXStatus = this.$store.getters.getUseAVAX;
       this.$store.commit("setUseAVAX", !AVAXStatus);
-      this.updateMainValue(this.mainValue)
+      this.updateMainValue(this.mainValue);
     },
     toFixed(num, fixed) {
       // eslint-disable-next-line no-useless-escape

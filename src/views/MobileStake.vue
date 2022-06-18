@@ -1,38 +1,33 @@
 <template>
-<div class="stake-view-mobile">
-  <div class="stake-text" v-if="actionStatus === false">
-    <h1>Earn</h1>
-  </div>
-  <div class="stake-content">
-    <div class="container-mini" v-if="actionStatus === false">
-      <TotalDeposit
-        :pool="pool"
-        :actionStatus="actionStatus"
-        :actionType="actionType"
-        :onClick="setActionType"
-      />
-
-      <InfoBlock
-        :pool="pool"
-      />
-
-      <LockedToken
-        :pool="pool"
-      />
-
-      <ExpectedInterest
-      />
+  <div class="stake-view-mobile">
+    <div class="stake-text" v-if="actionStatus === false">
+      <h1>Earn</h1>
     </div>
-    <div class="container-mini" v-else>
-      <DepositWithdraw
-        :actionType="actionType"
-        :actionStatus="actionStatus"
-        :onClick="setActionStatus"
-        :pool="pool"
-      />
+    <div class="stake-content">
+      <div class="container-mini" v-if="actionStatus === false">
+        <TotalDeposit
+          :pool="pool"
+          :actionStatus="actionStatus"
+          :actionType="actionType"
+          :onClick="setActionType"
+        />
+
+        <InfoBlock :pool="pool" />
+
+        <LockedToken :pool="pool" />
+
+        <ExpectedInterest />
+      </div>
+      <div class="container-mini" v-else>
+        <DepositWithdraw
+          :actionType="actionType"
+          :actionStatus="actionStatus"
+          :onClick="setActionStatus"
+          :pool="pool"
+        />
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -47,19 +42,18 @@ export default {
     return {
       actionStatus: false,
       actionType: "",
-    }
+    };
   },
   methods: {
     setActionStatus() {
       this.actionStatus = this.actionStatus === false;
     },
     setActionType(type) {
-      if (type !== this.actionType)
-        this.actionType = type;
+      if (type !== this.actionType) this.actionType = type;
       this.actionStatus = this.actionStatus === false;
     },
     async getData() {
-     // const configArray = this.$ethers.;
+      // const configArray = this.$ethers.;
     },
     async borrowHandler(data) {
       console.log("BORROW HANDLER", data);
@@ -380,7 +374,13 @@ export default {
       return this.$store.getters.getPoolById(poolId);
     },
   },
-  components: { DepositWithdraw, ExpectedInterest, InfoBlock, LockedToken, TotalDeposit }
+  components: {
+    DepositWithdraw,
+    ExpectedInterest,
+    InfoBlock,
+    LockedToken,
+    TotalDeposit,
+  },
 };
 </script>
 
@@ -399,19 +399,11 @@ export default {
     margin-bottom: 20px;
   }
 
-  .stake-text {
-    width: 328px;
-    height: 32px;
-
-    margin-right: auto;
-    margin-left: auto;
-    margin-bottom: 16px;
-  }
-
-  .stake-content {
+  .stake-wrapper {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
+    align-items: flex-start;
   }
   .container-mini {
     display: flex;
