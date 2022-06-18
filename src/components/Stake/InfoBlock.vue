@@ -219,13 +219,12 @@ export default {
 @media screen and(max-width: 767px) {
   .info-block {
     height: 230px;
-    width: 328px;
     border-radius: 4px;
-
+    align-items: center;
     margin-left: auto;
     margin-right: auto;
     padding: 24px 16px 16px 16px;
-
+    margin-top: 8px;
     .columns {
       height: 110px;
     }

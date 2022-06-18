@@ -86,6 +86,7 @@ export default {
   display: flex;
   flex-direction: column;
   margin: auto;
+  flex: 1;
 
   h1 {
     font-size: 32px;
@@ -115,11 +116,26 @@ export default {
   }
 }
 @media screen and(min-width: 768px) and(max-width: 1000px) {
+  .stake-view .stake-wrapper {
+    padding: 20px 28px;
+  }
   .stake-text {
     margin-left: 28px;
   }
 }
 @media screen and(max-width: 767px) {
+  .stake-view {
+    max-width: 450px;
+    .stake-item-one,
+    .stake-item-two {
+      width: 100%;
+      margin-left: 0;
+    }
+  }
+  .stake-wrapper {
+    flex-wrap: wrap;
+    padding: 16px;
+  }
   .stake-text {
     margin-left: 16px;
   }

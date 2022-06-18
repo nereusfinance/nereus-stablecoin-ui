@@ -591,6 +591,7 @@ export default {
 
     .deposit-withdraw-container {
       margin-top: 28px;
+      padding: 0;
     }
     .continue {
       width: 392px;
@@ -614,6 +615,7 @@ export default {
     }
     .deposit-withdraw-container {
       width: 328px;
+      padding: 40px 0;
     }
     .continue {
       width: 328px;

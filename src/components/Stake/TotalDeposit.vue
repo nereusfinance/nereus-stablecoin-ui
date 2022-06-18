@@ -162,11 +162,8 @@ export default {
 
 @media screen and(min-width: 768px) and(max-width: 1000px) {
   .total-deposit-block {
-    width: 280px;
     height: 186px;
     padding: 24px 16px 24px 16px;
-    margin: 0 8px 8px 0;
-
     p {
       font-size: 20px;
     }
@@ -193,7 +190,6 @@ export default {
 
 @media screen and(max-width: 767px) {
   .total-deposit-block {
-    width: 328px;
     height: 248px;
     padding: 24px 16px 20px 16px;
     margin-left: auto;
@@ -222,6 +218,7 @@ export default {
       display: flex;
       flex-direction: column;
       align-content: center;
+      align-items: center;
     }
     .deposit-btn {
       margin-top: 28px;

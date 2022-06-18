@@ -6,7 +6,7 @@
         src="@/assets/images/icon-info.svg"
         alt=""
         class="fist-info-icon"
-        v-tooltip="'Some text'"
+        v-tooltip="'Approximated interest for now'"
       />
     </p>
     <div class="container-interest">
@@ -55,7 +55,7 @@
           src="@/assets/images/icon-info.svg"
           alt=""
           class="info-icon"
-          v-tooltip="'Some text'"
+          v-tooltip="'Total earned rewards without deposit amount'"
         />
       </div>
       <div class="total-amount">
@@ -236,7 +236,6 @@ export default {
 @media screen and(max-width: 767px) {
   .expected-interest-block {
     height: auto;
-    width: 328px;
     margin-left: auto;
     margin-right: auto;
     margin-top: 24px;
@@ -266,7 +265,6 @@ export default {
     }
     .info-icon {
       width: 20px;
-      position: absolute;
       top: 90.05% !important;
       left: 95px;
     }
