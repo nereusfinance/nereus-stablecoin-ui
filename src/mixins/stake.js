@@ -72,7 +72,6 @@ export default {
     },
 
     async getAllParameters() {
-      console.log("here");
       this.createNXUSDStaking();
       this.createNXUSDStakingCalculation();
       this.createMultiFeeDistribution();

@@ -8,11 +8,11 @@
           <LockedToken />
         </div>
         <div class="stake-item">
-          <!--          <DepositWithdraw-->
-          <!--            v-if="actionType"-->
-          <!--            :actionType="actionType"-->
-          <!--            :onClick="setActionStatus"-->
-          <!--          />-->
+          <DepositWithdraw
+            v-if="actionType"
+            :actionType="actionType"
+            :onClick="setActionType"
+          />
           <!--          <InfoBlock v-if="!actionType"/>-->
           <!--          <ExpectedInterest-->
           <!--            v-if="!actionType"-->
@@ -30,7 +30,7 @@ import TotalDeposit from "@/components/Stake/TotalDeposit";
 import LockedToken from "@/components/Stake/LockedToken";
 // import InfoBlock from "@/components/Stake/InfoBlock";
 // import ExpectedInterest from "@/components/Stake/ExpectedInterest";
-// import DepositWithdraw from "@/components/Stake/DepositWithdraw";
+import DepositWithdraw from "@/components/Stake/DepositWithdraw";
 import stake from "@/mixins/stake.js";
 export default {
   mixins: [stake],
@@ -46,7 +46,7 @@ export default {
     };
   },
   components: {
-    // DepositWithdraw,
+    DepositWithdraw,
     // ExpectedInterest,
     // InfoBlock,
     LockedToken,

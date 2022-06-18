@@ -53,7 +53,7 @@ export default {
       return new Intl.NumberFormat("en-EN").format(
         parseFloat(
           this.$ethers.utils.formatEther(this.$store.getters.getUserData[1])
-        )
+        ).toFixed(2)
       );
     },
   },
@@ -70,7 +70,7 @@ export default {
   background: #262626;
   border-radius: 4px;
 
-  margin: 0 20px 20px 0;
+  margin-bottom: 20px;
   padding: 32px 24px 24px 24px;
 
   display: flex;

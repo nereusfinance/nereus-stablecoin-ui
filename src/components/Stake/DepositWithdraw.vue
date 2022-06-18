@@ -3,115 +3,119 @@
     <BackButton
       :text="'Back'"
       :disabled="transactionPending !== 'wait for action'"
-      @click="onClick"
+      @click="goBack"
     />
     <!--  <BackButton :text="'Back'" @click="onClick" v-else-if="transactionPending !== 'finished'" />-->
-
-    <div
-      v-if="actionType === 'Deposit' && overview === false"
-      class="deposit-withdraw-container"
-    >
-      <h1>How much would you like to deposit?</h1>
-      <p>
-        Please enter amount you would like to deposit. The maximum amount you
-        can deposit is shown below.
-      </p>
-      <div class="available-amount">
-        <h2>Available to deposit</h2>
-        <h3>{{ availableDeposit }}<span> NXUSD</span></h3>
-      </div>
-      <ValueInput
-        :max="availableDeposit"
-        :show-max="true"
-        :valueName="NXUS"
-        @onchange="updateValue"
-        :parentValue="valueAmount"
-        :error="valueError"
-        :isStake="true"
-      />
-      <button class="continue" :disabled="!btnText" @click="toOverview">
-        Continue
-      </button>
-    </div>
-
-    <div
-      v-if="actionType === 'Withdraw' && overview === false"
-      class="deposit-withdraw-container"
-    >
-      <h1>Withdraw</h1>
-      <p>How much do you want to withdraw?</p>
-      <div class="available-amount">
-        <h2>Available to withdraw</h2>
-        <h3>{{ availableWithdraw }}<span> NXUSD</span></h3>
-      </div>
-      <ValueInput
-        :max="availableWithdraw"
-        :show-max="true"
-        :valueName="stakingTokenInfo.name"
-        @onchange="updateValue"
-        :parentValue="valueAmount"
-        :error="valueError"
-        :isStake="true"
-      />
-      <button class="continue" :disabled="!btnText" @click="toOverview">
-        Continue
-      </button>
-    </div>
-
-    <div v-if="overview" class="deposit-withdraw-container">
-      <h1 v-if="transactionPending !== 'finished'">
-        {{ actionType }} overview
-      </h1>
-      <p v-if="transactionPending !== 'finished'">
-        These are your transaction details. Make sure to check if this is
-        correct before submitting.
-      </p>
-
-      <h1 v-if="transactionPending === 'finished'">Congrats!</h1>
-      <p v-if="transactionPending === 'finished'">
-        Your action has been successfully executed
-      </p>
-      <div class="currency-overview">
-        <h2>Currency</h2>
-        <TokenIcon
-          v-if="actionType === 'Deposit'"
-          :token="stakingTokenInfo.name"
-        />
-        <div>
-          {{ valueAmount }}
-          {{ stakingTokenInfo.name }}
-          <p
-            v-if="actionType === 'Deposit'"
-            style="margin: 0; text-align: right; font-size: 12px"
-          >
-            $ {{ valueInUsd }}
-          </p>
+    <div class="action-wrapper">
+      <div
+        v-if="actionType === 'Deposit' && overview === false"
+        class="deposit-withdraw-container"
+      >
+        <p class="form-header">How much would you like to deposit?</p>
+        <p class="form-description">
+          Please enter amount you would like to deposit. The maximum amount you
+          can deposit is shown below.
+        </p>
+        <div class="available-amount">
+          <span class="form-header-text">Available to deposit</span>
+          <span class="form-header-value">
+            {{ formatBNValues(stakingTokenInfo.balance)
+            }}<span class="form-symbol">{{ stakingTokenInfo.name }}</span>
+          </span>
         </div>
+        <ValueInput
+          :max="maxValue"
+          :show-max="true"
+          valueName="NXUSD"
+          @onchange="updateValue"
+          :parentValue="valueAmount"
+          :error="valueError"
+          :isStake="true"
+        />
+        <button class="continue" @click="toOverview">Continue</button>
       </div>
-      <TransactionStatus
-        v-if="actionType === 'Deposit'"
-        :statusType="depositStatus"
-        :transactionPending="transactionPending"
-        :action="action"
-        :value="valueAmount"
-        :tx="tx"
-        :action-amount="actionAmount"
-        :txApprove="txApprove"
-        @stakeHandler="stakeHandler"
-      />
-      <TransactionStatus
-        v-if="actionType === 'Withdraw'"
-        :statusType="withdrawStatus"
-        :transactionPending="transactionPending"
-        :action="action"
-        :value="valueAmount"
-        :tx="tx"
-        @addUnstake="unstakeHandler"
-      />
-      <add-token-btn
-        v-if="transactionPending === 'finished'"
-        :token-name="stakingTokenInfo.name"
-      />
+
+      <div
+        v-if="actionType === 'Withdraw' && overview === false"
+        class="deposit-withdraw-container"
+      >
+        <p class="form-header">How much would you like to withdraw?</p>
+        <p class="form-description">
+          Please enter amount you would like to withdraw. The maximum amount you
+          can withdraw is shown below.
+        </p>
+        <div class="available-amount">
+          <span class="form-header-text">Available to withdraw</span>
+          <span class="form-header-value"
+            >{{ formatBNValues(availableWithdraw)
+            }}<span class="form-symbol">{{ stakingTokenInfo.name }}</span></span
+          >
+        </div>
+        <ValueInput
+          :max="maxValue"
+          :show-max="true"
+          valueName="NXUSD"
+          @onchange="updateValue"
+          :parentValue="valueAmount"
+          :error="valueError"
+          :isStake="true"
+        />
+        <button class="continue" @click="toOverview">Continue</button>
+      </div>
+
+      <div v-if="overview" class="deposit-withdraw-container">
+        <p class="form-header" v-if="transactionPending !== 'finished'">
+          {{ actionType }} overview
+        </p>
+        <p class="form-description" v-if="transactionPending !== 'finished'">
+          These are your transaction details. Make sure to check if this is
+          correct before submitting.
+        </p>
+
+        <p class="form-header" v-if="transactionPending === 'finished'">
+          Congrats!
+        </p>
+        <p class="form-description" v-if="transactionPending === 'finished'">
+          Your action has been successfully executed
+        </p>
+        <div class="currency-overview">
+          <h2>Currency</h2>
+          <TokenIcon
+            v-if="actionType === 'Deposit'"
+            :token="stakingTokenInfo.name"
+          />
+          <div>
+            {{ valueAmount }}
+            {{ stakingTokenInfo.name }}
+          </div>
+        </div>
+        <TransactionStatus
+          v-if="actionType === 'Deposit'"
+          :statusType="depositStatus"
+          :transactionPending="transactionPending"
+          :action="action"
+          :value="valueAmount"
+          :tx="tx"
+          :action-amount="actionAmount"
+          :txApprove="txApprove"
+          @stakeHandler="stakeHandler"
+          @onFinish="goBack"
+        />
+        <TransactionStatus
+          v-if="actionType === 'Withdraw'"
+          :statusType="withdrawStatus"
+          :transactionPending="transactionPending"
+          :action="action"
+          :value="valueAmount"
+          :tx="tx"
+          @addUnstake="unstakeHandler"
+          @onFinish="goBack"
+        />
+        <add-token-btn
+          v-if="transactionPending === 'finished'"
+          :token-name="stakingTokenInfo.name"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -133,10 +137,11 @@ export default {
     return {
       bentoBoxContract: undefined,
       stakingTokenContract: undefined,
-      getNXUSDStakingContract: {
-        address: "0xF14f4CE569cB3679E99d5059909E23B07bd2F387",
+      stakingTokenInfo: {
+        name: null,
+        decimals: 18,
+        balance: this.$ethers.BigNumber.from(0),
       },
-      stakingTokenInfo: { name: null, decimals: 18 },
       overview: false,
       valueAmount: "0",
       valueError: "",
@@ -147,7 +152,6 @@ export default {
       txApprove: "",
       actionAmount: [1, 2],
       approved: true,
-      btnText: false,
       gasLimitConst: 1000,
     };
   },
@@ -163,7 +167,36 @@ export default {
     this.getBentoBoxContract();
     this.getStakingTokenInfo();
   },
+  computed: {
+    signer() {
+      return this.$store.getters.getSigner;
+    },
+    account() {
+      return this.$store.getters.getAccount;
+    },
+    chainId() {
+      return this.$store.getters.getChainId;
+    },
+    availableWithdraw() {
+      return this.$store.getters.getUserCurrentRewards;
+    },
+    NXUSDStakingContract() {
+      return this.$store.getters.getNXUSDStakingContract;
+    },
+  },
   methods: {
+    goBack() {
+      this.onClick("");
+    },
+    normalizeBNValues(value) {
+      return ethers.utils.formatEther(value);
+    },
+    formatBNValues(value) {
+      const normalizedValue = this.normalizeBNValues(value);
+      return new Intl.NumberFormat("en-EN").format(
+        parseFloat(normalizedValue).toFixed(2)
+      );
+    },
     getBentoBoxContract() {
       const bentoBox = masterContractInfo.find(
         (contract) => contract.contractChain === this.chainId
@@ -174,7 +207,7 @@ export default {
         this.signer
       );
     },
-    getStakingTokenInfo() {
+    async getStakingTokenInfo() {
       const NXUSDStaking = NXUSDStakingContractInfo.find(
         (contract) => contract.contractChain === this.chainId
       );
@@ -183,9 +216,11 @@ export default {
         NXUSDStaking.stakingToken.abi,
         this.signer
       );
+      const balance = await this.stakingTokenContract.balanceOf(this.account);
       this.stakingTokenInfo = {
         name: NXUSDStaking.stakingToken.name,
         decimals: NXUSDStaking.stakingToken.decimals,
+        balance: balance,
       };
     },
     async getNonce() {
@@ -196,11 +231,7 @@ export default {
       }
     },
     async stakingTokenApprove() {
-      const tokenAllowance = await this.tokenAllowance(
-        this.stakingTokenContract.address,
-        this.bentoBoxContract.address
-      );
-      if (tokenAllowance.lt(ethers.utils.parseUnits(this.valueAmount))) {
+      if (!(await this.isApprowed())) {
         await this.approveTokenToBentoBox();
       }
       return true;
@@ -216,6 +247,10 @@ export default {
         console.log("Approve token error:", e);
       }
     },
+    async isApprowed() {
+      const tokenAllowance = await this.tokenAllowance();
+      return !tokenAllowance.lt(ethers.utils.parseUnits(this.valueAmount));
+    },
     async isApprowedForBentobox() {
       try {
         const nxusdStaking = await this.$store.getters.getNXUSDStakingContract
@@ -229,12 +264,12 @@ export default {
         return false;
       }
     },
-    async availableDeposit() {
-      try {
-        return await this.stakingTokenContract.balanceOf(this.account);
-      } catch (e) {
-        console.log("Staking Token Balance error", e);
-        return ethers.BigNumber.from("0");
+    maxValue() {
+      if (this.actionType === "Deposit") {
+        return this.normalizeBNValues(this.stakingTokenInfo.balance);
+      }
+      if (this.actionType === "Withdraw") {
+        return this.normalizeBNValues(this.availableWithdraw);
       }
     },
     async action(tx) {
@@ -269,11 +304,11 @@ export default {
       this.overview = true;
     },
     updateValue(value) {
-      if (parseFloat(value) > parseFloat(this.maxPairValue)) {
-        this.valueError = `Insufficient amount. The value available ${this.maxPairValue}`;
+      if (parseFloat(value) > parseFloat(this.maxValue())) {
+        this.valueError = `Insufficient amount. The value available ${this.maxValue()}`;
         return false;
       } else if (value && value > 0.0) {
-        this.btnText = true;
+        this.valueError = "";
         this.valueAmount = value;
         return true;
       }
@@ -290,9 +325,9 @@ export default {
     async wrapperStatusTx(result) {
       const status = await result.wait();
       if (status) {
-        console.log("IT WORKS");
-        this.action("finished");
-        await this.updateStakedBalance();
+        await this.action("finished");
+        await this.$store.dispatch("checkUserData");
+        await this.$store.dispatch("checkUserCurrentRewards");
       }
     },
     async unstakeHandler() {
@@ -350,7 +385,6 @@ export default {
     async stake() {
       const contract = this.$store.getters.getNXUSDStakingContract;
       let value = this.$ethers.utils.parseUnits(this.valueAmount, 18);
-      console.log(contract);
       try {
         const tx = await contract.stake(value);
         const receipt = await tx.wait();
@@ -368,16 +402,6 @@ export default {
         const NXUSDStaking = await this.$store.getters.getNXUSDStakingContract
           .address;
 
-        // console.log(
-        //   "approveMasterContract",
-        //   this.account,
-        //   masterContract,
-        //   true,
-        //   this.$ethers.utils.formatBytes32String(approval.v),
-        //   this.$ethers.utils.formatBytes32String(approval.r),
-        //   this.$ethers.utils.formatBytes32String(approval.s)
-        // );
-        console.log(this.account, NXUSDStaking);
         const tx = await this.bentoBoxContract.setMasterContractApproval(
           this.account,
           NXUSDStaking,
@@ -402,7 +426,7 @@ export default {
       const verifyingContract = await this.bentoBoxContract.address;
       console.log("verifyingContract", verifyingContract);
 
-      const masterContract = await this.getMasterContract();
+      const masterContract = await this.NXUSDStakingContract.address;
       console.log("masterContract", masterContract);
 
       const nonce = await this.getNonce();
@@ -460,20 +484,11 @@ export default {
         v: parseInt(v, 16),
       };
     },
-    async getMasterContract() {
+    async tokenAllowance() {
       try {
-        const masterContract =
-          this.$store.getters.getNXUSDStakingContract.address;
-        return masterContract;
-      } catch (e) {
-        console.log("getMasterContract err:", e);
-      }
-    },
-    async tokenAllowance(tokenContract, spenderAddress) {
-      try {
-        const tokenAllowance = await tokenContract.allowance(
+        const tokenAllowance = await this.stakingTokenContract.allowance(
           this.account,
-          spenderAddress
+          this.bentoBoxContract.address
         );
         console.log("TOKEN APPROVE:", tokenAllowance, tokenAllowance.isZero());
         return tokenAllowance;
@@ -481,22 +496,6 @@ export default {
         console.log("Get Allowance error:", e);
         return ethers.BigNumber.from(0);
       }
-    },
-  },
-  computed: {
-    signer() {
-      return this.$store.getters.getSigner;
-    },
-    account() {
-      return this.$store.getters.getAccount;
-    },
-    chainId() {
-      return this.$store.getters.getChainId;
-    },
-    availableWithdraw() {
-      let withdraw =
-        this.$store.getters.getUserBalanceStaked / 1000000000000000000;
-      return this.toFixed(withdraw, 2);
     },
   },
   components: {
@@ -511,41 +510,34 @@ export default {
 
 <style scoped lang="scss">
 .deposit-withdraw-block {
-  width: 592px;
-  height: 544px;
-
   background: #262626;
   border-radius: 4px;
-
   padding: 32px 24px;
-
+  display: flex;
+  flex-direction: column;
   .deposit-withdraw-container {
-    margin-top: 40px;
-    width: 388px;
-    margin-left: auto;
-    margin-right: auto;
+    padding: 40px 100px;
 
-    h1 {
-      text-align: left;
-    }
-    h2,
-    span {
+    .form-header {
+      font-size: 24px;
+      line-height: 28px;
       font-weight: 400;
       text-align: left;
-      font-size: 16px;
-      color: #ffffff;
     }
-    h3 {
+    .form-header-value {
       font-weight: 600;
       font-size: 16px;
       text-align: right;
       color: #f2f4fe;
+      .form-symbol {
+        margin-left: 4px;
+        font-weight: 400;
+      }
     }
-    p {
+    .form-description {
       text-align: left;
       margin: 8px 0 24px 0;
       font-size: 14px;
-
       color: #8a8a8a;
     }
 
@@ -553,17 +545,21 @@ export default {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-
       margin-bottom: 16px;
+      .form-header-text {
+        font-weight: 400;
+        text-align: left;
+        font-size: 16px;
+        color: #ffffff;
+      }
     }
   }
   .continue {
-    width: 388px;
+    cursor: pointer;
     height: 40px;
-
     background: #e7fc6e;
     border-radius: 20px;
-
+    width: 100%;
     margin-top: 24px;
   }
 
@@ -595,9 +591,6 @@ export default {
 
     .deposit-withdraw-container {
       margin-top: 28px;
-    }
-    h1 {
-      font-size: 20px;
     }
     .continue {
       width: 392px;

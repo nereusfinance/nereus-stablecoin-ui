@@ -11,9 +11,11 @@
       class="central-block"
       v-if="transactionPending === 'wait for action' && statusType.length === 2"
     >
-      <h3 v-if="statusType[0] === 'Deposit'">Please submit not to deposit</h3>
+      <h3 v-if="statusType[0] === 'Deposit'">Please submit to deposit</h3>
       <h3 v-if="statusType[0] === 'Withdraw'">Please submit to withdraw</h3>
-      <button @click="actionHandler">{{ statusType[0] }}</button>
+      <button class="action-button" @click="actionHandler">
+        {{ statusType[0] }}
+      </button>
     </div>
 
     <!--  Central block for approve-->
@@ -26,7 +28,9 @@
         <br />
         <h3>Please approve before deposit</h3>
       </h2>
-      <button @click="actionHandler">{{ statusType[0] }}</button>
+      <button class="action-button" @click="actionHandler">
+        {{ statusType[0] }}
+      </button>
     </div>
 
     <!--    Both-->
@@ -45,7 +49,9 @@
         <br />
         <h3>Please submit to deposit</h3>
       </h2>
-      <button @click="actionHandler">{{ statusType[1] }}</button>
+      <button class="action-button" @click="actionHandler">
+        {{ statusType[1] }}
+      </button>
     </div>
 
     <div class="central-block" v-if="transactionPending === '3'">
@@ -55,9 +61,7 @@
     <!--    Finished-->
     <div class="finished" v-if="transactionPending === 'finished'">
       <h1>{{ statusType.length }}/{{ statusType.length }} Success!</h1>
-      <router-link :to="{ name: 'Dashboard' }" class="dashboard-btn"
-        >Dashboard</router-link
-      >
+      <button class="dashboard-btn" @click="goBack">Finish</button>
     </div>
 
     <hr v-if="transactionPending !== 'wait for action'" />
@@ -197,11 +201,13 @@ export default {
     },
   },
   methods: {
+    goBack() {
+      this.$emit("onFinish");
+    },
     actionHandler() {
       //approve handler
       //на бенто бокс в стор единоразово: по умолчанию фолс в сторе, при входе на страницу при креэйте проверять апрув
       //апрув на никсюсд перед каждой транзой
-      console.log("Value ", this.value);
       if (this.statusType[0] === "Deposit") {
         if (this.transactionPending === "wait for action") this.action(1);
         this.$emit("stakeHandler");
@@ -232,7 +238,7 @@ export default {
 
 <style scoped lang="scss">
 .transaction-status-block {
-  width: 388px;
+  width: 100%;
   height: auto;
   background: #262626;
 
@@ -272,12 +278,11 @@ export default {
         font-size: 14px;
       }
     }
-    button {
+    .action-button {
+      cursor: pointer;
       gap: 10px;
-
       width: auto;
       padding: 6px 16px;
-
       background: #e7fc6e;
       border-radius: 16px;
     }
@@ -327,7 +332,7 @@ export default {
     .dashboard-btn {
       align-items: center;
       padding: 6px 16px;
-
+      cursor: pointer;
       width: auto;
       background: #e7fc6e;
       border-radius: 16px;
