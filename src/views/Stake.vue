@@ -124,5 +124,4 @@ export default {
     margin-left: 16px;
   }
 }
-}
 </style>
