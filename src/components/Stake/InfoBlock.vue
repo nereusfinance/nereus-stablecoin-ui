@@ -141,8 +141,7 @@ export default {
 
 <style scoped lang="scss">
 .info-block {
-  width: 592px;
-  height: 315px;
+  width: 100%;
 
   background: #262626;
   border-radius: 4px;

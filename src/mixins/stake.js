@@ -84,6 +84,8 @@ export default {
 
       await this.$store.dispatch("getAPYDataConfig", configCurrentVersion);
 
+      await this.$store.dispatch("getConfig", configCurrentVersion);
+
       await this.$store.dispatch("checkUserWXTLock");
 
       await this.$store.dispatch("checkUserCurrentRewards");

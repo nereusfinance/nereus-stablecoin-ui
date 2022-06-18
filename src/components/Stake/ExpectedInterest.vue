@@ -17,72 +17,50 @@
       </div>
       <div>
         <p>Tier 1</p>
-        <!--        <div-->
-        <!--          class="column-tier"-->
-        <!--          v-for="digit in rewardsForPeriod"-->
-        <!--          :key="digit.rewardsTier1.toString()"-->
-        <!--        >-->
-        <!--          {{-->
-        <!--            new Intl.NumberFormat("en-EN", { minimumFractionDigits: 2 }).format(-->
-        <!--              parseFloat((digit.rewardsTier1.toString() / 1e18).toFixed(2))-->
-        <!--            )-->
-        <!--          }}-->
-        <!--        </div>-->
+        <div
+          class="column-tier"
+          v-for="(reward, i) in rewardsForPeriod"
+          :key="i"
+        >
+          {{ formatBNValues(reward.rewardsTier1) }}
+        </div>
       </div>
       <div>
         <p>Tier 2</p>
-        <!--        <div-->
-        <!--          class="column-tier"-->
-        <!--          v-for="digit in rewardsForPeriod"-->
-        <!--          :key="digit.rewardsTier2.toString()"-->
-        <!--        >-->
-        <!--          {{-->
-        <!--            new Intl.NumberFormat("en-EN", { minimumFractionDigits: 2 }).format(-->
-        <!--              parseFloat((digit.rewardsTier2.toString() / 1e18).toFixed(2))-->
-        <!--            )-->
-        <!--          }}-->
-        <!--        </div>-->
+        <div
+          class="column-tier"
+          v-for="(reward, i) in rewardsForPeriod"
+          :key="i"
+        >
+          {{ formatBNValues(reward.rewardsTier2) }}
+        </div>
       </div>
       <div style="flex-direction: row">
         <p class="total-text">Total</p>
-        <!--        <div-->
-        <!--          class="column-tier total"-->
-        <!--          v-for="digit in rewardsForPeriod"-->
-        <!--          :key="digit.rewardsTier2.toString()"-->
-        <!--        >-->
-        <!--          <span style="color: white">-->
-        <!--            {{-->
-        <!--              new Intl.NumberFormat("en-EN", {-->
-        <!--                minimumFractionDigits: 2,-->
-        <!--              }).format(-->
-        <!--                parseFloat(-->
-        <!--                  (-->
-        <!--                    digit.rewardsTier1.add(digit.rewardsTier2).toString() / 1e18-->
-        <!--                  ).toFixed(2)-->
-        <!--                )-->
-        <!--              )-->
-        <!--            }}-->
-        <!--            <span class="value-text"> NXUSD</span></span-->
-        <!--          >-->
-        <!--        </div>-->
+        <div
+          class="column-tier total"
+          v-for="(reward, i) in rewardsForPeriodTotal"
+          :key="i"
+        >
+          <span
+            >{{ formatBNValues(reward) }}<span class="value-text">NXUSD</span>
+          </span>
+        </div>
       </div>
     </div>
-    <hr />
-    <!--    <img-->
-    <!--      src="@/assets/images/icon-info.svg"-->
-    <!--      alt=""-->
-    <!--      class="info-icon"-->
-    <!--      v-tooltip="'Some text'"-->
-    <!--    />-->
     <div class="total-earned-rewards">
-      <div class="total-title">Total earned</div>
+      <div class="total-title">
+        <div>Total earned</div>
+        <img
+          src="@/assets/images/icon-info.svg"
+          alt=""
+          class="info-icon"
+          v-tooltip="'Some text'"
+        />
+      </div>
       <div class="total-amount">
-        {{
-          new Intl.NumberFormat("en-EN", { minimumFractionDigits: 2 }).format(
-            parseFloat((totalEarnedRewards / 1e18).toFixed(2))
-          )
-        }}
-        <span>NXUSD</span>
+        {{ formatBNValues(totalEarnedRewards)
+        }}<span class="value-text">NXUSD</span>
       </div>
     </div>
   </div>
@@ -96,29 +74,47 @@ export default {
       period: ["Daily", "Weekly", "Monthly", "Yearly"],
     };
   },
-  props: {
-    rewardsForPeriod: {
-      type: Array,
-    },
-    totalEarnedRewards: {
-      type: String,
-    },
-  },
   computed: {
-    // formattingRewards() {
-    //   const formattedRewards = this.rewardsForPeriod.map((reward) => {
-    //
-    //   });
-    // },
+    rewardsForPeriod() {
+      const tableRewards = this.$store.getters.getTableRewards;
+      const tableRewardsFormated = tableRewards.map((reward) => {
+        return {
+          rewardsTier1: this.normalizeBNValues(reward.rewardsTier1),
+          rewardsTier2: this.normalizeBNValues(reward.rewardsTier2),
+        };
+      });
+      return tableRewardsFormated;
+    },
+    rewardsForPeriodTotal() {
+      const totalTableRewards = this.$store.getters.getTotalTableRewards;
+      const totalTableRewardsFormated = totalTableRewards.map((reward) => {
+        return this.normalizeBNValues(reward);
+      });
+      return totalTableRewardsFormated;
+    },
+    totalEarnedRewards() {
+      const currentRewards = this.$store.getters.getUserData[2].sub(
+        this.$store.getters.getUserData[1]
+      );
+      return this.normalizeBNValues(currentRewards);
+    },
   },
-  methods: {},
+  methods: {
+    normalizeBNValues(value) {
+      return this.$ethers.utils.formatEther(value);
+    },
+    formatBNValues(value) {
+      return new Intl.NumberFormat("en-EN").format(
+        parseFloat(value).toFixed(2)
+      );
+    },
+  },
 };
 </script>
 
 <style scoped lang="scss">
 .expected-interest-block {
-  //width: 592px;
-  //height: 315px;
+  width: 100%;
   padding: 32px 24px 24px 24px;
 
   display: flex;
@@ -144,14 +140,17 @@ export default {
   .fist-info-icon {
     width: 13.33px;
   }
+  .total-title {
+    display: flex;
+    align-items: center;
+  }
+  .total-title img {
+    margin-left: 5px;
+  }
 
   .total-earned-rewards {
     font-size: 14px;
     line-height: 20px;
-    span,
-    .total-title {
-      color: #8a8a8a;
-    }
   }
 
   p {
@@ -167,13 +166,14 @@ export default {
   }
 
   .total-text {
-    //text-align: left;
-    padding-right: 53px;
+    padding-right: 56px;
   }
   .container-interest {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    border-bottom: 1px solid #363637;
+    margin-bottom: 12px;
   }
   .column-interest {
     display: flex;
@@ -202,33 +202,18 @@ export default {
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
-    color: #ffffff;
 
     text-align: right;
     margin-bottom: 8px;
+  }
 
-    span {
-      color: #8a8a8a;
-    }
+  .value-text {
+    margin-left: 8px;
+    color: #8a8a8a;
   }
-  .column-tier:last-child {
-    //padding-top: 25px;
-  }
-  hr {
-    width: 100%;
-    border-width: 0;
-    margin-bottom: 12px;
-    background: #363637;
-    height: 1px;
-    //position: relative;
-    //top: -20.5%;
-  }
+
   .info-icon {
     width: 13px;
-    //position: relative;
-    //left: 16.7%;
-    //right: 8.34%;
-    //top: -9.5%;
   }
 }
 
@@ -263,6 +248,7 @@ export default {
       text-align: right;
     }
     .value-text {
+      margin-left: 8px;
       display: none;
     }
     .expected-interest-title {
@@ -283,12 +269,6 @@ export default {
       position: absolute;
       top: 90.05% !important;
       left: 95px;
-    }
-    hr {
-      position: absolute;
-      top: 88.2% !important;
-      align-content: center;
-      width: 328px;
     }
   }
 }
