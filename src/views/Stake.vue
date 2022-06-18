@@ -11,15 +11,10 @@
             :onClick="setActionType"
           />
 
-          <LockedToken
-            :pool="pool"
-          />
+          <LockedToken :pool="pool" />
         </div>
         <div class="container-mini" v-if="actionStatus === false">
-          <InfoBlock
-            :pool="pool"
-            :yearlyEarn="yearlyEarn"
-          />
+          <InfoBlock :pool="pool" :yearlyEarn="yearlyEarn" />
           <ExpectedInterest
             :rewardsForPeriod="rewardsForPeriod"
             :totalEarnedRewards="totalEarnedRewards"
@@ -35,7 +30,7 @@
         </div>
       </div>
     </div>
-    <MobileStake class="mobile-ui"/>
+    <MobileStake class="mobile-ui" />
   </div>
 </template>
 
@@ -46,10 +41,9 @@ import InfoBlock from "@/components/Stake/InfoBlock";
 import ExpectedInterest from "@/components/Stake/ExpectedInterest";
 import DepositWithdraw from "@/components/Stake/DepositWithdraw";
 import MobileStake from "@/views/MobileStake";
-import NXUSDStakingContractInfo from "@/utils/contracts/NXUSDStaking";
-import NXUSDStakingCalculationInfo from "@/utils/contracts/NXUSDStakingCalculation";
-import MultiFeeDistributionInfo from "@/utils/contracts/MultiFeeDistribution";
+import stake from "@/mixins/stake.js";
 export default {
+  mixins: [stake],
   name: "Stake",
   data() {
     return {
@@ -60,111 +54,99 @@ export default {
       rewardsForPeriod: [],
       totalEarnedRewards: "",
       yearlyEarn: "",
-    }
+    };
   },
   created() {
-    this.createNXUSDStaking();
-    // this.createNXUSDStakingCalculation();
-    this.checkUserBalanceStaked();
-    this.setStakingInfo();
+    this.start();
   },
   methods: {
-    async setStakingInfo() {
-      const nxusdStaking = this.$store.getters.getNXUSDStakingContract;
-      let userData = (await nxusdStaking.userData(this.account));
-      this.$store.commit("setUserData", userData);
-
-      const configCurrentVersion = await nxusdStaking.configCurrentVersion();
-
-      let userBalance = userData.balance;
-      this.$store.commit("setUserBalanceStaked", userBalance);
-
-      const multiFeeDistributionInstance = this.createMultiFeeDistributionInstance();
-      console.log('multiFeeDistributionInstance', multiFeeDistributionInstance);
-      const WXTLock = await multiFeeDistributionInstance.lockedBalances(this.account);
-      this.$store.commit("setUserWXTLock", parseFloat((WXTLock.total.toString() / 1e18).toFixed(2)));
-      console.log("WXTLock", parseFloat((WXTLock.total.toString() / 1e18).toFixed(2)));
-
-      let userRewards = (await nxusdStaking.getUserRewards(this.account));
-      this.$store.commit("setUserStoredRewards", userRewards);
-
-      this.totalEarnedRewards = (userRewards.sub(userData.balance)).toString();
-
-      console.log("userRewards", userRewards.toString());
-
-      let getAPYDataConfig = await nxusdStaking.getAPYDataConfig(configCurrentVersion);
-      console.log("getAPYDataConfig", getAPYDataConfig);
-      this.$store.commit("setAPYConfig", getAPYDataConfig);
-
-      let tierOne = [];
-      let lockedToken = [];
-      for(let i = 1, j = 0; i < 5; i++, j++){
-        tierOne[j] = getAPYDataConfig[i].NXUSDByTier1.toString();
-        lockedToken[j] = getAPYDataConfig[i].WXTLocked.toString();
-      }
-      this.$store.commit("setTierOne", tierOne);
-      console.log("tierOne", tierOne);
-      this.$store.commit("setLockedToken", lockedToken);
-      console.log("lockedToken", lockedToken);
-
-      const nxusdStakingCalculation = this.createNXUSDStakingCalculation();
-      let tableRewards = await nxusdStakingCalculation.calculateTableRewards(this.account, [86400, 604800, 2629746, 31556952]);
-      this.$store.commit("setTableRewards", tableRewards);
-      this.rewardsForPeriod = tableRewards;
-      console.log("tableRewards", this.$store.getters.getTableRewards);
-      const yearlyEarnRewards = tableRewards[tableRewards.length - 1].rewardsTier1.add(tableRewards[tableRewards.length - 1].rewardsTier2);
-      this.$store.commit("setYearlyEarnReward", yearlyEarnRewards.toString());
-      this.yearlyEarn = yearlyEarnRewards.toString();
-      // for(let i = 0; i < 4; i++) {
-      //   this.tier1Array[i] = tableRewards[i].rewardsTier1.toString();
-      //   this.tier2Array[i] = tableRewards[i].rewardsTier2;
-      // }
-      // console.log(this.tier1Array);
-      // console.log(this.tier2Array);
-
-
-      let apyTierOne = getAPYDataConfig[1].APYTier1;
-      this.$store.commit("setAPYTierOne", parseFloat(apyTierOne.toString()));
-
-      let apyTierTwo = (await nxusdStaking.config(1)).APYTier2;
-      this.$store.commit("setAPYTierTwo", parseFloat(apyTierTwo.toString()));
-    },
-    async checkUserBalanceStaked() {
-      await this.$store.dispatch("checkUserBalanceStaked");
-    },
-    createNXUSDStaking() {
-      const nxusdStaking = new this.$ethers.Contract(
-        NXUSDStakingContractInfo.address,
-        JSON.stringify(NXUSDStakingContractInfo.abi),
-        this.signer
-      );
-      this.$store.commit("setNXUSDStakingContractInstance", nxusdStaking);
-    },
-    createNXUSDStakingCalculation() {
-      const nxusdStakingCalculation = new this.$ethers.Contract(
-        NXUSDStakingCalculationInfo.address,
-        JSON.stringify(NXUSDStakingCalculationInfo.abi),
-        this.signer
-      );
-      return nxusdStakingCalculation;
-      //this.$store.commit("setNXUSDStakingContractInstance", nxusdStaking);
-    },
-    createMultiFeeDistributionInstance() {
-      const multiFeeDistribution = new this.$ethers.Contract(
-        MultiFeeDistributionInfo.address,
-        JSON.stringify(MultiFeeDistributionInfo.abi),
-        this.signer
-      );
-      return multiFeeDistribution;
-      //this.$store.commit("setNXUSDStakingContractInstance", nxusdStaking);
+    // async setStakingInfo() {
+    //   // const nxusdStaking = this.$store.getters.getNXUSDStakingContract;
+    //   // let userData = await nxusdStaking.userData(this.account);
+    //   // this.$store.commit("setUserData", userData);
+    //
+    //   // const configCurrentVersion = await nxusdStaking.configCurrentVersion();
+    //
+    //   // let userBalance = userData.balance;
+    //   // this.$store.commit("setUserBalanceStaked", userBalance);
+    //
+    //   // const multiFeeDistributionInstance =
+    //   //   this.createMultiFeeDistributionInstance();
+    //   // console.log("multiFeeDistributionInstance", multiFeeDistributionInstance);
+    //   // const WXTLock = await multiFeeDistributionInstance.lockedBalances(
+    //   //   this.account
+    //   // );
+    //   // this.$store.commit(
+    //   //   "setUserWXTLock",
+    //   //   parseFloat((WXTLock.total.toString() / 1e18).toFixed(2))
+    //   // );
+    //   // console.log(
+    //   //   "WXTLock",
+    //   //   parseFloat((WXTLock.total.toString() / 1e18).toFixed(2))
+    //   // );
+    //
+    //   // let userRewards = await nxusdStaking.getUserRewards(this.account);
+    //   // this.$store.commit("setUserStoredRewards", userRewards);
+    //
+    //   // this.totalEarnedRewards = userRewards.sub(userData.balance).toString();
+    //
+    //   // console.log("userRewards", userRewards.toString());
+    //
+    //   // let getAPYDataConfig = await nxusdStaking.getAPYDataConfig(
+    //   //   configCurrentVersion
+    //   // );
+    //   // console.log("getAPYDataConfig", getAPYDataConfig);
+    //   // this.$store.commit("setAPYConfig", getAPYDataConfig);
+    //
+    //   // let tierOne = [];
+    //   // let lockedToken = [];
+    //   // for (let i = 1, j = 0; i < 5; i++, j++) {
+    //   //   tierOne[j] = getAPYDataConfig[i].NXUSDByTier1.toString();
+    //   //   lockedToken[j] = getAPYDataConfig[i].WXTLocked.toString();
+    //   // }
+    //   // this.$store.commit("setTierOne", tierOne);
+    //   // console.log("tierOne", tierOne);
+    //   // this.$store.commit("setLockedToken", lockedToken);
+    //   // console.log("lockedToken", lockedToken);
+    //
+    //   // const nxusdStakingCalculation = this.createNXUSDStakingCalculation();
+    //   // let tableRewards = await nxusdStakingCalculation.calculateTableRewards(
+    //   //   this.account,
+    //   //   [86400, 604800, 2629746, 31556952]
+    //   // );
+    //   // this.$store.commit("setTableRewards", tableRewards);
+    //   // this.rewardsForPeriod = tableRewards;
+    //   // console.log("tableRewards", this.$store.getters.getTableRewards);
+    //   // const yearlyEarnRewards = tableRewards[
+    //   //   tableRewards.length - 1
+    //   // ].rewardsTier1.add(tableRewards[tableRewards.length - 1].rewardsTier2);
+    //   // this.$store.commit("setYearlyEarnReward", yearlyEarnRewards.toString());
+    //   // this.yearlyEarn = yearlyEarnRewards.toString();
+    //   // for(let i = 0; i < 4; i++) {
+    //   //   this.tier1Array[i] = tableRewards[i].rewardsTier1.toString();
+    //   //   this.tier2Array[i] = tableRewards[i].rewardsTier2;
+    //   // }
+    //   // console.log(this.tier1Array);
+    //   // console.log(this.tier2Array);
+    //
+    //   let apyTierOne = getAPYDataConfig[1].APYTier1;
+    //   this.$store.commit("setAPYTierOne", parseFloat(apyTierOne.toString()));
+    //
+    //   let apyTierTwo = (await nxusdStaking.config(1)).APYTier2;
+    //   this.$store.commit("setAPYTierTwo", parseFloat(apyTierTwo.toString()));
+    // },
+    // async checkUserBalanceStaked() {
+    //   await this.$store.dispatch("checkUserBalanceStaked");
+    // },
+    async start() {
+      await this.getAllParameters();
     },
     setActionStatus() {
       this.actionStatus = this.actionStatus === false;
     },
     setActionType(type) {
       console.log(this.$store.getters.getUserStoredRewards);
-      if (type !== this.actionType)
-        this.actionType = type;
+      if (type !== this.actionType) this.actionType = type;
       this.actionStatus = this.actionStatus === false;
     },
   },
