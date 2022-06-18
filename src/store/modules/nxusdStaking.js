@@ -4,7 +4,16 @@ export default {
     tableRewards: [],
     totalTableRewards: [],
     apyDataConfig: [],
-    userData: {},
+    userData: [
+      [
+        ethers.BigNumber.from("0"),
+        ethers.BigNumber.from("0"),
+        ethers.BigNumber.from("0"),
+      ],
+      ethers.BigNumber.from("0"),
+      ethers.BigNumber.from("0"),
+      ethers.BigNumber.from("0"),
+    ],
     NXUSDStakingContract: {},
     NXUSDStakingCalculationContract: {},
     MultiFeeDistributionContract: {},

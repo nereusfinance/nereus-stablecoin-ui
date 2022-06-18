@@ -50,12 +50,10 @@ export default {
   },
   computed: {
     balance() {
-      // if (this.$store.getters.getUserBalanceStaked !== 0) {
-      //   return this.$store.getters.getUserBalanceStaked / Math.pow(10, this.pool.pairToken.decimals);
-      // } else
-      //   return 0.0;
       return new Intl.NumberFormat("en-EN").format(
-        parseFloat((this.$store.getters.getUserBalanceStaked / 1e18).toFixed(2))
+        parseFloat(
+          this.$ethers.utils.formatEther(this.$store.getters.getUserData[1])
+        )
       );
     },
   },
@@ -78,11 +76,6 @@ export default {
   display: flex;
   flex-direction: column;
 
-  h1 {
-    font-weight: 400;
-    font-size: 20px;
-    text-align: left;
-  }
   .container-top {
     display: flex;
     flex-direction: row;
@@ -111,6 +104,7 @@ export default {
     flex-direction: row;
   }
   .deposit-btn {
+    cursor: pointer;
     margin-top: 18px;
     text-align: center;
     align-items: center;
@@ -132,10 +126,15 @@ export default {
       background-color: $clrBg3;
     }
   }
+  .deposit-btn:hover {
+    color: black;
+    background-color: $clrBg3;
+  }
   .info-icon {
     width: 13.3px;
   }
   .withdraw-btn {
+    cursor: pointer;
     margin-top: 18px;
     text-align: center;
     align-items: center;
@@ -154,6 +153,10 @@ export default {
       color: black;
       background-color: $clrBg3;
     }
+  }
+  .withdraw-btn:hover {
+    color: black;
+    background-color: $clrBg3;
   }
 }
 

@@ -23,7 +23,7 @@
 
 <script>
 import TokenIcon from "@/components/UiComponents/TokenIcon";
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 
 export default {
   name: "LockedToken",
@@ -34,36 +34,10 @@ export default {
   },
   computed: {
     config() {
-      return [
-        [BigNumber.from("0"), BigNumber.from("0"), BigNumber.from("0")],
-        [
-          BigNumber.from("50000000000000000000000"),
-          BigNumber.from("1000000000000000000000"),
-          BigNumber.from("200000000000000000"),
-        ],
-        [
-          BigNumber.from("500000000000000000000000"),
-          BigNumber.from("15000000000000000000000"),
-          BigNumber.from("200000000000000000"),
-        ],
-        [
-          BigNumber.from("5000000000000000000000000"),
-          BigNumber.from("300000000000000000000000"),
-          BigNumber.from("200000000000000000"),
-        ],
-        [
-          BigNumber.from("50000000000000000000000000"),
-          BigNumber.from("5000000000000000000000000"),
-          BigNumber.from("200000000000000000"),
-        ],
-      ];
-      // return this.$store.getters.apyDataConfig;
+      return this.$store.getters.getAPYDataConfig;
     },
     balance() {
-      return ethers.utils.parseEther(
-        this.$store.getters.getUserWXTLock.toString()
-      );
-      // return this.$store.getters.getUserWXTLock;
+      return this.$store.getters.getUserWXTLock;
     },
   },
   methods: {
