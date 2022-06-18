@@ -3,22 +3,22 @@
     <div class="stake-view">
       <h1 class="stake-text">Earn</h1>
       <div class="stake-wrapper">
-        <div class="stake-item">
+        <div class="stake-item stake-item-one">
           <TotalDeposit :actionType="actionType" :onClick="setActionType" />
           <LockedToken />
         </div>
-        <div class="stake-item">
+        <div class="stake-item stake-item-two">
           <!--          <DepositWithdraw-->
           <!--            v-if="actionType"-->
           <!--            :actionType="actionType"-->
           <!--            :onClick="setActionStatus"-->
           <!--          />-->
-          <!--          <InfoBlock v-if="!actionType"/>-->
-          <!--          <ExpectedInterest-->
-          <!--            v-if="!actionType"-->
-          <!--            :rewardsForPeriod="rewardsForPeriod"-->
-          <!--            :totalEarnedRewards="totalEarnedRewards"-->
-          <!--          />-->
+          <InfoBlock v-if="!actionType" />
+          <ExpectedInterest
+            v-if="!actionType"
+            :rewardsForPeriod="rewardsForPeriod"
+            :totalEarnedRewards="totalEarnedRewards"
+          />
         </div>
       </div>
     </div>
@@ -28,8 +28,8 @@
 <script>
 import TotalDeposit from "@/components/Stake/TotalDeposit";
 import LockedToken from "@/components/Stake/LockedToken";
-// import InfoBlock from "@/components/Stake/InfoBlock";
-// import ExpectedInterest from "@/components/Stake/ExpectedInterest";
+import InfoBlock from "@/components/Stake/InfoBlock";
+import ExpectedInterest from "@/components/Stake/ExpectedInterest";
 // import DepositWithdraw from "@/components/Stake/DepositWithdraw";
 import stake from "@/mixins/stake.js";
 export default {
@@ -47,8 +47,8 @@ export default {
   },
   components: {
     // DepositWithdraw,
-    // ExpectedInterest,
-    // InfoBlock,
+    ExpectedInterest,
+    InfoBlock,
     LockedToken,
     TotalDeposit,
   },
@@ -90,6 +90,13 @@ export default {
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
+  }
+  .stake-item-two {
+    margin-left: 20px;
+    width: 59.2%;
+  }
+  .stake-item-one {
+    width: 38.8%;
   }
 }
 

@@ -2,8 +2,14 @@ import { ethers } from "ethers";
 export default {
   state: {
     tableRewards: [],
-    totalTableRewards: [],
+    totalTableRewards: [
+      ethers.BigNumber.from("0"),
+      ethers.BigNumber.from("0"),
+      ethers.BigNumber.from("0"),
+      ethers.BigNumber.from("0"),
+    ],
     apyDataConfig: [],
+    config: [],
     userData: [
       [
         ethers.BigNumber.from("0"),
@@ -52,6 +58,9 @@ export default {
     setAPYDataConfig(state, payload) {
       state.apyDataConfig = payload;
     },
+    setConfig(state, payload) {
+      state.config = payload;
+    },
   },
   actions: {
     async calculateTableRewards({ getters, commit }, periods) {
@@ -91,6 +100,12 @@ export default {
         await getters.getNXUSDStakingContract.getAPYDataConfig(configVersion);
       commit("setAPYDataConfig", apyDataConfig);
     },
+    async getConfig({ getters, commit }, configVersion) {
+      const config = await getters.getNXUSDStakingContract.config(
+        configVersion
+      );
+      commit("setConfig", config);
+    },
     async checkUserWXTLock({ getters, commit }) {
       const userWXTLock = (
         await getters.getMultiFeeDistributionContract.lockedBalances(
@@ -106,6 +121,7 @@ export default {
     getTotalTableRewards: (state) => state.totalTableRewards,
     getUserData: (state) => state.userData,
     getAPYDataConfig: (state) => state.apyDataConfig,
+    getConfig: (state) => state.config,
     getNXUSDStakingContract: (state) => state.NXUSDStakingContract,
     getNXUSDStakingCalculationContract: (state) =>
       state.NXUSDStakingCalculationContract,
