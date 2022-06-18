@@ -9,15 +9,15 @@
         </div>
         <div class="stake-item stake-item-two">
           <DepositWithdraw
-              v-if="actionType"
-              :actionType="actionType"
-              :onClick="setActionType"
+            v-if="actionType"
+            :actionType="actionType"
+            :onClick="setActionType"
           />
           <InfoBlock v-if="!actionType" />
           <ExpectedInterest
-              v-if="!actionType"
-              :rewardsForPeriod="rewardsForPeriod"
-              :totalEarnedRewards="totalEarnedRewards"
+            v-if="!actionType"
+            :rewardsForPeriod="rewardsForPeriod"
+            :totalEarnedRewards="totalEarnedRewards"
           />
         </div>
       </div>
