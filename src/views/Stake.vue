@@ -31,7 +31,9 @@ import LockedToken from "@/components/Stake/LockedToken";
 // import InfoBlock from "@/components/Stake/InfoBlock";
 // import ExpectedInterest from "@/components/Stake/ExpectedInterest";
 // import DepositWithdraw from "@/components/Stake/DepositWithdraw";
+import stake from "@/mixins/stake.js";
 export default {
+  mixins: [stake],
   name: "Stake",
   data() {
     return {
@@ -49,6 +51,9 @@ export default {
     // InfoBlock,
     LockedToken,
     TotalDeposit,
+  },
+  async created() {
+    await this.getAllParameters();
   },
   methods: {
     setActionType(selectedType) {
