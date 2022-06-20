@@ -199,7 +199,6 @@ export default {
   &:focus {
     outline: none;
     transform: scale(1.05);
-    border: 1px solid #FFFFFF;
   }
 }
 .stand-sort #select {
