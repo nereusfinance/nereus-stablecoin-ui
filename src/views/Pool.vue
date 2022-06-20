@@ -365,6 +365,7 @@ export default {
       const isApprowed = await this.isApprowed();
 
       if (isTokenApprowed) {
+        // (this.valueAmount < isTokenApprowed)
         this.cookRemoveAndRepayMax(data, isApprowed);
         return false;
       }
@@ -2433,7 +2434,7 @@ export default {
         [pairToken, this.account, amount, "0x0"]
       );
     },
-    async getApprovalEncode() {
+    getApprovalEncode: async function () {
       const account = this.account;
 
       const verifyingContract = await this.getVerifyingContract();

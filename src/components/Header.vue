@@ -14,12 +14,27 @@
 
       <nav>
         <div>
-          <router-link :to="{ name: 'Stand' }" class="markets-btn"
-            >Markets</router-link
+          <router-link
+            :to="{ name: 'Stand' }"
+            class="markets-btn"
+            active="onclick"
           >
-          <router-link :to="{ name: 'Dashboard' }" class="dashboard-btn"
-            >My Dashboard</router-link
+            Markets
+          </router-link>
+          <router-link
+            :to="{ name: 'Stake' }"
+            class="stake-btn"
+            active="onclick"
           >
+            Earn
+          </router-link>
+          <router-link
+            :to="{ name: 'Dashboard' }"
+            class="dashboard-btn"
+            active="onclick"
+          >
+            My Dashboard
+          </router-link>
         </div>
         <div class="btn-margin">
           <ConnectButton />
@@ -145,30 +160,48 @@ export default {
     z-index: 2;
   }
 
-  //.token-btn {
-  //  margin-left: 30px;
-  //  width: 36px;
-  //  height: 36px;
-  //  background: none;
-  //  border: none;
-  //  cursor: pointer;
-  //
-  //  img {
-  //    max-width: 100%;
-  //    height: auto;
-  //  }
-  //}
+  router-link:active {
+    background: rgba(28, 28, 28, 0.16);
+  }
 
   nav {
     display: flex;
     align-items: center;
     flex-direction: row;
     z-index: 2;
+    justify-content: space-between;
 
     .btn-margin {
       margin-left: 12px;
     }
   }
+
+  .stake-btn {
+    color: #ffffff;
+    font-size: 16px;
+    font-style: normal;
+    text-align: center;
+    align-items: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    padding: 8px 15px;
+    width: auto;
+    height: 32px;
+    border-radius: 21px;
+    margin-right: 12px;
+
+    &:hover {
+      color: $clrNavHover;
+      background: rgba(28, 28, 28, 0.16);
+    }
+  }
+  a.stake-btn.router-link-exact-active.router-link-active,
+  a.markets-btn.router-link-exact-active.router-link-active,
+  a.dashboard-btn.router-link-exact-active.router-link-active {
+    background: rgba(28, 28, 28, 0.16);
+  }
+
   .dashboard-btn {
     color: #ffffff;
     font-size: 16px;
@@ -177,7 +210,6 @@ export default {
     text-decoration: none;
     transition: all 0.3s ease;
     cursor: pointer;
-    background: rgba(28, 28, 28, 0.16);
     padding: 8px 15px;
     width: auto;
     height: 32px;
@@ -185,8 +217,10 @@ export default {
 
     &:hover {
       color: $clrNavHover;
+      background: rgba(28, 28, 28, 0.16);
     }
   }
+
   .markets-btn {
     color: #ffffff;
     font-size: 16px;
@@ -195,7 +229,6 @@ export default {
     text-decoration: none;
     transition: all 0.3s ease;
     cursor: pointer;
-    background: rgba(28, 28, 28, 0.16);
     padding: 8px 15px;
     width: auto;
     height: 32px;
@@ -203,6 +236,7 @@ export default {
     margin-right: 12px;
 
     &:hover {
+      background: rgba(28, 28, 28, 0.16);
       color: $clrNavHover;
     }
   }

@@ -122,8 +122,8 @@ export default {
       });
     },
     async disconnect() {
-      const walletType = localStorage.getItem('walletType');
-      if(walletType==='walletConnect') {
+      const walletType = localStorage.getItem("walletType");
+      if (walletType === "walletConnect") {
         const walletConnectProvider = new WalletConnectProvider({
           bridge: "https://bridge.walletconnect.org",
           rpc: {
@@ -131,9 +131,9 @@ export default {
             43114: "https://api.avax.network/ext/bc/C/rpc",
           },
         });
-        await walletConnectProvider.killSession()
+        await walletConnectProvider.killSession();
       }
-      delete window.localStorage.walletType
+      delete window.localStorage.walletType;
       window.location.reload();
     },
   },
