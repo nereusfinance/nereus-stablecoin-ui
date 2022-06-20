@@ -15,6 +15,7 @@
       :class="{ selected: isActive(config, index) }"
       v-for="(item, index) in config"
       :key="index"
+      v-show="index > 0"
     >
       <div class="locked-table-item" v-if="index > 0">
         {{ normalizeBNValues(item[0]) | formatNumber }}

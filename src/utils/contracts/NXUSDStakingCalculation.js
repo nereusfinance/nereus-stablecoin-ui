@@ -2,7 +2,7 @@ export default [
   {
     name: "NXUSDStakingCalculation",
     contractChain: "0xa86a",
-    address: "0xd9b5eccdf532a2d89d184ed39d367d14ecd5b8bd",
+    address: "0x1c56a2a65031d22bccbb73de8cbd34d9051a5b30",
     abi: [
       {
         inputs: [
