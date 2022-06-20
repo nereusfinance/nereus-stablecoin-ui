@@ -55,13 +55,6 @@ export default {
     yearlyEarn() {
       const yearlyRewards = this.$store.getters.getTotalTableRewards;
       return this.normalizeBNValues(yearlyRewards[yearlyRewards.length - 1]);
-      // console.log("yearlyRewards array", yearlyRewards);
-      // if (yearlyRewards[0]) {
-      //   console.log("yearlyRewards", yearlyRewards[yearlyRewards.length - 1]);
-      //   return this.normalizeBNValues(yearlyRewards[yearlyRewards.length - 1]);
-      // } else {
-      //   return 0;
-      // }
     },
     apyTierOne() {
       let APYTier1 = this.$store.getters.getUserData[0][2];
@@ -88,26 +81,8 @@ export default {
       } else {
         return userStoredReward;
       }
-      // if (userData.storedReward) {
-      //   const userStoredReward = parseInt(
-      //     userData.storedReward.toString() / 1e18
-      //   );
-      //   const NXUSDByTier1 = parseInt(
-      //     userData.apyData.NXUSDByTier1.toString() / 1e18
-      //   );
-      //   console.log("NXUSDByTier1", NXUSDByTier1);
-      //   if (userStoredReward > NXUSDByTier1) {
-      //     return (NXUSDByTier1 / 1000).toFixed(2) + "K";
-      //   } else {
-      //     return (userStoredReward / 1000).toFixed(2) + "K";
-      //   }
-      // } else {
-      //   return 0;
-      // }
     },
     tierTwo() {
-      // let apy = this.$store.getters.getTierTwo.toString();
-      // return parseFloat(apy.toString());
       const userData = this.$store.getters.getUserData;
       const userStoredReward = this.normalizeBNValues(userData[2]);
       const NXUSDByTier1 = this.normalizeBNValues(userData[0][1]);
@@ -116,21 +91,6 @@ export default {
       } else {
         return 0;
       }
-      // if (userData) {
-      //   const userStoredReward = parseInt(
-      //     userData.storedReward.toString() / 1e18
-      //   );
-      //   const NXUSDByTier1 = parseInt(
-      //     userData.apyData.NXUSDByTier1.toString() / 1e18
-      //   );
-      //   if (userStoredReward > NXUSDByTier1) {
-      //     return ((userStoredReward - NXUSDByTier1) / 1000).toFixed(2) + "K";
-      //   } else {
-      //     return 0;
-      //   }
-      // } else {
-      //   return 0;
-      // }
     },
   },
   methods: {
