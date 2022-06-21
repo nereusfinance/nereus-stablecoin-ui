@@ -283,7 +283,7 @@ export default [
       abi: swapContractAbi,
     },
     reverseSwapContractInfo: {
-      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      address: "0xDe694A5A3B16A93549f61480833A2CAf122C7681",
       abi: reverseSwapperContractAbiV1,
     },
   },
@@ -319,11 +319,11 @@ export default [
     ltv: 85,
     initialMax: 20,
     swapContractInfo: {
-      address: "0xdff76fb30b04935beaf6d4e4c37c4bd611de2862",
+      address: "0xb3658a7d82dcecac7116f6692155c1cc9c1dd70d",
       abi: swapContractAbi,
     },
     reverseSwapContractInfo: {
-      address: "0x9970a82D4fA705342237d609DBD562941aE16947",
+      address: "0x24577fb3FF3368a3883F2821B1Cd8ed04f6eAc7e",
       abi: reverseSwapperContractAbiV1,
     },
   },
@@ -359,7 +359,7 @@ export default [
     ltv: 85,
     initialMax: 20,
     swapContractInfo: {
-      address: "0x6931536784c64ccf942e170ec842e3b45c60c352",
+      address: "0x6931536784c64CCF942E170EC842e3B45c60C352",
       abi: swapContractAbi,
     },
     reverseSwapContractInfo: {

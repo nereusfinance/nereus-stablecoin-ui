@@ -8,7 +8,7 @@ describe("Leverage tests", () => {
     cy.addMetamaskNetwork({
       networkName: "Test NXUSD leverage",
       rpcUrl:
-        "https://rpc.tenderly.co/fork/5d954bd7-3bcc-42da-a0e8-467668bba042",
+        "https://rpc.tenderly.co/fork/42860c15-ac06-48a3-b42e-15261167a129",
       chainId: "43114",
       symbol: "AVAX",
       blockExplorer: "",

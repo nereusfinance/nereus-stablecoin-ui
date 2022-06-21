@@ -83,6 +83,7 @@
     >
       <div class="checkbox-wrap">
         <div
+            data-cy="leverage-checkbox"
             :class="{ active: showLeverage }"
             class="box-wrap"
             @click="toggleShowLeverage"
@@ -117,6 +118,7 @@
             :multiplier="multiplier"
             :pairValue="pairValue"
             :pool="pool"
+            :maxPairValue="maxPairValue"
             :tokentToNUSD="tokentToNUSD"
             @update="updateMultiplier"
         />

@@ -8,7 +8,7 @@ describe("Borrow-repay tests", () => {
     cy.addMetamaskNetwork({
       networkName: "Test NXUSD",
       rpcUrl:
-        "https://rpc.tenderly.co/fork/391cda13-1ef0-4377-8236-d0eefabc83d1",
+        "https://rpc.tenderly.co/fork/42860c15-ac06-48a3-b42e-15261167a129",
       chainId: "43114",
       symbol: "AVAX",
       blockExplorer: "",

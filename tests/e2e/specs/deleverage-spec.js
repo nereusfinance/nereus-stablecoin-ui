@@ -8,7 +8,7 @@ describe("Deleverage tests", () => {
     cy.addMetamaskNetwork({
       networkName: "Test NXUSD deleverage",
       rpcUrl:
-        "https://rpc.tenderly.co/fork/2db64d6a-e1a8-4065-b5ea-2f5dc1eb19f8",
+        "https://rpc.tenderly.co/fork/42860c15-ac06-48a3-b42e-15261167a129",
       chainId: "43114",
       symbol: "AVAX",
       blockExplorer: "",
