@@ -83,9 +83,9 @@
     >
       <div class="checkbox-wrap">
         <div
-            data-cy="leverage-checkbox"
             :class="{ active: showLeverage }"
             class="box-wrap"
+            data-cy="leverage-checkbox"
             @click="toggleShowLeverage"
         >
           <div v-if="showLeverage" class="checkbox">
@@ -115,10 +115,10 @@
         <SlipageBlock :slipage="slipage" @update="updateSlipage"/>
         <LeverageBar
             :mainValue="mainValue"
+            :maxPairValue="maxPairValue"
             :multiplier="multiplier"
             :pairValue="pairValue"
             :pool="pool"
-            :maxPairValue="maxPairValue"
             :tokentToNUSD="tokentToNUSD"
             @update="updateMultiplier"
         />
@@ -366,7 +366,7 @@ export default {
       }
 
       const exchangeRateWithSlipage =
-          (100 - this.slipage) / 100 / this.exchangeRate;
+          ((100 - this.slipage) / 100) / this.exchangeRate;
       // Max value that can be repayed using the user collateral
       const maxValueForCollateral =
           parseFloat(this.maxMainValueWithoutDeleverage) +
@@ -384,7 +384,7 @@ export default {
         return "0";
       }
       const exchangeRateWithSlipage =
-        ((100 - this.slipage) * this.exchangeRate) / 100;
+          (100 * this.exchangeRate) / (100 - this.slipage);
       return (parsedValue - parsedMax) * exchangeRateWithSlipage || 0;
     },
     mainValueTokenName() {
@@ -427,8 +427,8 @@ export default {
         let maxPairValue;
 
         valueInDolars =
-          (+this.$store.getters.getUserCollateralShare(this.poolId) +
-            +this.mainValue) / this.tokenToUsd;
+            (+this.$store.getters.getUserCollateralShare(this.poolId) +
+                +this.mainValue) / this.tokenToUsd;
         maxPairValue =
             (valueInDolars / 100) * (this.ltv - 1) -
             this.$store.getters.getUserBorrowPart(this.poolId);
@@ -987,8 +987,7 @@ export default {
 
       &.disabled .checkbox {
         cursor: not-allowed;
-        filter: brightness(0) saturate(100%) invert(61%) sepia(1%)
-          saturate(2362%) hue-rotate(40deg) brightness(90%) contrast(83%);
+        filter: brightness(0) saturate(100%) invert(61%) sepia(1%) saturate(2362%) hue-rotate(40deg) brightness(90%) contrast(83%);
       }
 
       .checkbox {
@@ -997,8 +996,7 @@ export default {
       }
 
       .checkbox-checked {
-        filter: brightness(0) saturate(100%) invert(81%) sepia(54%)
-          saturate(404%) hue-rotate(18deg) brightness(108%) contrast(98%);
+        filter: brightness(0) saturate(100%) invert(81%) sepia(54%) saturate(404%) hue-rotate(18deg) brightness(108%) contrast(98%);
       }
 
       .box {
