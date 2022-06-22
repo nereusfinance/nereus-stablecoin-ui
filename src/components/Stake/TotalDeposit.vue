@@ -6,7 +6,7 @@
         src="@/assets/images/icon-info.svg"
         alt=""
         class="info-icon"
-        v-tooltip="'Your deposited NXUSD'"
+        v-tooltip="'Your total deposited NXUSD amount'"
       />
     </p>
     <p>
