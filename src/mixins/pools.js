@@ -37,6 +37,7 @@ export default {
       const chainPools = poolsInfo.filter(
         (pool) => pool.contractChain === this.chainId
       );
+      //pools
       const pools = await Promise.all(
         chainPools.map((pool) => this.createPool(pool, masterContract))
       );
@@ -48,6 +49,7 @@ export default {
         this.createPools(masterContract);
       });
     },
+
     createWhitelistManager(address) {
       const whitelistContract = new this.$ethers.Contract(
         address,
@@ -62,6 +64,7 @@ export default {
         JSON.stringify(pool.contract.abi),
         this.signer
       );
+
       pool.isEnabled = true;
       if (pool.name === "WXT") {
         const whitelistContract = this.createWhitelistManager(

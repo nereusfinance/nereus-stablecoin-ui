@@ -73,9 +73,9 @@ export default {
     async setAccountListeners() {
       let accounts;
       const walletType = localStorage.getItem("walletType");
-      if(walletType === "Metamask" && window.ethereum){
-        accounts = await window.ethereum.request({ method: 'eth_accounts' });
-        }
+      if (walletType === "Metamask" && window.ethereum) {
+        accounts = await window.ethereum.request({ method: "eth_accounts" });
+      }
       if (accounts && accounts.length > 0) {
         window.ethereum.on("chainChanged", this.reload);
         window.ethereum.on("accountsChanged", this.onAccountChange);
@@ -83,7 +83,7 @@ export default {
           this.updatePoolData();
         });
         console.log("SET METAMASK ACCOUNT LISTENERS FUNC");
-      } else if (walletType==="walletConnect") {
+      } else if (walletType === "walletConnect") {
         const walletConnectProvider = new WalletConnectProvider({
           bridge: "https://bridge.walletconnect.org",
           rpc: {
@@ -105,7 +105,6 @@ export default {
     },
     onAccountChange(accounts) {
       if (accounts.length === 0) {
-
         this.disconnectHandler();
       } else {
         this.$store.commit("setAccount", accounts[0]);
