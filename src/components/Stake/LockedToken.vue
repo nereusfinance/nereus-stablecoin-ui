@@ -2,26 +2,28 @@
   <div class="locked-wrapper">
     <span class="locked-header">Locked {{ lockedTokenName }}</span>
     <div class="locked-balance">
-      <TokenIcon :token="lockedTokenName" />
-      {{ formatBNValues(balance) }}
-      {{ lockedTokenName }}
+      <TokenIcon :token="lockedTokenName"/>
+      <p v-tooltip="formatBNValues(balance)" class="info-tooltip">
+        {{ formatBNValuesRounded(balance) }}
+        {{ lockedTokenName }}
+      </p>
     </div>
     <div class="locked-table-header">
       <div class="locked-table-header-item">Locked {{ lockedTokenName }}</div>
       <div class="locked-table-header-item">Tier 1 amount NXUSD</div>
     </div>
     <div
-      class="locked-table-row"
-      :class="{ selected: isActive(config, index) }"
-      v-for="(item, index) in config"
-      :key="index"
-      v-show="index > 0"
+        v-for="(item, index) in config"
+        v-show="index > 0"
+        :key="index"
+        :class="{ selected: isActive(config, index) }"
+        class="locked-table-row"
     >
-      <div class="locked-table-item" v-if="index > 0">
+      <div v-if="index > 0" class="locked-table-item">
         {{ normalizeBNValues(item[0]) | formatNumber }}
       </div>
-      <div class="locked-table-item" v-if="index > 0">
-        {{ formatBNValues(item[1]) }}
+      <div v-if="index > 0" class="locked-table-item">
+        {{ formatBNValuesRounded(item[1]) }}
       </div>
     </div>
   </div>
@@ -29,7 +31,7 @@
 
 <script>
 import TokenIcon from "@/components/UiComponents/TokenIcon";
-import { ethers } from "ethers";
+import {ethers} from "ethers";
 
 export default {
   name: "LockedToken",
@@ -67,7 +69,15 @@ export default {
     },
     formatBNValues(value) {
       const normalizedValue = this.normalizeBNValues(value);
-      return new Intl.NumberFormat("en-EN").format(parseFloat(normalizedValue));
+      return new Intl.NumberFormat("en-EN", {
+        maximumSignificantDigits: 18,
+      }).format(parseFloat(normalizedValue));
+    },
+    formatBNValuesRounded(value) {
+      const normalizedValue = this.normalizeBNValues(value);
+      return new Intl.NumberFormat("en-EN").format(
+          parseFloat(normalizedValue).toFixed(2)
+      );
     },
   },
   filters: {
@@ -76,21 +86,21 @@ export default {
       if (Number(value) === 0) return value;
 
       const lookup = [
-        { value: 0, symbol: "" },
-        { value: 1, symbol: "" },
-        { value: 1e3, symbol: "K" },
-        { value: 1e6, symbol: "M" },
+        {value: 0, symbol: ""},
+        {value: 1, symbol: ""},
+        {value: 1e3, symbol: "K"},
+        {value: 1e6, symbol: "M"},
       ];
       const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
       let item = lookup
-        .slice()
-        .reverse()
-        .find(function (item) {
-          return parseFloat(value) >= item.value;
-        });
+          .slice()
+          .reverse()
+          .find(function (item) {
+            return parseFloat(value) >= item.value;
+          });
       return (
-        (parseFloat(value) / item.value).toFixed(0).replace(rx, "$1") +
-        item.symbol
+          (parseFloat(value) / item.value).toFixed(0).replace(rx, "$1") +
+          item.symbol
       );
     },
   },
@@ -100,7 +110,11 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
+.info-tooltip {
+  cursor: pointer;
+}
+
 .locked-wrapper {
   width: 100%;
   background: #262626;
@@ -125,6 +139,7 @@ export default {
     margin-top: 22px;
     gap: 2px;
   }
+
   .locked-table-header {
     padding: 0 12px;
     display: flex;
@@ -135,6 +150,7 @@ export default {
     margin-top: 28px;
     margin-bottom: 4px;
   }
+
   .locked-table-row {
     display: flex;
     justify-content: space-between;
@@ -143,11 +159,13 @@ export default {
     color: #ffffff;
     padding: 8px 12px;
   }
+
   .locked-table-row.selected {
     background: #2e2e2f;
     border-radius: 4px;
   }
 }
+
 @media screen and(min-width: 768px) and(max-width: 1000px) {
   .locked-token-block {
     height: 330px;
@@ -159,6 +177,7 @@ export default {
     p {
       font-size: 20px;
     }
+
     .row,
     .row1,
     .row2,
@@ -172,17 +191,21 @@ export default {
       opacity: 0.04;
       border-radius: 4px;
     }
+
     .row1 {
       top: 48px;
     }
+
     .row2 {
       top: 83px;
     }
+
     .row3 {
       top: 117px;
     }
   }
 }
+
 @media screen and(max-width: 767px) {
   .locked-token-block {
     height: 316px;
@@ -210,6 +233,7 @@ export default {
       font-size: 20px;
       margin-bottom: 24px;
     }
+
     .token-icon-wrap {
       width: 32px;
       height: 32px;
@@ -222,6 +246,7 @@ export default {
       position: relative;
       top: -40px;
     }
+
     .column {
       font-weight: 400;
       font-size: 12px;
@@ -229,16 +254,20 @@ export default {
 
       text-align: left;
     }
+
     .amount {
       font-weight: 400;
       font-size: 16px;
       margin-bottom: 24px;
     }
+
     .amount:first-child {
       margin-top: 12px;
     }
+
     .amount:last-child {
     }
+
     .row,
     .row1,
     .row2,
@@ -252,12 +281,15 @@ export default {
       opacity: 0.04;
       border-radius: 4px;
     }
+
     .row1 {
       top: 57px;
     }
+
     .row2 {
       top: 100px;
     }
+
     .row3 {
       top: 143px;
     }
