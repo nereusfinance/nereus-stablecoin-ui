@@ -306,7 +306,7 @@ export default {
       this.overview = true;
     },
     updateValue(value) {
-      if (value[0] === "0") {
+      if ((value[0] === "0") && (value[1] !== ".")) {
         this.valueError = "Wrong number format";
         return false;
       }
