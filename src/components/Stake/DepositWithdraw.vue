@@ -183,6 +183,17 @@ export default {
     NXUSDStakingContract() {
       return this.$store.getters.getNXUSDStakingContract;
     },
+    maxValue() {
+      let maxValue;
+      if (this.actionType === "Deposit") {
+        maxValue =  this.formatBNValues(this.stakingTokenInfo.balance);
+      }
+      if (this.actionType === "Withdraw") {
+        maxValue = this.formatBNValues(this.availableWithdraw);
+      }
+
+      return maxValue;
+    },
   },
   methods: {
     goBack() {
@@ -264,14 +275,6 @@ export default {
         return false;
       }
     },
-    maxValue() {
-      if (this.actionType === "Deposit") {
-        return this.normalizeBNValues(this.stakingTokenInfo.balance);
-      }
-      if (this.actionType === "Withdraw") {
-        return this.normalizeBNValues(this.availableWithdraw);
-      }
-    },
     async action(tx) {
       //let tx = 1;
       if (tx === "finished") {
@@ -304,8 +307,8 @@ export default {
       this.overview = true;
     },
     updateValue(value) {
-      if (parseFloat(value) > parseFloat(this.maxValue())) {
-        this.valueError = `Insufficient amount. The value available ${this.maxValue()}`;
+      if (parseFloat(value) > parseFloat(this.maxValue)) {
+        this.valueError = `Insufficient amount. The value available ${this.maxValue}`;
         return false;
       } else if (value && value > 0.0) {
         this.valueError = "";
