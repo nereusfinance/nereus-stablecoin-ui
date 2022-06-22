@@ -22,7 +22,7 @@
             >
               {{ setSortParam(sortParam) }}
             </div>
-            <div v-if="active">
+            <div v-if="active" class="table">
               <div
                 class="select-item"
                 v-for="item in sortedBy"
@@ -214,7 +214,7 @@ export default {
   border-radius: 4px;
   padding-top: 8px;
   padding-left: 8px;
-  margin-bottom: 24px;
+  margin-bottom: 30px;
   font-size: 12px;
   cursor: pointer;
 }
@@ -224,24 +224,32 @@ div#select.active {
   color: white;
 }
 
+
 .select-item {
   z-index: 1;
-  border: 0.1px solid #262626;
-  border-radius: 4px;
   position: relative;
   top: -23.5px;
   padding: 8px 12px;
   font-size: 12px;
   width: 159px;
   height: 32px;
-  background: #353535;
+  background: #262626;
   cursor: pointer;
+  text-align: left;
+  &:first-child{
+    border-radius: 4px 4px 0 0;
+  }
+  &:last-child{
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 10px 20px 2px rgba(0, 0, 0, 0.25);
+  }
+  &:not(:last-child){
+    border-bottom: 0.1px solid #1c1c1c;
+  }
+
   &:hover {
     background: #1C1C1C;
     color: white;
-  }
-  &:active {
-    border-color: white;
   }
 }
 
