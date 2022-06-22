@@ -79,14 +79,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.stake-view {
-  max-width: 1000px;
+.stake {
+  flex: 1;
   padding-top: 40px;
   padding-bottom: 40px;
+}
+.stake-view {
+  max-width: 1000px;
   display: flex;
   flex-direction: column;
   margin: auto;
-  flex: 1;
 
   h1 {
     font-size: 32px;
@@ -99,6 +101,7 @@ export default {
     flex-direction: row;
     justify-content: center;
     align-items: flex-start;
+    padding-top: 20px;
   }
 
   .stake-item {
@@ -124,20 +127,27 @@ export default {
   }
 }
 @media screen and(max-width: 767px) {
+  .stake {
+    padding-top: 24px;
+    padding-bottom: 37px;
+  }
   .stake-view {
     max-width: 450px;
+
+    .stake-wrapper {
+      flex-wrap: wrap;
+      padding: 16px;
+    }
+
     .stake-item-one,
     .stake-item-two {
       width: 100%;
       margin-left: 0;
     }
-  }
-  .stake-wrapper {
-    flex-wrap: wrap;
-    padding: 16px;
-  }
-  .stake-text {
-    margin-left: 16px;
+    .stake-text {
+      margin-left: 16px;
+      margin-bottom: 0;
+    }
   }
 }
 </style>

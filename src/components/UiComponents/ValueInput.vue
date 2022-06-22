@@ -82,7 +82,7 @@
       <input
         type="text"
         class="input-stake"
-        placeholder="0.0"
+        placeholder="Amount"
         @focus="setFocus(true)"
         @blur="setFocus(false)"
         v-model="value"
