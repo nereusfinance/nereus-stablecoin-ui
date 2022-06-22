@@ -60,9 +60,6 @@ export default {
     isDisabled() {
       return Number(this.balance) === 0;
     },
-    isEnabled() {
-      return Number(this.balance) > 0;
-    },
   },
   components: {
     TokenIcon,
