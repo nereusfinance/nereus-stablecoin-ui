@@ -24,8 +24,7 @@
           </span>
         </div>
         <ValueInput
-          :max="maxValue"
-          :show-max="true"
+          :max="maxValueInput"
           valueName="NXUSD"
           @onchange="updateValue"
           :parentValue="valueAmount"
@@ -52,8 +51,7 @@
           >
         </div>
         <ValueInput
-          :max="maxValue"
-          :show-max="true"
+          :max="maxValueInput"
           valueName="NXUSD"
           @onchange="updateValue"
           :parentValue="valueAmount"
@@ -183,6 +181,15 @@ export default {
     NXUSDStakingContract() {
       return this.$store.getters.getNXUSDStakingContract;
     },
+    maxValueInput() {
+      if (this.actionType === "Deposit") {
+        return this.normalizeBNValues(this.stakingTokenInfo.balance);
+      }
+      if (this.actionType === "Withdraw") {
+        return this.normalizeBNValues(this.availableWithdraw);
+      }
+      return 0;
+    },
   },
   methods: {
     goBack() {
@@ -271,6 +278,7 @@ export default {
       if (this.actionType === "Withdraw") {
         return this.normalizeBNValues(this.availableWithdraw);
       }
+      return  0;
     },
     async action(tx) {
       //let tx = 1;
