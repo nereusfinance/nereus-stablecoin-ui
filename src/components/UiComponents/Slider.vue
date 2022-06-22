@@ -1,18 +1,18 @@
 <template>
   <div class="slider-container">
     <input
-      :data-cy="cyData"
-      type="range"
-      :min="min"
-      :max="max"
-      :step="step"
-      :value="value"
-      class="slider"
-      @input="onChange"
-      :style="{
+        :data-cy="cyData"
+        :disabled="disabled"
+        :max="max"
+        :min="min"
+        :step="step"
+        :style="{
         backgroundSize: ((value - min) * 100) / (max - min) + '% 100%',
       }"
-      :disabled="disabled"
+        :value="value"
+        class="slider"
+        type="range"
+        @input="onChange"
     />
   </div>
 </template>
@@ -39,11 +39,9 @@ export default {
     min: {
       default: "0",
     },
-  },
-  data() {
-    return {
-      max: 100,
-    };
+    max: {
+      default: "100",
+    }
   },
   methods: {
     onChange(event) {
@@ -71,6 +69,7 @@ export default {
     background-image: linear-gradient(#e7fc6e, #e7fc6e);
     background-repeat: no-repeat;
   }
+
   .slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
@@ -83,9 +82,11 @@ export default {
     border-radius: 6px;
     margin-left: 1px;
   }
+
   .slider:disabled::-webkit-slider-thumb {
     cursor: not-allowed;
   }
+
   .slider::-moz-range-thumb {
     width: 10px;
     height: 20px;
@@ -97,9 +98,11 @@ export default {
     background-size: 10px 20px;
     margin-left: 1px;
   }
+
   .slider::-moz-range-progress {
     background-color: #e7fc6e;
   }
+
   .slider::-ms-fill-lower {
     background-color: #e7fc6e;
   }
@@ -112,11 +115,13 @@ export default {
     .slider {
       height: 4px;
     }
+
     .slider::-webkit-slider-thumb {
       width: 16px;
       height: 28px;
       background-size: 16px 28px;
     }
+
     .slider::-moz-range-thumb {
       width: 16px;
       height: 28px;

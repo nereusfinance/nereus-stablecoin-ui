@@ -3,12 +3,12 @@
     <div class="bar-wrap">
       <div class="slider-wrapper">
         <Slider
-          :cyData="'leverage-slider'"
-          :value="sliderValue"
-          :step="0.25"
-          :min="1"
-          :max="15"
-          @changeValue="testOnChangeValue"
+            :cyData="'leverage-slider'"
+            :max="4"
+            :min="1"
+            :step="0.25"
+            :value="sliderValue"
+            @changeValue="testOnChangeValue"
         />
       </div>
       <div class="liquidation-price-text">
@@ -72,9 +72,9 @@ export default {
     },
     leverageData() {
       const borrowPerc =
-        (100 - this.$store.getters.getBorrowFee(this.pool.id)) / 100;
+          (100 - this.$store.getters.getBorrowFee(this.pool.id)) / 100;
       const amountMultiplyer =
-        (this.pairValue * this.pool.ltv) / this.maxPairValue / 100;
+          (this.pairValue * this.pool.ltv) / this.maxPairValue / 100;
       let startAmount = this.pairValue * borrowPerc;
       let finalBorrowAmount = 0;
 
@@ -87,20 +87,20 @@ export default {
         }
       }
       const resultCollateral =
-        +this.$store.getters.getUserCollateralShare(this.pool.id) + +this.mainValue +
-        finalBorrowAmount / this.tokentToNUSD;
+          +this.$store.getters.getUserCollateralShare(this.pool.id) + +this.mainValue +
+          finalBorrowAmount / this.tokentToNUSD;
       const resultBorrow =
-        +this.$store.getters.getUserBorrowPart(this.pool.id) +
-        finalBorrowAmount;
+          +this.$store.getters.getUserBorrowPart(this.pool.id) +
+          finalBorrowAmount;
       const liquidationPrice =
-        resultBorrow / ((resultCollateral * this.pool.ltv) / 100);
+          resultBorrow / ((resultCollateral * this.pool.ltv) / 100);
       const priceDifferens = this.tokentToNUSD - liquidationPrice;
       const liquidationRisk = (priceDifferens / this.tokentToNUSD) * 100;
       return {
         liquidationRisk: liquidationRisk.toFixed(2),
         expectedNXUSDAmount: (
-          +finalBorrowAmount +
-          +this.$store.getters.getUserBorrowPart(this.pool.id)
+            +finalBorrowAmount +
+            +this.$store.getters.getUserBorrowPart(this.pool.id)
         ).toFixed(4),
         liquidationPrice: liquidationPrice.toFixed(4),
       };
@@ -167,9 +167,11 @@ export default {
       }
     }
   }
+
   .slider-wrapper {
     margin: 4px 0 4px;
   }
+
   .liquidation-price-text {
     font-weight: 400;
     font-size: 12px;
@@ -178,6 +180,7 @@ export default {
     color: #ffffff;
     margin-bottom: 24px;
   }
+
   .item-main {
     display: flex;
     align-items: center;
