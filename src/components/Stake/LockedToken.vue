@@ -9,7 +9,7 @@
     <div class="locked-table-header">
       <div class="locked-table-header-item">Locked {{ lockedTokenName }}</div>
       <div class="locked-table-header-item">Tier 1 amount NXUSD</div>
-    </div>
+    </div>Total deposit
     <div
       class="locked-table-row"
       :class="{ selected: isActive(config, index) }"
