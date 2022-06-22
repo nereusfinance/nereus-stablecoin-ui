@@ -178,7 +178,7 @@ export default {
       return this.$store.getters.getChainId;
     },
     availableWithdraw() {
-      return this.$store.getters.getUserCurrentRewards;
+      return this.$store.getters.getUserData[1];
     },
     NXUSDStakingContract() {
       return this.$store.getters.getNXUSDStakingContract;
