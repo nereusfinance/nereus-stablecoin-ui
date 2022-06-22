@@ -184,7 +184,6 @@ export default {
   color: #8a8a8a;
   &:focus {
     outline: none;
-    transform: scale(1.05);
     color: white;
     border-color: white;
   }
