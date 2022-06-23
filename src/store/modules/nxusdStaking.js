@@ -64,6 +64,10 @@ export default {
   },
   actions: {
     async calculateTableRewards({ getters, commit }, periods) {
+      console.log(
+        "Calculating start time in seconds:",
+        (new Date().getTime() / 1000).toFixed(0)
+      );
       const tableRewards =
         await getters.getNXUSDStakingCalculationContract.calculateTableRewards(
           getters.getAccount,
