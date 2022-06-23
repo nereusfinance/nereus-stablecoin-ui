@@ -2,37 +2,41 @@
   <div class="mobile-menu">
     <div class="like-header">
       <router-link :to="{ name: 'Stand' }" class="logo-wrap"
-        ><img src="@/assets/images/text-logo.svg" alt="" class="logo"
+      ><img alt="" class="logo" src="@/assets/images/text-logo.svg"
       /></router-link>
 
       <img
-        src="@/assets/images/mobile-menu.svg"
-        alt=""
-        class="mobile-btn"
-        @click="hideMenu"
+          alt=""
+          class="mobile-btn"
+          src="@/assets/images/mobile-menu.svg"
+          @click="hideMenu"
       />
     </div>
     <div class="btns-wrap">
-      <ConnectButton />
+      <ConnectButton/>
 
       <div class="btn-ml">
-        <NetworkButton @click="networkClickHandler" />
+        <NetworkButton @click="networkClickHandler"/>
       </div>
     </div>
 
     <nav>
       <router-link :to="{ name: 'Stand' }" class="nav-link"
-        >Markets</router-link
+      >Markets
+      </router-link
       >
       <router-link :to="{ name: 'Dashboard' }" class="nav-link"
-        >My Dashboard</router-link
+      >My Dashboard
+      </router-link
       >
       <router-link :to="{ name: 'Stake' }" class="nav-link">Earn</router-link>
     </nav>
+    <Footer></Footer>
   </div>
 </template>
 
 <script>
+const Footer = () => import("@/components/Footer");
 const NetworkButton = () => import("@/components/UiComponents/NetworkButton");
 const ConnectButton = () => import("@/components/UiComponents/ConnectButton");
 export default {
@@ -61,6 +65,7 @@ export default {
   components: {
     NetworkButton,
     ConnectButton,
+    Footer
   },
 };
 </script>
@@ -85,6 +90,7 @@ export default {
     justify-content: space-between;
     height: 90px;
     min-height: 90px;
+
     .logo {
       width: 130px;
       height: auto;
