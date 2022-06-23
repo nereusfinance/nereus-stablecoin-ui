@@ -63,8 +63,8 @@
     }
   },
   "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
   ]
 }
