@@ -185,7 +185,7 @@ export default {
     text-decoration: none;
     transition: all 0.3s ease;
     cursor: pointer;
-    padding: 8px 15px;
+    padding: 8px 9px 8px 15px;
     width: auto;
     height: 32px;
     border-radius: 21px;
@@ -229,7 +229,7 @@ export default {
     text-decoration: none;
     transition: all 0.3s ease;
     cursor: pointer;
-    padding: 8px 15px;
+    padding: 8px 9px 8px 15px;
     width: auto;
     height: 32px;
     border-radius: 21px;
