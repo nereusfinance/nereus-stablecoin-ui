@@ -43,7 +43,7 @@ export default {
   }
 }
 .icons:last-child {
-  padding-right: 0px;
+  padding-right: 0;
 }
 
 @media screen and(max-width: 780px) {

@@ -131,7 +131,7 @@ export default {
   .app-footer {
     position:fixed;
     margin: 16px 0 16px 0;
-    width: 85%;
+    width: 304px;
     bottom: 0;
     right: 0;
   }

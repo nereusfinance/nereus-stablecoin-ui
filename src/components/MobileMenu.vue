@@ -1,19 +1,16 @@
 <template>
   <div class="mobile-menu">
-<!--    <div class="like-header">-->
-<!--      <img-->
-<!--        src="@/assets/images/mobile-menu.svg"-->
-<!--        alt=""-->
-<!--        class="mobile-btn"-->
-<!--        @click="hideMenu"-->
-<!--      />-->
-<!--    </div>-->
-
-    <div class="blur"/>
     <div class="side-menu">
-      <div class="btn-wrap">
+      <img
+        src="@/assets/images/mobile-menu.svg"
+        alt=""
+        class="mobile-btn"
+        @click="hideMenu"
+      />
+      <div class="connect-btn">
         <ConnectButton />
       </div>
+
       <hr class="hr-top"/>
       <nav>
         <router-link :to="{ name: 'Stand' }" class="nav-link"
@@ -64,17 +61,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-mobile-menu {
-  width: 100%;
-}
-.blur {
-  z-index: 2;
-  position: absolute;
-  width: 100%;
-  top: -20px;
-  height: 200%;
-  background: #1C1C1C;
-  opacity: 0.5;
+
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .side-menu {
@@ -84,28 +81,23 @@ mobile-menu {
   top: 0;
   right: 0;
   bottom: 0;
-  width: 85%;
+  width: 304px;
   background-color: #262626;
   z-index: 400;
   display: flex;
   flex-direction: column;
 
-  .like-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 90px;
-    min-height: 90px;
-
-    .mobile-btn {
-      width: 24px;
-      height: auto;
-      object-fit: contain;
-      cursor: pointer;
-    }
+  .mobile-btn {
+    width: 24px;
+    height: auto;
+    margin-left: auto;
+    margin-right: 20px;
+    margin-bottom: 25px;
+    object-fit: contain;
+    cursor: pointer;
   }
 
-  .btn-wrap {
+  .connect-btn {
     display: flex;
     align-items: center;
     margin-left: auto;
