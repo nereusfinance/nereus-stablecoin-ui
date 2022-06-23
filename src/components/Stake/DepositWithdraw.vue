@@ -143,7 +143,7 @@ export default {
         balance: this.$ethers.BigNumber.from(0),
       },
       overview: false,
-      valueAmount: "0",
+      valueAmount: "",
       valueError: "",
       depositStatus: ["Deposit", "Finished"],
       withdrawStatus: ["Withdraw", "Finished"],

@@ -16,15 +16,16 @@
     <div class="btns">
       <button
         class="deposit-btn"
-        :class="{ active: actionType === 'Deposit' }"
+        :class="{ notActive: actionType === 'Withdraw' }"
         @click="onClick('Deposit')"
       >
         Deposit
       </button>
       <button
         class="withdraw-btn"
-        :class="{ active: actionType === 'Withdraw' }"
+        :class="{ notActive: actionType === 'Deposit' || isDisabled }"
         @click="onClick('Withdraw')"
+        :disabled="isDisabled"
       >
         Withdraw
       </button>
@@ -50,16 +51,24 @@ export default {
   },
   computed: {
     balance() {
-      return new Intl.NumberFormat("en-EN").format(
-        parseFloat(
-          this.$ethers.utils.formatEther(this.$store.getters.getUserData[1])
-        ).toFixed(2)
-      );
+      const userData = this.$store.getters.getUserData;
+      const NXUSDByTier1 = Number(this.normalizeBNValues(userData[0][1]));
+      const NXUSDByTier2 = Number(this.normalizeBNValues(userData[2].sub(userData[0][1])));
+      const total = NXUSDByTier1 + NXUSDByTier2;
+      return total.toFixed(2);
+    },
+    isDisabled() {
+      return Number(this.balance) === 0;
     },
   },
   components: {
     TokenIcon,
   },
+  methods : {
+    normalizeBNValues(value) {
+      return this.$ethers.utils.formatEther(value);
+    },
+  }
 };
 </script>
 
@@ -113,22 +122,23 @@ export default {
     width: auto;
     height: 32px;
 
-    background: #353535;
+    background: $clrBg3;
     border: 1px solid #414141;
     border-radius: 16px;
     margin-right: 16px;
 
     font-size: 14px;
-    color: #8a8a8a;
+    color: black;
 
-    &.active {
-      color: black;
-      background-color: $clrBg3;
+    &.notActive {
+      color: #8a8a8a;
+      background-color: #353535;
     }
   }
   .deposit-btn:hover {
     color: black;
-    background-color: $clrBg3;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+      #e7fc6e;
   }
   .info-icon {
     width: 13.3px;
@@ -143,20 +153,21 @@ export default {
     width: auto;
     height: 32px;
 
-    background: #353535;
+    background: $clrBg3;
     border: 1px solid #414141;
     border-radius: 16px;
 
     font-size: 14px;
-    color: #8a8a8a;
-    &.active {
-      color: black;
-      background-color: $clrBg3;
+    color: black;
+    &.notActive {
+      color: #8a8a8a;
+      background-color: #353535;
     }
   }
   .withdraw-btn:hover {
     color: black;
-    background-color: $clrBg3;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+      #e7fc6e;
   }
 }
 
