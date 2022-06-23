@@ -1,19 +1,19 @@
 <template>
   <div class="stand-view">
-    <img src="@/assets/images/stand/bg-top-left.svg" alt="" class="bg-1" />
-    <img src="@/assets/images/stand/bg-btm-right.svg" alt="" class="bg-2" />
-    <img src="@/assets/images/stand/bg-btm-left.svg" alt="" class="bg-3" />
+    <img alt="" class="bg-1" src="@/assets/images/stand/bg-top-left.svg"/>
+    <img alt="" class="bg-2" src="@/assets/images/stand/bg-btm-right.svg"/>
+    <img alt="" class="bg-3" src="@/assets/images/stand/bg-btm-left.svg"/>
 
     <div class="container mini">
-      <div class="stand-group" v-if="pools">
+      <div v-if="pools" class="stand-group">
         <h1>Deposited</h1>
 
-        <DepositedPoolStand v-for="pool in pools" :key="pool.id" :pool="pool" />
+        <DepositedPoolStand v-for="pool in pools" :key="pool.id" :pool="pool"/>
       </div>
 
       <div class="stand-group">
         <h1>PERFORM A RITUAL SPELL</h1>
-        <StandTable :items="pools" />
+        <StandTable :items="pools"/>
       </div>
     </div>
   </div>
@@ -22,7 +22,7 @@
 <script>
 const StandTable = () => import("@/components/Stand/Table");
 const DepositedPoolStand = () =>
-  import("@/components/Stand/DepositedPoolStand");
+    import("@/components/Stand/DepositedPoolStand");
 
 export default {
   components: {
@@ -38,7 +38,7 @@ export default {
     const isConnected = this.$store.getters.getWalletIsConnected;
 
     if (!isConnected) {
-      this.$router.push({ name: "Stand" });
+      this.$router.push({name: "Stand"});
       return false;
     }
   },

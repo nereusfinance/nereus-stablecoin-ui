@@ -1,21 +1,21 @@
 <template>
   <div
-    class="stand-table-item"
-    :class="{ 'stand-table-disable': !pool.isEnabled }"
-    @click="toPool"
+      :class="{ 'stand-table-disable': !pool.isEnabled }"
+      class="stand-table-item"
+      @click="toPool"
   >
     <div class="table-col pool-name">
       <div class="val-item">
         <div class="item-wrapper">
-          <TokenIcon :token="pool.token.name" />
+          <TokenIcon :token="pool.token.name"/>
           <p>
             {{ pool.name }}
             <img
-              v-if="isWTXPool"
-              src="@/assets/images/i-icon.svg"
-              alt=""
-              class="info-icon"
-              v-tooltip="'This is a private market.'"
+                v-if="isWTXPool"
+                v-tooltip="'This is a private market.'"
+                alt=""
+                class="info-icon"
+                src="@/assets/images/i-icon.svg"
             />
           </p>
         </div>
@@ -49,24 +49,24 @@ export default {
       //   this.$ethers.utils.formatEther(this.pool.totalBorrow)
       // ).toFixed(0);
       return parseFloat(
-        this.$ethers.utils.formatEther(
-          this.$store.getters.getTotalBorrow(this.pool.id)
-        )
+          this.$ethers.utils.formatEther(
+              this.$store.getters.getTotalBorrow(this.pool.id)
+          )
       ).toFixed(0);
     },
     mainTokenPrice() {
       return (
-        1 /
-        this.$ethers.utils.formatUnits(
-          this.pool.token.oracleExchangeRate,
-          this.pool.token.decimals
-        )
+          1 /
+          this.$ethers.utils.formatUnits(
+              this.pool.token.oracleExchangeRate,
+              this.pool.token.decimals
+          )
       );
     },
     collateralParsed() {
       return this.$ethers.utils.formatUnits(
-        this.pool.totalCollateralShare,
-        this.pool.token.decimals
+          this.pool.totalCollateralShare,
+          this.pool.token.decimals
       );
     },
     collateralInUsd() {
@@ -83,7 +83,7 @@ export default {
   methods: {
     toPool() {
       if (this.pool.isEnabled) {
-        this.$router.push({ name: "Pool", params: { id: this.pool.id } });
+        this.$router.push({name: "Pool", params: {id: this.pool.id}});
       }
     },
   },
@@ -93,21 +93,21 @@ export default {
       if (Number(value) === 0) return value;
 
       const lookup = [
-        { value: 0, symbol: "" },
-        { value: 1, symbol: "" },
-        { value: 1e3, symbol: "k" },
-        { value: 1e6, symbol: "M" },
+        {value: 0, symbol: ""},
+        {value: 1, symbol: ""},
+        {value: 1e3, symbol: "k"},
+        {value: 1e6, symbol: "M"},
       ];
       const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
       let item = lookup
-        .slice()
-        .reverse()
-        .find(function (item) {
-          return parseFloat(value) >= item.value;
-        });
+          .slice()
+          .reverse()
+          .find(function (item) {
+            return parseFloat(value) >= item.value;
+          });
       return (
-        (parseFloat(value) / item.value).toFixed(0).replace(rx, "$1") +
-        item.symbol
+          (parseFloat(value) / item.value).toFixed(0).replace(rx, "$1") +
+          item.symbol
       );
     },
   },
@@ -117,7 +117,9 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .stand-table-item {
   display: flex;
   align-items: center;
@@ -185,6 +187,7 @@ export default {
       span {
         color: #8a8a8a;
       }
+
       font-size: 16px;
       line-height: 24px;
     }
@@ -193,15 +196,18 @@ export default {
   .val-item {
     display: flex;
     align-items: center;
+
     .token-icon-wrap {
       .token-icon {
         max-width: none !important;
       }
     }
+
     .item-wrapper {
       display: flex;
       flex-direction: row;
       align-items: center;
+
       .info-icon {
         margin: 0;
       }
@@ -215,20 +221,28 @@ export default {
     margin-right: 10px;
   }
 }
+
 .stand-table-disable {
   cursor: not-allowed;
+
   &:hover {
     box-shadow: none;
   }
 }
+
 @media screen and(max-width: 780px) {
   .stand-table-item {
     flex-wrap: wrap;
     justify-content: center;
-    min-height: 100px;
+    min-height: 80px;
+    padding: 12px 20px;
 
     .table-col {
       width: 20%;
+    }
+
+    .stand-table-item .table-col p {
+      font-size: 16px;
     }
 
     .action-col {
@@ -252,13 +266,13 @@ export default {
 
 @media screen and(max-width: 640px) {
   .stand-table-item {
-    padding-left: 20px;
-    padding-right: 20px;
+    min-height: 80px;
+    padding: 12px 20px;
     justify-content: space-between;
   }
 
   .stand-table-item .table-col p {
-    font-size: 12px;
+    font-size: 16px;
   }
 
   .stand-table-item .val-icon {
@@ -269,9 +283,11 @@ export default {
   .stand-table-item .val-item {
     flex-direction: column;
     align-items: flex-start;
+
     .token-icon-wrap {
       margin: 0;
     }
+
     .item-wrapper {
       display: flex;
       flex-direction: column;
