@@ -77,6 +77,7 @@ export default {
         "Calculating finish time in seconds:",
         (new Date().getTime() / 1000).toFixed(0)
       );
+      console.log("Table rewards data", tableRewards);
       const totalTableRewards = tableRewards.map((rewards) => {
         return rewards[0].add(rewards[1]);
       });
