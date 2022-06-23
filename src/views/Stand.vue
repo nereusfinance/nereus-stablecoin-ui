@@ -17,7 +17,7 @@
             <div
               id="select"
               @click="isActive"
-              :class="{active: active}"
+              :class="{ active: active }"
               :disabled="disabledSort"
             >
               {{ setSortParam(sortParam) }}
@@ -221,10 +221,9 @@ export default {
 }
 div#select.active {
   background: #262626 url(../assets/images/arrow-list.svg) 98% center no-repeat;
-  border: 1px solid #FFFFFF;
+  border: 1px solid #ffffff;
   color: white;
 }
-
 
 .select-item {
   z-index: 1;
@@ -237,19 +236,19 @@ div#select.active {
   background: #262626;
   cursor: pointer;
   text-align: left;
-  &:first-child{
+  &:first-child {
     border-radius: 4px 4px 0 0;
   }
-  &:last-child{
+  &:last-child {
     border-radius: 0 0 4px 4px;
     box-shadow: 0 10px 20px 2px rgba(0, 0, 0, 0.25);
   }
-  &:not(:last-child){
+  &:not(:last-child) {
     border-bottom: 0.1px solid #1c1c1c;
   }
 
   &:hover {
-    background: #1C1C1C;
+    background: #1c1c1c;
     color: white;
   }
 }

@@ -3,15 +3,17 @@
     <div class="item-main">
       <div class="title">
         <img
-          src="@/assets/images/i-icon.svg"
+          v-tooltip="itemProp.tooltip"
           alt=""
           class="info-icon"
-          v-tooltip="itemProp.tooltip"
+          src="@/assets/images/i-icon.svg"
         />
         <p>{{ itemProp.title }}</p>
       </div>
 
-      <p class="percent-text">{{ itemProp.value }}</p>
+      <p :data-cy="itemProp.cyData" class="percent-text">
+        {{ itemProp.value }}
+      </p>
     </div>
   </div>
 </template>
@@ -63,6 +65,7 @@ export default {
       font-weight: 700;
       margin-left: auto;
     }
+
     .percent-text:i {
       font-weight: 400;
     }
