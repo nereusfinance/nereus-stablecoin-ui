@@ -1,6 +1,6 @@
 <template>
-  <button class="token-btn" @click="addToken">
-    <img src="@/assets/images/icon-add.svg" alt="" class="add-icon" />
+  <button :disabled="disabled" class="token-btn" @click="addToken">
+    <img alt="" class="add-icon" src="@/assets/images/icon-add.svg"/>
     Add {{ tokenName }} to your browser wallet
   </button>
 </template>
@@ -27,13 +27,18 @@ export default {
       return tokensInfo.find((token) => token.name === this.tokenName);
     },
   },
+  data() {
+    return {
+      disabled: false
+    }
+  },
   methods: {
     async addToken() {
       if (!this.account) {
         return false;
       }
-
-      const { ethereum } = window;
+      this.disabled = true;
+      const {ethereum} = window;
       if (this.tokenName === "NXUSD") {
         try {
           // wasAdded is a boolean. Like any RPC method, an error may be thrown.
@@ -48,14 +53,15 @@ export default {
                 image: require(`@/assets/images/tokens-icon/Token_NXUSD.svg`), // A string url of the token logo
               },
             },
-          });
-
+          })
           if (wasAdded) {
             console.log("Thanks for your interest!");
           } else {
+            this.disabled = false;
             console.log("Your loss!");
           }
         } catch (error) {
+          this.disabled = false;
           console.log(error);
         }
       } else {
@@ -77,9 +83,11 @@ export default {
           if (wasAdded) {
             console.log("Thanks for your interest!");
           } else {
+            this.disabled = false;
             console.log("Your loss!");
           }
         } catch (error) {
+          this.disabled = false;
           console.log(error);
         }
       }
@@ -104,7 +112,7 @@ export default {
 
   background: #353535;
   border-radius: 16px;
-  border: none;
+  border: 1px solid transparent;
   cursor: pointer;
 
   font-weight: 400;
@@ -112,6 +120,18 @@ export default {
   line-height: 20px;
   text-align: center;
   color: #ffffff;
+
+  &:disabled {
+    &:hover {
+      cursor: not-allowed;
+    }
+
+    border: 1px solid lightgrey;
+  }
+
+  &:hover {
+    border: 1px solid white;
+  }
 
   img {
     max-width: 100%;

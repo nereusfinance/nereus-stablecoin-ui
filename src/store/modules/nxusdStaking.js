@@ -64,11 +64,20 @@ export default {
   },
   actions: {
     async calculateTableRewards({ getters, commit }, periods) {
+      console.log(
+        "Calculating start time in seconds:",
+        (new Date().getTime() / 1000).toFixed(0)
+      );
       const tableRewards =
         await getters.getNXUSDStakingCalculationContract.calculateTableRewards(
           getters.getAccount,
           periods
         );
+      console.log(
+        "Calculating finish time in seconds:",
+        (new Date().getTime() / 1000).toFixed(0)
+      );
+      console.log("Table rewards data", tableRewards);
       const totalTableRewards = tableRewards.map((rewards) => {
         return rewards[0].add(rewards[1]);
       });
