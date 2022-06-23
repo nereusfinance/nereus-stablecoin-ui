@@ -73,6 +73,10 @@ export default {
           getters.getAccount,
           periods
         );
+      console.log(
+        "Calculating finish time in seconds:",
+        (new Date().getTime() / 1000).toFixed(0)
+      );
       const totalTableRewards = tableRewards.map((rewards) => {
         return rewards[0].add(rewards[1]);
       });
