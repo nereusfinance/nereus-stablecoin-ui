@@ -93,7 +93,7 @@ export default {
       return totalTableRewardsFormated;
     },
     totalEarnedRewards() {
-      const currentRewards = this.$store.getters.getUserData[2].sub(
+      const currentRewards = this.$store.getters.getUserCurrentRewards.sub(
         this.$store.getters.getUserData[1]
       );
       return this.normalizeBNValues(currentRewards);
