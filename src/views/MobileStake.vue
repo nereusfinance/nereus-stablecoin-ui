@@ -1,29 +1,22 @@
 <template>
   <div class="stake-view-mobile">
-    <div class="stake-text" v-if="actionStatus === false">
-      <h1>Earn</h1>
-    </div>
-    <div class="stake-content">
-      <div class="container-mini" v-if="actionStatus === false">
-        <TotalDeposit
-          :pool="pool"
-          :actionStatus="actionStatus"
-          :actionType="actionType"
-          :onClick="setActionType"
+    <h1 class="stake-text">Earn</h1>
+    <div class="stake-wrapper">
+      <div class="stake-item" v-if="!actionStatus">
+        <TotalDeposit :actionType="actionType" :onClick="setActionType" />
+        <InfoBlock/>
+        <LockedToken/>
+        <ExpectedInterest
+          v-if="!actionType"
+          :rewardsForPeriod="rewardsForPeriod"
+          :totalEarnedRewards="totalEarnedRewards"
         />
-
-        <InfoBlock :pool="pool" />
-
-        <LockedToken :pool="pool" />
-
-        <ExpectedInterest />
       </div>
       <div class="container-mini" v-else>
         <DepositWithdraw
+          v-if="actionType"
           :actionType="actionType"
-          :actionStatus="actionStatus"
-          :onClick="setActionStatus"
-          :pool="pool"
+          :onClick="setActionType"
         />
       </div>
     </div>
@@ -42,26 +35,15 @@ export default {
     return {
       actionStatus: false,
       actionType: "",
+      rewardsForPeriod: [],
+      totalEarnedRewards: "",
+      yearlyEarn: "",
     };
   },
   methods: {
-    setActionStatus() {
-      this.actionStatus = this.actionStatus === false;
-    },
     setActionType(type) {
       if (type !== this.actionType) this.actionType = type;
       this.actionStatus = this.actionStatus === false;
-    },
-    async getData() {
-      // const configArray = this.$ethers.;
-    },
-    async borrowHandler(data) {
-      console.log("BORROW HANDLER", data);
-      const isApprowed = await this.isApprowed();
-
-      if (isApprowed) {
-        this.cookBorrow(data, isApprowed);
-      }
     },
     async isApprowed() {
       try {
@@ -75,292 +57,6 @@ export default {
       } catch (e) {
         console.log("isApprowed err:", e);
       }
-    },
-    async cookBorrow({ amount, updatePrice }, isApprowed) {
-      const borrowEncode = this.getBorrowEncode(amount);
-      const bentoWithdrawEncode = this.getBentoWithdrawEncode(amount);
-
-      const gasPrice = await this.getGasPrice();
-      console.log("GAS PRICE:", gasPrice);
-
-      if (isApprowed) {
-        console.log("APPROWED");
-
-        if (updatePrice) {
-          const updateEncode = this.getUpdateRateEncode();
-
-          const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [11, 5, 21],
-            [0, 0, 0],
-            [updateEncode, borrowEncode, bentoWithdrawEncode],
-            {
-              value: 0,
-              // gasPrice,
-              // gasLimit: 1000000,
-            }
-          );
-
-          const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-          console.log("gasLimit:", gasLimit);
-
-          const result = await this.pool.contractInstance.cook(
-            [11, 5, 21],
-            [0, 0, 0],
-            [updateEncode, borrowEncode, bentoWithdrawEncode],
-            {
-              value: 0,
-              // gasPrice,
-              gasLimit,
-            }
-          );
-
-          await this.wrapperStatusTx(result);
-
-          console.log(result);
-          return false;
-        }
-
-        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [5, 21],
-          [0, 0],
-          [borrowEncode, bentoWithdrawEncode],
-          {
-            value: 0,
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
-        );
-
-        const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-        console.log("gasLimit:", gasLimit);
-
-        const result = await this.pool.contractInstance.cook(
-          [5, 21],
-          [0, 0],
-          [borrowEncode, bentoWithdrawEncode],
-          {
-            value: 0,
-            // gasPrice,
-            gasLimit,
-          }
-        );
-
-        await this.wrapperStatusTx(result);
-
-        console.log(result);
-        return false;
-      }
-
-      console.log("NOT APPROWED");
-      const approvalEncode = await this.getApprovalEncode();
-
-      if (approvalEncode === "ledger") {
-        const approvalMaster = await this.approveMasterContract();
-
-        console.log("approveMasterContract resp: ", approvalMaster);
-
-        if (!approvalMaster) return false;
-
-        if (updatePrice) {
-          const updateEncode = this.getUpdateRateEncode();
-
-          const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [11, 5, 21],
-            [0, 0, 0],
-            [updateEncode, borrowEncode, bentoWithdrawEncode],
-            {
-              value: 0,
-              // gasPrice,
-              // gasLimit: 1000000,
-            }
-          );
-
-          const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-          console.log("gasLimit:", gasLimit);
-
-          const result = await this.pool.contractInstance.cook(
-            [11, 5, 21],
-            [0, 0, 0],
-            [updateEncode, borrowEncode, bentoWithdrawEncode],
-            {
-              value: 0,
-              // gasPrice,
-              gasLimit,
-            }
-          );
-
-          await this.wrapperStatusTx(result);
-
-          console.log(result);
-          return false;
-        }
-
-        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [5, 21],
-          [0, 0],
-          [borrowEncode, bentoWithdrawEncode],
-          {
-            value: 0,
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
-        );
-
-        const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-        console.log("gasLimit:", gasLimit);
-
-        const result = await this.pool.contractInstance.cook(
-          [5, 21],
-          [0, 0],
-          [borrowEncode, bentoWithdrawEncode],
-          {
-            value: 0,
-            // gasPrice,
-            gasLimit,
-          }
-        );
-
-        await this.wrapperStatusTx(result);
-
-        console.log(result);
-
-        return false;
-      }
-
-      if (updatePrice) {
-        const updateEncode = this.getUpdateRateEncode();
-
-        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [24, 11, 5, 21],
-          [0, 0, 0, 0],
-          [approvalEncode, updateEncode, borrowEncode, bentoWithdrawEncode],
-          {
-            value: 0,
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
-        );
-
-        const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-        console.log("gasLimit:", gasLimit);
-
-        const result = await this.pool.contractInstance.cook(
-          [24, 11, 5, 21],
-          [0, 0, 0, 0],
-          [approvalEncode, updateEncode, borrowEncode, bentoWithdrawEncode],
-          {
-            value: 0,
-            // gasPrice,
-            gasLimit,
-          }
-        );
-
-        await this.wrapperStatusTx(result);
-
-        console.log(result);
-        return false;
-      }
-
-      const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-        [24, 5, 21],
-        [0, 0, 0],
-        [approvalEncode, borrowEncode, bentoWithdrawEncode],
-        {
-          value: 0,
-          // gasPrice,
-          // gasLimit: 1000000,
-        }
-      );
-
-      const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-      console.log("gasLimit:", gasLimit);
-
-      const result = await this.pool.contractInstance.cook(
-        [24, 5, 21],
-        [0, 0, 0],
-        [approvalEncode, borrowEncode, bentoWithdrawEncode],
-        {
-          value: 0,
-          // gasPrice,
-          gasLimit,
-        }
-      );
-
-      await this.wrapperStatusTx(result);
-
-      console.log(result);
-    },
-    async getApprovalEncode() {
-      const account = this.account;
-
-      const verifyingContract = await this.getVerifyingContract();
-      const masterContract = await this.getMasterContract();
-      const nonce = await this.getNonce();
-      const chainId = this.$store.getters.getActiveChain.code;
-
-      const domain = {
-        name: "BentoBox V1",
-        chainId,
-        verifyingContract,
-      };
-
-      // The named list of all type definitions
-      const types = {
-        SetMasterContractApproval: [
-          { name: "warning", type: "string" },
-          { name: "user", type: "address" },
-          { name: "masterContract", type: "address" },
-          { name: "approved", type: "bool" },
-          { name: "nonce", type: "uint256" },
-        ],
-      };
-
-      // The data to sign
-      const value = {
-        warning: "Give FULL access to funds in (and approved to) BentoBox?",
-        user: account,
-        masterContract,
-        approved: true,
-        nonce,
-      };
-      console.log(chainId);
-
-      let signature;
-
-      try {
-        signature = await this.signer._signTypedData(domain, types, value);
-      } catch (e) {
-        console.log("SIG ERR:", e.code);
-        if (e.code === -32603) {
-          return "ledger";
-
-          // this.$store.commit("setPopupState", {
-          //   type: "device-error",
-          //   isShow: true,
-          // });
-        }
-        return false;
-      }
-
-      const parsedSignature = this.parseSignature(signature);
-
-      return this.$ethers.utils.defaultAbiCoder.encode(
-        ["address", "address", "bool", "uint8", "bytes32", "bytes32"],
-        [
-          account,
-          masterContract,
-          true,
-          parsedSignature.v,
-          parsedSignature.r,
-          parsedSignature.s,
-        ]
-      );
     },
   },
   computed: {
@@ -386,8 +82,7 @@ export default {
 
 <style scoped lang="scss">
 .stake-view-mobile {
-  padding-top: 24px;
-  padding-bottom: 29px;
+  padding: 24px 15px 29px 15px;
   margin-left: auto;
   margin-right: auto;
   flex: 1;
@@ -399,15 +94,23 @@ export default {
     margin-bottom: 20px;
   }
 
+
   .stake-wrapper {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
+    margin-left: auto;
+    margin-right: auto;
   }
   .container-mini {
     display: flex;
     flex-direction: column;
+  }
+}
+
+@media screen and(min-width: 768px){
+  .stake-view-mobile.mobile-stake {
+    display: none;
   }
 }
 </style>

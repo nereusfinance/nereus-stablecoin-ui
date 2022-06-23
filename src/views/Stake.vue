@@ -22,6 +22,7 @@
         </div>
       </div>
     </div>
+    <MobileStake class="mobile-stake" />
   </div>
   <div v-else class="action-view">
     <ActionComponent
@@ -42,6 +43,7 @@ import DepositWithdraw from "@/components/Stake/DepositWithdraw";
 const ActionComponent = () =>
   import("@/components/UiComponents/ActionComponent");
 import stake from "@/mixins/stake.js";
+import MobileStake from "@/views/MobileStake";
 export default {
   mixins: [stake],
   name: "Stake",
@@ -62,6 +64,7 @@ export default {
     };
   },
   components: {
+    MobileStake,
     ActionComponent,
     DepositWithdraw,
     ExpectedInterest,
@@ -153,6 +156,7 @@ export default {
     width: 38.8%;
   }
 }
+
 @media screen and(min-width: 768px) and(max-width: 1000px) {
   .stake-view .stake-wrapper {
     padding: 20px 28px;
@@ -167,22 +171,7 @@ export default {
     padding-bottom: 37px;
   }
   .stake-view {
-    max-width: 450px;
-
-    .stake-wrapper {
-      flex-wrap: wrap;
-      padding: 16px;
-    }
-
-    .stake-item-one,
-    .stake-item-two {
-      width: 100%;
-      margin-left: 0;
-    }
-    .stake-text {
-      margin-left: 16px;
-      margin-bottom: 0;
-    }
+    display: none;
   }
 }
 </style>
