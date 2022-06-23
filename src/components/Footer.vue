@@ -128,6 +128,13 @@ export default {
 }
 
 @media screen and(max-width: 780px) {
+  .app-footer {
+    position:fixed;
+    margin: 16px 0 16px 0;
+    width: 85%;
+    bottom: 0;
+    right: 0;
+  }
   .app-footer .container .links-wrap .link-item.ml {
     margin-left: 30px;
   }

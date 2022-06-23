@@ -6,7 +6,7 @@
       <transition name="fade" mode="out-in">
         <router-view></router-view>
       </transition>
-      <Footer></Footer>
+      <Footer class="footer"></Footer>
       <PopupsWrapper v-if="showPopup" />
     </template>
 
@@ -289,6 +289,10 @@ h3 {
   .container {
     width: 100%;
     padding: 0 $containerSidePadding;
+  }
+
+  footer.app-footer.footer {
+    display: none;
   }
 }
 </style>

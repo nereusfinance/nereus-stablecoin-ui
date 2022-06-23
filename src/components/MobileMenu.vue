@@ -8,23 +8,30 @@
 <!--        @click="hideMenu"-->
 <!--      />-->
 <!--    </div>-->
-    <div class="btn-wrap">
-      <ConnectButton />
-    </div>
 
-    <nav>
-      <router-link :to="{ name: 'Stand' }" class="nav-link"
-        >Markets</router-link
-      >
-      <router-link :to="{ name: 'Dashboard' }" class="nav-link"
-        >My Dashboard</router-link
-      >
-      <router-link :to="{ name: 'Stake' }" class="nav-link">Earn</router-link>
-    </nav>
+    <div class="blur"/>
+    <div class="side-menu">
+      <div class="btn-wrap">
+        <ConnectButton />
+      </div>
+      <hr class="hr-top"/>
+      <nav>
+        <router-link :to="{ name: 'Stand' }" class="nav-link"
+          >Markets</router-link
+        >
+        <router-link :to="{ name: 'Dashboard' }" class="nav-link"
+          >My Dashboard</router-link
+        >
+        <router-link :to="{ name: 'Stake' }" class="nav-link">Earn</router-link>
+      </nav>
+      <hr/>
+      <Footer />
+    </div>
   </div>
 </template>
 
 <script>
+const Footer = () => import("@/components/Footer");
 const ConnectButton = () => import("@/components/UiComponents/ConnectButton");
 export default {
   watch: {
@@ -51,19 +58,34 @@ export default {
   },
   components: {
     ConnectButton,
+    Footer,
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.mobile-menu {
-  padding: 20px 15px 30px 15px;
+mobile-menu {
+  width: 100%;
+}
+.blur {
+  z-index: 2;
+  position: absolute;
+  width: 100%;
+  top: -20px;
+  height: 200%;
+  background: #1C1C1C;
+  opacity: 0.5;
+}
+
+.side-menu {
+  flex: 1;
+  padding-top: 20px;
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   width: 85%;
-  background-color: $clrBg1;
+  background-color: #262626;
   z-index: 400;
   display: flex;
   flex-direction: column;
@@ -86,7 +108,6 @@ export default {
   .btn-wrap {
     display: flex;
     align-items: center;
-    margin-bottom: 51px;
     margin-left: auto;
     margin-right: auto;
   }
@@ -112,6 +133,14 @@ export default {
     &:hover {
       color: $clrNavHover;
     }
+  }
+
+  hr {
+    border-color: #1C1C1C;
+    margin: auto 0 63px 0;
+  }
+  .hr-top {
+    margin: 20px 0 30px 0;
   }
 }
 </style>
