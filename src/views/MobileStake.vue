@@ -1,6 +1,6 @@
 <template>
   <div class="stake-view-mobile">
-    <h1 class="stake-text">Earn</h1>
+    <h1 class="stake-text"  v-if="!actionStatus">Earn</h1>
     <div class="stake-wrapper">
       <div class="stake-item" v-if="!actionStatus">
         <TotalDeposit :actionType="actionType" :onClick="setActionType" />
