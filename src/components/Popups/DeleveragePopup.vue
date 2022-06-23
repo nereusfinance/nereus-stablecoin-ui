@@ -1,10 +1,10 @@
 <template>
   <div class="deleverage-popup">
     <img
-        alt=""
-        class="close-btn"
-        src="@/assets/images/close-popup-grey.svg"
-        @click="closePopup"
+      alt=""
+      class="close-btn"
+      src="@/assets/images/close-popup-grey.svg"
+      @click="closePopup"
     />
     <p class="main-text">
       Attention! You are about to repay your position using flashloan
@@ -14,7 +14,11 @@
       Make sure you understand the additional costs of using a flashloan by
       reading our <a :href="docsLink" target="blanc">docs</a>!
     </p>
-    <button class="dont-show-btn" data-cy="dont-show-again" @click="dontShowAgain">
+    <button
+      class="dont-show-btn"
+      data-cy="dont-show-again"
+      @click="dontShowAgain"
+    >
       Don&#39;t show again
     </button>
   </div>

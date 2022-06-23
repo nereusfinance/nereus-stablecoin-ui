@@ -1271,7 +1271,7 @@ export default {
         ["address", "bytes", "bool", "bool", "uint8"],
         [swapperAddress, swapCallByte, false, false, 2]
       );
-      console.log('swapperAddress', swapperAddress);
+      console.log("swapperAddress", swapperAddress);
       console.log("Call encode2: ", getCallEncode2);
       events.push(30);
       values.push(0);

@@ -39,7 +39,8 @@ import LockedToken from "@/components/Stake/LockedToken";
 import InfoBlock from "@/components/Stake/InfoBlock";
 import ExpectedInterest from "@/components/Stake/ExpectedInterest";
 import DepositWithdraw from "@/components/Stake/DepositWithdraw";
-const ActionComponent = () => import("@/components/UiComponents/ActionComponent");
+const ActionComponent = () =>
+  import("@/components/UiComponents/ActionComponent");
 import stake from "@/mixins/stake.js";
 export default {
   mixins: [stake],
@@ -103,7 +104,7 @@ export default {
     isConnected() {
       return this.$store.getters.getWalletIsConnected;
     },
-  }
+  },
 };
 </script>
 

@@ -5,10 +5,10 @@
     </p>
     <div class="slider-wrapper">
       <Slider
-          :cyData="'deleverage-slider'"
-          :disabled="repaySliderMaxZero"
-          :value="repaySliderValue"
-          @changeValue="onRepaySliderChange"
+        :cyData="'deleverage-slider'"
+        :disabled="repaySliderMaxZero"
+        :value="repaySliderValue"
+        @changeValue="onRepaySliderChange"
       />
     </div>
     <p class="bar-conclusion">
@@ -25,10 +25,10 @@
         :min="removeCollateralSliderMinValue"
       /> -->
       <Slider
-          :disabled="true"
-          :min="0"
-          :value="0"
-          @changeValue="onRemoveCollateralSliderChange"
+        :disabled="true"
+        :min="0"
+        :value="0"
+        @changeValue="onRemoveCollateralSliderChange"
       />
     </div>
     <p class="bar-conclusion">
@@ -95,26 +95,26 @@ export default {
   computed: {
     liquidationPriceFormatted() {
       return isNaN(this.liquidationPrice)
-          ? "xx.xxx"
-          : this.liquidationPrice.toFixed(4);
+        ? "xx.xxx"
+        : this.liquidationPrice.toFixed(4);
     },
     amountToRepayFormatted() {
       const parsed = parseFloat(this.amountToRepay);
       return parsed === 0 || this.amountToRepay === ""
-          ? "0"
-          : parsed.toFixed(4);
+        ? "0"
+        : parsed.toFixed(4);
     },
     collateralToRemoveFormatted() {
       const parsed = parseFloat(this.collateralToRemove);
       return parsed === 0 || this.collateralToRemove === ""
-          ? "0"
-          : parsed.toFixed(4);
+        ? "0"
+        : parsed.toFixed(4);
     },
     repaySliderMaxZero() {
       return (
-          isNaN(this.amountToRepay) ||
-          isNaN(this.maxAmountToRepay) ||
-          parseFloat(this.maxAmountToRepay) === 0
+        isNaN(this.amountToRepay) ||
+        isNaN(this.maxAmountToRepay) ||
+        parseFloat(this.maxAmountToRepay) === 0
       );
     },
     repaySliderValue() {
@@ -122,15 +122,15 @@ export default {
       // empty string case
       const amountToRepayFixed = parseFloat(this.amountToRepay) || 0;
       return (
-          (amountToRepayFixed * 100) /
-          parseFloat(this.maxAmountToRepay)
+        (amountToRepayFixed * 100) /
+        parseFloat(this.maxAmountToRepay)
       ).toString();
     },
     removeCollateralSliderMaxZero() {
       return (
-          isNaN(this.collateralToRemove) ||
-          isNaN(this.maxCollateralToRemove) ||
-          parseFloat(this.maxCollateralToRemove) === 0
+        isNaN(this.collateralToRemove) ||
+        isNaN(this.maxCollateralToRemove) ||
+        parseFloat(this.maxCollateralToRemove) === 0
       );
     },
     removeCollateralSliderValue() {
@@ -138,8 +138,8 @@ export default {
       // empty string case
       const collateralToRemoveFixed = parseFloat(this.collateralToRemove) || 0;
       return (
-          (collateralToRemoveFixed * 100) /
-          parseFloat(this.maxCollateralToRemove)
+        (collateralToRemoveFixed * 100) /
+        parseFloat(this.maxCollateralToRemove)
       ).toString();
     },
     removeCollateralSliderMinValue() {
@@ -147,22 +147,22 @@ export default {
         return "0";
       }
       return (
-          (parseFloat(this.minCollateralToRemove) * 100) /
-          parseFloat(this.maxCollateralToRemove)
+        (parseFloat(this.minCollateralToRemove) * 100) /
+        parseFloat(this.maxCollateralToRemove)
       ).toString();
     },
   },
   methods: {
     onRepaySliderChange(newVal) {
       this.$emit(
-          "updateAmountToRepay",
-          ((parseFloat(newVal) * this.maxAmountToRepay) / 100).toString()
+        "updateAmountToRepay",
+        ((parseFloat(newVal) * this.maxAmountToRepay) / 100).toString()
       );
     },
     onRemoveCollateralSliderChange(newVal) {
       this.$emit(
-          "updateCollateralToRemove",
-          ((parseFloat(newVal) * this.maxCollateralToRemove) / 100).toString()
+        "updateCollateralToRemove",
+        ((parseFloat(newVal) * this.maxCollateralToRemove) / 100).toString()
       );
     },
   },

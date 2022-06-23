@@ -1,18 +1,18 @@
 <template>
   <div class="slider-container">
     <input
-        :data-cy="cyData"
-        :disabled="disabled"
-        :max="max"
-        :min="min"
-        :step="step"
-        :style="{
+      :data-cy="cyData"
+      :disabled="disabled"
+      :max="max"
+      :min="min"
+      :step="step"
+      :style="{
         backgroundSize: ((value - min) * 100) / (max - min) + '% 100%',
       }"
-        :value="value"
-        class="slider"
-        type="range"
-        @input="onChange"
+      :value="value"
+      class="slider"
+      type="range"
+      @input="onChange"
     />
   </div>
 </template>
@@ -22,7 +22,7 @@ export default {
   props: {
     cyData: {
       type: String,
-      default: ''
+      default: "",
     },
     // from 0 to 100
     value: {
@@ -41,7 +41,7 @@ export default {
     },
     max: {
       default: "100",
-    }
+    },
   },
   methods: {
     onChange(event) {

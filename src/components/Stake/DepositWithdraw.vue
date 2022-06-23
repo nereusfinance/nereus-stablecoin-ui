@@ -186,7 +186,7 @@ export default {
     maxValue() {
       let maxValue;
       if (this.actionType === "Deposit") {
-        maxValue =  this.formatBNValues(this.stakingTokenInfo.balance);
+        maxValue = this.formatBNValues(this.stakingTokenInfo.balance);
       }
       if (this.actionType === "Withdraw") {
         maxValue = this.formatBNValues(this.availableWithdraw);

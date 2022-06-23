@@ -26,3 +26,4 @@ pnpm-debug.log*
 tests/e2e/videos/*.mp4
 
 .gitlab-ci.yml
+yarn.lock
