@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isConnected">
+  <div class="btn-text" v-if="isConnected">
     <button
       class="btn mini connected-btn"
       :class="{ load: connectLoader, connected: isConnected }"
@@ -191,5 +191,26 @@ export default {
 
   text-align: center;
   color: #000000;
+}
+
+@media screen and(max-width: 980px) {
+  .btn-text {
+    height: 31px;
+    margin: 0;
+  }
+  .connected-btn {
+    width: auto;
+    padding: 0;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 24px;
+    margin: 0;
+  }
+  .slicedAddress {
+    width: auto;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+  }
 }
 </style>
