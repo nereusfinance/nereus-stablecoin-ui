@@ -14,16 +14,24 @@
             />
           </div>
           <div class="stand-sort">
-            <select :disabled="disabledSort" v-model="sortParam">
-              <option
+            <div
+              id="select"
+              @click="isActive"
+              :class="{active: active}"
+              :disabled="disabledSort"
+            >
+              {{ setSortParam(sortParam) }}
+            </div>
+            <div v-if="active" class="table">
+              <div
                 class="select-item"
                 v-for="item in sortedBy"
                 :key="item"
                 @click="setSortParam(item)"
               >
                 {{ item }}
-              </option>
-            </select>
+              </div>
+            </div>
           </div>
         </div>
         <StandTable :tableType="2" :items="filteredList" />
@@ -57,6 +65,7 @@ export default {
       text: "Please connect your wallet",
       name: "Connect",
       disabledStatus: false,
+      active: false,
 
       sortParam: "Sorted by Title",
       sortedBy: [
@@ -100,6 +109,9 @@ export default {
     },
   },
   methods: {
+    isActive() {
+      this.active = this.active === false;
+    },
     sortByFee(d1, d2) {
       return d1.stabilityFee < d2.stabilityFee ? 1 : -1;
     },
@@ -127,6 +139,7 @@ export default {
     },
     setSortParam(sortParam) {
       this.sortParam = sortParam;
+      return sortParam;
     },
     async walletBtnHandler() {
       if (this.isConnected) {
@@ -166,6 +179,7 @@ export default {
 .stand-container {
   display: flex;
   flex-direction: row;
+  height: 50px;
 }
 .search-input {
   background: #353535 url(../assets/images/search-icon.svg) 98% center no-repeat;
@@ -188,7 +202,7 @@ export default {
     border-color: white;
   }
 }
-.stand-sort select {
+.stand-sort #select {
   background: #353535 url(../assets/images/arrow-list.svg) 98% center no-repeat;
   appearance: none;
   color: #8a8a8a;
@@ -199,21 +213,44 @@ export default {
   border: 1px solid #8a8a8a;
   box-sizing: border-box;
   border-radius: 4px;
-  padding: 8px;
-  margin-bottom: 24px;
+  padding-top: 8px;
+  padding-left: 8px;
+  margin-bottom: 30px;
   font-size: 12px;
   cursor: pointer;
-  &:focus {
-    background: #1c1c1c;
-  }
 }
-.select-item {
+div#select.active {
+  background: #262626 url(../assets/images/arrow-list.svg) 98% center no-repeat;
+  border: 1px solid #FFFFFF;
   color: white;
+}
+
+
+.select-item {
+  z-index: 1;
+  position: relative;
+  top: -23.5px;
+  padding: 8px 12px;
   font-size: 12px;
+  width: 159px;
+  height: 32px;
   background: #262626;
   cursor: pointer;
-  :hover {
-    background-color: #1c1c1c;
+  text-align: left;
+  &:first-child{
+    border-radius: 4px 4px 0 0;
+  }
+  &:last-child{
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 10px 20px 2px rgba(0, 0, 0, 0.25);
+  }
+  &:not(:last-child){
+    border-bottom: 0.1px solid #1c1c1c;
+  }
+
+  &:hover {
+    background: #1C1C1C;
+    color: white;
   }
 }
 
