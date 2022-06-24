@@ -89,7 +89,7 @@ export default {
       if (parseFloat(userStoredReward) > parseFloat(NXUSDByTier1)) {
         return this.normalizeBNValues(userData[2].sub(userData[0][1]));
       } else {
-        return 0;
+        return "0.0";
       }
     },
   },
