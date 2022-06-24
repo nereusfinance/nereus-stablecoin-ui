@@ -959,6 +959,9 @@ export default {
     border: 1px solid #606060;
     padding: 16px 12px;
     margin-bottom: 8px;
+    @include respond-to(sm) {
+      padding: 16px;
+    }
   }
 
   .checkbox-wrap {
@@ -966,9 +969,6 @@ export default {
     align-items: center;
     font-size: 14px;
     line-height: 20px;
-    @include respond-to(sm) {
-      margin-bottom: 28px;
-    }
 
     .label-text {
       cursor: pointer;
@@ -1059,6 +1059,7 @@ export default {
     width: 200px;
     height: 32px;
     @include respond-to(sm) {
+      margin-top: 28px;
       margin-left: 0;
       width: 100%;
       height: 48px;
@@ -1079,7 +1080,7 @@ export default {
     padding-right: 16px;
   }
 
-  .deposit-borrow-block .config-box {
+  .deposit-borrow-block {
     padding: 10px;
   }
 }
