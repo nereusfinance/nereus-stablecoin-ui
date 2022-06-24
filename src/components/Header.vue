@@ -41,12 +41,15 @@
         </div>
       </nav>
 
-      <img
-        src="@/assets/images/mobile-menu.svg"
-        alt=""
-        class="mobile-btn"
-        @click="menuClickHandler"
-      />
+      <div class="mobile-connect-btn">
+        <img
+          src="@/assets/images/mobile-menu.svg"
+          alt=""
+          class="mobile-btn"
+          @click="menuClickHandler"
+        />
+        <ConnectButton :class="'connected'"/>
+      </div>
     </div>
   </header>
 </template>
@@ -274,6 +277,9 @@ export default {
     height: auto;
     object-fit: contain;
     cursor: pointer;
+    margin-right: 20px;
+  }
+  .mobile-connect-btn {
     display: none;
   }
 }
@@ -311,12 +317,18 @@ export default {
     display: none;
   }
 
-  .app-header .mobile-btn {
-    display: block;
+  .app-header .mobile-connect-btn {
+    display: flex;
   }
 
   .app-header .logo {
     width: 130px;
+  }
+}
+
+@media screen and(max-width: 500px) {
+  .app-header .connected {
+    display: none;
   }
 }
 </style>

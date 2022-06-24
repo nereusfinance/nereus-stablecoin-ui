@@ -224,11 +224,11 @@ export default {
 @media screen and(max-width: 780px) {
   .stand-table-item {
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-between;
     min-height: 100px;
 
     .table-col {
-      width: 20%;
+      width: 25%;
     }
 
     .action-col {
@@ -255,6 +255,10 @@ export default {
     padding-left: 20px;
     padding-right: 20px;
     justify-content: space-between;
+
+    .table-col {
+      width: 21%;
+    }
   }
 
   .stand-table-item .table-col p {

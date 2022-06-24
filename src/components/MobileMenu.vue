@@ -1,23 +1,8 @@
 <template>
   <div class="mobile-menu">
     <div class="like-header">
-      <router-link :to="{ name: 'Stand' }" class="logo-wrap"
-        ><img src="@/assets/images/text-logo.svg" alt="" class="logo"
-      /></router-link>
-
-      <img
-        src="@/assets/images/mobile-menu.svg"
-        alt=""
-        class="mobile-btn"
-        @click="hideMenu"
-      />
-    </div>
-    <div class="btns-wrap">
-      <ConnectButton />
-
-      <div class="btn-ml">
-        <NetworkButton @click="networkClickHandler" />
-      </div>
+      <NetworkButton @click="networkClickHandler" v-if="isConnected" />
+      <ConnectButton class="btn-connect" v-else />
     </div>
 
     <nav>
@@ -39,6 +24,9 @@ export default {
   watch: {
     $route() {
       this.hideMenu();
+    },
+    isConnected() {
+      return this.$store.getters.getWalletIsConnected;
     },
   },
   methods: {
@@ -73,7 +61,7 @@ export default {
   top: 0;
   right: 0;
   bottom: 0;
-  width: 100%;
+  width: 40%;
   background-color: $clrBg1;
   z-index: 400;
   display: flex;
@@ -82,15 +70,13 @@ export default {
   .like-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     height: 90px;
     min-height: 90px;
-    .logo {
-      width: 130px;
-      height: auto;
-      object-fit: contain;
-      position: relative;
-      z-index: 2;
+    border-bottom: 1px solid black;
+    .btn-connect {
+      width: 100%;
+      height: 48px;
     }
 
     .mobile-btn {
@@ -114,8 +100,8 @@ export default {
   nav {
     display: flex;
     flex-direction: column;
-    text-align: left;
     overflow-y: auto;
+    margin-top: 20px;
   }
 
   .nav-link {
@@ -132,6 +118,12 @@ export default {
     &:hover {
       color: $clrNavHover;
     }
+  }
+}
+
+@media screen and(max-width: 610px) {
+  .mobile-menu {
+    width: 50%;
   }
 }
 </style>
