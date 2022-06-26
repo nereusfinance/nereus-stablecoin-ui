@@ -14,7 +14,7 @@
             :onClick="setActionType"
           />
           <InfoBlock v-if="!actionType" />
-          <LockedToken class="mobileVersion"/>
+          <LockedToken class="mobileVersion" v-if="!actionType"/>
           <ExpectedInterest
             v-if="!actionType"
             :rewardsForPeriod="rewardsForPeriod"
