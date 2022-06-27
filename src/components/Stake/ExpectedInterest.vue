@@ -74,6 +74,13 @@ export default {
       period: ["Daily", "Weekly", "Monthly", "Yearly"],
     };
   },
+  async mounted() {
+    await this.$store.dispatch("checkUserCurrentRewards");
+    await this.$store.dispatch(
+      "calculateTableRewards",
+      [86400, 604800, 2629746, 31556952]
+    );
+  },
   computed: {
     rewardsForPeriod() {
       const tableRewards = this.$store.getters.getTableRewards;
