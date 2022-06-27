@@ -213,6 +213,7 @@ export default {
     height: 40px;
     width: 100%;
     margin-bottom: 8px;
+    border-radius: 8px;
   }
 
   &:focus {
@@ -243,6 +244,7 @@ export default {
     width: 100%;
     margin-bottom: 0px;
     padding-top: 12px;
+    border-radius: 8px;
   }
 }
 
