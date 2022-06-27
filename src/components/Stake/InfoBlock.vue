@@ -61,8 +61,10 @@ export default {
   },
   computed: {
     yearlyEarn() {
-      const yearlyRewards = this.$store.getters.getTotalTableRewards;
-      return this.normalizeBNValues(yearlyRewards[yearlyRewards.length - 1]);
+      const yearlyRewards = this.$store.getters.getTableRewards;
+      return this.normalizeBNValues(
+        yearlyRewards[yearlyRewards.length - 1].rewardsTotal
+      );
     },
     apyTierOne() {
       let APYTier1 = this.$store.getters.getUserData[0][2];
