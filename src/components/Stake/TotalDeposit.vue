@@ -3,16 +3,16 @@
     <p class="container-top">
       Total deposit
       <img
-        src="@/assets/images/icon-info.svg"
-        alt=""
-        class="info-icon"
-        v-tooltip="'Your deposited NXUSD'"
+          v-tooltip="'Your deposited NXUSD'"
+          alt=""
+          class="info-icon"
+          src="@/assets/images/icon-info.svg"
       />
     </p>
-    <p>
-      <TokenIcon token="NXUSD" />
-      {{ balance }} NXUSD
-    </p>
+    <div class="container">
+      <TokenIcon token="NXUSD"/>
+      <p v-tooltip="balanceWithDecimals" class="info-tooltip">{{ balance }} NXUSD</p>
+    </div>
     <div class="btns">
       <button
         class="deposit-btn"
@@ -35,6 +35,7 @@
 
 <script>
 import TokenIcon from "@/components/UiComponents/TokenIcon";
+
 export default {
   name: "TotalDeposit",
   data() {
@@ -50,6 +51,15 @@ export default {
     },
   },
   computed: {
+    balanceWithDecimals() {
+      return new Intl.NumberFormat("en-EN", {
+        maximumSignificantDigits: 18,
+      }).format(
+          parseFloat(
+              this.$ethers.utils.formatEther(this.$store.getters.getUserData[1])
+          )
+      );
+    },
     balance() {
       const userData = this.$store.getters.getUserData;
       const NXUSDByTier1 = Number(this.normalizeBNValues(userData[0][1]));
@@ -74,7 +84,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .total-deposit-block {
   width: 100%;
 
@@ -95,6 +105,15 @@ export default {
     gap: 8px;
     margin-bottom: 26px;
   }
+
+  .container {
+    display: flex
+  }
+
+  .info-tooltip {
+    cursor: pointer;
+  }
+
   p {
     font-size: 24px;
 
@@ -104,6 +123,7 @@ export default {
 
     gap: 2px;
   }
+
   .token-icon-wrap {
     width: 32px;
     height: 32px;
@@ -114,6 +134,7 @@ export default {
     display: flex;
     flex-direction: row;
   }
+
   .deposit-btn {
     cursor: pointer;
     margin-top: 18px;
@@ -137,14 +158,17 @@ export default {
       background-color: #353535;
     }
   }
+
   .deposit-btn:hover {
     color: black;
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
       #e7fc6e;
   }
+
   .info-icon {
     width: 13.3px;
   }
+
   .withdraw-btn {
     cursor: pointer;
     margin-top: 18px;
@@ -166,6 +190,7 @@ export default {
       background-color: #353535;
     }
   }
+
   .withdraw-btn:hover {
     color: black;
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
@@ -177,14 +202,17 @@ export default {
   .total-deposit-block {
     height: 186px;
     padding: 24px 16px 24px 16px;
+
     p {
       font-size: 20px;
     }
+
     .token-icon-wrap {
       width: 26px;
       height: 26px;
       margin-right: 6px;
     }
+
     .deposit-btn {
       width: 140px;
       margin-right: 8px;
@@ -192,6 +220,7 @@ export default {
       height: 40px;
       padding: 0 0 3px 0;
     }
+
     .withdraw-btn {
       width: 100px;
       height: 40px;
@@ -208,14 +237,17 @@ export default {
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 8px;
+
     .info-icon {
       width: 20px;
     }
+
     h1 {
       font-weight: 400;
       font-size: 18px;
       margin-bottom: 16px;
     }
+
     p {
       font-weight: 400;
       font-size: 20px;
@@ -233,6 +265,7 @@ export default {
       align-content: center;
       align-items: center;
     }
+
     .deposit-btn {
       margin-top: 28px;
       width: 296px;
@@ -240,12 +273,14 @@ export default {
       margin-right: 0;
       border-radius: 24px;
     }
+
     .withdraw-btn {
       margin-top: 12px;
       width: 296px;
       height: 48px;
       border-radius: 24px;
     }
+
     .container-top {
       gap: 6px;
       font-size: 18px;
