@@ -48,9 +48,7 @@
         <div class="available-amount">
           <span class="form-header-text">Available to withdraw</span>
           <span class="form-header-value"
-          >{{
-              formatBNValues(availableWithdraw)
-            }}<span class="form-symbol">{{ stakingTokenInfo.name }}</span></span
+          >{{formatBNValues(availableWithdraw)}}<span class="form-symbol">{{ stakingTokenInfo.name }}</span></span
           >
         </div>
         <ValueInput
@@ -188,10 +186,10 @@ export default {
     maxValue() {
       let maxValue;
       if (this.actionType === "Deposit") {
-        maxValue = this.formatBNValues(this.stakingTokenInfo.balance);
+        maxValue = this.normalizeBNValues(this.stakingTokenInfo.balance);
       }
       if (this.actionType === "Withdraw") {
-        maxValue = this.formatBNValues(this.availableWithdraw);
+        maxValue = this.normalizeBNValues(this.availableWithdraw);
       }
 
       return maxValue;
@@ -314,7 +312,7 @@ export default {
         return false;
       }
       if (parseFloat(value) > parseFloat(this.maxValue)) {
-        this.valueError = `Insufficient amount. The value available ${this.maxValue)}`;
+        this.valueError = `Insufficient amount. The value available ${this.maxValue}`;
         return false;
       } else if (value && value > 0.0) {
         this.valueError = "";
