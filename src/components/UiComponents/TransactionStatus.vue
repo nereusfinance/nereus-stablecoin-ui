@@ -405,7 +405,8 @@ export default {
 @media screen and(min-width: 768px) and(max-width: 1000px) {
   .transaction-status-block {
     .central-block {
-      button, .action-button {
+      button,
+      .action-button {
         width: 360px;
         height: 48px;
         border-radius: 24px;
@@ -414,7 +415,8 @@ export default {
     }
 
     .central-block-default {
-      button, .action-button {
+      button,
+      .action-button {
         margin-top: 5px;
         padding: 6px 12px;
         width: 100px;
@@ -441,7 +443,8 @@ export default {
         width: 180px;
       }
 
-      button, .action-button {
+      button,
+      .action-button {
         margin-top: 20px;
         padding: 6px 12px;
         width: 100px;
@@ -451,7 +454,8 @@ export default {
     }
     .central-block {
       width: 328px;
-      button, .action-button{
+      button,
+      .action-button {
         width: 296px;
         border-radius: 24px;
       }

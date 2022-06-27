@@ -144,7 +144,7 @@ export default {
   .total-title {
     display: flex;
     align-items: center;
-    color: #8A8A8A;
+    color: #8a8a8a;
   }
   .total-title img {
     margin-left: 5px;

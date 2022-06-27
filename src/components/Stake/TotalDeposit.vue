@@ -3,15 +3,17 @@
     <p class="container-top">
       Total deposit
       <img
-          v-tooltip="'Your deposited NXUSD'"
-          alt=""
-          class="info-icon"
-          src="@/assets/images/icon-info.svg"
+        v-tooltip="'Your deposited NXUSD'"
+        alt=""
+        class="info-icon"
+        src="@/assets/images/icon-info.svg"
       />
     </p>
     <div class="container">
-      <TokenIcon token="NXUSD"/>
-      <p v-tooltip="balanceWithDecimals" class="info-tooltip">{{ balance }} NXUSD</p>
+      <TokenIcon token="NXUSD" />
+      <p v-tooltip="balanceWithDecimals" class="info-tooltip">
+        {{ balance }} NXUSD
+      </p>
     </div>
     <div class="btns">
       <button
@@ -55,9 +57,9 @@ export default {
       return new Intl.NumberFormat("en-EN", {
         maximumSignificantDigits: 18,
       }).format(
-          parseFloat(
-              this.$ethers.utils.formatEther(this.$store.getters.getUserData[1])
-          )
+        parseFloat(
+          this.$ethers.utils.formatEther(this.$store.getters.getUserData[1])
+        )
       );
     },
     balance() {
@@ -107,7 +109,7 @@ export default {
   }
 
   .container {
-    display: flex
+    display: flex;
   }
 
   .info-tooltip {
@@ -184,7 +186,7 @@ export default {
     font-size: 14px;
     color: black;
     &.notActive {
-      color: #8A8A8A;
+      color: #8a8a8a;
       background-color: #353535;
     }
   }

@@ -10,7 +10,7 @@ export default class DashboardPage extends Page {
   }
 
   connectBrowserWallet() {
-    cy.findAllByText("Connect").spread((firstButton, secondButton) => {
+    cy.findAllByText("Connect").spread((firstButton) => {
       firstButton.click();
     });
     cy.findByText("Metamask").click();

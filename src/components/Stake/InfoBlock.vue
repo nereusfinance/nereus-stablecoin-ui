@@ -4,7 +4,10 @@
       <div class="column">
         Tier 1 amount
         <h2>
-          <span v-tooltip="tierOne" style="cursor:pointer;color: white">{{ tierOne | formatNumber }}</span> NXUSD
+          <span v-tooltip="tierOne" style="cursor: pointer; color: white">{{
+            tierOne | formatNumber
+          }}</span>
+          NXUSD
         </h2>
         <p class="apy">{{ apyTierOne }}%<span>APY</span></p>
       </div>
@@ -12,14 +15,19 @@
       <div class="column">
         Tier 2 amount
         <h2>
-          <span v-tooltip="tierTwo" style="cursor:pointer;color: white">{{ tierTwo | formatNumber }}</span> NXUSD
+          <span v-tooltip="tierTwo" style="cursor: pointer; color: white">{{
+            tierTwo | formatNumber
+          }}</span>
+          NXUSD
         </h2>
         <p class="apy">{{ apyTierTwo }}%<span>APY</span></p>
       </div>
     </div>
     <div class="column last-column">
       Yearly earn
-      <h1 v-tooltip="yearlyEarn" style="cursor:pointer">{{ yearlyEarn | formatNumber }}<span>NXUSD</span></h1>
+      <h1 v-tooltip="yearlyEarn" style="cursor: pointer">
+        {{ yearlyEarn | formatNumber }}<span>NXUSD</span>
+      </h1>
     </div>
   </div>
 </template>
@@ -33,21 +41,21 @@ export default {
       if (Number(value) === 0) return value;
 
       const lookup = [
-        {value: 0, symbol: ""},
-        {value: 1, symbol: ""},
-        {value: 1e3, symbol: "K"},
-        {value: 1e6, symbol: "M"},
+        { value: 0, symbol: "" },
+        { value: 1, symbol: "" },
+        { value: 1e3, symbol: "K" },
+        { value: 1e6, symbol: "M" },
       ];
       const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
       let item = lookup
-          .slice()
-          .reverse()
-          .find(function (item) {
-            return parseFloat(value) >= item.value;
-          });
+        .slice()
+        .reverse()
+        .find(function (item) {
+          return parseFloat(value) >= item.value;
+        });
       return (
-          (parseFloat(value) / item.value).toFixed(2).replace(rx, "$1") +
-          item.symbol
+        (parseFloat(value) / item.value).toFixed(2).replace(rx, "$1") +
+        item.symbol
       );
     },
   },

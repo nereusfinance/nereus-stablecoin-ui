@@ -5,7 +5,7 @@
       <div class="stake-wrapper">
         <div class="stake-item stake-item-one" v-if="!actionStatus">
           <TotalDeposit :actionType="actionType" :onClick="setActionType" />
-          <LockedToken class="compScreenVersion"/>
+          <LockedToken class="compScreenVersion" />
         </div>
         <div class="stake-item stake-item-two">
           <DepositWithdraw
@@ -14,7 +14,7 @@
             :onClick="setActionType"
           />
           <InfoBlock v-if="!actionType" />
-          <LockedToken class="mobileVersion" v-if="!actionType"/>
+          <LockedToken class="mobileVersion" v-if="!actionType" />
           <ExpectedInterest
             v-if="!actionType"
             :rewardsForPeriod="rewardsForPeriod"
@@ -156,7 +156,7 @@ export default {
 }
 
 @media screen and(min-width: 768px) {
-  .mobileVersion{
+  .mobileVersion {
     display: none;
   }
 }
