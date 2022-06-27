@@ -1,15 +1,15 @@
 <template>
   <div class="deposit-withdraw-block">
     <BackButton
-      :text="'Back'"
-      :disabled="transactionPending !== 'wait for action'"
-      @click="goBack"
+        :disabled="transactionPending !== 'wait for action'"
+        :text="'Back'"
+        @click="goBack"
     />
     <!--  <BackButton :text="'Back'" @click="onClick" v-else-if="transactionPending !== 'finished'" />-->
     <div class="action-wrapper">
       <div
-        v-if="actionType === 'Deposit' && overview === false"
-        class="deposit-withdraw-container"
+          v-if="actionType === 'Deposit' && overview === false"
+          class="deposit-withdraw-container"
       >
         <p class="form-header">How much would you like to deposit?</p>
         <p class="form-description">
@@ -19,25 +19,26 @@
         <div class="available-amount">
           <span class="form-header-text">Available to deposit</span>
           <span class="form-header-value">
-            {{ formatBNValues(stakingTokenInfo.balance)
+            {{
+              formatBNValues(stakingTokenInfo.balance)
             }}<span class="form-symbol">{{ stakingTokenInfo.name }}</span>
           </span>
         </div>
         <ValueInput
-          :max="maxValue"
-          :show-max="true"
-          valueName="NXUSD"
-          @onchange="updateValue"
-          :parentValue="valueAmount"
-          :error="valueError"
-          :isStake="true"
+            :error="valueError"
+            :isStake="true"
+            :max="maxValue"
+            :parentValue="valueAmount"
+            :show-max="true"
+            valueName="NXUSD"
+            @onchange="updateValue"
         />
         <button class="continue" @click="toOverview">Continue</button>
       </div>
 
       <div
-        v-if="actionType === 'Withdraw' && overview === false"
-        class="deposit-withdraw-container"
+          v-if="actionType === 'Withdraw' && overview === false"
+          class="deposit-withdraw-container"
       >
         <p class="form-header">How much would you like to withdraw?</p>
         <p class="form-description">
@@ -47,42 +48,43 @@
         <div class="available-amount">
           <span class="form-header-text">Available to withdraw</span>
           <span class="form-header-value"
-            >{{ formatBNValues(availableWithdraw)
+          >{{
+              formatBNValues(availableWithdraw)
             }}<span class="form-symbol">{{ stakingTokenInfo.name }}</span></span
           >
         </div>
         <ValueInput
-          :max="maxValue"
-          :show-max="true"
-          valueName="NXUSD"
-          @onchange="updateValue"
-          :parentValue="valueAmount"
-          :error="valueError"
-          :isStake="true"
+            :error="valueError"
+            :isStake="true"
+            :max="maxValue"
+            :parentValue="valueAmount"
+            :show-max="true"
+            valueName="NXUSD"
+            @onchange="updateValue"
         />
         <button class="continue" @click="toOverview">Continue</button>
       </div>
 
       <div v-if="overview" class="deposit-withdraw-container">
-        <p class="form-header" v-if="transactionPending !== 'finished'">
+        <p v-if="transactionPending !== 'finished'" class="form-header">
           {{ actionType }} overview
         </p>
-        <p class="form-description" v-if="transactionPending !== 'finished'">
+        <p v-if="transactionPending !== 'finished'" class="form-description">
           These are your transaction details. Make sure to check if this is
           correct before submitting.
         </p>
 
-        <p class="form-header" v-if="transactionPending === 'finished'">
+        <p v-if="transactionPending === 'finished'" class="form-header">
           Congrats!
         </p>
-        <p class="form-description" v-if="transactionPending === 'finished'">
+        <p v-if="transactionPending === 'finished'" class="form-description">
           Your action has been successfully executed
         </p>
         <div class="currency-overview">
           <h2>Currency</h2>
           <TokenIcon
-            v-if="actionType === 'Deposit'"
-            :token="stakingTokenInfo.name"
+              v-if="actionType === 'Deposit'"
+              :token="stakingTokenInfo.name"
           />
           <div>
             {{ valueAmount }}
@@ -90,30 +92,30 @@
           </div>
         </div>
         <TransactionStatus
-          v-if="actionType === 'Deposit'"
-          :statusType="depositStatus"
-          :transactionPending="transactionPending"
-          :action="action"
-          :value="valueAmount"
-          :tx="tx"
-          :action-amount="actionAmount"
-          :txApprove="txApprove"
-          @stakeHandler="stakeHandler"
-          @onFinish="goBack"
+            v-if="actionType === 'Deposit'"
+            :action="action"
+            :action-amount="actionAmount"
+            :statusType="depositStatus"
+            :transactionPending="transactionPending"
+            :tx="tx"
+            :txApprove="txApprove"
+            :value="valueAmount"
+            @onFinish="goBack"
+            @stakeHandler="stakeHandler"
         />
         <TransactionStatus
-          v-if="actionType === 'Withdraw'"
-          :statusType="withdrawStatus"
-          :transactionPending="transactionPending"
-          :action="action"
-          :value="valueAmount"
-          :tx="tx"
-          @addUnstake="unstakeHandler"
-          @onFinish="goBack"
+            v-if="actionType === 'Withdraw'"
+            :action="action"
+            :statusType="withdrawStatus"
+            :transactionPending="transactionPending"
+            :tx="tx"
+            :value="valueAmount"
+            @addUnstake="unstakeHandler"
+            @onFinish="goBack"
         />
         <add-token-btn
-          v-if="transactionPending === 'finished'"
-          :token-name="stakingTokenInfo.name"
+            v-if="transactionPending === 'finished'"
+            :token-name="stakingTokenInfo.name"
         />
       </div>
     </div>
@@ -127,7 +129,7 @@ import TransactionStatus from "@/components/UiComponents/TransactionStatus";
 import AddTokenBtn from "@/components/UiComponents/AddTokenBtn";
 import NXUSDStakingContractInfo from "@/utils/contracts/NXUSDStaking";
 import masterContractInfo from "@/utils/contracts/master";
-import { ethers } from "ethers";
+import {ethers} from "ethers";
 
 const BackButton = () => import("@/components/UiComponents/BackButton");
 
@@ -186,10 +188,10 @@ export default {
     maxValue() {
       let maxValue;
       if (this.actionType === "Deposit") {
-        maxValue = this.formatBNValues(this.stakingTokenInfo.balance);
+        maxValue = this.normalizeBNValues(this.stakingTokenInfo.balance);
       }
       if (this.actionType === "Withdraw") {
-        maxValue = this.formatBNValues(this.availableWithdraw);
+        maxValue = this.normalizeBNValues(this.availableWithdraw);
       }
 
       return maxValue;
@@ -205,27 +207,27 @@ export default {
     formatBNValues(value) {
       const normalizedValue = this.normalizeBNValues(value);
       return new Intl.NumberFormat("en-EN").format(
-        parseFloat(normalizedValue).toFixed(2)
+          parseFloat(normalizedValue).toFixed(2)
       );
     },
     getBentoBoxContract() {
       const bentoBox = masterContractInfo.find(
-        (contract) => contract.contractChain === this.chainId
+          (contract) => contract.contractChain === this.chainId
       );
       this.bentoBoxContract = new this.$ethers.Contract(
-        bentoBox.address,
-        bentoBox.abi,
-        this.signer
+          bentoBox.address,
+          bentoBox.abi,
+          this.signer
       );
     },
     async getStakingTokenInfo() {
       const NXUSDStaking = NXUSDStakingContractInfo.find(
-        (contract) => contract.contractChain === this.chainId
+          (contract) => contract.contractChain === this.chainId
       );
       this.stakingTokenContract = new this.$ethers.Contract(
-        NXUSDStaking.stakingToken.address,
-        NXUSDStaking.stakingToken.abi,
-        this.signer
+          NXUSDStaking.stakingToken.address,
+          NXUSDStaking.stakingToken.abi,
+          this.signer
       );
       const balance = await this.stakingTokenContract.balanceOf(this.account);
       this.stakingTokenInfo = {
@@ -250,8 +252,8 @@ export default {
     async approveTokenToBentoBox() {
       try {
         const tx = await this.stakingTokenContract.approve(
-          this.bentoBoxContract.address,
-          ethers.constants.MaxUint256
+            this.bentoBoxContract.address,
+            ethers.constants.MaxUint256
         );
         await tx.wait();
       } catch (e) {
@@ -265,10 +267,10 @@ export default {
     async isApprowedForBentobox() {
       try {
         const nxusdStaking = await this.$store.getters.getNXUSDStakingContract
-          .address;
+            .address;
         return await this.bentoBoxContract.masterContractApproved(
-          nxusdStaking,
-          this.account
+            nxusdStaking,
+            this.account
         );
       } catch (e) {
         console.log("isApprowed err:", e);
@@ -307,8 +309,12 @@ export default {
       this.overview = true;
     },
     updateValue(value) {
+      if ((value[0] === "0") && (value[1] !== ".")) {
+        this.valueError = "Wrong number format";
+        return false;
+      }
       if (parseFloat(value) > parseFloat(this.maxValue)) {
-        this.valueError = `Insufficient amount. The value available ${this.maxValue}`;
+        this.valueError = `Insufficient amount. The value available ${this.maxValue)}`;
         return false;
       } else if (value && value > 0.0) {
         this.valueError = "";
@@ -355,16 +361,16 @@ export default {
           this.transactionPending = "wait for action";
         }
         if (
-          approveInBento &&
-          tokenApprove &&
-          this.depositStatus.length > 2 &&
-          this.transactionPending !== "3"
+            approveInBento &&
+            tokenApprove &&
+            this.depositStatus.length > 2 &&
+            this.transactionPending !== "3"
         )
           await this.action(2);
         if (
-          approveInBento &&
-          tokenApprove &&
-          (this.transactionPending === "3" || this.transactionPending < 2)
+            approveInBento &&
+            tokenApprove &&
+            (this.transactionPending === "3" || this.transactionPending < 2)
         ) {
           await this.stake();
         }
@@ -403,15 +409,15 @@ export default {
     async approveMasterContract(approval) {
       try {
         const NXUSDStaking = await this.$store.getters.getNXUSDStakingContract
-          .address;
+            .address;
 
         const tx = await this.bentoBoxContract.setMasterContractApproval(
-          this.account,
-          NXUSDStaking,
-          true,
-          approval.v,
-          approval.r,
-          approval.s
+            this.account,
+            NXUSDStaking,
+            true,
+            approval.v,
+            approval.r,
+            approval.s
         );
 
         const receipt = await tx.wait();
@@ -445,11 +451,11 @@ export default {
       // The named list of all type definitions
       const types = {
         SetMasterContractApproval: [
-          { name: "warning", type: "string" },
-          { name: "user", type: "address" },
-          { name: "masterContract", type: "address" },
-          { name: "approved", type: "bool" },
-          { name: "nonce", type: "uint256" },
+          {name: "warning", type: "string"},
+          {name: "user", type: "address"},
+          {name: "masterContract", type: "address"},
+          {name: "approved", type: "bool"},
+          {name: "nonce", type: "uint256"},
         ],
       };
 
@@ -490,8 +496,8 @@ export default {
     async tokenAllowance() {
       try {
         const tokenAllowance = await this.stakingTokenContract.allowance(
-          this.account,
-          this.bentoBoxContract.address
+            this.account,
+            this.bentoBoxContract.address
         );
         console.log("TOKEN APPROVE:", tokenAllowance, tokenAllowance.isZero());
         return tokenAllowance;
@@ -511,13 +517,14 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .deposit-withdraw-block {
   background: #262626;
   border-radius: 4px;
   padding: 32px 24px;
   display: flex;
   flex-direction: column;
+
   .deposit-withdraw-container {
     padding: 40px 100px;
 
@@ -527,16 +534,19 @@ export default {
       font-weight: 400;
       text-align: left;
     }
+
     .form-header-value {
       font-weight: 600;
       font-size: 16px;
       text-align: right;
       color: #f2f4fe;
+
       .form-symbol {
         margin-left: 4px;
         font-weight: 400;
       }
     }
+
     .form-description {
       text-align: left;
       margin: 8px 0 24px 0;
@@ -549,6 +559,7 @@ export default {
       flex-direction: row;
       justify-content: space-between;
       margin-bottom: 16px;
+
       .form-header-text {
         font-weight: 400;
         text-align: left;
@@ -557,6 +568,7 @@ export default {
       }
     }
   }
+
   .continue {
     border: none;
     cursor: pointer;
@@ -597,6 +609,7 @@ export default {
       margin-top: 28px;
       padding: 0;
     }
+
     .continue {
       width: 392px;
       height: 48px;
@@ -604,6 +617,7 @@ export default {
     }
   }
 }
+
 @media screen and(max-width: 767px) {
   .deposit-withdraw-block {
     background-color: #1c1c1c;
@@ -617,10 +631,12 @@ export default {
     p {
       line-height: 16px;
     }
+
     .deposit-withdraw-container {
       width: 328px;
       padding: 40px 0;
     }
+
     .continue {
       width: 328px;
     }
