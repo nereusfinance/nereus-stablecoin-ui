@@ -1,22 +1,22 @@
 <template>
-  <footer class="app-footer" :class="{ transparent: itsTransparent }">
+  <footer :class="{ transparent: itsTransparent }" class="app-footer">
     <div class="container">
       <div class="leftLinks">
         <SocialLink
-          v-for="(item, index) in filteredLeftIcons"
-          :key="index"
-          :data="item.data"
-          :link="item.link"
-          :type="item.type"
+            v-for="(item, index) in filteredLeftIcons"
+            :key="index"
+            :data="item.data"
+            :link="item.link"
+            :type="item.type"
         />
       </div>
       <div class="rightLinks">
         <SocialLink
-          v-for="(item, index) in filteredRightIcons"
-          :key="index"
-          :data="item.data"
-          :link="item.link"
-          :type="item.type"
+            v-for="(item, index) in filteredRightIcons"
+            :key="index"
+            :data="item.data"
+            :link="item.link"
+            :type="item.type"
         />
       </div>
     </div>
@@ -84,13 +84,21 @@ export default {
   },
 };
 </script>
-<style scoped lang="scss">
+<style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .app-footer {
   z-index: 1;
   height: $footerHeight;
   background: #262626;
   display: flex;
   align-items: center;
+  @include respond-to(sm) {
+    background: transparent;
+    position: absolute;
+    bottom: 0;
+    width: calc(100% - 30px);
+  }
 
   &.transparent {
     position: absolute;
@@ -108,6 +116,9 @@ export default {
     margin: auto;
     justify-content: space-between;
     width: 100%;
+    @include respond-to(sm) {
+      padding: 0 !important;
+    }
   }
 
   .rightLinks {
