@@ -10,9 +10,9 @@
       <PopupsWrapper v-if="showPopup" />
     </template>
 
-    <ConnectionChecker @checkError="checkError" @checkSuccess="checkSuccess"/>
+    <ConnectionChecker @checkError="checkError" @checkSuccess="checkSuccess" />
 
-    <NotificationContainer/>
+    <NotificationContainer />
   </div>
 </template>
 
@@ -22,9 +22,9 @@ const Footer = () => import("@/components/Footer");
 // const Banner = () => import("@/components/UiComponents/Banner");
 const PopupsWrapper = () => import("@/components/Popups/PopupWrapper");
 const NotificationContainer = () =>
-    import("@/components/Notifications/NotificationContainer");
+  import("@/components/Notifications/NotificationContainer");
 const ConnectionChecker = () =>
-    import("@/components/ConnectionChecker/ConnectionChecker");
+  import("@/components/ConnectionChecker/ConnectionChecker");
 import poolsMixin from "@/mixins/pools.js";
 import farmPoolsMixin from "@/mixins/farmPools.js";
 import swapMixin from "@/mixins/swap.js";
@@ -98,7 +98,7 @@ export default {
 
 .footer-container {
   @include respond-to(sm) {
-    display: none
+    display: none;
   }
 }
 

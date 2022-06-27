@@ -2,24 +2,24 @@
   <div class="statistics-stand">
     <div class="btns-group">
       <button
-          :class="{ active: actionType === 'share' }"
-          class="btn mini borrow-btn"
-          @click="setActionType('share')"
+        :class="{ active: actionType === 'share' }"
+        class="btn mini borrow-btn"
+        @click="setActionType('share')"
       >
         My share
       </button>
       <button
-          :class="{ active: actionType === 'reserves' }"
-          class="btn mini replay-btn"
-          @click="setActionType('reserves')"
+        :class="{ active: actionType === 'reserves' }"
+        class="btn mini replay-btn"
+        @click="setActionType('reserves')"
       >
         Currency reserves
       </button>
     </div>
 
     <div class="items-wrap">
-      <TokenItem/>
-      <InfoItem/>
+      <TokenItem />
+      <InfoItem />
     </div>
   </div>
 </template>
@@ -54,7 +54,6 @@ export default {
   background: $clrBg2;
   border-radius: 20px;
 
-
   h2 {
     margin-bottom: 30px;
   }
@@ -69,7 +68,6 @@ export default {
     align-items: center;
     justify-content: space-between;
     margin-bottom: 20px;
-
 
     .btn {
       width: calc(50% - 10px);

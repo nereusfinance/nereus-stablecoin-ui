@@ -2,10 +2,10 @@
   <div class="statistics-block">
     <div v-for="(item, idx) in userStats" :key="idx" class="item-wrap">
       <TotalItem
-          :amount="item.amount"
-          :count="item.count"
-          :icon="item.icon"
-          :type="item.type"
+        :amount="item.amount"
+        :count="item.count"
+        :icon="item.icon"
+        :type="item.type"
       />
     </div>
 
@@ -27,16 +27,16 @@ export default {
   methods: {
     updatedBorrowStat() {
       const userBorrowPools = this.pools.filter(
-          (pool) => +pool.userBorrowPart > 0
+        (pool) => +pool.userBorrowPart > 0
       );
 
       const borrowAmount = userBorrowPools.reduce(function (
-              accumulator,
-              currentValue
-          ) {
-            return accumulator + +currentValue.userBorrowPart;
-          },
-          0);
+        accumulator,
+        currentValue
+      ) {
+        return accumulator + +currentValue.userBorrowPart;
+      },
+      0);
 
       return {
         type: "borrow",
@@ -47,22 +47,22 @@ export default {
     },
     updatedCollateralStat() {
       const userCollateralPools = this.pools.filter(
-          (pool) => +pool.userCollateralShare > 0
+        (pool) => +pool.userCollateralShare > 0
       );
 
       const collateralAmount = userCollateralPools.reduce(
-          (accumulator, currentValue) => {
-            const parsedExchangeRate = this.$ethers.utils.formatUnits(
-                currentValue.token.oracleExchangeRate.toString(),
-                currentValue.token.decimals
-            );
+        (accumulator, currentValue) => {
+          const parsedExchangeRate = this.$ethers.utils.formatUnits(
+            currentValue.token.oracleExchangeRate.toString(),
+            currentValue.token.decimals
+          );
 
-            const collateralInUsd =
-                +currentValue.userCollateralShare / +parsedExchangeRate;
+          const collateralInUsd =
+            +currentValue.userCollateralShare / +parsedExchangeRate;
 
-            return accumulator + collateralInUsd;
-          },
-          0
+          return accumulator + collateralInUsd;
+        },
+        0
       );
 
       return {

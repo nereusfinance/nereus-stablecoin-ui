@@ -1,7 +1,7 @@
 <template>
   <div class="info-block">
     <div class="items-wrap">
-      <CollParamItem v-for="(item, idx) in infoItems" :key="idx" :item="item"/>
+      <CollParamItem v-for="(item, idx) in infoItems" :key="idx" :item="item" />
     </div>
   </div>
 </template>

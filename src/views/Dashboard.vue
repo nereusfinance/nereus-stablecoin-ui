@@ -8,20 +8,20 @@
       </div>
 
       <template v-if="pools">
-        <StatisticsBlock :pools="userPools"/>
+        <StatisticsBlock :pools="userPools" />
 
         <div class="btns-group">
           <button
-              :class="{ active: shortcutState === 'borrow' }"
-              class="btn mini borrow-btn"
-              @click="setShortcutType('borrow')"
+            :class="{ active: shortcutState === 'borrow' }"
+            class="btn mini borrow-btn"
+            @click="setShortcutType('borrow')"
           >
             Borrow
           </button>
           <button
-              :class="{ active: shortcutState === 'repay' }"
-              class="btn mini replay-btn"
-              @click="setShortcutType('repay')"
+            :class="{ active: shortcutState === 'repay' }"
+            class="btn mini replay-btn"
+            @click="setShortcutType('repay')"
           >
             Repay
           </button>
@@ -29,14 +29,14 @@
 
         <div v-if="userPools.length" class="items-wrap">
           <OpenPoolItem
-              v-for="pool in userPools"
-              :key="pool.id"
-              :actionType="shortcutState"
-              :pool="pool"
+            v-for="pool in userPools"
+            :key="pool.id"
+            :actionType="shortcutState"
+            :pool="pool"
           />
         </div>
 
-        <EmptyPoolsState v-else :blockType="shortcutState"/>
+        <EmptyPoolsState v-else :blockType="shortcutState" />
       </template>
     </div>
   </div>
@@ -62,8 +62,8 @@ export default {
     },
     userPools() {
       return this.pools.filter(
-          (pool) =>
-              pool.userBorrowPart !== "0.0" || pool.userCollateralShare !== "0.0"
+        (pool) =>
+          pool.userBorrowPart !== "0.0" || pool.userCollateralShare !== "0.0"
       );
     },
   },
@@ -85,7 +85,7 @@ export default {
     async getUserCollateralShare(poolContract) {
       try {
         const userCollateralShare = await poolContract.userCollateralShare(
-            this.account
+          this.account
         );
         return userCollateralShare;
       } catch (e) {
@@ -96,13 +96,12 @@ export default {
   async created() {
     const isConnected = this.$store.getters.getWalletIsConnected;
     if (!isConnected) {
-      this.$router.push({name: "Stand"});
+      this.$router.push({ name: "Stand" });
       return false;
     }
     this.createStakePool();
   },
-  mounted() {
-  },
+  mounted() {},
   components: {
     StatisticsBlock,
     OpenPoolItem,
@@ -162,7 +161,7 @@ export default {
       line-height: 20px;
       background: #262626;
       @include respond-to(sm) {
-        width: 50%
+        width: 50%;
       }
 
       &:hover {

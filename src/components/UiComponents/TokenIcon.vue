@@ -1,10 +1,10 @@
 <template>
   <div
-      :class="{ 'mim-wrap': token === 'MIM' || full, pair: itsGroup, mini }"
-      class="token-icon-wrap"
+    :class="{ 'mim-wrap': token === 'MIM' || full, pair: itsGroup, mini }"
+    class="token-icon-wrap"
   >
     <!--    <img :src="bgIcon" alt="" class="bg" />-->
-    <img :src="tokenIcon" alt="" class="token-icon"/>
+    <img :src="tokenIcon" alt="" class="token-icon" />
   </div>
 </template>
 
@@ -38,7 +38,7 @@ export default {
         const tokenImage = require(`@/assets/images/tokens-icon/Token_${this.token}.svg`);
 
         return (
-            tokenImage || require("@/assets/images/tokens-icon/Token_AVAX.svg")
+          tokenImage || require("@/assets/images/tokens-icon/Token_AVAX.svg")
         );
       } catch (e) {
         return require("@/assets/images/tokens-icon/Token_AVAX.svg");

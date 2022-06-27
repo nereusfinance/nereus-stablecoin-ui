@@ -10,28 +10,28 @@
     </div>
     <div class="block-body">
       <div
-          v-for="(item, idx) in percentItems"
-          :key="idx"
-          :class="{ active: item == value, disabled: item > maxValue }"
-          class="percent-item"
-          @click="setItemActive(item)"
+        v-for="(item, idx) in percentItems"
+        :key="idx"
+        :class="{ active: item == value, disabled: item > maxValue }"
+        class="percent-item"
+        @click="setItemActive(item)"
       >
         <p>{{ item }}%</p>
       </div>
       <label
-          :class="{
+        :class="{
           error: customErr,
           active: customValue == value && value !== '',
         }"
-          class="percent-item custom"
-          @click="setCustomState(true)"
+        class="percent-item custom"
+        @click="setCustomState(true)"
       >
         <input
-            v-if="isCustom"
-            v-model.trim="customValue"
-            placeholder="Custom"
-            type="number"
-            @input="setCustomValue($event.target.value)"
+          v-if="isCustom"
+          v-model.trim="customValue"
+          placeholder="Custom"
+          type="number"
+          @input="setCustomValue($event.target.value)"
         />
         <p v-else>Custom</p>
       </label>
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import {between} from "vuelidate/lib/validators";
+import { between } from "vuelidate/lib/validators";
 
 export default {
   props: {
@@ -75,8 +75,8 @@ export default {
     },
     liquidationPriceFormatted() {
       return this.liquidationPrice === "xxx.xx" || !this.liquidationPrice
-          ? "xxx.xx"
-          : parseFloat(this.liquidationPrice).toFixed(8);
+        ? "xxx.xx"
+        : parseFloat(this.liquidationPrice).toFixed(8);
     },
   },
   watch: {

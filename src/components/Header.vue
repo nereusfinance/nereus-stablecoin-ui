@@ -4,48 +4,48 @@
       <div class="containerS">
         <div>
           <router-link :to="{ name: 'Stand' }" class="logo-wrap">
-            <img alt="" class="logo" src="@/assets/images/text-logo.svg"/>
+            <img alt="" class="logo" src="@/assets/images/text-logo.svg" />
           </router-link>
         </div>
         <a class="nereus-btn" href="https://app.nereus.finance/#/markets"
-        >Nereus Markets</a
+          >Nereus Markets</a
         >
       </div>
 
       <nav>
         <div>
           <router-link
-              :to="{ name: 'Stand' }"
-              active="onclick"
-              class="markets-btn"
+            :to="{ name: 'Stand' }"
+            active="onclick"
+            class="markets-btn"
           >
             Markets
           </router-link>
           <router-link
-              :to="{ name: 'Stake' }"
-              active="onclick"
-              class="stake-btn"
+            :to="{ name: 'Stake' }"
+            active="onclick"
+            class="stake-btn"
           >
             Earn
           </router-link>
           <router-link
-              :to="{ name: 'Dashboard' }"
-              active="onclick"
-              class="dashboard-btn"
+            :to="{ name: 'Dashboard' }"
+            active="onclick"
+            class="dashboard-btn"
           >
             My Dashboard
           </router-link>
         </div>
         <div class="btn-margin">
-          <ConnectButton/>
+          <ConnectButton />
         </div>
       </nav>
 
       <img
-          alt=""
-          class="mobile-btn"
-          src="@/assets/images/mobile-menu.svg"
-          @click="menuClickHandler"
+        alt=""
+        class="mobile-btn"
+        src="@/assets/images/mobile-menu.svg"
+        @click="menuClickHandler"
       />
     </div>
   </header>

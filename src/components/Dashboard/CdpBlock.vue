@@ -3,7 +3,7 @@
     <h2>Opened deals</h2>
 
     <div v-if="pools.length" class="items-wrap">
-      <CdpItem v-for="pool in pools" :key="pool.id" :pool="pool"/>
+      <CdpItem v-for="pool in pools" :key="pool.id" :pool="pool" />
     </div>
     <p v-else>You have no opened deals yet</p>
   </div>

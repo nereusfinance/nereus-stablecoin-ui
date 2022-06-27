@@ -11,7 +11,7 @@
         <ConnectButton />
       </div>
 
-      <hr class="hr-top"/>
+      <hr class="hr-top" />
       <nav>
         <router-link :to="{ name: 'Stand' }" class="nav-link"
           >Markets</router-link
@@ -21,7 +21,7 @@
         >
         <router-link :to="{ name: 'Stake' }" class="nav-link">Earn</router-link>
       </nav>
-      <hr/>
+      <hr />
       <Footer />
     </div>
   </div>
@@ -61,7 +61,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .mobile-menu {
   position: fixed;
   top: 0;
@@ -128,7 +127,7 @@ export default {
   }
 
   hr {
-    border-color: #1C1C1C;
+    border-color: #1c1c1c;
     margin: auto 0 63px 0;
   }
   .hr-top {

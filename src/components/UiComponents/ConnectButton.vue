@@ -27,8 +27,7 @@
       @click="walletBtnHandler"
     >
       <ButtonLoader v-if="connectLoader" />
-      <template v-else>
-      </template>
+      <template v-else> </template>
     </button>
   </div>
 </template>
@@ -215,7 +214,7 @@ export default {
   .connect-btn {
     height: 48px;
     width: 272px;
-    background: #E7FC6E;
+    background: #e7fc6e;
     border-radius: 24px;
     font-size: 18px;
   }

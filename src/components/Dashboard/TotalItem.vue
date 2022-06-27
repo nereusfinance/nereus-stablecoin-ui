@@ -6,7 +6,7 @@
     <!--      <img class="type-icon" :src="icon" alt="" />-->
     <!--    </div>-->
     <div class="token-container">
-      <TokenIcon v-if="type === 'borrow'" :token="'NXUSD'"/>
+      <TokenIcon v-if="type === 'borrow'" :token="'NXUSD'" />
       <p class="count-text">{{ amount }}</p>
       <p v-if="type === 'borrow'" class="token-text">NXUSD</p>
     </div>
@@ -18,7 +18,7 @@
 import TokenIcon from "../UiComponents/TokenIcon";
 
 export default {
-  components: {TokenIcon},
+  components: { TokenIcon },
   props: {
     type: {
       type: String,
@@ -110,7 +110,6 @@ export default {
       font-size: 28px;
       margin-right: 8px;
     }
-
   }
 
   .token-text {
@@ -129,7 +128,7 @@ export default {
     text-align: left;
     color: #8a8a8a;
     @include respond-to(sm) {
-      display: none
+      display: none;
     }
   }
 }
