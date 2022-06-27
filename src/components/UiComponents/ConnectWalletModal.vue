@@ -4,28 +4,28 @@
       <header class="modal-header">
         <slot name="header"> Choose provider</slot>
         <img
-            alt="cross"
-            class="btn-close"
-            src="@/assets/images/cross.svg"
-            @click="closeModal"
+          alt="cross"
+          class="btn-close"
+          src="@/assets/images/cross.svg"
+          @click="closeModal"
         />
       </header>
       <slot name="body">
         <div
-            v-for="connector in connectors"
-            :key="connector.name"
-            class="modal-body"
+          v-for="connector in connectors"
+          :key="connector.name"
+          class="modal-body"
         >
           <div
-              v-if="!connector.disabled"
-              class="provider-btn"
-              @click="connector.onClick()"
+            v-if="!connector.disabled"
+            class="provider-btn"
+            @click="connector.onClick()"
           >
             <div>{{ connector.name }}</div>
             <img
-                :alt="connector.name"
-                :src="require(`@/assets/images/${connector.iconName}.svg`)"
-                class="connector-img"
+              :alt="connector.name"
+              :src="require(`@/assets/images/${connector.iconName}.svg`)"
+              class="connector-img"
             />
           </div>
         </div>
@@ -141,7 +141,7 @@ export default {
   cursor: pointer;
   @include respond-to(sm) {
     top: -30px;
-    right: 0
+    right: 0;
   }
 }
 
@@ -157,7 +157,7 @@ export default {
   @include respond-to(sm) {
     height: 48px;
     border-radius: 4px;
-    background: #353535
+    background: #353535;
   }
 
   img {

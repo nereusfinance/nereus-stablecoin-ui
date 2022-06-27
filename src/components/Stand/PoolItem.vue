@@ -1,21 +1,21 @@
 <template>
   <div
-      :class="{ 'stand-table-disable': !pool.isEnabled }"
-      class="stand-table-item"
-      @click="toPool"
+    :class="{ 'stand-table-disable': !pool.isEnabled }"
+    class="stand-table-item"
+    @click="toPool"
   >
     <div class="table-col pool-name">
       <div class="val-item">
         <div class="item-wrapper">
-          <TokenIcon :token="pool.token.name"/>
+          <TokenIcon :token="pool.token.name" />
           <p>
             {{ pool.name }}
             <img
-                v-if="isWTXPool"
-                v-tooltip="'This is a private market.'"
-                alt=""
-                class="info-icon"
-                src="@/assets/images/i-icon.svg"
+              v-if="isWTXPool"
+              v-tooltip="'This is a private market.'"
+              alt=""
+              class="info-icon"
+              src="@/assets/images/i-icon.svg"
             />
           </p>
         </div>
@@ -49,24 +49,24 @@ export default {
       //   this.$ethers.utils.formatEther(this.pool.totalBorrow)
       // ).toFixed(0);
       return parseFloat(
-          this.$ethers.utils.formatEther(
-              this.$store.getters.getTotalBorrow(this.pool.id)
-          )
+        this.$ethers.utils.formatEther(
+          this.$store.getters.getTotalBorrow(this.pool.id)
+        )
       ).toFixed(0);
     },
     mainTokenPrice() {
       return (
-          1 /
-          this.$ethers.utils.formatUnits(
-              this.pool.token.oracleExchangeRate,
-              this.pool.token.decimals
-          )
+        1 /
+        this.$ethers.utils.formatUnits(
+          this.pool.token.oracleExchangeRate,
+          this.pool.token.decimals
+        )
       );
     },
     collateralParsed() {
       return this.$ethers.utils.formatUnits(
-          this.pool.totalCollateralShare,
-          this.pool.token.decimals
+        this.pool.totalCollateralShare,
+        this.pool.token.decimals
       );
     },
     collateralInUsd() {
@@ -83,7 +83,7 @@ export default {
   methods: {
     toPool() {
       if (this.pool.isEnabled) {
-        this.$router.push({name: "Pool", params: {id: this.pool.id}});
+        this.$router.push({ name: "Pool", params: { id: this.pool.id } });
       }
     },
   },
@@ -93,21 +93,21 @@ export default {
       if (Number(value) === 0) return value;
 
       const lookup = [
-        {value: 0, symbol: ""},
-        {value: 1, symbol: ""},
-        {value: 1e3, symbol: "k"},
-        {value: 1e6, symbol: "M"},
+        { value: 0, symbol: "" },
+        { value: 1, symbol: "" },
+        { value: 1e3, symbol: "k" },
+        { value: 1e6, symbol: "M" },
       ];
       const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
       let item = lookup
-          .slice()
-          .reverse()
-          .find(function (item) {
-            return parseFloat(value) >= item.value;
-          });
+        .slice()
+        .reverse()
+        .find(function (item) {
+          return parseFloat(value) >= item.value;
+        });
       return (
-          (parseFloat(value) / item.value).toFixed(0).replace(rx, "$1") +
-          item.symbol
+        (parseFloat(value) / item.value).toFixed(0).replace(rx, "$1") +
+        item.symbol
       );
     },
   },
@@ -238,7 +238,7 @@ export default {
     padding: 12px 20px;
 
     .table-col {
-      width: 20%;
+      width: 25%;
     }
 
     .stand-table-item .table-col p {
@@ -269,6 +269,10 @@ export default {
     min-height: 80px;
     padding: 12px 20px;
     justify-content: space-between;
+
+    .table-col {
+      width: 21%;
+    }
   }
 
   .stand-table-item .table-col p {

@@ -7,37 +7,37 @@
         <div class="stand-container">
           <div class="search-container">
             <input
-                v-model="search"
-                class="search-input"
-                placeholder="Search"
-                type="text"
+              v-model="search"
+              class="search-input"
+              placeholder="Search"
+              type="text"
             />
           </div>
           <div class="stand-sort">
             <div
-                id="select"
-                :class="{ active: active }"
-                :disabled="disabledSort"
-                @click="isActive"
+              id="select"
+              :class="{ active: active }"
+              :disabled="disabledSort"
+              @click="isActive"
             >
               {{ setSortParam(sortParam) }}
             </div>
             <div v-if="active" class="table">
               <div
-                  v-for="item in sortedBy"
-                  :key="item"
-                  class="select-item"
-                  @click="setSortParam(item)"
+                v-for="item in sortedBy"
+                :key="item"
+                class="select-item"
+                @click="setSortParam(item)"
               >
                 {{ item }}
               </div>
             </div>
           </div>
         </div>
-        <StandTable :items="filteredList" :tableType="2"/>
+        <StandTable :items="filteredList" :tableType="2" />
         <p
-            v-if="!filteredList.length && this.search.length !== 0"
-            class="notExist"
+          v-if="!filteredList.length && this.search.length !== 0"
+          class="notExist"
         >
           The search has not given any results
         </p>
@@ -46,10 +46,10 @@
   </div>
   <div v-else class="stand-action-view">
     <ActionComponent
-        :disabled-status="disabledStatus"
-        :name="name"
-        :onClick="walletBtnHandler"
-        :text="text"
+      :disabled-status="disabledStatus"
+      :name="name"
+      :onClick="walletBtnHandler"
+      :text="text"
     />
   </div>
 </template>
@@ -57,7 +57,7 @@
 <script>
 const StandTable = () => import("@/components/Stand/Table");
 const ActionComponent = () =>
-    import("@/components/UiComponents/ActionComponent");
+  import("@/components/UiComponents/ActionComponent");
 
 export default {
   data() {
@@ -117,23 +117,23 @@ export default {
     },
     sortByNXUSDleft(d1, d2) {
       return Number(d1.dynamicBorrowAmount) < Number(d2.dynamicBorrowAmount)
-          ? 1
-          : -1;
+        ? 1
+        : -1;
     },
     sortByTitle(d1, d2) {
       return d1.name > d2.name ? 1 : -1;
     },
     sortByTVL(d1, d2) {
       let borrowD1 = parseFloat(
-          this.$ethers.utils.formatEther(
-              this.$store.getters.getTotalBorrow(d1.id)
-          )
+        this.$ethers.utils.formatEther(
+          this.$store.getters.getTotalBorrow(d1.id)
+        )
       );
 
       let borrowD2 = parseFloat(
-          this.$ethers.utils.formatEther(
-              this.$store.getters.getTotalBorrow(d2.id)
-          )
+        this.$ethers.utils.formatEther(
+          this.$store.getters.getTotalBorrow(d2.id)
+        )
       );
       return Number(borrowD1) < Number(borrowD2) ? 1 : -1;
     },
@@ -212,7 +212,7 @@ export default {
   margin-right: 12px;
   transition: 0.15s all ease-in-out;
   color: #8a8a8a;
-  
+
   @include respond-to(sm) {
     height: 40px;
     width: 100%;

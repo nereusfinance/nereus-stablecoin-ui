@@ -28,7 +28,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-@import '../../mixins/screen-size';
+@import "../../mixins/screen-size";
 
 .action-group {
   padding: 350px 0;

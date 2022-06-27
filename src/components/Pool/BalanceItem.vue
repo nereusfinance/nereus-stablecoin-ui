@@ -1,7 +1,7 @@
 <template>
   <div class="balance-item">
     <div class="value-type">
-      <TokenIcon :token="this.item.token"/>
+      <TokenIcon :token="this.item.token" />
       <p>{{ this.item.token }}</p>
     </div>
     <p class="value-text">{{ balance }}</p>
@@ -25,8 +25,8 @@ export default {
   methods: {
     parseBalance(value, decimals) {
       const parsedBalance = this.$ethers.utils.formatUnits(
-          value.toString(),
-          decimals
+        value.toString(),
+        decimals
       );
       this.userBalance = parseFloat(parsedBalance).toFixed(4);
     },

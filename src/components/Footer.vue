@@ -3,20 +3,20 @@
     <div class="container">
       <div class="leftLinks">
         <SocialLink
-            v-for="(item, index) in filteredLeftIcons"
-            :key="index"
-            :data="item.data"
-            :link="item.link"
-            :type="item.type"
+          v-for="(item, index) in filteredLeftIcons"
+          :key="index"
+          :data="item.data"
+          :link="item.link"
+          :type="item.type"
         />
       </div>
       <div class="rightLinks">
         <SocialLink
-            v-for="(item, index) in filteredRightIcons"
-            :key="index"
-            :data="item.data"
-            :link="item.link"
-            :type="item.type"
+          v-for="(item, index) in filteredRightIcons"
+          :key="index"
+          :data="item.data"
+          :link="item.link"
+          :type="item.type"
         />
       </div>
     </div>
@@ -150,7 +150,7 @@ export default {
 }
 @media screen and(max-width: 780px) {
   .app-footer {
-    position:fixed;
+    position: fixed;
     margin: 16px 0 16px 0;
     width: 304px;
     bottom: 0;

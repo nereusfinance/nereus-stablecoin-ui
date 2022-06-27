@@ -2,7 +2,7 @@
   <div class="balances-block">
     <h2>Your Balances</h2>
 
-    <BalanceItem v-for="(item, idx) in balanceItems" :key="idx" :item="item"/>
+    <BalanceItem v-for="(item, idx) in balanceItems" :key="idx" :item="item" />
   </div>
 </template>
 
@@ -54,7 +54,7 @@ export default {
 
 @media screen and(max-width: 780px) {
   .balances-block {
-    padding: 0
+    padding: 0;
   }
 }
 </style>

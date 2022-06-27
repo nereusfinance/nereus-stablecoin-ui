@@ -4,9 +4,9 @@
 
     <div class="items-wrap">
       <CollParamItem
-          v-for="(item, idx) in getInfoItems"
-          :key="idx"
-          :item="item"
+        v-for="(item, idx) in getInfoItems"
+        :key="idx"
+        :item="item"
       />
     </div>
 
@@ -66,7 +66,7 @@ export default {
 
   .btm-text {
     @include respond-to(sm) {
-      margin-bottom: 8px
+      margin-bottom: 8px;
     }
   }
 

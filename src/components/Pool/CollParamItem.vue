@@ -3,10 +3,10 @@
     <div class="item-main">
       <div class="title">
         <img
-            v-tooltip="itemProp.tooltip"
-            alt=""
-            class="info-icon"
-            src="@/assets/images/i-icon.svg"
+          v-tooltip="itemProp.tooltip"
+          alt=""
+          class="info-icon"
+          src="@/assets/images/i-icon.svg"
         />
         <p>{{ itemProp.title }}</p>
       </div>
