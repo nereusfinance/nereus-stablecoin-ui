@@ -94,13 +94,6 @@ export default {
       });
       return tableRewardsFormated;
     },
-    // rewardsForPeriodTotal() {
-    //   const totalTableRewards = this.$store.getters.getTableRewards;
-    //   const totalTableRewardsFormated = totalTableRewards.map((reward) => {
-    //     return this.normalizeBNValues(reward.rewardsTotal);
-    //   });
-    //   return totalTableRewardsFormated;
-    // },
     totalEarnedRewards() {
       const currentRewards = this.$store.getters.getUserCurrentRewards.sub(
         this.$store.getters.getUserData[1]
