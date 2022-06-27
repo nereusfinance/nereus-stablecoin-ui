@@ -88,11 +88,18 @@ export default {
 @import url("styles/_fonts.scss");
 @import url("styles/_animations.scss");
 @import "~normalize.css";
+@import "src/mixins/screen-size";
 
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+}
+
+.footer-container {
+  @include respond-to(sm) {
+    display: none
+  }
 }
 
 h1,

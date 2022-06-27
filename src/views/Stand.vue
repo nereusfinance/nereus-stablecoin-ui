@@ -180,6 +180,10 @@ export default {
   position: relative;
   flex: 1;
   background: #1c1c1c;
+  @include respond-to(sm) {
+    display: flex;
+    justify-content: center;
+  }
 }
 
 .stand-container {
@@ -208,14 +212,13 @@ export default {
   margin-right: 12px;
   transition: 0.15s all ease-in-out;
   color: #8a8a8a;
-
+  
   @include respond-to(sm) {
     height: 40px;
     width: 100%;
     margin-bottom: 8px;
     border-radius: 8px;
   }
-
   &:focus {
     outline: none;
     color: white;

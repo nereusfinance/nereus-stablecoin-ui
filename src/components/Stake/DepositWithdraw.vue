@@ -1,8 +1,8 @@
 <template>
   <div class="deposit-withdraw-block">
     <BackButton
-      :text="'Back'"
       :disabled="transactionPending !== 'wait for action'"
+      :text="'Back'"
       @click="goBack"
     />
     <!--  <BackButton :text="'Back'" @click="onClick" v-else-if="transactionPending !== 'finished'" />-->
@@ -24,13 +24,13 @@
           </span>
         </div>
         <ValueInput
+          :error="valueError"
+          :isStake="true"
           :max="maxValue"
+          :parentValue="valueAmount"
           :show-max="true"
           valueName="NXUSD"
           @onchange="updateValue"
-          :parentValue="valueAmount"
-          :error="valueError"
-          :isStake="true"
         />
         <button class="continue" @click="toOverview">Continue</button>
       </div>
@@ -52,30 +52,30 @@
           >
         </div>
         <ValueInput
+          :error="valueError"
+          :isStake="true"
           :max="maxValue"
+          :parentValue="valueAmount"
           :show-max="true"
           valueName="NXUSD"
           @onchange="updateValue"
-          :parentValue="valueAmount"
-          :error="valueError"
-          :isStake="true"
         />
         <button class="continue" @click="toOverview">Continue</button>
       </div>
 
       <div v-if="overview" class="deposit-withdraw-container">
-        <p class="form-header" v-if="transactionPending !== 'finished'">
+        <p v-if="transactionPending !== 'finished'" class="form-header">
           {{ actionType }} overview
         </p>
-        <p class="form-description" v-if="transactionPending !== 'finished'">
+        <p v-if="transactionPending !== 'finished'" class="form-description">
           These are your transaction details. Make sure to check if this is
           correct before submitting.
         </p>
 
-        <p class="form-header" v-if="transactionPending === 'finished'">
+        <p v-if="transactionPending === 'finished'" class="form-header">
           Congrats!
         </p>
-        <p class="form-description" v-if="transactionPending === 'finished'">
+        <p v-if="transactionPending === 'finished'" class="form-description">
           Your action has been successfully executed
         </p>
         <div class="currency-overview">
@@ -91,23 +91,23 @@
         </div>
         <TransactionStatus
           v-if="actionType === 'Deposit'"
+          :action="action"
+          :action-amount="actionAmount"
           :statusType="depositStatus"
           :transactionPending="transactionPending"
-          :action="action"
-          :value="valueAmount"
           :tx="tx"
-          :action-amount="actionAmount"
           :txApprove="txApprove"
-          @stakeHandler="stakeHandler"
+          :value="valueAmount"
           @onFinish="goBack"
+          @stakeHandler="stakeHandler"
         />
         <TransactionStatus
           v-if="actionType === 'Withdraw'"
+          :action="action"
           :statusType="withdrawStatus"
           :transactionPending="transactionPending"
-          :action="action"
-          :value="valueAmount"
           :tx="tx"
+          :value="valueAmount"
           @addUnstake="unstakeHandler"
           @onFinish="goBack"
         />
@@ -186,10 +186,10 @@ export default {
     maxValue() {
       let maxValue;
       if (this.actionType === "Deposit") {
-        maxValue = this.formatBNValues(this.stakingTokenInfo.balance);
+        maxValue = this.normalizeBNValues(this.stakingTokenInfo.balance);
       }
       if (this.actionType === "Withdraw") {
-        maxValue = this.formatBNValues(this.availableWithdraw);
+        maxValue = this.normalizeBNValues(this.availableWithdraw);
       }
 
       return maxValue;
@@ -307,6 +307,10 @@ export default {
       this.overview = true;
     },
     updateValue(value) {
+      if (value[0] === "0" && value[1] !== ".") {
+        this.valueError = "Wrong number format";
+        return false;
+      }
       if (parseFloat(value) > parseFloat(this.maxValue)) {
         this.valueError = `Insufficient amount. The value available ${this.maxValue}`;
         return false;
@@ -511,13 +515,14 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .deposit-withdraw-block {
   background: #262626;
   border-radius: 4px;
   padding: 32px 24px;
   display: flex;
   flex-direction: column;
+
   .deposit-withdraw-container {
     padding: 40px 100px;
 
@@ -527,16 +532,19 @@ export default {
       font-weight: 400;
       text-align: left;
     }
+
     .form-header-value {
       font-weight: 600;
       font-size: 16px;
       text-align: right;
       color: #f2f4fe;
+
       .form-symbol {
         margin-left: 4px;
         font-weight: 400;
       }
     }
+
     .form-description {
       text-align: left;
       margin: 8px 0 24px 0;
@@ -549,6 +557,7 @@ export default {
       flex-direction: row;
       justify-content: space-between;
       margin-bottom: 16px;
+
       .form-header-text {
         font-weight: 400;
         text-align: left;
@@ -557,7 +566,9 @@ export default {
       }
     }
   }
+
   .continue {
+    border: none;
     cursor: pointer;
     height: 40px;
     background: #e7fc6e;
@@ -596,6 +607,7 @@ export default {
       margin-top: 28px;
       padding: 0;
     }
+
     .continue {
       width: 392px;
       height: 48px;
@@ -603,6 +615,7 @@ export default {
     }
   }
 }
+
 @media screen and(max-width: 767px) {
   .deposit-withdraw-block {
     background-color: #1c1c1c;
@@ -616,10 +629,12 @@ export default {
     p {
       line-height: 16px;
     }
+
     .deposit-withdraw-container {
       width: 328px;
       padding: 40px 0;
     }
+
     .continue {
       width: 328px;
     }
