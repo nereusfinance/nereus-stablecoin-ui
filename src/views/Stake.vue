@@ -1,11 +1,11 @@
 <template>
   <div class="stake" v-if="isConnected">
     <div class="stake-view">
-      <h1 class="stake-text">Earn</h1>
+      <h1 class="stake-text" v-if="!actionStatus">Earn</h1>
       <div class="stake-wrapper">
         <div class="stake-item stake-item-one" v-if="!actionStatus">
           <TotalDeposit :actionType="actionType" :onClick="setActionType" />
-          <LockedToken />
+          <LockedToken class="compScreenVersion" />
         </div>
         <div class="stake-item stake-item-two">
           <DepositWithdraw
@@ -14,6 +14,7 @@
             :onClick="setActionType"
           />
           <InfoBlock v-if="!actionType" />
+          <LockedToken class="mobileVersion" v-if="!actionType" />
           <ExpectedInterest
             v-if="!actionType"
             :rewardsForPeriod="rewardsForPeriod"
@@ -153,12 +154,21 @@ export default {
     width: 38.8%;
   }
 }
+
+@media screen and(min-width: 768px) {
+  .mobileVersion {
+    display: none;
+  }
+}
 @media screen and(min-width: 768px) and(max-width: 1000px) {
   .stake-view .stake-wrapper {
     padding: 20px 28px;
   }
   .stake-text {
     margin-left: 28px;
+  }
+  .stake-view .stake-item-two {
+    margin-left: 8px;
   }
 }
 @media screen and(max-width: 767px) {
@@ -168,6 +178,9 @@ export default {
   }
   .stake-view {
     max-width: 450px;
+    .compScreenVersion {
+      display: none;
+    }
 
     .stake-wrapper {
       flex-wrap: wrap;

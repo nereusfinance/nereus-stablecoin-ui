@@ -3,16 +3,18 @@
     <p class="container-top">
       Total deposit
       <img
-        src="@/assets/images/icon-info.svg"
+        v-tooltip="'Your deposited NXUSD'"
         alt=""
         class="info-icon"
-        v-tooltip="'Your deposited NXUSD'"
+        src="@/assets/images/icon-info.svg"
       />
     </p>
-    <p>
+    <div class="container">
       <TokenIcon token="NXUSD" />
-      {{ balance }} NXUSD
-    </p>
+      <p v-tooltip="balanceWithDecimals" class="info-tooltip">
+        {{ balance }} NXUSD
+      </p>
+    </div>
     <div class="btns">
       <button
         class="deposit-btn"
@@ -54,6 +56,15 @@ export default {
     },
   },
   computed: {
+    balanceWithDecimals() {
+      return new Intl.NumberFormat("en-EN", {
+        maximumSignificantDigits: 18,
+      }).format(
+        parseFloat(
+          this.$ethers.utils.formatEther(this.$store.getters.getUserData[1])
+        )
+      );
+    },
     balance() {
       const userData = this.$store.getters.getUserData;
       const NXUSDByTier1 = Number(this.normalizeBNValues(userData[0][1]));
@@ -78,7 +89,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .total-deposit-block {
   width: 100%;
 
@@ -99,15 +110,12 @@ export default {
     gap: 8px;
     margin-bottom: 26px;
   }
-
   p {
     font-size: 24px;
 
     display: flex;
     flex-direction: row;
     align-items: center;
-
-    gap: 2px;
   }
 
   .token-icon-wrap {
@@ -132,7 +140,7 @@ export default {
     height: 32px;
 
     background: $clrBg3;
-    border: 1px solid #414141;
+    border: none;
     border-radius: 16px;
     margin-right: 16px;
 
@@ -172,7 +180,7 @@ export default {
     height: 32px;
 
     background: $clrBg3;
-    border: 1px solid #414141;
+    border: none;
     border-radius: 16px;
 
     font-size: 14px;
@@ -202,7 +210,6 @@ export default {
   .total-deposit-block {
     height: 186px;
     padding: 24px 16px 24px 16px;
-
     p {
       font-size: 20px;
     }
@@ -214,18 +221,24 @@ export default {
     }
 
     .deposit-btn {
+      font-size: 20px;
       width: 140px;
+      height: 40px;
       margin-right: 8px;
       border-radius: 20px;
-      height: 40px;
-      padding: 0 0 3px 0;
+      padding: 8px 16px;
+      gap: 10px;
     }
 
     .withdraw-btn {
+      border: none;
+      font-size: 20px;
       width: 100px;
       height: 40px;
       border-radius: 20px;
-      padding: 0 0 3px 0;
+      padding: 8px 3px;
+      font-weight: 400;
+      line-height: 24px;
     }
   }
 }
@@ -256,7 +269,7 @@ export default {
     .token-icon-wrap {
       width: 26px;
       height: 26px;
-      margin-right: 6px;
+      margin-right: 8px;
     }
 
     .btns {
@@ -272,6 +285,7 @@ export default {
       height: 48px;
       margin-right: 0;
       border-radius: 24px;
+      font-size: 18px;
     }
 
     .withdraw-btn {
@@ -279,6 +293,7 @@ export default {
       width: 296px;
       height: 48px;
       border-radius: 24px;
+      font-size: 18px;
     }
 
     .container-top {

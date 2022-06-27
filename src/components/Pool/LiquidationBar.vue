@@ -4,16 +4,16 @@
       <div class="info-wrap">
         <div class="image-wrap">
           <img
-            src="@/assets/images/i-icon.svg"
-            alt=""
-            class="info-icon"
-            v-tooltip="
+              v-tooltip="
               'This bar displays how healthy your position is. If you have an open position and the bar becomes empty, you will be flagged for liquidation. The Stablecoins bar is enlarged by 10x to allow better visual representation.'
             "
+              alt=""
+              class="info-icon"
+              src="@/assets/images/i-icon.svg"
           />
         </div>
         <div class="indicator-wrap">
-          <div class="amount-indicator" v-if="priceDifferens">
+          <div v-if="priceDifferens" class="amount-indicator">
             <p>&lt;{{ parseFloat(priceDifferens).toFixed(6) }}$</p>
           </div>
           <div class="percent-indicator">
@@ -24,13 +24,13 @@
 
       <div class="range">
         <div
-          class="range-indicator"
-          :class="{
+            :class="{
             safe: liquidationRisk > 75,
             medium: liquidationRisk > 5 && liquidationRisk <= 75,
             hight: liquidationRisk > 0 && liquidationRisk <= 5,
           }"
-          :style="{ width: `${liquidationRisk}%` }"
+            :style="{ width: `${liquidationRisk}%` }"
+            class="range-indicator"
         ></div>
       </div>
     </div>
@@ -59,10 +59,10 @@ export default {
     },
     liquidationPrice() {
       const liquidationPrice =
-        this.$store.getters.getUserBorrowPart(this.pool.id) /
-        ((this.$store.getters.getUserCollateralShare(this.pool.id) *
-          this.$store.getters.getPoolLtv(this.pool.id)) /
-          100);
+          this.$store.getters.getUserBorrowPart(this.pool.id) /
+          ((this.$store.getters.getUserCollateralShare(this.pool.id) *
+                  this.$store.getters.getPoolLtv(this.pool.id)) /
+              100);
       return liquidationPrice;
     },
     priceDifferens() {
@@ -72,14 +72,14 @@ export default {
     },
     liquidationRisk() {
       if (
-        +this.$store.getters.getUserBorrowPart(this.pool.id) === 0 ||
-        isNaN(this.liquidationPrice)
+          +this.$store.getters.getUserBorrowPart(this.pool.id) === 0 ||
+          isNaN(this.liquidationPrice)
       )
         return 0;
 
       const riskPersent =
-        ((this.priceDifferens * this.stableCoinMultiplyer) / this.tokenPrice) *
-        100;
+          ((this.priceDifferens * this.stableCoinMultiplyer) / this.tokenPrice) *
+          100;
 
       if (riskPersent > 100) {
         return 100;
@@ -92,6 +92,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .liquidation-bar {
   //background: $clrBg2;
   //border-radius: 12px;
@@ -109,6 +111,10 @@ export default {
     .info-icon {
       width: 13px;
       height: 13px;
+      @include respond-to(sm) {
+        width: 24px;
+        height: 24px;
+      }
     }
   }
 
@@ -118,6 +124,9 @@ export default {
     border-radius: 4px;
     display: flex;
     height: 12px;
+    @include respond-to(sm) {
+      height: 8px;
+    }
 
     .range-indicator {
       height: 100%;
@@ -165,6 +174,7 @@ export default {
     line-height: 24px;
     margin-bottom: 6px;
   }
+
   .indicator-wrap {
     display: flex;
   }

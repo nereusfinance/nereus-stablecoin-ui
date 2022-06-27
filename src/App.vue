@@ -3,16 +3,16 @@
     <template v-if="!checkInProcess">
       <Header></Header>
       <!-- <Banner v-if="showBanner" /> -->
-      <transition name="fade" mode="out-in">
+      <transition mode="out-in" name="fade">
         <router-view></router-view>
       </transition>
       <Footer></Footer>
-      <PopupsWrapper v-if="showPopup" />
+      <PopupsWrapper v-if="showPopup"/>
     </template>
 
-    <ConnectionChecker @checkSuccess="checkSuccess" @checkError="checkError" />
+    <ConnectionChecker @checkError="checkError" @checkSuccess="checkSuccess"/>
 
-    <NotificationContainer />
+    <NotificationContainer/>
   </div>
 </template>
 
@@ -22,9 +22,9 @@ const Footer = () => import("@/components/Footer");
 // const Banner = () => import("@/components/UiComponents/Banner");
 const PopupsWrapper = () => import("@/components/Popups/PopupWrapper");
 const NotificationContainer = () =>
-  import("@/components/Notifications/NotificationContainer");
+    import("@/components/Notifications/NotificationContainer");
 const ConnectionChecker = () =>
-  import("@/components/ConnectionChecker/ConnectionChecker");
+    import("@/components/ConnectionChecker/ConnectionChecker");
 import poolsMixin from "@/mixins/pools.js";
 import farmPoolsMixin from "@/mixins/farmPools.js";
 import swapMixin from "@/mixins/swap.js";
@@ -88,11 +88,18 @@ export default {
 @import url("styles/_fonts.scss");
 @import url("styles/_animations.scss");
 @import "~normalize.css";
+@import "src/mixins/screen-size";
 
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+}
+
+.footer-container {
+  @include respond-to(sm) {
+    display: none
+  }
 }
 
 h1,
@@ -285,7 +292,7 @@ h3 {
 }
 
 @media screen and(max-width: 780px) {
-  $containerSidePadding: 15px;
+  $containerSidePadding: 16px;
   .container {
     width: 100%;
     padding: 0 $containerSidePadding;

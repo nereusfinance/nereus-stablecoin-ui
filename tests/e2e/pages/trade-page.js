@@ -39,8 +39,10 @@ export default class TradePage extends Page {
   }
 
   changeLeverageSlider() {
-    cy.get('[data-cy=leverage-slider]').invoke('val', 15) .trigger('input')
-        .click()
+    cy.get("[data-cy=leverage-slider]")
+      .invoke("val", 15)
+      .trigger("input")
+      .click();
   }
 
   inputMain(value) {
@@ -52,7 +54,7 @@ export default class TradePage extends Page {
   }
 
   clearPairInput() {
-    for( let i=0;i<20;i++){
+    for (let i = 0; i < 20; i++) {
       cy.get("[data-cy=pair-input]").type("{backspace}");
     }
   }
