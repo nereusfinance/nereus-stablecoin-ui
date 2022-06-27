@@ -4,7 +4,7 @@
       <div class="column">
         Tier 1 amount
         <h2>
-          <span style="color: white">{{ tierOne | formatNumber }}</span> NXUSD
+          <span v-tooltip="tierOne" style="cursor:pointer;color: white">{{ tierOne | formatNumber }}</span> NXUSD
         </h2>
         <p class="apy">{{ apyTierOne }}%<span>APY</span></p>
       </div>
@@ -12,14 +12,14 @@
       <div class="column">
         Tier 2 amount
         <h2>
-          <span style="color: white">{{ tierTwo | formatNumber }}</span> NXUSD
+          <span v-tooltip="tierTwo" style="cursor:pointer;color: white">{{ tierTwo | formatNumber }}</span> NXUSD
         </h2>
         <p class="apy">{{ apyTierTwo }}%<span>APY</span></p>
       </div>
     </div>
     <div class="column last-column">
       Yearly earn
-      <h1>{{ yearlyEarn | formatNumber }}<span>NXUSD</span></h1>
+      <h1 v-tooltip="yearlyEarn" style="cursor:pointer">{{ yearlyEarn | formatNumber }}<span>NXUSD</span></h1>
     </div>
   </div>
 </template>
@@ -33,21 +33,21 @@ export default {
       if (Number(value) === 0) return value;
 
       const lookup = [
-        { value: 0, symbol: "" },
-        { value: 1, symbol: "" },
-        { value: 1e3, symbol: "K" },
-        { value: 1e6, symbol: "M" },
+        {value: 0, symbol: ""},
+        {value: 1, symbol: ""},
+        {value: 1e3, symbol: "K"},
+        {value: 1e6, symbol: "M"},
       ];
       const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
       let item = lookup
-        .slice()
-        .reverse()
-        .find(function (item) {
-          return parseFloat(value) >= item.value;
-        });
+          .slice()
+          .reverse()
+          .find(function (item) {
+            return parseFloat(value) >= item.value;
+          });
       return (
-        (parseFloat(value) / item.value).toFixed(2).replace(rx, "$1") +
-        item.symbol
+          (parseFloat(value) / item.value).toFixed(2).replace(rx, "$1") +
+          item.symbol
       );
     },
   },
@@ -89,7 +89,7 @@ export default {
       if (parseFloat(userStoredReward) > parseFloat(NXUSDByTier1)) {
         return this.normalizeBNValues(userData[2].sub(userData[0][1]));
       } else {
-        return 0;
+        return "0.0";
       }
     },
   },
@@ -107,7 +107,7 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .info-block {
   width: 100%;
 
@@ -123,6 +123,8 @@ export default {
   .columns {
     display: flex;
     flex-direction: row;
+    width: 100%;
+    padding: 0;
   }
 
   .column {
@@ -138,9 +140,11 @@ export default {
       margin-top: 4px;
       margin-bottom: 8px;
       font-size: 16px;
+      line-height: 24px;
       color: #8a8a8a;
     }
   }
+
   .last-column {
     margin-bottom: 0;
   }
@@ -148,6 +152,7 @@ export default {
   p.apy {
     font-weight: 600;
     font-size: 60px;
+    line-height: 48px;
     color: #55bcc0;
 
     span {
@@ -160,7 +165,8 @@ export default {
   h1 {
     text-align: left;
     font-weight: 600;
-    font-size: 96px;
+    font-size: 80px;
+    line-height: 80px;
     color: #55bcc0;
     gap: 2px;
 
@@ -180,7 +186,10 @@ export default {
     .columns {
       height: 136px;
     }
-
+    .column {
+      margin-right: 36px;
+      margin-bottom: 32px;
+    }
     h1 {
       font-size: 80px;
     }
@@ -196,6 +205,7 @@ export default {
     margin-right: auto;
     padding: 24px 16px 16px 16px;
     margin-top: 8px;
+
     .columns {
       height: 110px;
     }
@@ -204,10 +214,12 @@ export default {
       display: flex;
       flex-direction: column;
       margin-right: 24px;
+      margin-bottom: 16px;
 
       h1 {
         font-weight: 600;
         font-size: 64px;
+        line-height: 68px;
         margin: 0;
 
         span {
@@ -216,7 +228,10 @@ export default {
         }
       }
     }
-
+    .column.last-column {
+      margin-right: auto;
+      margin-left: 0;
+    }
     h2 {
       font-weight: 400;
       font-size: 16px;
