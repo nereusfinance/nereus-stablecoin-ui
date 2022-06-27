@@ -232,6 +232,9 @@ export default {
       left: -2.4%;
       right: 8.34%;
     }
+    .fist-info-icon {
+      width: 13px;
+    }
   }
 }
 
