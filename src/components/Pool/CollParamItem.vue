@@ -3,10 +3,10 @@
     <div class="item-main">
       <div class="title">
         <img
-          v-tooltip="itemProp.tooltip"
-          alt=""
-          class="info-icon"
-          src="@/assets/images/i-icon.svg"
+            v-tooltip="itemProp.tooltip"
+            alt=""
+            class="info-icon"
+            src="@/assets/images/i-icon.svg"
         />
         <p>{{ itemProp.title }}</p>
       </div>
@@ -35,6 +35,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .param-item {
   .item-main {
     display: flex;
@@ -44,6 +46,10 @@ export default {
     font-size: 14px;
     line-height: 20px;
     margin-bottom: 16px;
+    @include respond-to(sm) {
+      padding: 0 16px;
+      margin-bottom: 16px;
+    }
 
     .title {
       display: flex;
@@ -53,11 +59,18 @@ export default {
         width: 13px;
         height: 13px;
         margin-right: 10px;
+        @include respond-to(sm) {
+          width: 24px;
+          height: 24px;
+        }
       }
 
       p {
         max-width: 210px;
         text-align: left;
+        @include respond-to(sm) {
+          font-size: 14px;
+        }
       }
     }
 

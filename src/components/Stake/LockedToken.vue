@@ -3,25 +3,27 @@
     <span class="locked-header">Locked {{ lockedTokenName }}</span>
     <div class="locked-balance">
       <TokenIcon :token="lockedTokenName" />
-      {{ formatBNValues(balance) }}
-      {{ lockedTokenName }}
+      <p v-tooltip="formatBNValues(balance)" class="info-tooltip">
+        {{ formatBNValuesRounded(balance) }}
+        {{ lockedTokenName }}
+      </p>
     </div>
     <div class="locked-table-header">
       <div class="locked-table-header-item">Locked {{ lockedTokenName }}</div>
       <div class="locked-table-header-item">Tier 1 amount NXUSD</div>
     </div>
     <div
-      class="locked-table-row"
-      :class="{ selected: isActive(config, index) }"
       v-for="(item, index) in config"
-      :key="index"
       v-show="index > 0"
+      :key="index"
+      :class="{ selected: isActive(config, index) }"
+      class="locked-table-row"
     >
-      <div class="locked-table-item" v-if="index > 0">
+      <div v-if="index > 0" class="locked-table-item">
         {{ normalizeBNValues(item[0]) | formatNumber }}
       </div>
-      <div class="locked-table-item" v-if="index > 0">
-        {{ formatBNValues(item[1]) }}
+      <div v-if="index > 0" class="locked-table-item">
+        {{ formatBNValuesRounded(item[1]) }}
       </div>
     </div>
   </div>
@@ -67,7 +69,15 @@ export default {
     },
     formatBNValues(value) {
       const normalizedValue = this.normalizeBNValues(value);
-      return new Intl.NumberFormat("en-EN").format(parseFloat(normalizedValue));
+      return new Intl.NumberFormat("en-EN", {
+        maximumSignificantDigits: 18,
+      }).format(parseFloat(normalizedValue));
+    },
+    formatBNValuesRounded(value) {
+      const normalizedValue = this.normalizeBNValues(value);
+      return new Intl.NumberFormat("en-EN").format(
+        parseFloat(normalizedValue).toFixed(2)
+      );
     },
   },
   filters: {
@@ -100,33 +110,39 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
+.info-tooltip {
+  cursor: pointer;
+}
+
 .locked-wrapper {
   width: 100%;
   background: #262626;
   border-radius: 4px;
-  padding: 32px 12px 12px 16px;
+  padding: 32px 16px 16px 24px;
   display: flex;
   flex-direction: column;
 
   .locked-header {
-    padding: 0 12px;
     font-weight: 400;
     font-size: 20px;
     text-align: left;
   }
 
   .locked-balance {
-    padding: 0 12px;
     font-size: 24px;
     display: flex;
     flex-direction: row;
     align-items: center;
     margin-top: 22px;
-    gap: 2px;
   }
+  .token-icon-wrap {
+    width: 32px;
+    height: 32px;
+    margin-right: 8px;
+  }
+
   .locked-table-header {
-    padding: 0 12px;
     display: flex;
     justify-content: space-between;
     font-weight: 400;
@@ -135,19 +151,22 @@ export default {
     margin-top: 28px;
     margin-bottom: 4px;
   }
+
   .locked-table-row {
     display: flex;
     justify-content: space-between;
     font-weight: 400;
     font-size: 16px;
     color: #ffffff;
-    padding: 8px 12px;
+    padding: 8px 0;
   }
+
   .locked-table-row.selected {
     background: #2e2e2f;
     border-radius: 4px;
   }
 }
+
 @media screen and(min-width: 768px) and(max-width: 1000px) {
   .locked-token-block {
     height: 330px;
@@ -159,6 +178,7 @@ export default {
     p {
       font-size: 20px;
     }
+
     .row,
     .row1,
     .row2,
@@ -172,18 +192,25 @@ export default {
       opacity: 0.04;
       border-radius: 4px;
     }
+
     .row1 {
       top: 48px;
     }
+
     .row2 {
       top: 83px;
     }
+
     .row3 {
       top: 117px;
     }
   }
 }
+
 @media screen and(max-width: 767px) {
+  .locked-wrapper {
+    padding: 24px 16px 16px 16px;
+  }
   .locked-token-block {
     height: 316px;
     width: 328px;
@@ -210,10 +237,11 @@ export default {
       font-size: 20px;
       margin-bottom: 24px;
     }
+
     .token-icon-wrap {
       width: 32px;
       height: 32px;
-      margin-right: 6px;
+      margin-right: 8px;
     }
 
     .columns {
@@ -222,6 +250,7 @@ export default {
       position: relative;
       top: -40px;
     }
+
     .column {
       font-weight: 400;
       font-size: 12px;
@@ -229,16 +258,20 @@ export default {
 
       text-align: left;
     }
+
     .amount {
       font-weight: 400;
       font-size: 16px;
       margin-bottom: 24px;
     }
+
     .amount:first-child {
       margin-top: 12px;
     }
+
     .amount:last-child {
     }
+
     .row,
     .row1,
     .row2,
@@ -252,12 +285,15 @@ export default {
       opacity: 0.04;
       border-radius: 4px;
     }
+
     .row1 {
       top: 57px;
     }
+
     .row2 {
       top: 100px;
     }
+
     .row3 {
       top: 143px;
     }

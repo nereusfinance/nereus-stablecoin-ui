@@ -7,43 +7,21 @@
 
     <nav>
       <router-link :to="{ name: 'Stand' }" class="nav-link"
-        >Markets</router-link
+      >Markets
+      </router-link
       >
       <router-link :to="{ name: 'Dashboard' }" class="nav-link"
-        >My Dashboard</router-link
+      >My Dashboard
+      </router-link
       >
       <router-link :to="{ name: 'Stake' }" class="nav-link">Earn</router-link>
     </nav>
-    <div class="footer">
-        <div class="leftLinks">
-          <SocialLink
-            v-for="(item, index) in filteredLeftIcons"
-            :key="index"
-            :data="item.data"
-            :link="item.link"
-            :type="item.type"
-            class="git-book"
-          />
-        </div>
-        <div class="rightLinks">
-          <SocialLink
-            v-for="(item, index) in filteredRightIcons"
-            :key="index"
-            :data="item.data"
-            :link="item.link"
-            :type="item.type"
-            class="media"
-          />
-        </div>
-      </div>
+    <Footer></Footer>
   </div>
 </template>
 
 <script>
-import DiscordWhite from "@/assets/images/DiscordWhite.svg";
-import TwitterWhite from "@/assets/images/TwitterWhite.svg";
-import MediumWhite from "@/assets/images/MediumWhite.svg";
-
+const Footer = () => import("@/components/Footer");
 const NetworkButton = () => import("@/components/UiComponents/NetworkButton");
 const ConnectButton = () => import("@/components/UiComponents/ConnectButton");
 const SocialLink = () => import("@/components/SocialLink");
@@ -108,16 +86,7 @@ export default {
   components: {
     NetworkButton,
     ConnectButton,
-    SocialLink,
-  },
-  mounted() {
-    this.socialLink.forEach((item) => {
-      if (item.position === "left") {
-        this.filteredLeftIcons.push(item);
-      } else if (item.position === "right") {
-        this.filteredRightIcons.push(item);
-      }
-    });
+    Footer
   },
 };
 </script>
@@ -158,10 +127,13 @@ export default {
     justify-content: center;
     height: 90px;
     min-height: 90px;
-    border-bottom: 1px solid black;
-    .btn-connect {
-      width: 100%;
-      height: 48px;
+
+    .logo {
+      width: 130px;
+      height: auto;
+      object-fit: contain;
+      position: relative;
+      z-index: 2;
     }
 
     .mobile-btn {

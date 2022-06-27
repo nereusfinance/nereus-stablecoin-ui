@@ -1,7 +1,7 @@
 <template>
   <div class="balance-item">
     <div class="value-type">
-      <TokenIcon :token="this.item.token" />
+      <TokenIcon :token="this.item.token"/>
       <p>{{ this.item.token }}</p>
     </div>
     <p class="value-text">{{ balance }}</p>
@@ -25,8 +25,8 @@ export default {
   methods: {
     parseBalance(value, decimals) {
       const parsedBalance = this.$ethers.utils.formatUnits(
-        value.toString(),
-        decimals
+          value.toString(),
+          decimals
       );
       this.userBalance = parseFloat(parsedBalance).toFixed(4);
     },
@@ -44,12 +44,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .balance-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 16px;
   padding: 0 24px;
+  @include respond-to(sm) {
+    padding: 0 16px;
+    margin-bottom: 16px;
+  }
 
   .value-text {
     font-size: 14px;
@@ -69,6 +75,10 @@ export default {
       height: 16px;
       object-fit: contain;
       margin-right: 10px;
+      @include respond-to(sm) {
+        width: 24px;
+        height: 24px;
+      }
     }
   }
 }
