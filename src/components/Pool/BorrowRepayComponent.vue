@@ -336,7 +336,8 @@ export default {
       return (200 - this.ltv) / 100;
     },
     showMax() {
-      return !(this.actionType === "borrow");
+      return (this.actionType === "repay") || ((this.actionType === "borrow") && (+this.$store.getters.getUserCollateralShare(this.poolId) +
+          +this.mainValue));
     },
     maxMainValueWithoutDeleverage() {
       const balance = this.getAVAXStatus()
