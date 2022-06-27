@@ -156,7 +156,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'src/mixins/screen-size';
+@import "src/mixins/screen-size";
 
 .stand-view {
   padding: 40px 0;
@@ -190,6 +190,11 @@ export default {
   display: flex;
   flex-direction: row;
   height: 50px;
+  @include respond-to(sm) {
+    flex-direction: column;
+    height: 88px;
+    margin-bottom: 24px;
+  }
 }
 
 .search-input {
@@ -207,7 +212,13 @@ export default {
   margin-right: 12px;
   transition: 0.15s all ease-in-out;
   color: #8a8a8a;
-
+  
+  @include respond-to(sm) {
+    height: 40px;
+    width: 100%;
+    margin-bottom: 8px;
+    border-radius: 8px;
+  }
   &:focus {
     outline: none;
     color: white;
@@ -231,6 +242,13 @@ export default {
   margin-bottom: 30px;
   font-size: 12px;
   cursor: pointer;
+  @include respond-to(sm) {
+    height: 40px;
+    width: 100%;
+    margin-bottom: 0px;
+    padding-top: 12px;
+    border-radius: 8px;
+  }
 }
 
 div#select.active {
@@ -279,7 +297,7 @@ div#select.active {
 
 @media screen and(max-width: 980px) {
   .stand-view .stand-group:first-child {
-    padding-top: 30px;
+    padding-top: 0px;
   }
 }
 
@@ -288,7 +306,7 @@ div#select.active {
 
 @media screen and(max-width: 640px) {
   .stand-view .stand-group h1 {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
   }
   .stand-view {
     padding-bottom: 100px;

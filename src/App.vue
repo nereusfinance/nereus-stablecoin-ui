@@ -6,9 +6,7 @@
       <transition mode="out-in" name="fade">
         <router-view></router-view>
       </transition>
-      <div class="footer-container">
-        <Footer></Footer>
-      </div>
+      <Footer></Footer>
       <PopupsWrapper v-if="showPopup"/>
     </template>
 
@@ -294,7 +292,7 @@ h3 {
 }
 
 @media screen and(max-width: 780px) {
-  $containerSidePadding: 15px;
+  $containerSidePadding: 16px;
   .container {
     width: 100%;
     padding: 0 $containerSidePadding;
