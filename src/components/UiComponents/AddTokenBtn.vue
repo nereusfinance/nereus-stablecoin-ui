@@ -38,12 +38,7 @@ export default {
         return false;
       }
       let imageURL = String(
-        window.location.protocol +
-          "/" +
-          window.location.hostname +
-          ":" +
-          window.location.port +
-          "/img/Token_NXUSD.e269f352.svg"
+        window.location.origin + "/img/Token_NXUSD.e269f352.svg"
       );
 
       this.disabled = true;
