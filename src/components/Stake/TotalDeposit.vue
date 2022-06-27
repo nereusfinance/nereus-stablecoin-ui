@@ -20,14 +20,17 @@
         class="deposit-btn"
         :class="{ notActive: actionType === 'Withdraw' }"
         @click="onClick('Deposit')"
+        :disabled="actionType === 'Withdraw'"
       >
         Deposit
       </button>
       <button
         class="withdraw-btn"
-        :class="{ notActive: actionType === 'Deposit' || isDisabled }"
+        :class="{
+          notActive: actionType === 'Deposit' || isDisabled,
+        }"
         @click="onClick('Withdraw')"
-        :disabled="isDisabled"
+        :disabled="isDisabled || actionType === 'Deposit'"
       >
         Withdraw
       </button>
@@ -107,15 +110,6 @@ export default {
     gap: 8px;
     margin-bottom: 26px;
   }
-
-  .container {
-    display: flex;
-  }
-
-  .info-tooltip {
-    cursor: pointer;
-  }
-
   p {
     font-size: 24px;
 
@@ -157,6 +151,12 @@ export default {
       color: #8a8a8a;
       background-color: #353535;
     }
+    &:disabled:hover {
+      cursor: not-allowed;
+      color: #8a8a8a;
+      background: linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)),
+        #353535;
+    }
   }
 
   .deposit-btn:hover {
@@ -185,9 +185,17 @@ export default {
 
     font-size: 14px;
     color: black;
+
     &.notActive {
       color: #8a8a8a;
       background-color: #353535;
+    }
+
+    &:disabled:hover {
+      cursor: not-allowed;
+      color: #8a8a8a;
+      background: linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)),
+        #353535;
     }
   }
 
@@ -202,7 +210,6 @@ export default {
   .total-deposit-block {
     height: 186px;
     padding: 24px 16px 24px 16px;
-    margin-bottom: 8px;
     p {
       font-size: 20px;
     }

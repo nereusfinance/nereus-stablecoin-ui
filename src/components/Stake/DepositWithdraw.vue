@@ -32,7 +32,9 @@
           valueName="NXUSD"
           @onchange="updateValue"
         />
-        <button class="continue" @click="toOverview">Continue</button>
+        <button class="continue" @click="toOverview" :disabled="isDisabled">
+          Continue
+        </button>
       </div>
 
       <div
@@ -60,7 +62,9 @@
           valueName="NXUSD"
           @onchange="updateValue"
         />
-        <button class="continue" @click="toOverview">Continue</button>
+        <button class="continue" @click="toOverview" :disabled="isDisabled">
+          Continue
+        </button>
       </div>
 
       <div v-if="overview" class="deposit-withdraw-container">
@@ -137,6 +141,7 @@ export default {
     return {
       bentoBoxContract: undefined,
       stakingTokenContract: undefined,
+      isDisabled: false,
       stakingTokenInfo: {
         name: null,
         decimals: 18,
@@ -193,6 +198,11 @@ export default {
       }
 
       return maxValue;
+    },
+  },
+  watch: {
+    isDisabled(value) {
+      return value;
     },
   },
   methods: {
@@ -313,10 +323,12 @@ export default {
       }
       if (parseFloat(value) > parseFloat(this.maxValue)) {
         this.valueError = `Insufficient amount. The value available ${this.maxValue}`;
+        this.isDisabled = true;
         return false;
       } else if (value && value > 0.0) {
         this.valueError = "";
         this.valueAmount = value;
+        this.isDisabled = false;
         return true;
       }
     },
@@ -575,6 +587,12 @@ export default {
     border-radius: 20px;
     width: 100%;
     margin-top: 24px;
+    &:disabled {
+      cursor: not-allowed;
+      color: #8a8a8a;
+      background-color: #353535;
+      border: none;
+    }
   }
 
   .currency-overview {
