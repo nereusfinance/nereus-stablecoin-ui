@@ -128,6 +128,9 @@ export default {
     line-height: 24px;
     text-align: left;
     color: #8a8a8a;
+    @include respond-to(sm) {
+      display: none
+    }
   }
 }
 </style>
