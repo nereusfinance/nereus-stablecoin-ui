@@ -1,5 +1,5 @@
 <template>
-  <div class="stake" v-if="isConnected">
+  <div class="stake">
     <div class="stake-view">
       <h1 class="stake-text" v-if="!actionStatus">Earn</h1>
       <div class="stake-wrapper">
@@ -24,14 +24,6 @@
       </div>
     </div>
   </div>
-  <div v-else class="action-view">
-    <ActionComponent
-      :text="text"
-      :name="name"
-      :onClick="walletBtnHandler"
-      :disabled-status="disabledStatus"
-    />
-  </div>
 </template>
 
 <script>
@@ -40,18 +32,12 @@ import LockedToken from "@/components/Stake/LockedToken";
 import InfoBlock from "@/components/Stake/InfoBlock";
 import ExpectedInterest from "@/components/Stake/ExpectedInterest";
 import DepositWithdraw from "@/components/Stake/DepositWithdraw";
-const ActionComponent = () =>
-  import("@/components/UiComponents/ActionComponent");
 import stake from "@/mixins/stake.js";
 export default {
   mixins: [stake],
   name: "Stake",
   data() {
     return {
-      text: "Please connect your wallet",
-      name: "Connect",
-      disabledStatus: false,
-
       actionStatus: false,
       actionType: "",
       tier1Array: [""],
@@ -63,7 +49,6 @@ export default {
     };
   },
   components: {
-    ActionComponent,
     DepositWithdraw,
     ExpectedInterest,
     InfoBlock,
@@ -71,6 +56,10 @@ export default {
     TotalDeposit,
   },
   async created() {
+    if (!this.isConnected) {
+      this.$router.push({ name: "Stand" });
+      return false;
+    }
     window.addEventListener("resize", this.handleResize);
     this.handleResize();
     await this.getAllParameters();
@@ -89,16 +78,6 @@ export default {
         this.actionStatus = this.windowWidth < 768 && true;
       }
       this.actionType = selectedType;
-    },
-    async walletBtnHandler() {
-      if (this.isConnected) {
-        return false;
-      }
-
-      this.$store.commit("setPopupState", {
-        type: "connectWallet",
-        isShow: true,
-      });
     },
   },
   computed: {
