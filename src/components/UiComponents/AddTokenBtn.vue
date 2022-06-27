@@ -1,6 +1,6 @@
 <template>
   <button :disabled="disabled" class="token-btn" @click="addToken">
-    <img alt="" class="add-icon" src="@/assets/images/icon-add.svg"/>
+    <img alt="" class="add-icon" src="@/assets/images/icon-add.svg" />
     Add {{ tokenName }} to your browser wallet
   </button>
 </template>
@@ -29,8 +29,8 @@ export default {
   },
   data() {
     return {
-      disabled: false
-    }
+      disabled: false,
+    };
   },
   methods: {
     async addToken() {
@@ -38,7 +38,7 @@ export default {
         return false;
       }
       this.disabled = true;
-      const {ethereum} = window;
+      const { ethereum } = window;
       if (this.tokenName === "NXUSD") {
         try {
           // wasAdded is a boolean. Like any RPC method, an error may be thrown.
@@ -53,7 +53,7 @@ export default {
                 image: require(`@/assets/images/tokens-icon/Token_NXUSD.svg`), // A string url of the token logo
               },
             },
-          })
+          });
           if (wasAdded) {
             console.log("Thanks for your interest!");
           } else {

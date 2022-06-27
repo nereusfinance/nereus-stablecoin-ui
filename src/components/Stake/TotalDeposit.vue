@@ -63,7 +63,9 @@ export default {
     balance() {
       const userData = this.$store.getters.getUserData;
       const NXUSDByTier1 = Number(this.normalizeBNValues(userData[0][1]));
-      const NXUSDByTier2 = Number(this.normalizeBNValues(userData[2].sub(userData[0][1])));
+      const NXUSDByTier2 = Number(
+        this.normalizeBNValues(userData[2].sub(userData[0][1]))
+      );
       const total = NXUSDByTier1 + NXUSDByTier2;
       return total.toFixed(2);
     },
@@ -74,11 +76,11 @@ export default {
   components: {
     TokenIcon,
   },
-  methods : {
+  methods: {
     normalizeBNValues(value) {
       return this.$ethers.utils.formatEther(value);
     },
-  }
+  },
 };
 </script>
 

@@ -1,15 +1,15 @@
 <template>
   <div class="wrapper" v-if="!isStake">
     <div
-      class="val-input"
       :class="{
         focus: isFocus,
         error,
       }"
+      class="val-input"
     >
       <div
-        class="value-type"
         :class="{ 'values-choose': values.length }"
+        class="value-type"
         @click="openSelect"
       >
         <TokenIcon :token="valueName" />
@@ -18,31 +18,37 @@
 
         <img
           v-if="values.length"
-          src="@/assets/images/select-pixel-arrow.svg"
           alt=""
           class="arrow-icon"
+          src="@/assets/images/select-pixel-arrow.svg"
         />
       </div>
 
       <input
-        type="text"
-        placeholder="0.0"
-        @focus="setFocus(true)"
-        @blur="setFocus(false)"
         v-model="value"
+        :data-cy="cyData"
         :disabled="disabled"
+        placeholder="0.0"
+        type="text"
+        @blur="setFocus(false)"
+        @focus="setFocus(true)"
       />
 
-      <div class="max-btn" v-if="parseFloat(max) && showMax" @click="setMax">
+      <div
+        class="max-btn"
+        v-if="parseFloat(max) && showMax"
+        @click="setMax"
+        :style="{ cursor: disabled ? 'not-allowed' : 'pointer' }"
+      >
         <p>MAX</p>
       </div>
 
       <transition name="fade">
-        <div class="values-select" v-if="showSelect">
+        <div v-if="showSelect" class="values-select">
           <div
-            class="balance-item"
             v-for="(token, idx) in values"
             :key="idx"
+            class="balance-item"
             @click="changeValue(token.tokenIdx)"
           >
             <div class="value-select-type">
@@ -54,7 +60,7 @@
         </div>
       </transition>
     </div>
-    <p class="error-text" v-if="errorText">{{ errorText }}</p>
+    <p v-if="errorText" class="error-text">{{ errorText }}</p>
   </div>
   <div class="wrapper" v-else-if="isStake">
     <div
@@ -116,9 +122,14 @@
 
 <script>
 const TokenIcon = () => import("@/components/UiComponents/TokenIcon");
+import { floorToFixed } from "@/utils/fiexdMath/fixedMath";
 
 export default {
   props: {
+    cyData: {
+      type: String,
+      default: "",
+    },
     showMax: {
       type: Boolean,
       default: true,
@@ -182,7 +193,9 @@ export default {
       this.isFocus = payload;
     },
     setMax() {
-      this.value = this.max;
+      if (!this.disabled) {
+        this.value = floorToFixed(this.max, 6);
+      }
     },
     openSelect() {
       if (this.values.length) {
@@ -263,10 +276,6 @@ export default {
   width: 100%;
   transition: border 0.3s ease;
 
-  //&.focus {
-  //  border: 1px solid #605ee8;
-  //}
-
   &.error {
     border: 1px solid $clrInputError;
   }
@@ -326,12 +335,15 @@ export default {
     &::placeholder {
       color: rgba(255, 255, 255, 0.6);
     }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
   }
 
   .max-btn {
     position: absolute;
     right: 12px;
-    cursor: pointer;
     display: flex;
     align-items: center;
     border-radius: 12px;
