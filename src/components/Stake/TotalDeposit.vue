@@ -101,8 +101,6 @@ export default {
     display: flex;
     flex-direction: row;
     align-items: center;
-
-    gap: 2px;
   }
   .token-icon-wrap {
     width: 32px;
@@ -162,7 +160,7 @@ export default {
     font-size: 14px;
     color: black;
     &.notActive {
-      color: #8a8a8a;
+      color: white;
       background-color: #353535;
     }
   }
@@ -224,7 +222,7 @@ export default {
     .token-icon-wrap {
       width: 26px;
       height: 26px;
-      margin-right: 6px;
+      margin-right: 8px;
     }
 
     .btns {
@@ -239,12 +237,14 @@ export default {
       height: 48px;
       margin-right: 0;
       border-radius: 24px;
+      font-size: 18px;
     }
     .withdraw-btn {
       margin-top: 12px;
       width: 296px;
       height: 48px;
       border-radius: 24px;
+      font-size: 18px;
     }
     .container-top {
       gap: 6px;

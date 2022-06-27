@@ -123,7 +123,11 @@ export default {
     flex-direction: row;
     align-items: center;
     margin-top: 22px;
-    gap: 2px;
+  }
+  .token-icon-wrap {
+    width: 32px;
+    height: 32px;
+    margin-right: 8px;
   }
   .locked-table-header {
     padding: 0 12px;
@@ -213,7 +217,7 @@ export default {
     .token-icon-wrap {
       width: 32px;
       height: 32px;
-      margin-right: 6px;
+      margin-right: 8px;
     }
 
     .columns {
