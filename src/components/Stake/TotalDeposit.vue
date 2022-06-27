@@ -146,7 +146,8 @@ export default {
     &:disabled:hover {
       cursor: not-allowed;
       color: #8a8a8a;
-      background-color: #353535;
+      background: linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)),
+        #353535;
     }
   }
 
@@ -185,7 +186,8 @@ export default {
     &:disabled:hover {
       cursor: not-allowed;
       color: #8a8a8a;
-      background-color: #353535;
+      background: linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)),
+        #353535;
     }
   }
 
