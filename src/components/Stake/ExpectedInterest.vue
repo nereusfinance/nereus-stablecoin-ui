@@ -131,8 +131,7 @@ export default {
     text-align: left;
   }
   .expected-interest-title {
-    display: flex;
-    flex-direction: row;
+    color: white;
     text-align: left;
     font-size: 20px;
     line-height: 28px;
