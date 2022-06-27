@@ -279,12 +279,13 @@ export default {
       }
     }
     .action-button {
+      border: none;
       cursor: pointer;
       gap: 10px;
       width: auto;
       padding: 6px 16px;
       background: #e7fc6e;
-      border-radius: 16px;
+      border-radius: 24px;
     }
   }
 
@@ -297,6 +298,7 @@ export default {
       margin-bottom: 16px;
     }
     button {
+      border: none;
       gap: 10px;
 
       padding: 8px 24px;
@@ -403,10 +405,23 @@ export default {
 @media screen and(min-width: 768px) and(max-width: 1000px) {
   .transaction-status-block {
     .central-block {
-      button {
+      button,
+      .action-button {
         width: 360px;
         height: 48px;
         border-radius: 24px;
+        border: none;
+      }
+    }
+
+    .central-block-default {
+      button,
+      .action-button {
+        margin-top: 5px;
+        padding: 6px 12px;
+        width: 100px;
+        border-radius: 21px;
+        border: none;
       }
     }
   }
@@ -428,19 +443,21 @@ export default {
         width: 180px;
       }
 
-      button {
+      button,
+      .action-button {
         margin-top: 20px;
         padding: 6px 12px;
         width: 100px;
         border-radius: 21px;
-        height: 28px;
-        border: 0;
+        border: none;
       }
     }
     .central-block {
       width: 328px;
-      button {
+      button,
+      .action-button {
         width: 296px;
+        border-radius: 24px;
       }
     }
     .bottom-block {

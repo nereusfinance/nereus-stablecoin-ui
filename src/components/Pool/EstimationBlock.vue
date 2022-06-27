@@ -1,7 +1,7 @@
 <template>
   <div class="estimation-block">
     <div class="item-main">
-      <p>NXUSD Amount</p>
+      <p>{{ `${this.pool.pairToken.name} Amount` }}</p>
       <p class="percent-text"><span>~$ </span>{{ this.nxusdAmountDisplay }}</p>
     </div>
 

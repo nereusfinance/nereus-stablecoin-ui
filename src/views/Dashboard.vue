@@ -3,40 +3,40 @@
     <div class="container mini">
       <h1>Dashboard</h1>
 
-      <div class="transaction-btn" @click="toTransactions" v-if="false">
+      <div v-if="false" class="transaction-btn" @click="toTransactions">
         <p>Transactions</p>
       </div>
 
       <template v-if="pools">
-        <StatisticsBlock :pools="userPools" />
+        <StatisticsBlock :pools="userPools"/>
 
         <div class="btns-group">
           <button
-            class="btn mini borrow-btn"
-            :class="{ active: shortcutState === 'borrow' }"
-            @click="setShortcutType('borrow')"
+              :class="{ active: shortcutState === 'borrow' }"
+              class="btn mini borrow-btn"
+              @click="setShortcutType('borrow')"
           >
             Borrow
           </button>
           <button
-            class="btn mini replay-btn"
-            :class="{ active: shortcutState === 'repay' }"
-            @click="setShortcutType('repay')"
+              :class="{ active: shortcutState === 'repay' }"
+              class="btn mini replay-btn"
+              @click="setShortcutType('repay')"
           >
             Repay
           </button>
         </div>
 
-        <div class="items-wrap" v-if="userPools.length">
+        <div v-if="userPools.length" class="items-wrap">
           <OpenPoolItem
-            v-for="pool in userPools"
-            :pool="pool"
-            :key="pool.id"
-            :actionType="shortcutState"
+              v-for="pool in userPools"
+              :key="pool.id"
+              :actionType="shortcutState"
+              :pool="pool"
           />
         </div>
 
-        <EmptyPoolsState :blockType="shortcutState" v-else />
+        <EmptyPoolsState v-else :blockType="shortcutState"/>
       </template>
     </div>
   </div>
@@ -62,8 +62,8 @@ export default {
     },
     userPools() {
       return this.pools.filter(
-        (pool) =>
-          pool.userBorrowPart !== "0.0" || pool.userCollateralShare !== "0.0"
+          (pool) =>
+              pool.userBorrowPart !== "0.0" || pool.userCollateralShare !== "0.0"
       );
     },
   },
@@ -85,7 +85,7 @@ export default {
     async getUserCollateralShare(poolContract) {
       try {
         const userCollateralShare = await poolContract.userCollateralShare(
-          this.account
+            this.account
         );
         return userCollateralShare;
       } catch (e) {
@@ -96,12 +96,13 @@ export default {
   async created() {
     const isConnected = this.$store.getters.getWalletIsConnected;
     if (!isConnected) {
-      this.$router.push({ name: "Stand" });
+      this.$router.push({name: "Stand"});
       return false;
     }
     this.createStakePool();
   },
-  mounted() {},
+  mounted() {
+  },
   components: {
     StatisticsBlock,
     OpenPoolItem,
@@ -111,6 +112,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .dashboard-view {
   padding-top: 40px;
   padding-bottom: 40px;
@@ -121,6 +124,9 @@ export default {
     line-height: 36px;
     margin-bottom: 20px;
     text-align: left;
+    @include respond-to(sm) {
+      margin-bottom: 24px;
+    }
   }
 
   .transaction-btn {
@@ -144,13 +150,20 @@ export default {
     border-radius: 100px;
     padding: 2px;
     margin-bottom: 24px;
+    @include respond-to(sm) {
+      width: 100%;
+      margin-bottom: 54px;
+    }
 
     .btn {
       width: 73px;
-      height: 28px;
+      height: 32px;
       font-size: 14px;
       line-height: 20px;
       background: #262626;
+      @include respond-to(sm) {
+        width: 50%
+      }
 
       &:hover {
         //background-color: $clrBlue5;
@@ -162,7 +175,7 @@ export default {
 
       &.active {
         color: black;
-        background-color: $clrBg3;
+        background-color: white;
       }
     }
   }
@@ -177,7 +190,7 @@ export default {
 
 @media screen and(max-width: 1024px) {
   .dashboard-view {
-    padding-top: 80px;
+    padding-top: 40px;
   }
 
   .dashboard-view .btns-group {

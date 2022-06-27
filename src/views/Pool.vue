@@ -1,69 +1,71 @@
 <template>
   <div class="pool-view">
     <div class="container mini">
-      <BackButton :text="'Back'" @click="toStand" />
+      <BackButton :text="'Back'" @click="toStand"/>
 
       <div class="pool-head-bar">
         <div class="btns-group">
           <button
-            class="btn mini borrow-btn"
-            :class="{ active: actionType === 'borrow' }"
-            @click="setActionType('borrow')"
+              :class="{ active: actionType === 'borrow' }"
+              class="btn mini borrow-btn"
+              @click="setActionType('borrow')"
           >
             Borrow
           </button>
           <button
-            class="btn mini replay-btn"
-            :class="{ active: actionType === 'repay' }"
-            @click="setActionType('repay')"
+              :class="{ active: actionType === 'repay' }"
+              class="btn mini replay-btn"
+              data-cy="repay-button"
+              @click="setActionType('repay')"
           >
             Repay
           </button>
         </div>
 
         <template v-if="pool">
-          <LiquidationBar :pool="pool" />
+          <LiquidationBar :pool="pool"/>
         </template>
       </div>
 
-      <div class="pool-content" v-if="pool">
+      <div v-if="pool" class="pool-content">
         <BorrowRepayComponent
-          :poolId="pool.id"
-          :actionType="actionType"
-          :balance="pool.userBalance"
-          :balanceNativeToken="pool.userBalanceNativeToken"
-          :pairBalance="pool.userPairBalance"
-          @addAndBorrow="addAndBorrowHandler"
-          @addCollateral="addCollateralHandler"
-          @borrow="borrowHandler"
-          @removeAndRepay="removeAndRepayHandler"
-          @removeAndRepayMax="removeAndRepayMaxHandler"
-          @repay="repayHandler"
-          @removeCollateral="removeCollateralHandler"
-          @addAndBorrowMultiple="addMultiBorrowHandler"
-          @borrowMultiple="addMultiBorrowHandler"
-          :isUpdatePrice="pool.askUpdatePrice"
-          :tokenName="pool.token.name"
-          :tokenToUsd="pool.tokenPrice"
-          :tokenDecimals="pool.token.decimals"
-          :tokenPair="pool.tokenPairPrice"
-          :tokenPairName="pool.pairToken.name"
-          :tokenPairDecimals="pool.pairToken.decimals"
-          :userTotalCollateral="pool.userCollateralShare"
-          :userTotalBorrowed="pool.userBorrowPart"
-          :ltv="pool.ltv"
-          :exchangeRate="pool.tokenPrice"
+            :actionType="actionType"
+            :balance="pool.userBalance"
+            :balanceNativeToken="pool.userBalanceNativeToken"
+            :exchangeRate="pool.tokenPrice"
+            :isUpdatePrice="pool.askUpdatePrice"
+            :ltv="pool.ltv"
+            :pairBalance="pool.userPairBalance"
+            :poolId="pool.id"
+            :tokenDecimals="pool.token.decimals"
+            :tokenName="pool.token.name"
+            :tokenPair="pool.tokenPairPrice"
+            :tokenPairDecimals="pool.pairToken.decimals"
+            :tokenPairName="pool.pairToken.name"
+            :tokenToUsd="pool.tokenPrice"
+            :userTotalBorrowed="pool.userBorrowPart"
+            :userTotalCollateral="pool.userCollateralShare"
+            @addAndBorrow="addAndBorrowHandler"
+            @addAndBorrowMultiple="addMultiBorrowHandler"
+            @addCollateral="addCollateralHandler"
+            @borrow="borrowHandler"
+            @borrowMultiple="addMultiBorrowHandler"
+            @removeAndRepay="removeAndRepayHandler"
+            @removeAndRepayMax="removeAndRepayMaxHandler"
+            @removeCollateral="removeCollateralHandler"
+            @repay="repayHandler"
+            @repayWithDeleverage="repayWithDeleverageHandler"
         />
 
         <CollateralParameters
-          :infoItems="collateralInfo"
-          :exchangeRate="tokenPrice"
-          :tokenName="pool.token.name"
+            :exchangeRate="tokenPrice"
+            :infoItems="collateralInfo"
+            :tokenName="pool.token.name"
         />
 
-        <Balances :balances="userBalancesProp" />
+        <Balances :balances="userBalancesProp"/>
 
-        <InfoBlock :infoItems="pool.mainInfo" />
+        <InfoBlock :infoItems="pool.mainInfo"/>
       </div>
     </div>
   </div>
@@ -71,9 +73,9 @@
 
 <script>
 const BorrowRepayComponent = () =>
-  import("@/components/Pool/BorrowRepayComponent");
+    import("@/components/Pool/BorrowRepayComponent");
 const CollateralParameters = () =>
-  import("@/components/Pool/CollateralParameters");
+    import("@/components/Pool/CollateralParameters");
 const Balances = () => import("@/components/Pool/Balances");
 const InfoBlock = () => import("@/components/Pool/InfoBlock");
 const BackButton = () => import("@/components/UiComponents/BackButton");
@@ -152,8 +154,8 @@ export default {
     },
     async updateBalancesAndCollateralInfo() {
       this.useAVAX
-        ? await this.$store.dispatch("checkBalanceNativeToken", this.pool.id)
-        : await this.$store.dispatch("checkBalanceToken", {
+          ? await this.$store.dispatch("checkBalanceNativeToken", this.pool.id)
+          : await this.$store.dispatch("checkBalanceToken", {
             contract: this.pool.token.contract,
             id: this.pool.id,
           });
@@ -196,53 +198,53 @@ export default {
     toStand() {
       const AVAXStatus = true;
       this.$store.commit("setUseAVAX", !AVAXStatus);
-      this.$router.push({ name: "Stand" });
+      this.$router.push({name: "Stand"});
     },
     async addMultiBorrowHandler(data) {
       console.log("ADD COLL OR/AND BORROW -MULTI- HANDLER", data);
 
       let isTokenToCookApprove = await this.isTokenApprowed(
-        this.pool.token.contract,
-        this.pool.masterContractInstance.address
+          this.pool.token.contract,
+          this.pool.masterContractInstance.address.toLowerCase()
       );
 
       if (!isTokenToCookApprove) {
         isTokenToCookApprove = await this.approveToken(
-          this.pool.token.contract,
-          this.pool.masterContractInstance.address
+            this.pool.token.contract,
+            this.pool.masterContractInstance.address
         );
       }
 
       let isTokenToSwapApprove = await this.isTokenApprowed(
-        this.pool.token.contract,
-        this.pool.swapContract.address
+          this.pool.token.contract,
+          this.pool.swapContract.address
       );
 
       if (!isTokenToSwapApprove) {
         isTokenToSwapApprove = await this.approveToken(
-          this.pool.token.contract,
-          this.pool.swapContract.address
+            this.pool.token.contract,
+            this.pool.swapContract.address
         );
       }
 
       let isPairTokenToSwapApprove = await this.isTokenApprowed(
-        this.pool.pairTokenContract,
-        this.pool.swapContract.address
+          this.pool.pairTokenContract,
+          this.pool.swapContract.address
       );
 
       if (!isPairTokenToSwapApprove) {
         isPairTokenToSwapApprove = await this.approveToken(
-          this.pool.pairTokenContract,
-          this.pool.swapContract.address
+            this.pool.pairTokenContract,
+            this.pool.swapContract.address
         );
       }
 
       const isApprowed = await this.isApprowed();
 
       if (
-        isTokenToCookApprove &&
-        isTokenToSwapApprove &&
-        isPairTokenToSwapApprove
+          isTokenToCookApprove &&
+          isTokenToSwapApprove &&
+          isPairTokenToSwapApprove
       ) {
         this.cookMultiBorrow(data, isApprowed);
         return false;
@@ -257,8 +259,8 @@ export default {
         this.cookAddAndBorrow(data, isApprowed);
       } else {
         const isTokenApprove = await this.isTokenApprowed(
-          this.pool.token.contract,
-          this.pool.masterContractInstance.address
+            this.pool.token.contract,
+            this.pool.masterContractInstance.address
         );
 
         if (isTokenApprove) {
@@ -267,8 +269,8 @@ export default {
         }
 
         const approveResult = await this.approveToken(
-          this.pool.token.contract,
-          this.pool.masterContractInstance.address
+            this.pool.token.contract,
+            this.pool.masterContractInstance.address
         );
         if (approveResult) this.cookAddAndBorrow(data, isApprowed);
       }
@@ -282,8 +284,8 @@ export default {
         this.cookAddCollateral(data, isApprowed);
       } else {
         const isTokenApprove = await this.isTokenApprowed(
-          this.pool.token.contract,
-          this.pool.masterContractInstance.address
+            this.pool.token.contract,
+            this.pool.masterContractInstance.address
         );
 
         if (isTokenApprove) {
@@ -292,8 +294,8 @@ export default {
         }
 
         const approveResult = await this.approveToken(
-          this.pool.token.contract,
-          this.pool.masterContractInstance.address
+            this.pool.token.contract,
+            this.pool.masterContractInstance.address
         );
         if (approveResult) this.cookAddCollateral(data, isApprowed);
       }
@@ -310,8 +312,8 @@ export default {
       console.log("REMOVE & REPAY HANDLER", data);
 
       const isTokenApprowed = await this.isTokenApprowed(
-        this.pool.pairTokenContract,
-        this.pool.masterContractInstance.address
+          this.pool.pairTokenContract,
+          this.pool.masterContractInstance.address
       );
 
       const isApprowed = await this.isApprowed();
@@ -322,17 +324,37 @@ export default {
       }
 
       const approveResult = await this.approveToken(
-        this.pool.pairTokenContract,
-        this.pool.masterContractInstance.address
+          this.pool.pairTokenContract,
+          this.pool.masterContractInstance.address
       );
       if (approveResult) this.cookRemoveAndRepay(data, isApprowed);
+    },
+    async repayWithDeleverageHandler(data) {
+      console.log("REPAY WITH DELEVERAGE HANDLER", data);
+      const isTokenApprowed = await this.isTokenApprowed(
+          this.pool.pairTokenContract,
+          this.pool.masterContractInstance.address
+      );
+
+      const isApprowed = await this.isApprowed();
+
+      if (isTokenApprowed) {
+        this.cookRepayWithDeleverage(data, isApprowed);
+        return false;
+      }
+
+      const approveResult = await this.approveToken(
+          this.pool.pairTokenContract,
+          this.pool.masterContractInstance.address
+      );
+      if (approveResult) this.cookRepayWithDeleverage(data, isApprowed);
     },
     async repayHandler(data) {
       console.log("REPAY HANDLER", data);
 
       const isTokenApprowed = await this.isTokenApprowed(
-        this.pool.pairTokenContract,
-        this.pool.masterContractInstance.address
+          this.pool.pairTokenContract,
+          this.pool.masterContractInstance.address
       );
 
       const isApprowed = await this.isApprowed();
@@ -343,8 +365,8 @@ export default {
       }
 
       const approveResult = await this.approveToken(
-        this.pool.pairTokenContract,
-        this.pool.masterContractInstance.address
+          this.pool.pairTokenContract,
+          this.pool.masterContractInstance.address
       );
       if (approveResult) this.cookRepay(data, isApprowed);
     },
@@ -358,8 +380,8 @@ export default {
       console.log("REMOVE & REPAY MAX HANDLER", data);
 
       const isTokenApprowed = await this.isTokenApprowed(
-        this.pool.pairTokenContract,
-        this.pool.masterContractInstance.address
+          this.pool.pairTokenContract,
+          this.pool.masterContractInstance.address
       );
 
       const isApprowed = await this.isApprowed();
@@ -371,47 +393,47 @@ export default {
       }
 
       const approveResult = await this.approveToken(
-        this.pool.pairTokenContract,
-        this.pool.masterContractInstance.address
+          this.pool.pairTokenContract,
+          this.pool.masterContractInstance.address
       );
       if (approveResult) this.cookRemoveAndRepayMax(data, isApprowed);
     },
     async cookRemoveAndRepayMax(
-      { amount, collateralAmount, updatePrice },
-      isApprowed
+        {amount, collateralAmount, updatePrice},
+        isApprowed
     ) {
       const account = this.account;
       const pairToken = this.pool.pairToken.address;
 
       // 20
       const depositEncode = this.$ethers.utils.defaultAbiCoder.encode(
-        ["address", "address", "int256", "int256"],
-        [pairToken, account, "0x00", "-0x01"]
+          ["address", "address", "int256", "int256"],
+          [pairToken, account, "0x00", "-0x01"]
       );
       // 6
       const getRepayShareEncode = this.$ethers.utils.defaultAbiCoder.encode(
-        ["int256"],
-        [collateralAmount]
+          ["int256"],
+          [collateralAmount]
       );
       // 2
       const repayEncode = this.$ethers.utils.defaultAbiCoder.encode(
-        ["int256", "address", "bool"],
-        [collateralAmount, account, false]
+          ["int256", "address", "bool"],
+          [collateralAmount, account, false]
       );
       // 4
       const removeCollateral = this.$ethers.utils.defaultAbiCoder.encode(
-        ["int256", "address"],
-        [amount, account]
+          ["int256", "address"],
+          [amount, account]
       );
       // 21
       const bentoWithdrawEncode = this.$ethers.utils.defaultAbiCoder.encode(
-        ["address", "address", "int256", "int256"],
-        [
-          this.pool.token.address, //token addres !!
-          account,
-          "0x00",
-          amount,
-        ]
+          ["address", "address", "int256", "int256"],
+          [
+            this.pool.token.address, //token addres !!
+            account,
+            "0x00",
+            amount,
+          ]
       );
 
       const gasPrice = await this.getGasPrice();
@@ -424,21 +446,21 @@ export default {
           const updateEncode = this.getUpdateRateEncode();
 
           const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [11, 6, 20, 2, 4, 21],
-            [0, 0, 0, 0, 0, 0],
-            [
-              updateEncode,
-              getRepayShareEncode,
-              depositEncode,
-              repayEncode,
-              removeCollateral,
-              bentoWithdrawEncode,
-            ],
-            {
-              value: "0",
-              // gasPrice,
-              // gasLimit: 1000000,
-            }
+              [11, 6, 20, 2, 4, 21],
+              [0, 0, 0, 0, 0, 0],
+              [
+                updateEncode,
+                getRepayShareEncode,
+                depositEncode,
+                repayEncode,
+                removeCollateral,
+                bentoWithdrawEncode,
+              ],
+              {
+                value: "0",
+                // gasPrice,
+                // gasLimit: 1000000,
+              }
           );
 
           const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -446,101 +468,6 @@ export default {
           console.log("gasLimit:", gasLimit);
 
           const result = await this.pool.contractInstance.cook(
-            [11, 6, 20, 2, 4, 21],
-            [0, 0, 0, 0, 0, 0],
-            [
-              updateEncode,
-              getRepayShareEncode,
-              depositEncode,
-              repayEncode,
-              removeCollateral,
-              bentoWithdrawEncode,
-            ],
-            {
-              value: "0",
-              // gasPrice,
-              gasLimit,
-            }
-          );
-
-          console.log(result);
-          return false;
-        }
-
-        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [6, 20, 2, 4, 21],
-          [0, 0, 0, 0, 0],
-          [
-            getRepayShareEncode,
-            depositEncode,
-            repayEncode,
-            removeCollateral,
-            bentoWithdrawEncode,
-          ],
-          {
-            value: "0",
-          }
-        );
-
-        const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-        console.log("gasLimit:", gasLimit);
-
-        const result = await this.pool.contractInstance.cook(
-          [6, 20, 2, 4, 21],
-          [0, 0, 0, 0, 0],
-          [
-            getRepayShareEncode,
-            depositEncode,
-            repayEncode,
-            removeCollateral,
-            bentoWithdrawEncode,
-          ],
-          {
-            value: "0",
-            gasLimit,
-          }
-        );
-
-        console.log(result);
-      } else {
-        console.log("NOT APPROWED");
-        const approvalEncode = await this.getApprovalEncode();
-
-        if (approvalEncode === "ledger") {
-          const approvalMaster = await this.approveMasterContract();
-
-          console.log("approveMasterContract resp: ", approvalMaster);
-
-          if (!approvalMaster) return false;
-
-          if (updatePrice) {
-            const updateEncode = this.getUpdateRateEncode();
-
-            const estimateGas =
-              await this.pool.contractInstance.estimateGas.cook(
-                [11, 6, 20, 2, 4, 21],
-                [0, 0, 0, 0, 0, 0],
-                [
-                  updateEncode,
-                  getRepayShareEncode,
-                  depositEncode,
-                  repayEncode,
-                  removeCollateral,
-                  bentoWithdrawEncode,
-                ],
-                {
-                  value: "0",
-                  // gasPrice,
-                  // gasLimit: 1000000,
-                }
-              );
-
-            const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-            console.log("gasLimit:", gasLimit);
-
-            const result = await this.pool.contractInstance.cook(
               [11, 6, 20, 2, 4, 21],
               [0, 0, 0, 0, 0, 0],
               [
@@ -556,6 +483,101 @@ export default {
                 // gasPrice,
                 gasLimit,
               }
+          );
+
+          console.log(result);
+          return false;
+        }
+
+        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+            [6, 20, 2, 4, 21],
+            [0, 0, 0, 0, 0],
+            [
+              getRepayShareEncode,
+              depositEncode,
+              repayEncode,
+              removeCollateral,
+              bentoWithdrawEncode,
+            ],
+            {
+              value: "0",
+            }
+        );
+
+        const gasLimit = this.gasLimitConst + +estimateGas.toString();
+
+        console.log("gasLimit:", gasLimit);
+
+        const result = await this.pool.contractInstance.cook(
+            [6, 20, 2, 4, 21],
+            [0, 0, 0, 0, 0],
+            [
+              getRepayShareEncode,
+              depositEncode,
+              repayEncode,
+              removeCollateral,
+              bentoWithdrawEncode,
+            ],
+            {
+              value: "0",
+              gasLimit,
+            }
+        );
+
+        console.log(result);
+      } else {
+        console.log("NOT APPROWED");
+        const approvalEncode = await this.getApprovalEncode();
+
+        if (approvalEncode === "ledger") {
+          const approvalMaster = await this.approveMasterContract();
+
+          console.log("approveMasterContract resp: ", approvalMaster);
+
+          if (!approvalMaster) return false;
+
+          if (updatePrice) {
+            const updateEncode = this.getUpdateRateEncode();
+
+            const estimateGas =
+                await this.pool.contractInstance.estimateGas.cook(
+                    [11, 6, 20, 2, 4, 21],
+                    [0, 0, 0, 0, 0, 0],
+                    [
+                      updateEncode,
+                      getRepayShareEncode,
+                      depositEncode,
+                      repayEncode,
+                      removeCollateral,
+                      bentoWithdrawEncode,
+                    ],
+                    {
+                      value: "0",
+                      // gasPrice,
+                      // gasLimit: 1000000,
+                    }
+                );
+
+            const gasLimit = this.gasLimitConst + +estimateGas.toString();
+
+            console.log("gasLimit:", gasLimit);
+
+            const result = await this.pool.contractInstance.cook(
+                [11, 6, 20, 2, 4, 21],
+                [0, 0, 0, 0, 0, 0],
+                [
+                  updateEncode,
+                  getRepayShareEncode,
+                  depositEncode,
+                  repayEncode,
+                  removeCollateral,
+                  bentoWithdrawEncode,
+                ],
+                {
+                  value: "0",
+                  // gasPrice,
+                  gasLimit,
+                }
             );
 
             console.log(result);
@@ -563,20 +585,20 @@ export default {
           }
 
           const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [6, 20, 2, 4, 21],
-            [0, 0, 0, 0, 0],
-            [
-              getRepayShareEncode,
-              depositEncode,
-              repayEncode,
-              removeCollateral,
-              bentoWithdrawEncode,
-            ],
-            {
-              value: "0",
-              // gasPrice,
-              // gasLimit: 1000000,
-            }
+              [6, 20, 2, 4, 21],
+              [0, 0, 0, 0, 0],
+              [
+                getRepayShareEncode,
+                depositEncode,
+                repayEncode,
+                removeCollateral,
+                bentoWithdrawEncode,
+              ],
+              {
+                value: "0",
+                // gasPrice,
+                // gasLimit: 1000000,
+              }
           );
 
           const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -584,20 +606,20 @@ export default {
           console.log("gasLimit:", gasLimit);
 
           const result = await this.pool.contractInstance.cook(
-            [6, 20, 2, 4, 21],
-            [0, 0, 0, 0, 0],
-            [
-              getRepayShareEncode,
-              depositEncode,
-              repayEncode,
-              removeCollateral,
-              bentoWithdrawEncode,
-            ],
-            {
-              value: "0",
-              // gasPrice,
-              gasLimit,
-            }
+              [6, 20, 2, 4, 21],
+              [0, 0, 0, 0, 0],
+              [
+                getRepayShareEncode,
+                depositEncode,
+                repayEncode,
+                removeCollateral,
+                bentoWithdrawEncode,
+              ],
+              {
+                value: "0",
+                // gasPrice,
+                gasLimit,
+              }
           );
 
           console.log(result);
@@ -609,11 +631,56 @@ export default {
           const updateEncode = this.getUpdateRateEncode();
 
           const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [24, 11, 6, 20, 2, 4, 21],
-            [0, 0, 0, 0, 0, 0, 0],
+              [24, 11, 6, 20, 2, 4, 21],
+              [0, 0, 0, 0, 0, 0, 0],
+              [
+                approvalEncode,
+                updateEncode,
+                getRepayShareEncode,
+                depositEncode,
+                repayEncode,
+                removeCollateral,
+                bentoWithdrawEncode,
+              ],
+              {
+                value: "0",
+                // gasPrice,
+                // gasLimit: 1000000,
+              }
+          );
+
+          const gasLimit = this.gasLimitConst + +estimateGas.toString();
+
+          console.log("gasLimit:", gasLimit);
+
+          const result = await this.pool.contractInstance.cook(
+              [24, 11, 6, 20, 2, 4, 21],
+              [0, 0, 0, 0, 0, 0, 0],
+              [
+                approvalEncode,
+                updateEncode,
+                getRepayShareEncode,
+                depositEncode,
+                repayEncode,
+                removeCollateral,
+                bentoWithdrawEncode,
+              ],
+              {
+                value: "0",
+                // gasPrice,
+                gasLimit,
+              }
+          );
+
+          console.log(result);
+          return false;
+        }
+
+        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+            [24, 6, 20, 2, 4, 21],
+            [0, 0, 0, 0, 0, 0],
             [
               approvalEncode,
-              updateEncode,
               getRepayShareEncode,
               depositEncode,
               repayEncode,
@@ -625,18 +692,17 @@ export default {
               // gasPrice,
               // gasLimit: 1000000,
             }
-          );
+        );
 
-          const gasLimit = this.gasLimitConst + +estimateGas.toString();
+        const gasLimit = this.gasLimitConst + +estimateGas.toString();
 
-          console.log("gasLimit:", gasLimit);
+        console.log("gasLimit:", gasLimit);
 
-          const result = await this.pool.contractInstance.cook(
-            [24, 11, 6, 20, 2, 4, 21],
-            [0, 0, 0, 0, 0, 0, 0],
+        const result = await this.pool.contractInstance.cook(
+            [24, 6, 20, 2, 4, 21],
+            [0, 0, 0, 0, 0, 0],
             [
               approvalEncode,
-              updateEncode,
               getRepayShareEncode,
               depositEncode,
               repayEncode,
@@ -648,72 +714,28 @@ export default {
               // gasPrice,
               gasLimit,
             }
-          );
-
-          console.log(result);
-          return false;
-        }
-
-        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [24, 6, 20, 2, 4, 21],
-          [0, 0, 0, 0, 0, 0],
-          [
-            approvalEncode,
-            getRepayShareEncode,
-            depositEncode,
-            repayEncode,
-            removeCollateral,
-            bentoWithdrawEncode,
-          ],
-          {
-            value: "0",
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
-        );
-
-        const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-        console.log("gasLimit:", gasLimit);
-
-        const result = await this.pool.contractInstance.cook(
-          [24, 6, 20, 2, 4, 21],
-          [0, 0, 0, 0, 0, 0],
-          [
-            approvalEncode,
-            getRepayShareEncode,
-            depositEncode,
-            repayEncode,
-            removeCollateral,
-            bentoWithdrawEncode,
-          ],
-          {
-            value: "0",
-            // gasPrice,
-            gasLimit,
-          }
         );
 
         console.log(result);
       }
     },
-    async cookRepay({ amount, updatePrice }, isApprowed) {
+    async cookRepay({amount, updatePrice}, isApprowed) {
       const account = this.account;
       const pairToken = this.pool.pairToken.address;
 
       const depositEncode = this.$ethers.utils.defaultAbiCoder.encode(
-        ["address", "address", "int256", "int256"],
-        [pairToken, account, amount, "0x0"]
+          ["address", "address", "int256", "int256"],
+          [pairToken, account, amount, "0x0"]
       );
 
       const getRepayPartEncode = this.$ethers.utils.defaultAbiCoder.encode(
-        ["int256"],
-        ["-0x01"]
+          ["int256"],
+          ["-0x01"]
       );
 
       const repayEncode = this.$ethers.utils.defaultAbiCoder.encode(
-        ["int256", "address", "bool"],
-        ["-0x01", account, false]
+          ["int256", "address", "bool"],
+          ["-0x01", account, false]
       );
 
       const gasPrice = await this.getGasPrice();
@@ -726,12 +748,12 @@ export default {
           const updateEncode = this.getUpdateRateEncode();
 
           const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [11, 20, 7, 2],
-            [0, 0, 0, 0],
-            [updateEncode, depositEncode, getRepayPartEncode, repayEncode],
-            {
-              value: "0",
-            }
+              [11, 20, 7, 2],
+              [0, 0, 0, 0],
+              [updateEncode, depositEncode, getRepayPartEncode, repayEncode],
+              {
+                value: "0",
+              }
           );
 
           const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -739,13 +761,13 @@ export default {
           console.log("gasLimit:", gasLimit);
 
           const result = await this.pool.contractInstance.cook(
-            [11, 20, 7, 2],
-            [0, 0, 0, 0],
-            [updateEncode, depositEncode, getRepayPartEncode, repayEncode],
-            {
-              value: "0",
-              gasLimit,
-            }
+              [11, 20, 7, 2],
+              [0, 0, 0, 0],
+              [updateEncode, depositEncode, getRepayPartEncode, repayEncode],
+              {
+                value: "0",
+                gasLimit,
+              }
           );
           await this.wrapperStatusTx(result);
 
@@ -754,14 +776,14 @@ export default {
         }
 
         const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [20, 7, 2],
-          [0, 0, 0],
-          [depositEncode, getRepayPartEncode, repayEncode],
-          {
-            value: "0",
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
+            [20, 7, 2],
+            [0, 0, 0],
+            [depositEncode, getRepayPartEncode, repayEncode],
+            {
+              value: "0",
+              // gasPrice,
+              // gasLimit: 1000000,
+            }
         );
 
         const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -769,14 +791,14 @@ export default {
         console.log("gasLimit:", gasLimit);
 
         const result = await this.pool.contractInstance.cook(
-          [20, 7, 2],
-          [0, 0, 0],
-          [depositEncode, getRepayPartEncode, repayEncode],
-          {
-            value: "0",
-            // gasPrice,
-            gasLimit,
-          }
+            [20, 7, 2],
+            [0, 0, 0],
+            [depositEncode, getRepayPartEncode, repayEncode],
+            {
+              value: "0",
+              // gasPrice,
+              gasLimit,
+            }
         );
 
         await this.wrapperStatusTx(result);
@@ -799,30 +821,30 @@ export default {
             const updateEncode = this.getUpdateRateEncode();
 
             const estimateGas =
-              await this.pool.contractInstance.estimateGas.cook(
-                [11, 20, 7, 2],
-                [0, 0, 0, 0],
-                [updateEncode, depositEncode, getRepayPartEncode, repayEncode],
-                {
-                  value: "0",
-                  // gasPrice,
-                  // gasLimit: 1000000,
-                }
-              );
+                await this.pool.contractInstance.estimateGas.cook(
+                    [11, 20, 7, 2],
+                    [0, 0, 0, 0],
+                    [updateEncode, depositEncode, getRepayPartEncode, repayEncode],
+                    {
+                      value: "0",
+                      // gasPrice,
+                      // gasLimit: 1000000,
+                    }
+                );
 
             const gasLimit = this.gasLimitConst + +estimateGas.toString();
 
             console.log("gasLimit:", gasLimit);
 
             const result = await this.pool.contractInstance.cook(
-              [11, 20, 7, 2],
-              [0, 0, 0, 0],
-              [updateEncode, depositEncode, getRepayPartEncode, repayEncode],
-              {
-                value: "0",
-                // gasPrice,
-                gasLimit,
-              }
+                [11, 20, 7, 2],
+                [0, 0, 0, 0],
+                [updateEncode, depositEncode, getRepayPartEncode, repayEncode],
+                {
+                  value: "0",
+                  // gasPrice,
+                  gasLimit,
+                }
             );
 
             await this.wrapperStatusTx(result);
@@ -832,14 +854,14 @@ export default {
           }
 
           const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [20, 7, 2],
-            [0, 0, 0],
-            [depositEncode, getRepayPartEncode, repayEncode],
-            {
-              value: "0",
-              // gasPrice,
-              // gasLimit: 1000000,
-            }
+              [20, 7, 2],
+              [0, 0, 0],
+              [depositEncode, getRepayPartEncode, repayEncode],
+              {
+                value: "0",
+                // gasPrice,
+                // gasLimit: 1000000,
+              }
           );
 
           const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -847,14 +869,14 @@ export default {
           console.log("gasLimit:", gasLimit);
 
           const result = await this.pool.contractInstance.cook(
-            [20, 7, 2],
-            [0, 0, 0],
-            [depositEncode, getRepayPartEncode, repayEncode],
-            {
-              value: "0",
-              // gasPrice,
-              gasLimit,
-            }
+              [20, 7, 2],
+              [0, 0, 0],
+              [depositEncode, getRepayPartEncode, repayEncode],
+              {
+                value: "0",
+                // gasPrice,
+                gasLimit,
+              }
           );
 
           await this.wrapperStatusTx(result);
@@ -867,20 +889,20 @@ export default {
           const updateEncode = this.getUpdateRateEncode();
 
           const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [24, 11, 20, 7, 2],
-            [0, 0, 0, 0, 0],
-            [
-              approvalEncode,
-              updateEncode,
-              depositEncode,
-              getRepayPartEncode,
-              repayEncode,
-            ],
-            {
-              value: "0",
-              // gasPrice,
-              // gasLimit: 1000000,
-            }
+              [24, 11, 20, 7, 2],
+              [0, 0, 0, 0, 0],
+              [
+                approvalEncode,
+                updateEncode,
+                depositEncode,
+                getRepayPartEncode,
+                repayEncode,
+              ],
+              {
+                value: "0",
+                // gasPrice,
+                // gasLimit: 1000000,
+              }
           );
 
           const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -888,20 +910,20 @@ export default {
           console.log("gasLimit:", gasLimit);
 
           const result = await this.pool.contractInstance.cook(
-            [24, 11, 20, 7, 2],
-            [0, 0, 0, 0, 0],
-            [
-              approvalEncode,
-              updateEncode,
-              depositEncode,
-              getRepayPartEncode,
-              repayEncode,
-            ],
-            {
-              value: "0",
-              // gasPrice,
-              gasLimit,
-            }
+              [24, 11, 20, 7, 2],
+              [0, 0, 0, 0, 0],
+              [
+                approvalEncode,
+                updateEncode,
+                depositEncode,
+                getRepayPartEncode,
+                repayEncode,
+              ],
+              {
+                value: "0",
+                // gasPrice,
+                gasLimit,
+              }
           );
 
           await this.wrapperStatusTx(result);
@@ -911,14 +933,14 @@ export default {
         }
 
         const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [24, 20, 7, 2],
-          [0, 0, 0, 0],
-          [approvalEncode, depositEncode, getRepayPartEncode, repayEncode],
-          {
-            value: "0",
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
+            [24, 20, 7, 2],
+            [0, 0, 0, 0],
+            [approvalEncode, depositEncode, getRepayPartEncode, repayEncode],
+            {
+              value: "0",
+              // gasPrice,
+              // gasLimit: 1000000,
+            }
         );
 
         const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -926,14 +948,14 @@ export default {
         console.log("gasLimit:", gasLimit);
 
         const result = await this.pool.contractInstance.cook(
-          [24, 20, 7, 2],
-          [0, 0, 0, 0],
-          [approvalEncode, depositEncode, getRepayPartEncode, repayEncode],
-          {
-            value: "0",
-            // gasPrice,
-            gasLimit,
-          }
+            [24, 20, 7, 2],
+            [0, 0, 0, 0],
+            [approvalEncode, depositEncode, getRepayPartEncode, repayEncode],
+            {
+              value: "0",
+              // gasPrice,
+              gasLimit,
+            }
         );
 
         await this.wrapperStatusTx(result);
@@ -941,18 +963,18 @@ export default {
         console.log(result);
       }
     },
-    async cookRemoveCollateral({ amount, updatePrice }, isApprowed) {
+    async cookRemoveCollateral({amount, updatePrice}, isApprowed) {
       const withdrawAddressToken = this.getAVAXStatus()
-        ? "0x0000000000000000000000000000000000000000"
-        : this.pool.token.address;
+          ? "0x0000000000000000000000000000000000000000"
+          : this.pool.token.address;
       const removeCollateral = this.$ethers.utils.defaultAbiCoder.encode(
-        ["int256", "address"],
-        [amount, this.account]
+          ["int256", "address"],
+          [amount, this.account]
       );
 
       const bentoWithdrawEncode = this.$ethers.utils.defaultAbiCoder.encode(
-        ["address", "address", "int256", "int256"],
-        [withdrawAddressToken, this.account, "0x00", amount]
+          ["address", "address", "int256", "int256"],
+          [withdrawAddressToken, this.account, "0x00", amount]
       );
 
       const gasPrice = await this.getGasPrice();
@@ -965,14 +987,14 @@ export default {
           const updateEncode = this.getUpdateRateEncode();
 
           const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [11, 4, 21],
-            [0, 0, 0],
-            [updateEncode, removeCollateral, bentoWithdrawEncode],
-            {
-              value: "0",
-              // gasPrice,
-              // gasLimit: 1000000,
-            }
+              [11, 4, 21],
+              [0, 0, 0],
+              [updateEncode, removeCollateral, bentoWithdrawEncode],
+              {
+                value: "0",
+                // gasPrice,
+                // gasLimit: 1000000,
+              }
           );
 
           const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -980,84 +1002,6 @@ export default {
           console.log("gasLimit:", gasLimit);
 
           const result = await this.pool.contractInstance.cook(
-            [11, 4, 21],
-            [0, 0, 0],
-            [updateEncode, removeCollateral, bentoWithdrawEncode],
-            {
-              value: "0",
-              // gasPrice,
-              gasLimit,
-            }
-          );
-
-          await this.wrapperStatusTx(result);
-
-          console.log(result);
-          return false;
-        }
-
-        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [4, 21],
-          [0, 0],
-          [removeCollateral, bentoWithdrawEncode],
-          {
-            value: "0",
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
-        );
-
-        const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-        console.log("gasLimit:", gasLimit);
-
-        const result = await this.pool.contractInstance.cook(
-          [4, 21],
-          [0, 0],
-          [removeCollateral, bentoWithdrawEncode],
-          {
-            value: "0",
-            // gasPrice,
-            gasLimit,
-          }
-        );
-
-        await this.wrapperStatusTx(result);
-
-        console.log(result);
-      } else {
-        console.log("NOT APPROWED");
-        const approvalEncode = await this.getApprovalEncode();
-
-        console.log("approvalEncode result:", approvalEncode);
-
-        if (approvalEncode === "ledger") {
-          const approvalMaster = await this.approveMasterContract();
-
-          console.log("approveMasterContract resp: ", approvalMaster);
-
-          if (!approvalMaster) return false;
-
-          if (updatePrice) {
-            const updateEncode = this.getUpdateRateEncode();
-
-            const estimateGas =
-              await this.pool.contractInstance.estimateGas.cook(
-                [11, 4, 21],
-                [0, 0, 0],
-                [updateEncode, removeCollateral, bentoWithdrawEncode],
-                {
-                  value: "0",
-                  // gasPrice,
-                  // gasLimit: 1000000,
-                }
-              );
-
-            const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-            console.log("gasLimit:", gasLimit);
-
-            const result = await this.pool.contractInstance.cook(
               [11, 4, 21],
               [0, 0, 0],
               [updateEncode, removeCollateral, bentoWithdrawEncode],
@@ -1066,84 +1010,6 @@ export default {
                 // gasPrice,
                 gasLimit,
               }
-            );
-
-            await this.wrapperStatusTx(result);
-
-            console.log(result);
-            return false;
-          }
-
-          const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [4, 21],
-            [0, 0],
-            [removeCollateral, bentoWithdrawEncode],
-            {
-              value: "0",
-              // gasPrice,
-              // gasLimit: 1000000,
-            }
-          );
-
-          const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-          console.log("gasLimit:", gasLimit);
-
-          const result = await this.pool.contractInstance.cook(
-            [4, 21],
-            [0, 0],
-            [removeCollateral, bentoWithdrawEncode],
-            {
-              value: "0",
-              // gasPrice,
-              gasLimit,
-            }
-          );
-
-          await this.wrapperStatusTx(result);
-
-          console.log(result);
-
-          return false;
-        }
-
-        if (updatePrice) {
-          const updateEncode = this.getUpdateRateEncode();
-
-          const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [24, 11, 4, 21],
-            [0, 0, 0, 0],
-            [
-              approvalEncode,
-              updateEncode,
-              removeCollateral,
-              bentoWithdrawEncode,
-            ],
-            {
-              value: "0",
-              // gasPrice,
-              // gasLimit: 1000000,
-            }
-          );
-
-          const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-          console.log("gasLimit:", gasLimit);
-
-          const result = await this.pool.contractInstance.cook(
-            [24, 11, 4, 21],
-            [0, 0, 0, 0],
-            [
-              approvalEncode,
-              updateEncode,
-              removeCollateral,
-              bentoWithdrawEncode,
-            ],
-            {
-              value: "0",
-              // gasPrice,
-              gasLimit,
-            }
           );
 
           await this.wrapperStatusTx(result);
@@ -1153,147 +1019,14 @@ export default {
         }
 
         const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [24, 4, 21],
-          [0, 0, 0],
-          [approvalEncode, removeCollateral, bentoWithdrawEncode],
-          {
-            value: "0",
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
-        );
-
-        const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-        console.log("gasLimit:", gasLimit);
-
-        const result = await this.pool.contractInstance.cook(
-          [24, 4, 21],
-          [0, 0, 0],
-          [approvalEncode, removeCollateral, bentoWithdrawEncode],
-          {
-            value: "0",
-            // gasPrice,
-            gasLimit,
-          }
-        );
-
-        await this.wrapperStatusTx(result);
-
-        console.log(result);
-      }
-    },
-    async cookRemoveAndRepay(
-      { amount, collateralAmount, updatePrice },
-      isApprowed
-    ) {
-      const account = this.account;
-      const pairToken = this.pool.pairToken.address;
-
-      const depositEncode = this.$ethers.utils.defaultAbiCoder.encode(
-        ["address", "address", "int256", "int256"],
-        [pairToken, account, collateralAmount, "0x0"]
-      );
-
-      const getRepayPartEncode = this.$ethers.utils.defaultAbiCoder.encode(
-        ["int256"],
-        ["-0x01"]
-      );
-
-      const repayEncode = this.$ethers.utils.defaultAbiCoder.encode(
-        ["int256", "address", "bool"],
-        ["-0x01", account, false]
-      );
-
-      const removeCollateral = this.$ethers.utils.defaultAbiCoder.encode(
-        ["int256", "address"],
-        [amount, account]
-      );
-
-      const withdrawAddressToken = this.getAVAXStatus()
-        ? "0x0000000000000000000000000000000000000000"
-        : this.pool.token.address;
-
-      const bentoWithdrawEncode = this.$ethers.utils.defaultAbiCoder.encode(
-        ["address", "address", "int256", "int256"],
-        [
-          withdrawAddressToken, //token addres !!
-          account,
-          "0x00",
-          amount,
-        ]
-      );
-
-      const gasPrice = await this.getGasPrice();
-      console.log("GAS PRICE:", gasPrice);
-
-      if (isApprowed) {
-        console.log("APPROWED");
-
-        if (updatePrice) {
-          const updateEncode = this.getUpdateRateEncode();
-
-          const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [11, 20, 7, 2, 4, 21],
-            [0, 0, 0, 0, 0, 0],
-            [
-              updateEncode,
-              depositEncode,
-              getRepayPartEncode,
-              repayEncode,
-              removeCollateral,
-              bentoWithdrawEncode,
-            ],
+            [4, 21],
+            [0, 0],
+            [removeCollateral, bentoWithdrawEncode],
             {
               value: "0",
               // gasPrice,
               // gasLimit: 1000000,
             }
-          );
-
-          const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-          console.log("gasLimit:", gasLimit);
-
-          const result = await this.pool.contractInstance.cook(
-            [11, 20, 7, 2, 4, 21],
-            [0, 0, 0, 0, 0, 0],
-            [
-              updateEncode,
-              depositEncode,
-              getRepayPartEncode,
-              repayEncode,
-              removeCollateral,
-              bentoWithdrawEncode,
-            ],
-            {
-              value: "0",
-              // gasPrice,
-              gasLimit,
-            }
-          );
-
-          await this.wrapperStatusTx(result);
-
-          console.log(result);
-          return false;
-        }
-
-        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [20, 7, 2, 4, 21],
-          [0, 0, 0, 0, 0],
-          [
-            depositEncode,
-            getRepayPartEncode,
-            repayEncode,
-            removeCollateral,
-            bentoWithdrawEncode,
-          ],
-          {
-            value: "0",
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
         );
 
         const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -1301,20 +1034,14 @@ export default {
         console.log("gasLimit:", gasLimit);
 
         const result = await this.pool.contractInstance.cook(
-          [20, 7, 2, 4, 21],
-          [0, 0, 0, 0, 0],
-          [
-            depositEncode,
-            getRepayPartEncode,
-            repayEncode,
-            removeCollateral,
-            bentoWithdrawEncode,
-          ],
-          {
-            value: "0",
-            // gasPrice,
-            gasLimit,
-          }
+            [4, 21],
+            [0, 0],
+            [removeCollateral, bentoWithdrawEncode],
+            {
+              value: "0",
+              // gasPrice,
+              gasLimit,
+            }
         );
 
         await this.wrapperStatusTx(result);
@@ -1323,6 +1050,8 @@ export default {
       } else {
         console.log("NOT APPROWED");
         const approvalEncode = await this.getApprovalEncode();
+
+        console.log("approvalEncode result:", approvalEncode);
 
         if (approvalEncode === "ledger") {
           const approvalMaster = await this.approveMasterContract();
@@ -1335,29 +1064,341 @@ export default {
             const updateEncode = this.getUpdateRateEncode();
 
             const estimateGas =
-              await this.pool.contractInstance.estimateGas.cook(
-                [11, 20, 7, 2, 4, 21],
-                [0, 0, 0, 0, 0, 0],
-                [
-                  updateEncode,
-                  depositEncode,
-                  getRepayPartEncode,
-                  repayEncode,
-                  removeCollateral,
-                  bentoWithdrawEncode,
-                ],
-                {
-                  value: "0",
-                  // gasPrice,
-                  // gasLimit: 1000000,
-                }
-              );
+                await this.pool.contractInstance.estimateGas.cook(
+                    [11, 4, 21],
+                    [0, 0, 0],
+                    [updateEncode, removeCollateral, bentoWithdrawEncode],
+                    {
+                      value: "0",
+                      // gasPrice,
+                      // gasLimit: 1000000,
+                    }
+                );
 
             const gasLimit = this.gasLimitConst + +estimateGas.toString();
 
             console.log("gasLimit:", gasLimit);
 
             const result = await this.pool.contractInstance.cook(
+                [11, 4, 21],
+                [0, 0, 0],
+                [updateEncode, removeCollateral, bentoWithdrawEncode],
+                {
+                  value: "0",
+                  // gasPrice,
+                  gasLimit,
+                }
+            );
+
+            await this.wrapperStatusTx(result);
+
+            console.log(result);
+            return false;
+          }
+
+          const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+              [4, 21],
+              [0, 0],
+              [removeCollateral, bentoWithdrawEncode],
+              {
+                value: "0",
+                // gasPrice,
+                // gasLimit: 1000000,
+              }
+          );
+
+          const gasLimit = this.gasLimitConst + +estimateGas.toString();
+
+          console.log("gasLimit:", gasLimit);
+
+          const result = await this.pool.contractInstance.cook(
+              [4, 21],
+              [0, 0],
+              [removeCollateral, bentoWithdrawEncode],
+              {
+                value: "0",
+                // gasPrice,
+                gasLimit,
+              }
+          );
+
+          await this.wrapperStatusTx(result);
+
+          console.log(result);
+
+          return false;
+        }
+
+        if (updatePrice) {
+          const updateEncode = this.getUpdateRateEncode();
+
+          const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+              [24, 11, 4, 21],
+              [0, 0, 0, 0],
+              [
+                approvalEncode,
+                updateEncode,
+                removeCollateral,
+                bentoWithdrawEncode,
+              ],
+              {
+                value: "0",
+                // gasPrice,
+                // gasLimit: 1000000,
+              }
+          );
+
+          const gasLimit = this.gasLimitConst + +estimateGas.toString();
+
+          console.log("gasLimit:", gasLimit);
+
+          const result = await this.pool.contractInstance.cook(
+              [24, 11, 4, 21],
+              [0, 0, 0, 0],
+              [
+                approvalEncode,
+                updateEncode,
+                removeCollateral,
+                bentoWithdrawEncode,
+              ],
+              {
+                value: "0",
+                // gasPrice,
+                gasLimit,
+              }
+          );
+
+          await this.wrapperStatusTx(result);
+
+          console.log(result);
+          return false;
+        }
+
+        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+            [24, 4, 21],
+            [0, 0, 0],
+            [approvalEncode, removeCollateral, bentoWithdrawEncode],
+            {
+              value: "0",
+              // gasPrice,
+              // gasLimit: 1000000,
+            }
+        );
+
+        const gasLimit = this.gasLimitConst + +estimateGas.toString();
+
+        console.log("gasLimit:", gasLimit);
+
+        const result = await this.pool.contractInstance.cook(
+            [24, 4, 21],
+            [0, 0, 0],
+            [approvalEncode, removeCollateral, bentoWithdrawEncode],
+            {
+              value: "0",
+              // gasPrice,
+              gasLimit,
+            }
+        );
+
+        await this.wrapperStatusTx(result);
+
+        console.log(result);
+      }
+    },
+    // @params
+    // updatePrice: update price or not
+    // collateralAmount: amount of collateral to swap
+    // walletAmount: amount user has to pay from his wallet
+    // isApproved: approval check result
+    // amount: total amount to repay
+    async cookRepayWithDeleverage(
+        {updatePrice, collateralAmount, walletAmount, amount},
+        isApprowed
+    ) {
+      const swapperAddress = this.pool.reverseSwapContract.address;
+      const userAddress = this.account;
+      const emptyAddress = "0x0000000000000000000000000000000000000000";
+
+      const events = [];
+      const values = [];
+      const datas = [];
+      const gasPrice = await this.getGasPrice();
+      console.log("GAS PRICE:", gasPrice.toString());
+
+      if (!isApprowed) {
+        const approvalEncode = await this.getApprovalEncode();
+        if (approvalEncode === "ledger") {
+          const approvalMaster = await this.approveMasterContract();
+          console.log("approveMasterContract resp: ", approvalMaster);
+          if (!approvalMaster) return false;
+        } else {
+          eventsArray.push(24);
+          valuesArray.push(0);
+          datasArray.push(approvalEncode);
+        }
+      }
+      if (updatePrice) {
+        events.push(11);
+        values.push(0);
+        datas.push(this.getUpdateRateEncode());
+      }
+
+      // Remove collateral from user address to swapper
+      const removeCollateralData = this.$ethers.utils.defaultAbiCoder.encode(
+          ["int256", "address"],
+          [collateralAmount, swapperAddress]
+      );
+      events.push(4);
+      values.push(0);
+      datas.push(removeCollateralData);
+
+      // Swap collateral
+      const swapStaticTx =
+          await this.pool.reverseSwapContract.populateTransaction.swap(
+              emptyAddress,
+              emptyAddress,
+              userAddress,
+              "0",
+              collateralAmount,
+              {
+                gasLimit: 10000000,
+              }
+          );
+      const swapCallByte = swapStaticTx.data;
+      console.log("TX byte", swapCallByte);
+
+      const getCallEncode2 = this.$ethers.utils.defaultAbiCoder.encode(
+          ["address", "bytes", "bool", "bool", "uint8"],
+          [swapperAddress, swapCallByte, false, false, 2]
+      );
+      console.log("swapperAddress", swapperAddress);
+      console.log("Call encode2: ", getCallEncode2);
+      events.push(30);
+      values.push(0);
+      datas.push(getCallEncode2);
+
+      // Deposit if necessary
+      if (walletAmount && !walletAmount.isZero()) {
+        const depositEncode = this.$ethers.utils.defaultAbiCoder.encode(
+            ["address", "address", "int256", "int256"],
+            [this.pool.pairToken.address, userAddress, walletAmount, "0x0"]
+        );
+        events.push(20);
+        values.push(0);
+        datas.push(depositEncode);
+      }
+
+      // Repay
+      const repayEncode = this.$ethers.utils.defaultAbiCoder.encode(
+          ["int256", "address", "bool"],
+          [amount, userAddress, false]
+      );
+      events.push(2);
+      values.push(0);
+      datas.push(repayEncode);
+
+      // Send tx
+      try {
+        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+            events,
+            values,
+            datas,
+            {
+              value: "0",
+            }
+        );
+        const gasLimit = this.gasLimitConst + +estimateGas.toString();
+        console.log("GAS LIMIT:", gasLimit.toString());
+
+        const result = await this.pool.contractInstance.cook(
+            events,
+            values,
+            datas,
+            {
+              value: "0",
+              gasLimit,
+            }
+        );
+
+        await this.wrapperStatusTx(result);
+        console.log(result);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    async cookRemoveAndRepay(
+        {amount, collateralAmount, updatePrice},
+        isApprowed
+    ) {
+      const account = this.account;
+      const pairToken = this.pool.pairToken.address;
+
+      const depositEncode = this.$ethers.utils.defaultAbiCoder.encode(
+          ["address", "address", "int256", "int256"],
+          [pairToken, account, collateralAmount, "0x0"]
+      );
+
+      const getRepayPartEncode = this.$ethers.utils.defaultAbiCoder.encode(
+          ["int256"],
+          ["-0x01"]
+      );
+
+      const repayEncode = this.$ethers.utils.defaultAbiCoder.encode(
+          ["int256", "address", "bool"],
+          ["-0x01", account, false]
+      );
+
+      const removeCollateral = this.$ethers.utils.defaultAbiCoder.encode(
+          ["int256", "address"],
+          [amount, account]
+      );
+
+      const withdrawAddressToken = this.getAVAXStatus()
+          ? "0x0000000000000000000000000000000000000000"
+          : this.pool.token.address;
+
+      const bentoWithdrawEncode = this.$ethers.utils.defaultAbiCoder.encode(
+          ["address", "address", "int256", "int256"],
+          [
+            withdrawAddressToken, //token addres !!
+            account,
+            "0x00",
+            amount,
+          ]
+      );
+
+      const gasPrice = await this.getGasPrice();
+      console.log("GAS PRICE:", gasPrice);
+
+      if (isApprowed) {
+        console.log("APPROWED");
+
+        if (updatePrice) {
+          const updateEncode = this.getUpdateRateEncode();
+
+          const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+              [11, 20, 7, 2, 4, 21],
+              [0, 0, 0, 0, 0, 0],
+              [
+                updateEncode,
+                depositEncode,
+                getRepayPartEncode,
+                repayEncode,
+                removeCollateral,
+                bentoWithdrawEncode,
+              ],
+              {
+                value: "0",
+                // gasPrice,
+                // gasLimit: 1000000,
+              }
+          );
+
+          const gasLimit = this.gasLimitConst + +estimateGas.toString();
+
+          console.log("gasLimit:", gasLimit);
+
+          const result = await this.pool.contractInstance.cook(
               [11, 20, 7, 2, 4, 21],
               [0, 0, 0, 0, 0, 0],
               [
@@ -1373,15 +1414,15 @@ export default {
                 // gasPrice,
                 gasLimit,
               }
-            );
+          );
 
-            await this.wrapperStatusTx(result);
+          await this.wrapperStatusTx(result);
 
-            console.log(result);
-            return false;
-          }
+          console.log(result);
+          return false;
+        }
 
-          const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
             [20, 7, 2, 4, 21],
             [0, 0, 0, 0, 0],
             [
@@ -1396,13 +1437,13 @@ export default {
               // gasPrice,
               // gasLimit: 1000000,
             }
-          );
+        );
 
-          const gasLimit = this.gasLimitConst + +estimateGas.toString();
+        const gasLimit = this.gasLimitConst + +estimateGas.toString();
 
-          console.log("gasLimit:", gasLimit);
+        console.log("gasLimit:", gasLimit);
 
-          const result = await this.pool.contractInstance.cook(
+        const result = await this.pool.contractInstance.cook(
             [20, 7, 2, 4, 21],
             [0, 0, 0, 0, 0],
             [
@@ -1417,6 +1458,108 @@ export default {
               // gasPrice,
               gasLimit,
             }
+        );
+
+        await this.wrapperStatusTx(result);
+
+        console.log(result);
+      } else {
+        console.log("NOT APPROWED");
+        const approvalEncode = await this.getApprovalEncode();
+
+        if (approvalEncode === "ledger") {
+          const approvalMaster = await this.approveMasterContract();
+
+          console.log("approveMasterContract resp: ", approvalMaster);
+
+          if (!approvalMaster) return false;
+
+          if (updatePrice) {
+            const updateEncode = this.getUpdateRateEncode();
+
+            const estimateGas =
+                await this.pool.contractInstance.estimateGas.cook(
+                    [11, 20, 7, 2, 4, 21],
+                    [0, 0, 0, 0, 0, 0],
+                    [
+                      updateEncode,
+                      depositEncode,
+                      getRepayPartEncode,
+                      repayEncode,
+                      removeCollateral,
+                      bentoWithdrawEncode,
+                    ],
+                    {
+                      value: "0",
+                      // gasPrice,
+                      // gasLimit: 1000000,
+                    }
+                );
+
+            const gasLimit = this.gasLimitConst + +estimateGas.toString();
+
+            console.log("gasLimit:", gasLimit);
+
+            const result = await this.pool.contractInstance.cook(
+                [11, 20, 7, 2, 4, 21],
+                [0, 0, 0, 0, 0, 0],
+                [
+                  updateEncode,
+                  depositEncode,
+                  getRepayPartEncode,
+                  repayEncode,
+                  removeCollateral,
+                  bentoWithdrawEncode,
+                ],
+                {
+                  value: "0",
+                  // gasPrice,
+                  gasLimit,
+                }
+            );
+
+            await this.wrapperStatusTx(result);
+
+            console.log(result);
+            return false;
+          }
+
+          const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+              [20, 7, 2, 4, 21],
+              [0, 0, 0, 0, 0],
+              [
+                depositEncode,
+                getRepayPartEncode,
+                repayEncode,
+                removeCollateral,
+                bentoWithdrawEncode,
+              ],
+              {
+                value: "0",
+                // gasPrice,
+                // gasLimit: 1000000,
+              }
+          );
+
+          const gasLimit = this.gasLimitConst + +estimateGas.toString();
+
+          console.log("gasLimit:", gasLimit);
+
+          const result = await this.pool.contractInstance.cook(
+              [20, 7, 2, 4, 21],
+              [0, 0, 0, 0, 0],
+              [
+                depositEncode,
+                getRepayPartEncode,
+                repayEncode,
+                removeCollateral,
+                bentoWithdrawEncode,
+              ],
+              {
+                value: "0",
+                // gasPrice,
+                gasLimit,
+              }
           );
 
           await this.wrapperStatusTx(result);
@@ -1430,11 +1573,58 @@ export default {
           const updateEncode = this.getUpdateRateEncode();
 
           const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [24, 11, 20, 7, 2, 4, 21],
-            [0, 0, 0, 0, 0, 0, 0],
+              [24, 11, 20, 7, 2, 4, 21],
+              [0, 0, 0, 0, 0, 0, 0],
+              [
+                approvalEncode,
+                updateEncode,
+                depositEncode,
+                getRepayPartEncode,
+                repayEncode,
+                removeCollateral,
+                bentoWithdrawEncode,
+              ],
+              {
+                value: "0",
+                // gasPrice,
+                // gasLimit: 1000000,
+              }
+          );
+
+          const gasLimit = this.gasLimitConst + +estimateGas.toString();
+
+          console.log("gasLimit:", gasLimit);
+
+          const result = await this.pool.contractInstance.cook(
+              [24, 11, 20, 7, 2, 4, 21],
+              [0, 0, 0, 0, 0, 0, 0],
+              [
+                approvalEncode,
+                updateEncode,
+                depositEncode,
+                getRepayPartEncode,
+                repayEncode,
+                removeCollateral,
+                bentoWithdrawEncode,
+              ],
+              {
+                value: "0",
+                // gasPrice,
+                gasLimit,
+              }
+          );
+
+          await this.wrapperStatusTx(result);
+
+          console.log(result);
+          return false;
+        }
+
+        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+            [24, 20, 7, 2, 4, 21],
+            [0, 0, 0, 0, 0, 0],
             [
               approvalEncode,
-              updateEncode,
               depositEncode,
               getRepayPartEncode,
               repayEncode,
@@ -1446,18 +1636,17 @@ export default {
               // gasPrice,
               // gasLimit: 1000000,
             }
-          );
+        );
 
-          const gasLimit = this.gasLimitConst + +estimateGas.toString();
+        const gasLimit = this.gasLimitConst + +estimateGas.toString();
 
-          console.log("gasLimit:", gasLimit);
+        console.log("gasLimit:", gasLimit);
 
-          const result = await this.pool.contractInstance.cook(
-            [24, 11, 20, 7, 2, 4, 21],
-            [0, 0, 0, 0, 0, 0, 0],
+        const result = await this.pool.contractInstance.cook(
+            [24, 20, 7, 2, 4, 21],
+            [0, 0, 0, 0, 0, 0],
             [
               approvalEncode,
-              updateEncode,
               depositEncode,
               getRepayPartEncode,
               repayEncode,
@@ -1469,52 +1658,6 @@ export default {
               // gasPrice,
               gasLimit,
             }
-          );
-
-          await this.wrapperStatusTx(result);
-
-          console.log(result);
-          return false;
-        }
-
-        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [24, 20, 7, 2, 4, 21],
-          [0, 0, 0, 0, 0, 0],
-          [
-            approvalEncode,
-            depositEncode,
-            getRepayPartEncode,
-            repayEncode,
-            removeCollateral,
-            bentoWithdrawEncode,
-          ],
-          {
-            value: "0",
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
-        );
-
-        const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-        console.log("gasLimit:", gasLimit);
-
-        const result = await this.pool.contractInstance.cook(
-          [24, 20, 7, 2, 4, 21],
-          [0, 0, 0, 0, 0, 0],
-          [
-            approvalEncode,
-            depositEncode,
-            getRepayPartEncode,
-            repayEncode,
-            removeCollateral,
-            bentoWithdrawEncode,
-          ],
-          {
-            value: "0",
-            // gasPrice,
-            gasLimit,
-          }
         );
 
         await this.wrapperStatusTx(result);
@@ -1522,7 +1665,7 @@ export default {
         console.log(result);
       }
     },
-    async cookBorrow({ amount, updatePrice }, isApprowed) {
+    async cookBorrow({amount, updatePrice}, isApprowed) {
       const borrowEncode = this.getBorrowEncode(amount);
       const bentoWithdrawEncode = this.getBentoWithdrawEncode(amount);
 
@@ -1536,14 +1679,14 @@ export default {
           const updateEncode = this.getUpdateRateEncode();
 
           const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [11, 5, 21],
-            [0, 0, 0],
-            [updateEncode, borrowEncode, bentoWithdrawEncode],
-            {
-              value: 0,
-              // gasPrice,
-              // gasLimit: 1000000,
-            }
+              [11, 5, 21],
+              [0, 0, 0],
+              [updateEncode, borrowEncode, bentoWithdrawEncode],
+              {
+                value: 0,
+                // gasPrice,
+                // gasLimit: 1000000,
+              }
           );
 
           const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -1551,14 +1694,14 @@ export default {
           console.log("gasLimit:", gasLimit);
 
           const result = await this.pool.contractInstance.cook(
-            [11, 5, 21],
-            [0, 0, 0],
-            [updateEncode, borrowEncode, bentoWithdrawEncode],
-            {
-              value: 0,
-              // gasPrice,
-              gasLimit,
-            }
+              [11, 5, 21],
+              [0, 0, 0],
+              [updateEncode, borrowEncode, bentoWithdrawEncode],
+              {
+                value: 0,
+                // gasPrice,
+                gasLimit,
+              }
           );
 
           await this.wrapperStatusTx(result);
@@ -1568,14 +1711,14 @@ export default {
         }
 
         const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [5, 21],
-          [0, 0],
-          [borrowEncode, bentoWithdrawEncode],
-          {
-            value: 0,
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
+            [5, 21],
+            [0, 0],
+            [borrowEncode, bentoWithdrawEncode],
+            {
+              value: 0,
+              // gasPrice,
+              // gasLimit: 1000000,
+            }
         );
 
         const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -1583,14 +1726,14 @@ export default {
         console.log("gasLimit:", gasLimit);
 
         const result = await this.pool.contractInstance.cook(
-          [5, 21],
-          [0, 0],
-          [borrowEncode, bentoWithdrawEncode],
-          {
-            value: 0,
-            // gasPrice,
-            gasLimit,
-          }
+            [5, 21],
+            [0, 0],
+            [borrowEncode, bentoWithdrawEncode],
+            {
+              value: 0,
+              // gasPrice,
+              gasLimit,
+            }
         );
 
         await this.wrapperStatusTx(result);
@@ -1613,14 +1756,14 @@ export default {
           const updateEncode = this.getUpdateRateEncode();
 
           const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [11, 5, 21],
-            [0, 0, 0],
-            [updateEncode, borrowEncode, bentoWithdrawEncode],
-            {
-              value: 0,
-              // gasPrice,
-              // gasLimit: 1000000,
-            }
+              [11, 5, 21],
+              [0, 0, 0],
+              [updateEncode, borrowEncode, bentoWithdrawEncode],
+              {
+                value: 0,
+                // gasPrice,
+                // gasLimit: 1000000,
+              }
           );
 
           const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -1628,14 +1771,14 @@ export default {
           console.log("gasLimit:", gasLimit);
 
           const result = await this.pool.contractInstance.cook(
-            [11, 5, 21],
-            [0, 0, 0],
-            [updateEncode, borrowEncode, bentoWithdrawEncode],
-            {
-              value: 0,
-              // gasPrice,
-              gasLimit,
-            }
+              [11, 5, 21],
+              [0, 0, 0],
+              [updateEncode, borrowEncode, bentoWithdrawEncode],
+              {
+                value: 0,
+                // gasPrice,
+                gasLimit,
+              }
           );
 
           await this.wrapperStatusTx(result);
@@ -1645,14 +1788,14 @@ export default {
         }
 
         const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [5, 21],
-          [0, 0],
-          [borrowEncode, bentoWithdrawEncode],
-          {
-            value: 0,
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
+            [5, 21],
+            [0, 0],
+            [borrowEncode, bentoWithdrawEncode],
+            {
+              value: 0,
+              // gasPrice,
+              // gasLimit: 1000000,
+            }
         );
 
         const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -1660,14 +1803,14 @@ export default {
         console.log("gasLimit:", gasLimit);
 
         const result = await this.pool.contractInstance.cook(
-          [5, 21],
-          [0, 0],
-          [borrowEncode, bentoWithdrawEncode],
-          {
-            value: 0,
-            // gasPrice,
-            gasLimit,
-          }
+            [5, 21],
+            [0, 0],
+            [borrowEncode, bentoWithdrawEncode],
+            {
+              value: 0,
+              // gasPrice,
+              gasLimit,
+            }
         );
 
         await this.wrapperStatusTx(result);
@@ -1681,14 +1824,14 @@ export default {
         const updateEncode = this.getUpdateRateEncode();
 
         const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [24, 11, 5, 21],
-          [0, 0, 0, 0],
-          [approvalEncode, updateEncode, borrowEncode, bentoWithdrawEncode],
-          {
-            value: 0,
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
+            [24, 11, 5, 21],
+            [0, 0, 0, 0],
+            [approvalEncode, updateEncode, borrowEncode, bentoWithdrawEncode],
+            {
+              value: 0,
+              // gasPrice,
+              // gasLimit: 1000000,
+            }
         );
 
         const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -1696,14 +1839,14 @@ export default {
         console.log("gasLimit:", gasLimit);
 
         const result = await this.pool.contractInstance.cook(
-          [24, 11, 5, 21],
-          [0, 0, 0, 0],
-          [approvalEncode, updateEncode, borrowEncode, bentoWithdrawEncode],
-          {
-            value: 0,
-            // gasPrice,
-            gasLimit,
-          }
+            [24, 11, 5, 21],
+            [0, 0, 0, 0],
+            [approvalEncode, updateEncode, borrowEncode, bentoWithdrawEncode],
+            {
+              value: 0,
+              // gasPrice,
+              gasLimit,
+            }
         );
 
         await this.wrapperStatusTx(result);
@@ -1713,14 +1856,14 @@ export default {
       }
 
       const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-        [24, 5, 21],
-        [0, 0, 0],
-        [approvalEncode, borrowEncode, bentoWithdrawEncode],
-        {
-          value: 0,
-          // gasPrice,
-          // gasLimit: 1000000,
-        }
+          [24, 5, 21],
+          [0, 0, 0],
+          [approvalEncode, borrowEncode, bentoWithdrawEncode],
+          {
+            value: 0,
+            // gasPrice,
+            // gasLimit: 1000000,
+          }
       );
 
       const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -1728,21 +1871,21 @@ export default {
       console.log("gasLimit:", gasLimit);
 
       const result = await this.pool.contractInstance.cook(
-        [24, 5, 21],
-        [0, 0, 0],
-        [approvalEncode, borrowEncode, bentoWithdrawEncode],
-        {
-          value: 0,
-          // gasPrice,
-          gasLimit,
-        }
+          [24, 5, 21],
+          [0, 0, 0],
+          [approvalEncode, borrowEncode, bentoWithdrawEncode],
+          {
+            value: 0,
+            // gasPrice,
+            gasLimit,
+          }
       );
 
       await this.wrapperStatusTx(result);
 
       console.log(result);
     },
-    async cookAddCollateral({ amount, updatePrice }, isApprowed) {
+    async cookAddCollateral({amount, updatePrice}, isApprowed) {
       const depositEncode = this.getDepositEncode(amount);
 
       const colateralEncode = this.getAddCollateralEncode();
@@ -1759,14 +1902,14 @@ export default {
           const updateEncode = this.getUpdateRateEncode();
 
           const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [11, 20, 10],
-            [0, depositAmount, 0],
-            [updateEncode, depositEncode, colateralEncode],
-            {
-              value: depositAmount,
-              // gasPrice,
-              // gasLimit: 1000000,
-            }
+              [11, 20, 10],
+              [0, depositAmount, 0],
+              [updateEncode, depositEncode, colateralEncode],
+              {
+                value: depositAmount,
+                // gasPrice,
+                // gasLimit: 1000000,
+              }
           );
 
           const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -1774,14 +1917,14 @@ export default {
           console.log("gasLimit:", gasLimit);
 
           const result = await this.pool.contractInstance.cook(
-            [11, 20, 10],
-            [0, depositAmount, 0],
-            [updateEncode, depositEncode, colateralEncode],
-            {
-              value: depositAmount,
-              // gasPrice,
-              gasLimit,
-            }
+              [11, 20, 10],
+              [0, depositAmount, 0],
+              [updateEncode, depositEncode, colateralEncode],
+              {
+                value: depositAmount,
+                // gasPrice,
+                gasLimit,
+              }
           );
 
           await this.wrapperStatusTx(result);
@@ -1791,14 +1934,14 @@ export default {
         }
 
         const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [20, 10],
-          [depositAmount, 0],
-          [depositEncode, colateralEncode],
-          {
-            value: depositAmount,
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
+            [20, 10],
+            [depositAmount, 0],
+            [depositEncode, colateralEncode],
+            {
+              value: depositAmount,
+              // gasPrice,
+              // gasLimit: 1000000,
+            }
         );
 
         const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -1806,14 +1949,14 @@ export default {
         console.log("gasLimit:", gasLimit);
 
         const result = await this.pool.contractInstance.cook(
-          [20, 10],
-          [depositAmount, 0],
-          [depositEncode, colateralEncode],
-          {
-            value: depositAmount,
-            // gasPrice,
-            gasLimit,
-          }
+            [20, 10],
+            [depositAmount, 0],
+            [depositEncode, colateralEncode],
+            {
+              value: depositAmount,
+              // gasPrice,
+              gasLimit,
+            }
         );
 
         await this.wrapperStatusTx(result);
@@ -1838,14 +1981,14 @@ export default {
           const updateEncode = this.getUpdateRateEncode();
 
           const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [11, 20, 10],
-            [0, depositAmount, 0],
-            [updateEncode, depositEncode, colateralEncode],
-            {
-              value: depositAmount,
-              // gasPrice,
-              // gasLimit: 1000000,
-            }
+              [11, 20, 10],
+              [0, depositAmount, 0],
+              [updateEncode, depositEncode, colateralEncode],
+              {
+                value: depositAmount,
+                // gasPrice,
+                // gasLimit: 1000000,
+              }
           );
 
           const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -1853,14 +1996,14 @@ export default {
           console.log("gasLimit:", gasLimit);
 
           const result = await this.pool.contractInstance.cook(
-            [11, 20, 10],
-            [0, depositAmount, 0],
-            [updateEncode, depositEncode, colateralEncode],
-            {
-              value: depositAmount,
-              // gasPrice,
-              gasLimit,
-            }
+              [11, 20, 10],
+              [0, depositAmount, 0],
+              [updateEncode, depositEncode, colateralEncode],
+              {
+                value: depositAmount,
+                // gasPrice,
+                gasLimit,
+              }
           );
 
           await this.wrapperStatusTx(result);
@@ -1870,14 +2013,14 @@ export default {
         }
 
         const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [20, 10],
-          [depositAmount, 0],
-          [depositEncode, colateralEncode],
-          {
-            value: depositAmount,
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
+            [20, 10],
+            [depositAmount, 0],
+            [depositEncode, colateralEncode],
+            {
+              value: depositAmount,
+              // gasPrice,
+              // gasLimit: 1000000,
+            }
         );
 
         const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -1885,14 +2028,14 @@ export default {
         console.log("gasLimit:", gasLimit);
 
         const result = await this.pool.contractInstance.cook(
-          [20, 10],
-          [depositAmount, 0],
-          [depositEncode, colateralEncode],
-          {
-            value: depositAmount,
-            // gasPrice,
-            gasLimit,
-          }
+            [20, 10],
+            [depositAmount, 0],
+            [depositEncode, colateralEncode],
+            {
+              value: depositAmount,
+              // gasPrice,
+              gasLimit,
+            }
         );
 
         await this.wrapperStatusTx(result);
@@ -1906,14 +2049,14 @@ export default {
         const updateEncode = this.getUpdateRateEncode();
 
         const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [24, 11, 20, 10],
-          [0, 0, depositAmount, 0],
-          [approvalEncode, updateEncode, depositEncode, colateralEncode],
-          {
-            value: depositAmount,
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
+            [24, 11, 20, 10],
+            [0, 0, depositAmount, 0],
+            [approvalEncode, updateEncode, depositEncode, colateralEncode],
+            {
+              value: depositAmount,
+              // gasPrice,
+              // gasLimit: 1000000,
+            }
         );
 
         const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -1921,14 +2064,14 @@ export default {
         console.log("gasLimit:", gasLimit);
 
         const result = await this.pool.contractInstance.cook(
-          [24, 11, 20, 10],
-          [0, 0, depositAmount, 0],
-          [approvalEncode, updateEncode, depositEncode, colateralEncode],
-          {
-            value: depositAmount,
-            // gasPrice,
-            gasLimit,
-          }
+            [24, 11, 20, 10],
+            [0, 0, depositAmount, 0],
+            [approvalEncode, updateEncode, depositEncode, colateralEncode],
+            {
+              value: depositAmount,
+              // gasPrice,
+              gasLimit,
+            }
         );
 
         await this.wrapperStatusTx(result);
@@ -1938,14 +2081,14 @@ export default {
       }
 
       const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-        [24, 20, 10],
-        [0, depositAmount, 0],
-        [approvalEncode, depositEncode, colateralEncode],
-        {
-          value: depositAmount,
-          // gasPrice,
-          // gasLimit: 1000000,
-        }
+          [24, 20, 10],
+          [0, depositAmount, 0],
+          [approvalEncode, depositEncode, colateralEncode],
+          {
+            value: depositAmount,
+            // gasPrice,
+            // gasLimit: 1000000,
+          }
       );
 
       const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -1953,14 +2096,14 @@ export default {
       console.log("gasLimit:", gasLimit);
 
       const result = await this.pool.contractInstance.cook(
-        [24, 20, 10],
-        [0, depositAmount, 0],
-        [approvalEncode, depositEncode, colateralEncode],
-        {
-          value: depositAmount,
-          // gasPrice,
-          gasLimit,
-        }
+          [24, 20, 10],
+          [0, depositAmount, 0],
+          [approvalEncode, depositEncode, colateralEncode],
+          {
+            value: depositAmount,
+            // gasPrice,
+            gasLimit,
+          }
       );
 
       await this.wrapperStatusTx(result);
@@ -1968,8 +2111,8 @@ export default {
       console.log(result);
     },
     async cookAddAndBorrow(
-      { collateralAmount, amount, updatePrice },
-      isApprowed
+        {collateralAmount, amount, updatePrice},
+        isApprowed
     ) {
       const borrowEncode = this.getBorrowEncode(amount);
 
@@ -1983,8 +2126,8 @@ export default {
       console.log("GAS PRICE:", gasPrice);
 
       const depositCollateralAmount = this.getAVAXStatus()
-        ? collateralAmount
-        : 0;
+          ? collateralAmount
+          : 0;
 
       if (isApprowed) {
         console.log("APPROWED");
@@ -1993,20 +2136,20 @@ export default {
           const updateEncode = this.getUpdateRateEncode();
 
           const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [11, 5, 21, 20, 10],
-            [0, 0, 0, depositCollateralAmount, 0],
-            [
-              updateEncode,
-              borrowEncode,
-              bentoWithdrawEncode,
-              depositEncode,
-              colateralEncode,
-            ],
-            {
-              value: depositCollateralAmount,
-              // gasPrice,
-              // gasLimit: 1000000,
-            }
+              [11, 5, 21, 20, 10],
+              [0, 0, 0, depositCollateralAmount, 0],
+              [
+                updateEncode,
+                borrowEncode,
+                bentoWithdrawEncode,
+                depositEncode,
+                colateralEncode,
+              ],
+              {
+                value: depositCollateralAmount,
+                // gasPrice,
+                // gasLimit: 1000000,
+              }
           );
 
           const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -2014,20 +2157,20 @@ export default {
           console.log("gasLimit:", gasLimit);
 
           const result = await this.pool.contractInstance.cook(
-            [11, 5, 21, 20, 10],
-            [0, 0, 0, depositCollateralAmount, 0],
-            [
-              updateEncode,
-              borrowEncode,
-              bentoWithdrawEncode,
-              depositEncode,
-              colateralEncode,
-            ],
-            {
-              value: depositCollateralAmount,
-              // gasPrice,
-              gasLimit,
-            }
+              [11, 5, 21, 20, 10],
+              [0, 0, 0, depositCollateralAmount, 0],
+              [
+                updateEncode,
+                borrowEncode,
+                bentoWithdrawEncode,
+                depositEncode,
+                colateralEncode,
+              ],
+              {
+                value: depositCollateralAmount,
+                // gasPrice,
+                gasLimit,
+              }
           );
 
           await this.wrapperStatusTx(result);
@@ -2038,14 +2181,14 @@ export default {
         }
 
         const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [5, 21, 20, 10],
-          [0, 0, depositCollateralAmount, 0],
-          [borrowEncode, bentoWithdrawEncode, depositEncode, colateralEncode],
-          {
-            value: depositCollateralAmount,
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
+            [5, 21, 20, 10],
+            [0, 0, depositCollateralAmount, 0],
+            [borrowEncode, bentoWithdrawEncode, depositEncode, colateralEncode],
+            {
+              value: depositCollateralAmount,
+              // gasPrice,
+              // gasLimit: 1000000,
+            }
         );
 
         const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -2053,14 +2196,14 @@ export default {
         console.log("gasLimit:", gasLimit);
 
         const result = await this.pool.contractInstance.cook(
-          [5, 21, 20, 10],
-          [0, 0, depositCollateralAmount, 0],
-          [borrowEncode, bentoWithdrawEncode, depositEncode, colateralEncode],
-          {
-            value: depositCollateralAmount,
-            // gasPrice,
-            gasLimit,
-          }
+            [5, 21, 20, 10],
+            [0, 0, depositCollateralAmount, 0],
+            [borrowEncode, bentoWithdrawEncode, depositEncode, colateralEncode],
+            {
+              value: depositCollateralAmount,
+              // gasPrice,
+              gasLimit,
+            }
         );
 
         await this.wrapperStatusTx(result);
@@ -2085,20 +2228,20 @@ export default {
           const updateEncode = this.getUpdateRateEncode();
 
           const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-            [11, 5, 21, 20, 10],
-            [0, 0, 0, depositCollateralAmount, 0],
-            [
-              updateEncode,
-              borrowEncode,
-              bentoWithdrawEncode,
-              depositEncode,
-              colateralEncode,
-            ],
-            {
-              value: depositCollateralAmount,
-              // gasPrice,
-              // gasLimit: 1000000,
-            }
+              [11, 5, 21, 20, 10],
+              [0, 0, 0, depositCollateralAmount, 0],
+              [
+                updateEncode,
+                borrowEncode,
+                bentoWithdrawEncode,
+                depositEncode,
+                colateralEncode,
+              ],
+              {
+                value: depositCollateralAmount,
+                // gasPrice,
+                // gasLimit: 1000000,
+              }
           );
 
           const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -2106,20 +2249,20 @@ export default {
           console.log("gasLimit:", gasLimit);
 
           const result = await this.pool.contractInstance.cook(
-            [11, 5, 21, 20, 10],
-            [0, 0, 0, depositCollateralAmount, 0],
-            [
-              updateEncode,
-              borrowEncode,
-              bentoWithdrawEncode,
-              depositEncode,
-              colateralEncode,
-            ],
-            {
-              value: depositCollateralAmount,
-              // gasPrice,
-              gasLimit,
-            }
+              [11, 5, 21, 20, 10],
+              [0, 0, 0, depositCollateralAmount, 0],
+              [
+                updateEncode,
+                borrowEncode,
+                bentoWithdrawEncode,
+                depositEncode,
+                colateralEncode,
+              ],
+              {
+                value: depositCollateralAmount,
+                // gasPrice,
+                gasLimit,
+              }
           );
 
           await this.wrapperStatusTx(result);
@@ -2129,14 +2272,14 @@ export default {
         }
 
         const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [5, 21, 20, 10],
-          [0, 0, depositCollateralAmount, 0],
-          [borrowEncode, bentoWithdrawEncode, depositEncode, colateralEncode],
-          {
-            value: depositCollateralAmount,
-            // gasPrice,
-            // gasLimit: 1000000,
-          }
+            [5, 21, 20, 10],
+            [0, 0, depositCollateralAmount, 0],
+            [borrowEncode, bentoWithdrawEncode, depositEncode, colateralEncode],
+            {
+              value: depositCollateralAmount,
+              // gasPrice,
+              // gasLimit: 1000000,
+            }
         );
 
         const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -2144,14 +2287,14 @@ export default {
         console.log("gasLimit:", gasLimit);
 
         const result = await this.pool.contractInstance.cook(
-          [5, 21, 20, 10],
-          [0, 0, depositCollateralAmount, 0],
-          [borrowEncode, bentoWithdrawEncode, depositEncode, colateralEncode],
-          {
-            value: depositCollateralAmount,
-            // gasPrice,
-            gasLimit,
-          }
+            [5, 21, 20, 10],
+            [0, 0, depositCollateralAmount, 0],
+            [borrowEncode, bentoWithdrawEncode, depositEncode, colateralEncode],
+            {
+              value: depositCollateralAmount,
+              // gasPrice,
+              gasLimit,
+            }
         );
 
         await this.wrapperStatusTx(result);
@@ -2165,11 +2308,56 @@ export default {
         const updateEncode = this.getUpdateRateEncode();
 
         const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          [24, 11, 5, 21, 20, 10],
-          [0, 0, 0, 0, depositCollateralAmount, 0],
+            [24, 11, 5, 21, 20, 10],
+            [0, 0, 0, 0, depositCollateralAmount, 0],
+            [
+              approvalEncode,
+              updateEncode,
+              borrowEncode,
+              bentoWithdrawEncode,
+              depositEncode,
+              colateralEncode,
+            ],
+            {
+              value: depositCollateralAmount,
+              // gasPrice,
+              // gasLimit: 1000000,
+            }
+        );
+
+        const gasLimit = this.gasLimitConst + +estimateGas.toString();
+
+        console.log("gasLimit:", gasLimit);
+
+        const result = await this.pool.contractInstance.cook(
+            [24, 11, 5, 21, 20, 10],
+            [0, 0, 0, 0, depositCollateralAmount, 0],
+            [
+              approvalEncode,
+              updateEncode,
+              borrowEncode,
+              bentoWithdrawEncode,
+              depositEncode,
+              colateralEncode,
+            ],
+            {
+              value: depositCollateralAmount,
+              // gasPrice,
+              gasLimit,
+            }
+        );
+
+        await this.wrapperStatusTx(result);
+
+        console.log(result);
+        return false;
+      }
+
+      const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+          [24, 5, 21, 20, 10],
+          [0, 0, 0, depositCollateralAmount, 0],
           [
             approvalEncode,
-            updateEncode,
             borrowEncode,
             bentoWithdrawEncode,
             depositEncode,
@@ -2180,18 +2368,17 @@ export default {
             // gasPrice,
             // gasLimit: 1000000,
           }
-        );
+      );
 
-        const gasLimit = this.gasLimitConst + +estimateGas.toString();
+      const gasLimit = this.gasLimitConst + +estimateGas.toString();
 
-        console.log("gasLimit:", gasLimit);
+      console.log("gasLimit:", gasLimit);
 
-        const result = await this.pool.contractInstance.cook(
-          [24, 11, 5, 21, 20, 10],
-          [0, 0, 0, 0, depositCollateralAmount, 0],
+      const result = await this.pool.contractInstance.cook(
+          [24, 5, 21, 20, 10],
+          [0, 0, 0, depositCollateralAmount, 0],
           [
             approvalEncode,
-            updateEncode,
             borrowEncode,
             bentoWithdrawEncode,
             depositEncode,
@@ -2202,50 +2389,6 @@ export default {
             // gasPrice,
             gasLimit,
           }
-        );
-
-        await this.wrapperStatusTx(result);
-
-        console.log(result);
-        return false;
-      }
-
-      const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-        [24, 5, 21, 20, 10],
-        [0, 0, 0, depositCollateralAmount, 0],
-        [
-          approvalEncode,
-          borrowEncode,
-          bentoWithdrawEncode,
-          depositEncode,
-          colateralEncode,
-        ],
-        {
-          value: depositCollateralAmount,
-          // gasPrice,
-          // gasLimit: 1000000,
-        }
-      );
-
-      const gasLimit = this.gasLimitConst + +estimateGas.toString();
-
-      console.log("gasLimit:", gasLimit);
-
-      const result = await this.pool.contractInstance.cook(
-        [24, 5, 21, 20, 10],
-        [0, 0, 0, depositCollateralAmount, 0],
-        [
-          approvalEncode,
-          borrowEncode,
-          bentoWithdrawEncode,
-          depositEncode,
-          colateralEncode,
-        ],
-        {
-          value: depositCollateralAmount,
-          // gasPrice,
-          gasLimit,
-        }
       );
 
       await this.wrapperStatusTx(result);
@@ -2253,13 +2396,12 @@ export default {
       console.log(result);
     },
     async cookMultiBorrow(
-      { collateralAmount, amount, updatePrice, minExpected },
-      isApprowed
+        {collateralAmount, amount, updatePrice, minExpected},
+        isApprowed
     ) {
-      const tokenAddr = this.pool.token.address;
       const swapperAddres = this.pool.swapContract.address;
       const userAddr = this.account;
-
+      const depositAmount = this.getAVAXStatus() ? collateralAmount : 0;
       const eventsArray = [];
       const valuesArray = [];
       const datasArray = [];
@@ -2288,19 +2430,16 @@ export default {
 
       //10
       const getCollateralEncode2 = this.$ethers.utils.defaultAbiCoder.encode(
-        ["int256", "address", "bool"],
-        ["-0x02", userAddr, false]
+          ["int256", "address", "bool"],
+          ["-0x02", userAddr, false]
       );
 
       if (collateralAmount) {
         //20
-        const getDepositEncode1 = this.$ethers.utils.defaultAbiCoder.encode(
-          ["address", "address", "int256", "int256"],
-          [tokenAddr, userAddr, collateralAmount, "0"]
-        );
+        const getDepositEncode1 = this.getDepositEncode(collateralAmount);
 
         eventsArray.push(20);
-        valuesArray.push(0);
+        valuesArray.push(depositAmount);
         datasArray.push(getDepositEncode1);
 
         eventsArray.push(10);
@@ -2310,8 +2449,8 @@ export default {
 
       //5
       const getBorrowSwapperEncode2 = this.$ethers.utils.defaultAbiCoder.encode(
-        ["int256", "address"],
-        [amount, swapperAddres]
+          ["int256", "address"],
+          [amount, swapperAddres]
       );
 
       eventsArray.push(5);
@@ -2319,14 +2458,14 @@ export default {
       datasArray.push(getBorrowSwapperEncode2);
 
       const swapStaticTx =
-        await this.pool.swapContract.populateTransaction.swap(
-          userAddr,
-          minExpected,
-          0,
-          {
-            gasLimit: 10000000,
-          }
-        );
+          await this.pool.swapContract.populateTransaction.swap(
+              userAddr,
+              minExpected,
+              0,
+              {
+                gasLimit: 10000000,
+              }
+          );
 
       const swapCallByte = swapStaticTx.data.substr(0, 138);
 
@@ -2341,8 +2480,8 @@ export default {
 
       //30
       const getCallEncode2 = this.$ethers.utils.defaultAbiCoder.encode(
-        ["address", "bytes", "bool", "bool", "uint8"],
-        [swapperAddres, swapCallByte, false, true, 2]
+          ["address", "bytes", "bool", "bool", "uint8"],
+          [swapperAddres, swapCallByte, false, true, 2]
       );
 
       eventsArray.push(30);
@@ -2363,12 +2502,12 @@ export default {
 
       try {
         const estimateGas = await this.pool.contractInstance.estimateGas.cook(
-          cookData.events,
-          cookData.values,
-          cookData.datas,
-          {
-            value: 0,
-          }
+            cookData.events,
+            cookData.values,
+            cookData.datas,
+            {
+              value: depositAmount,
+            }
         );
 
         const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -2376,13 +2515,13 @@ export default {
         console.log("gasLimit for cook:", gasLimit);
 
         const result = await this.pool.contractInstance.cook(
-          cookData.events,
-          cookData.values,
-          cookData.datas,
-          {
-            value: 0,
-            gasLimit,
-          }
+            cookData.events,
+            cookData.values,
+            cookData.datas,
+            {
+              value: depositAmount,
+              gasLimit,
+            }
         );
 
         console.log(result);
@@ -2400,38 +2539,38 @@ export default {
     },
     getBorrowEncode(borrow) {
       return this.$ethers.utils.defaultAbiCoder.encode(
-        ["int256", "address"],
-        [borrow, this.account]
+          ["int256", "address"],
+          [borrow, this.account]
       );
     },
     getDepositEncode(amount) {
       const depositAddressToken = this.getAVAXStatus()
-        ? "0x0000000000000000000000000000000000000000"
-        : this.pool.token.address;
+          ? "0x0000000000000000000000000000000000000000"
+          : this.pool.token.address;
 
       return this.$ethers.utils.defaultAbiCoder.encode(
-        ["address", "address", "int256", "int256"],
-        [depositAddressToken, this.account, amount, "0"]
+          ["address", "address", "int256", "int256"],
+          [depositAddressToken, this.account, amount, "0"]
       );
     },
     getUpdateRateEncode() {
       return this.$ethers.utils.defaultAbiCoder.encode(
-        ["bool", "uint256", "uint256"],
-        [true, "0x00", "0x00"]
+          ["bool", "uint256", "uint256"],
+          [true, "0x00", "0x00"]
       );
     },
     getAddCollateralEncode() {
       return this.$ethers.utils.defaultAbiCoder.encode(
-        ["int256", "address", "bool"],
-        ["-2", this.account, false]
+          ["int256", "address", "bool"],
+          ["-2", this.account, false]
       );
     },
     getBentoWithdrawEncode(amount) {
       const pairToken = this.pool.pairToken.address;
 
       return this.$ethers.utils.defaultAbiCoder.encode(
-        ["address", "address", "int256", "int256"],
-        [pairToken, this.account, amount, "0x0"]
+          ["address", "address", "int256", "int256"],
+          [pairToken, this.account, amount, "0x0"]
       );
     },
     getApprovalEncode: async function () {
@@ -2451,11 +2590,11 @@ export default {
       // The named list of all type definitions
       const types = {
         SetMasterContractApproval: [
-          { name: "warning", type: "string" },
-          { name: "user", type: "address" },
-          { name: "masterContract", type: "address" },
-          { name: "approved", type: "bool" },
-          { name: "nonce", type: "uint256" },
+          {name: "warning", type: "string"},
+          {name: "user", type: "address"},
+          {name: "masterContract", type: "address"},
+          {name: "approved", type: "bool"},
+          {name: "nonce", type: "uint256"},
         ],
       };
 
@@ -2542,15 +2681,15 @@ export default {
       const parsedSignature = this.parseSignature(signature);
 
       return this.$ethers.utils.defaultAbiCoder.encode(
-        ["address", "address", "bool", "uint8", "bytes32", "bytes32"],
-        [
-          account,
-          masterContract,
-          true,
-          parsedSignature.v,
-          parsedSignature.r,
-          parsedSignature.s,
-        ]
+          ["address", "address", "bool", "uint8", "bytes32", "bytes32"],
+          [
+            account,
+            masterContract,
+            true,
+            parsedSignature.v,
+            parsedSignature.r,
+            parsedSignature.s,
+          ]
       );
     },
     parseSignature(signature) {
@@ -2577,7 +2716,7 @@ export default {
     async getMasterContract() {
       try {
         const masterContract =
-          await this.pool.contractInstance.masterContract();
+            await this.pool.contractInstance.masterContract();
         return masterContract;
       } catch (e) {
         console.log("getMasterContract err:", e);
@@ -2595,10 +2734,10 @@ export default {
       try {
         const masterContract = await this.getMasterContract();
         const addressApprowed =
-          await this.pool.masterContractInstance.masterContractApproved(
-            masterContract,
-            this.account
-          );
+            await this.pool.masterContractInstance.masterContractApproved(
+                masterContract,
+                this.account
+            );
         return addressApprowed;
       } catch (e) {
         console.log("isApprowed err:", e);
@@ -2607,17 +2746,17 @@ export default {
     async isTokenApprowed(tokenContract, spenderAddress) {
       try {
         const addressApprowed = await tokenContract.allowance(
-          this.account,
-          spenderAddress,
-          {
-            gasLimit: 1000000,
-          }
+            this.account,
+            spenderAddress,
+            {
+              gasLimit: 1000000,
+            }
         );
 
         console.log(
-          "TOKEN APPROVE:",
-          addressApprowed,
-          parseFloat(addressApprowed.toString()) > 0
+            "TOKEN APPROVE:",
+            addressApprowed,
+            parseFloat(addressApprowed.toString()) > 0
         );
         return parseFloat(addressApprowed.toString()) > 0;
       } catch (e) {
@@ -2628,8 +2767,8 @@ export default {
     async approveToken(tokenContract, spenderAddress) {
       try {
         const estimateGas = await tokenContract.estimateGas.approve(
-          spenderAddress,
-          "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+            spenderAddress,
+            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
         );
 
         const gasLimit = this.gasLimitConst + +estimateGas.toString();
@@ -2637,11 +2776,11 @@ export default {
         console.log("gasLimit:", gasLimit);
 
         const tx = await tokenContract.approve(
-          spenderAddress,
-          "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-          {
-            gasLimit,
-          }
+            spenderAddress,
+            "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            {
+              gasLimit,
+            }
         );
         const receipt = await tx.wait();
 
@@ -2658,24 +2797,24 @@ export default {
         const masterContract = await this.getMasterContract();
 
         console.log(
-          "approveMasterContract",
-          this.account,
-          masterContract,
-          true,
-          this.$ethers.utils.formatBytes32String(""),
-          this.$ethers.utils.formatBytes32String(""),
-          this.$ethers.utils.formatBytes32String("")
-        );
-
-        const tx =
-          await this.pool.masterContractInstance.setMasterContractApproval(
+            "approveMasterContract",
             this.account,
             masterContract,
             true,
             this.$ethers.utils.formatBytes32String(""),
             this.$ethers.utils.formatBytes32String(""),
             this.$ethers.utils.formatBytes32String("")
-          );
+        );
+
+        const tx =
+            await this.pool.masterContractInstance.setMasterContractApproval(
+                this.account,
+                masterContract,
+                true,
+                this.$ethers.utils.formatBytes32String(""),
+                this.$ethers.utils.formatBytes32String(""),
+                this.$ethers.utils.formatBytes32String("")
+            );
 
         const receipt = await tx.wait();
         return receipt;
@@ -2687,7 +2826,7 @@ export default {
     async getNonce() {
       try {
         const nonces = await this.pool.masterContractInstance.nonces(
-          this.account
+            this.account
         );
 
         console.log("NONCE:", nonces.toString());
@@ -2707,15 +2846,15 @@ export default {
     },
     async updatePrices() {
       this.pool.tokenPrice =
-        1 / (await this.getTokenPrice(this.pool.token.name));
+          1 / (await this.getTokenPrice(this.pool.token.name));
       this.pool.tokenPairPrice = await this.getTokenPrice(
-        this.pool.pairToken.name
+          this.pool.pairToken.name
       );
 
       console.log(
-        "PAIR PRICES UPDATE",
-        this.pool.tokenPrice,
-        this.pool.tokenPairPrice
+          "PAIR PRICES UPDATE",
+          this.pool.tokenPrice,
+          this.pool.tokenPairPrice
       );
     },
   },
@@ -2723,12 +2862,12 @@ export default {
     const isConnected = this.$store.getters.getWalletIsConnected;
 
     if (!isConnected) {
-      this.$router.push({ name: "Stand" });
+      this.$router.push({name: "Stand"});
       return false;
     }
 
     if (!this.pool.isEnabled) {
-      this.$router.push({ name: "Stand" });
+      this.$router.push({name: "Stand"});
       return false;
     }
 
@@ -2737,7 +2876,7 @@ export default {
     const poolItem = this.$store.getters.getPoolById(poolId);
 
     if (!poolItem) {
-      this.$router.push({ name: "Stand" });
+      this.$router.push({name: "Stand"});
       console.log("POOL IS UNDEFINED");
       return false;
     }
@@ -2745,9 +2884,9 @@ export default {
     console.log("POOL:", poolId);
 
     if (
-      this.$route.query.actionType &&
-      (this.$route.query.actionType === "borrow" ||
-        this.$route.query.actionType === "repay")
+        this.$route.query.actionType &&
+        (this.$route.query.actionType === "borrow" ||
+            this.$route.query.actionType === "repay")
     )
       this.setActionType(this.$route.query.actionType);
   },
@@ -2763,6 +2902,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .pool-view {
   padding: 40px 0;
   flex: 1;
@@ -2773,6 +2914,9 @@ export default {
     grid-template-columns: 600px 375px;
     column-gap: 20px;
     margin-top: 50px;
+    @include respond-to(sm) {
+      margin-top: 40px;
+    }
   }
 
   .btns-group {
@@ -2783,6 +2927,9 @@ export default {
     background: #262626;
     border-radius: 100px;
     padding: 2px;
+    @include respond-to(sm) {
+      width: 100%;
+    }
 
     .btn {
       width: 73px;
@@ -2790,6 +2937,10 @@ export default {
       font-size: 14px;
       line-height: 20px;
       background: #262626;
+      @include respond-to(sm) {
+        width: 50%;
+        height: 32px;
+      }
 
       &:hover {
         //background-color: $clrBlue5;
@@ -2802,6 +2953,9 @@ export default {
       &.active {
         color: black;
         background-color: $clrBg3;
+        @include respond-to(sm) {
+          background-color: white;
+        }
       }
     }
   }
@@ -2842,7 +2996,7 @@ export default {
 @media screen and(max-width: 640px) {
   .pool-view .btns-group {
     justify-content: center;
-    margin-bottom: 30px;
+    margin-bottom: 28px;
   }
 
   .pool-view .pool-head-bar {
