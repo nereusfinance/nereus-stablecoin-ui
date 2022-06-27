@@ -1,14 +1,14 @@
 <template>
   <div class="expected-interest-block">
-    <p class="expected-interest-title">
-      Expected interest
+    <div class="expected-interest-title">
+      <div>Expected interest</div>
       <img
         src="@/assets/images/icon-info.svg"
         alt=""
         class="fist-info-icon"
         v-tooltip="'Approximated interest for now'"
       />
-    </p>
+    </div>
     <div class="container-interest">
       <div>
         <div class="column-interest" v-for="time in period" :key="time">
@@ -131,18 +131,21 @@ export default {
     text-align: left;
   }
   .expected-interest-title {
+    display: flex;
+    flex-direction: row;
     text-align: left;
     font-size: 20px;
     line-height: 28px;
-    gap: 9.33px;
+    gap: 6px;
     margin-bottom: 16px;
   }
   .fist-info-icon {
-    width: 13.33px;
+    width: 13px;
   }
   .total-title {
     display: flex;
     align-items: center;
+    color: #8A8A8A;
   }
   .total-title img {
     margin-left: 5px;
@@ -221,14 +224,16 @@ export default {
   .expected-interest-block {
     width: 424px;
     height: 280px;
-    padding: 35px 16px 16px 16px;
+    padding: 32px 16px 16px 16px;
 
     .info-icon {
       width: 13px;
       position: relative;
-      left: 22.4%;
+      left: -2.4%;
       right: 8.34%;
-      top: -9.1%;
+    }
+    .fist-info-icon {
+      width: 13px;
     }
   }
 }
@@ -241,7 +246,9 @@ export default {
     margin-top: 24px;
 
     padding: 0;
-
+    .fist-info-icon {
+      width: 20px;
+    }
     .total-text {
       padding-right: 0;
       text-align: right;
@@ -252,8 +259,8 @@ export default {
     }
     .expected-interest-title {
       font-size: 20px;
-      gap: 6px;
       margin-bottom: 12px;
+      gap: 6px;
     }
 
     .column-interest:last-child {

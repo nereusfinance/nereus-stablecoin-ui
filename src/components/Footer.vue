@@ -126,7 +126,17 @@ export default {
     display: none;
   }
 }
+@media screen and(max-width: 767px) {
+  .app-footer {
+    display: none;
+  }
+}
 
+@media screen and(min-width: 768px) and(max-width: 1000px) {
+  .app-footer {
+    display: none;
+  }
+}
 @media screen and(max-width: 780px) {
   .app-footer .container .links-wrap .link-item.ml {
     margin-left: 30px;

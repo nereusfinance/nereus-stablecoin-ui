@@ -123,6 +123,8 @@ export default {
   .columns {
     display: flex;
     flex-direction: row;
+    width: 100%;
+    padding: 0;
   }
 
   .column {
@@ -138,6 +140,7 @@ export default {
       margin-top: 4px;
       margin-bottom: 8px;
       font-size: 16px;
+      line-height: 24px;
       color: #8a8a8a;
     }
   }
@@ -149,6 +152,7 @@ export default {
   p.apy {
     font-weight: 600;
     font-size: 60px;
+    line-height: 48px;
     color: #55bcc0;
 
     span {
@@ -161,7 +165,8 @@ export default {
   h1 {
     text-align: left;
     font-weight: 600;
-    font-size: 96px;
+    font-size: 80px;
+    line-height: 80px;
     color: #55bcc0;
     gap: 2px;
 
@@ -181,7 +186,10 @@ export default {
     .columns {
       height: 136px;
     }
-
+    .column {
+      margin-right: 36px;
+      margin-bottom: 32px;
+    }
     h1 {
       font-size: 80px;
     }
@@ -206,10 +214,12 @@ export default {
       display: flex;
       flex-direction: column;
       margin-right: 24px;
+      margin-bottom: 16px;
 
       h1 {
         font-weight: 600;
         font-size: 64px;
+        line-height: 68px;
         margin: 0;
 
         span {
@@ -218,7 +228,10 @@ export default {
         }
       }
     }
-
+    .column.last-column {
+      margin-right: auto;
+      margin-left: 0;
+    }
     h2 {
       font-weight: 400;
       font-size: 16px;

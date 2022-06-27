@@ -119,29 +119,30 @@ export default {
   width: 100%;
   background: #262626;
   border-radius: 4px;
-  padding: 32px 12px 12px 16px;
+  padding: 32px 16px 16px 24px;
   display: flex;
   flex-direction: column;
 
   .locked-header {
-    padding: 0 12px;
     font-weight: 400;
     font-size: 20px;
     text-align: left;
   }
 
   .locked-balance {
-    padding: 0 12px;
     font-size: 24px;
     display: flex;
     flex-direction: row;
     align-items: center;
     margin-top: 22px;
-    gap: 2px;
+  }
+  .token-icon-wrap {
+    width: 32px;
+    height: 32px;
+    margin-right: 8px;
   }
 
   .locked-table-header {
-    padding: 0 12px;
     display: flex;
     justify-content: space-between;
     font-weight: 400;
@@ -157,7 +158,7 @@ export default {
     font-weight: 400;
     font-size: 16px;
     color: #ffffff;
-    padding: 8px 12px;
+    padding: 8px 0;
   }
 
   .locked-table-row.selected {
@@ -207,6 +208,9 @@ export default {
 }
 
 @media screen and(max-width: 767px) {
+  .locked-wrapper {
+    padding: 24px 16px 16px 16px;
+  }
   .locked-token-block {
     height: 316px;
     width: 328px;
@@ -237,7 +241,7 @@ export default {
     .token-icon-wrap {
       width: 32px;
       height: 32px;
-      margin-right: 6px;
+      margin-right: 8px;
     }
 
     .columns {

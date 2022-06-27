@@ -570,6 +570,7 @@ export default {
   }
 
   .continue {
+    border: none;
     cursor: pointer;
     height: 40px;
     background: #e7fc6e;
