@@ -6,8 +6,8 @@
       <transition mode="out-in" name="fade">
         <router-view></router-view>
       </transition>
-      <Footer></Footer>
-      <PopupsWrapper v-if="showPopup"/>
+      <Footer class="footer"></Footer>
+      <PopupsWrapper v-if="showPopup" />
     </template>
 
     <ConnectionChecker @checkError="checkError" @checkSuccess="checkSuccess"/>
@@ -296,6 +296,10 @@ h3 {
   .container {
     width: 100%;
     padding: 0 $containerSidePadding;
+  }
+
+  footer.app-footer.footer {
+    display: none;
   }
 }
 </style>

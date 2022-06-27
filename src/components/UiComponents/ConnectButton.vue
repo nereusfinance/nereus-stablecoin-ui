@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isConnected">
+  <div class="btn-text" v-if="isConnected">
     <button
       :class="{ load: connectLoader, connected: isConnected }"
       class="btn mini connected-btn"
@@ -28,7 +28,6 @@
     >
       <ButtonLoader v-if="connectLoader" />
       <template v-else>
-        {{ connectBtnText }}
       </template>
     </button>
   </div>
@@ -54,7 +53,6 @@ export default {
     return {
       itsHover: false,
       connectLoader: false,
-      btnText: "Connect",
 
       networks: [
         // {
@@ -105,9 +103,6 @@ export default {
       let endAddr = account.slice(-4);
 
       return `${startAddr}...${endAddr}`;
-    },
-    connectBtnText() {
-      return this.btnText;
     },
     isConnected() {
       return this.$store.getters.getWalletIsConnected;
@@ -179,6 +174,9 @@ export default {
   }
 }
 
+.connect-btn:before {
+  content: "Connect";
+}
 .connect-btn {
   background: #e7fc6e;
   border-radius: 21px;
@@ -193,5 +191,37 @@ export default {
 
   text-align: center;
   color: #000000;
+}
+
+@media screen and(max-width: 980px) {
+  .btn-text {
+    margin: 0;
+  }
+  .connected-btn {
+    width: auto;
+    padding: 0;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 24px;
+    margin: 0;
+  }
+  .slicedAddress {
+    width: auto;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+  }
+
+  .connect-btn {
+    height: 48px;
+    width: 272px;
+    background: #E7FC6E;
+    border-radius: 24px;
+    font-size: 18px;
+  }
+
+  .connect-btn:before {
+    content: "Connect wallet";
+  }
 }
 </style>
