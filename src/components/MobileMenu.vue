@@ -14,13 +14,72 @@
       >
       <router-link :to="{ name: 'Stake' }" class="nav-link">Earn</router-link>
     </nav>
+    <div class="footer">
+        <div class="leftLinks">
+          <SocialLink
+            v-for="(item, index) in filteredLeftIcons"
+            :key="index"
+            :data="item.data"
+            :link="item.link"
+            :type="item.type"
+            class="git-book"
+          />
+        </div>
+        <div class="rightLinks">
+          <SocialLink
+            v-for="(item, index) in filteredRightIcons"
+            :key="index"
+            :data="item.data"
+            :link="item.link"
+            :type="item.type"
+            class="media"
+          />
+        </div>
+      </div>
   </div>
 </template>
 
 <script>
+import DiscordWhite from "@/assets/images/DiscordWhite.svg";
+import TwitterWhite from "@/assets/images/TwitterWhite.svg";
+import MediumWhite from "@/assets/images/MediumWhite.svg";
+
 const NetworkButton = () => import("@/components/UiComponents/NetworkButton");
 const ConnectButton = () => import("@/components/UiComponents/ConnectButton");
+const SocialLink = () => import("@/components/SocialLink");
 export default {
+  data() {
+    return {
+      socialLink: [
+        {
+          data: "GitBook",
+          link: "https://docs.nereus.finance/",
+          position: "left",
+          type: "text",
+        },
+        {
+          data: DiscordWhite,
+          link: "https://discord.gg/4tw3VsuTf9",
+          position: "right",
+          type: "image",
+        },
+        {
+          data: TwitterWhite,
+          link: "https://twitter.com/nereusfinance",
+          position: "right",
+          type: "image",
+        },
+        {
+          data: MediumWhite,
+          link: "https://medium.com/nereus-protocol",
+          position: "right",
+          type: "image",
+        },
+      ],
+      filteredRightIcons: [],
+      filteredLeftIcons: [],
+    };
+  },
   watch: {
     $route() {
       this.hideMenu();
@@ -49,13 +108,22 @@ export default {
   components: {
     NetworkButton,
     ConnectButton,
+    SocialLink,
+  },
+  mounted() {
+    this.socialLink.forEach((item) => {
+      if (item.position === "left") {
+        this.filteredLeftIcons.push(item);
+      } else if (item.position === "right") {
+        this.filteredRightIcons.push(item);
+      }
+    });
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .mobile-menu {
-  padding: 30px 15px;
   padding-top: 0;
   position: fixed;
   top: 0;
@@ -66,6 +134,23 @@ export default {
   z-index: 400;
   display: flex;
   flex-direction: column;
+
+  .footer {
+    position: absolute;
+    bottom: 5px;
+    width: 100%;
+    border-top: 1px solid black;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 18px 18px 6px 16px ;
+    .git-book{
+      color: #fff;
+    }
+    .rightLinks{
+      display: flex;
+    }
+  }
 
   .like-header {
     display: flex;
