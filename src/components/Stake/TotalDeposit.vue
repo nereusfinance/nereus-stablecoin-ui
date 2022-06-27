@@ -123,7 +123,7 @@ export default {
     height: 32px;
 
     background: $clrBg3;
-    border: 1px solid #414141;
+    border: none;
     border-radius: 16px;
     margin-right: 16px;
 
@@ -154,13 +154,13 @@ export default {
     height: 32px;
 
     background: $clrBg3;
-    border: 1px solid #414141;
+    border: none;
     border-radius: 16px;
 
     font-size: 14px;
     color: black;
     &.notActive {
-      color: white;
+      color: #8A8A8A;
       background-color: #353535;
     }
   }
@@ -175,6 +175,7 @@ export default {
   .total-deposit-block {
     height: 186px;
     padding: 24px 16px 24px 16px;
+    margin-bottom: 8px;
     p {
       font-size: 20px;
     }
@@ -184,17 +185,23 @@ export default {
       margin-right: 6px;
     }
     .deposit-btn {
+      font-size: 20px;
       width: 140px;
+      height: 40px;
       margin-right: 8px;
       border-radius: 20px;
-      height: 40px;
-      padding: 0 0 3px 0;
+      padding: 8px 16px;
+      gap: 10px;
     }
     .withdraw-btn {
+      border: none;
+      font-size: 20px;
       width: 100px;
       height: 40px;
       border-radius: 20px;
-      padding: 0 0 3px 0;
+      padding: 8px 3px;
+      font-weight: 400;
+      line-height: 24px;
     }
   }
 }

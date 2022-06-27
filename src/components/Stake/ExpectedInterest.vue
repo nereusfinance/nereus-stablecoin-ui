@@ -224,7 +224,7 @@ export default {
   .expected-interest-block {
     width: 424px;
     height: 280px;
-    padding: 35px 16px 16px 16px;
+    padding: 32px 16px 16px 16px;
 
     .info-icon {
       width: 13px;

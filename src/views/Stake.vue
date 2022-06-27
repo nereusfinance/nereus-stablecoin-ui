@@ -167,6 +167,9 @@ export default {
   .stake-text {
     margin-left: 28px;
   }
+  .stake-view .stake-item-two {
+    margin-left: 8px;
+  }
 }
 @media screen and(max-width: 767px) {
   .stake {
