@@ -1,8 +1,8 @@
 <template>
   <div class="btn-text" v-if="isConnected">
     <button
-      class="btn mini connected-btn"
       :class="{ load: connectLoader, connected: isConnected }"
+      class="btn mini connected-btn"
       @click="disconnect"
       @mouseenter="itsHover = true"
       @mouseleave="itsHover = false"
@@ -12,7 +12,9 @@
       <template v-else>
         <div>
           {{ walletBtnText }}
-          <p class="slicedAddress">{{ slicedAccountAddress }}</p>
+          <p class="slicedAddress" data-cy="account-address">
+            {{ slicedAccountAddress }}
+          </p>
         </div>
       </template>
     </button>
@@ -20,8 +22,8 @@
 
   <div v-else>
     <button
-      class="btn mini connect-btn"
       :class="{ load: connectLoader, connected: isConnected }"
+      class="btn mini connect-btn"
       @click="walletBtnHandler"
     >
       <ButtonLoader v-if="connectLoader" />

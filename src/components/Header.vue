@@ -1,51 +1,51 @@
 <template>
-  <header class="app-header" :class="{ transparent: itsTransparent }">
+  <header :class="{ transparent: itsTransparent }" class="app-header">
     <div class="container">
       <div class="containerS">
         <div>
           <router-link :to="{ name: 'Stand' }" class="logo-wrap">
-            <img src="@/assets/images/text-logo.svg" alt="" class="logo" />
+            <img alt="" class="logo" src="@/assets/images/text-logo.svg"/>
           </router-link>
         </div>
-        <a href="https://app.nereus.finance/#/markets" class="nereus-btn"
-          >Nereus Markets</a
+        <a class="nereus-btn" href="https://app.nereus.finance/#/markets"
+        >Nereus Markets</a
         >
       </div>
 
       <nav>
         <div>
           <router-link
-            :to="{ name: 'Stand' }"
-            class="markets-btn"
-            active="onclick"
+              :to="{ name: 'Stand' }"
+              active="onclick"
+              class="markets-btn"
           >
             Markets
           </router-link>
           <router-link
-            :to="{ name: 'Stake' }"
-            class="stake-btn"
-            active="onclick"
+              :to="{ name: 'Stake' }"
+              active="onclick"
+              class="stake-btn"
           >
             Earn
           </router-link>
           <router-link
-            :to="{ name: 'Dashboard' }"
-            class="dashboard-btn"
-            active="onclick"
+              :to="{ name: 'Dashboard' }"
+              active="onclick"
+              class="dashboard-btn"
           >
             My Dashboard
           </router-link>
         </div>
         <div class="btn-margin">
-          <ConnectButton />
+          <ConnectButton/>
         </div>
       </nav>
 
       <img
-        src="@/assets/images/mobile-menu.svg"
-        alt=""
-        class="mobile-btn"
-        @click="menuClickHandler"
+          alt=""
+          class="mobile-btn"
+          src="@/assets/images/mobile-menu.svg"
+          @click="menuClickHandler"
       />
     </div>
   </header>
@@ -113,6 +113,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "../mixins/screen-size";
+
 .app-header {
   background: #4d4aec;
   height: $headerHeight;
@@ -153,6 +155,7 @@ export default {
     display: flex;
     align-items: center;
   }
+
   .logo {
     height: 32px;
     width: 146px;
@@ -185,7 +188,7 @@ export default {
     text-decoration: none;
     transition: all 0.3s ease;
     cursor: pointer;
-    padding: 8px 15px;
+    padding: 8px 9px 8px 15px;
     width: auto;
     height: 32px;
     border-radius: 21px;
@@ -196,6 +199,7 @@ export default {
       background: rgba(28, 28, 28, 0.16);
     }
   }
+
   a.stake-btn.router-link-exact-active.router-link-active,
   a.markets-btn.router-link-exact-active.router-link-active,
   a.dashboard-btn.router-link-exact-active.router-link-active {
@@ -229,7 +233,7 @@ export default {
     text-decoration: none;
     transition: all 0.3s ease;
     cursor: pointer;
-    padding: 8px 15px;
+    padding: 8px 9px 8px 15px;
     width: auto;
     height: 32px;
     border-radius: 21px;
@@ -262,6 +266,10 @@ export default {
     text-decoration: none;
     transition: all 0.3s ease;
     cursor: pointer;
+
+    @include respond-to(sm) {
+      margin-left: 16px;
+    }
 
     &:hover {
       color: black;

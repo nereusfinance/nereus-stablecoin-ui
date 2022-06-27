@@ -2,30 +2,30 @@
   <div class="modal-backdrop">
     <div class="modal">
       <header class="modal-header">
-        <slot name="header"> Choose provider </slot>
+        <slot name="header"> Choose provider</slot>
         <img
-          class="btn-close"
-          src="@/assets/images/cross.svg"
-          alt="cross"
-          @click="closeModal"
+            alt="cross"
+            class="btn-close"
+            src="@/assets/images/cross.svg"
+            @click="closeModal"
         />
       </header>
       <slot name="body">
         <div
-          v-for="connector in connectors"
-          :key="connector.name"
-          class="modal-body"
+            v-for="connector in connectors"
+            :key="connector.name"
+            class="modal-body"
         >
           <div
-            class="provider-btn"
-            @click="connector.onClick()"
-            v-if="!connector.disabled"
+              v-if="!connector.disabled"
+              class="provider-btn"
+              @click="connector.onClick()"
           >
             <div>{{ connector.name }}</div>
             <img
-              :src="require(`@/assets/images/${connector.iconName}.svg`)"
-              class="connector-img"
-              :alt="connector.name"
+                :alt="connector.name"
+                :src="require(`@/assets/images/${connector.iconName}.svg`)"
+                class="connector-img"
             />
           </div>
         </div>
@@ -73,6 +73,8 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -97,6 +99,14 @@ export default {
   position: relative;
   display: flex;
   flex-direction: column;
+  @include respond-to(sm) {
+    width: 100%;
+    min-width: 0;
+    padding: 56px 16px 16px 16px;
+    margin-left: 16px;
+    margin-right: 16px;
+    border-radius: 8px;
+  }
 }
 
 .modal-header {
@@ -106,6 +116,10 @@ export default {
   font-size: 20px;
   line-height: 28px;
   justify-content: space-between;
+  @include respond-to(sm) {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
 }
 
 .modal-body {
@@ -114,6 +128,9 @@ export default {
   color: #4aae9b;
   position: relative;
   padding: 8px 40px;
+  @include respond-to(sm) {
+    padding: 8px 0;
+  }
 }
 
 .btn-close {
@@ -122,6 +139,10 @@ export default {
   top: 2px;
   right: 10px;
   cursor: pointer;
+  @include respond-to(sm) {
+    top: -30px;
+    right: 0
+  }
 }
 
 .provider-btn {
@@ -133,12 +154,26 @@ export default {
   font-size: 16px;
   background-color: #606060;
   height: 56px;
+  @include respond-to(sm) {
+    height: 48px;
+    border-radius: 4px;
+    background: #353535
+  }
+
   img {
     width: 40px;
     margin-right: 24px;
+    @include respond-to(sm) {
+      width: 32px;
+      margin-right: 8px;
+    }
   }
+
   div {
     margin-left: 24px;
+    @include respond-to(sm) {
+      margin-left: 16px;
+    }
   }
 }
 

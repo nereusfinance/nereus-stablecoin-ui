@@ -1,75 +1,123 @@
 <template>
   <div class="leverage-bar">
-    <p class="bar-title">Choose your leverage</p>
-
     <div class="bar-wrap">
-      <div class="multipliers-wrap">
-        <div
-          v-for="multiplierItem in multipliers"
-          :key="multiplierItem"
-          class="multiplier-item"
-          :class="{ active: multiplierItem === multiplier }"
-          @click="setActive(multiplierItem)"
-        >
-          <p>{{ multiplierItem }}x</p>
-
-          <!--          <transition name="fade">-->
-          <!--            <img-->
-          <!--              v-if="multiplierItem === 10 && multiplierItem === multiplier"-->
-          <!--              src="@/assets/images/dani-mac.svg"-->
-          <!--              alt=""-->
-          <!--              class="dani-mac"-->
-          <!--            />-->
-          <!--          </transition>-->
-        </div>
+      <div class="slider-wrapper">
+        <Slider
+          :cyData="'leverage-slider'"
+          :max="4"
+          :min="1"
+          :step="0.25"
+          :value="sliderValue"
+          @changeValue="testOnChangeValue"
+        />
+      </div>
+      <div class="liquidation-price-text">
+        Liquidation Price ~ {{ leverageData.liquidationPrice }}
       </div>
 
-      <div class="range-track">
-        <div
-          class="range"
-          :class="userRisk"
-          :style="{ width: `${rangeWidth}%` }"
-        ></div>
+      <div class="item-main">
+        <p>Expected NXUSD amount</p>
+        <p class="percent-text">
+          <span>~ </span
+          ><span data-cy="expected-leverage">{{
+            leverageData.expectedNXUSDAmount
+          }}</span>
+        </p>
+      </div>
+
+      <div class="item-main">
+        <p>Expected leverage</p>
+        <p>~ {{ sliderValueFormatted }}x</p>
+      </div>
+
+      <div class="liquid-text">
+        The price of the collateral has to decrease approximately by
+        <span style="color: #fdd33f">{{ leverageData.liquidationRisk }} %</span>
+        for you to get flagged for liquidation
       </div>
     </div>
   </div>
 </template>
 
 <script>
+const Slider = () => import("@/components/UiComponents/Slider");
 export default {
   props: {
     multiplier: {
       type: Number,
       required: true,
     },
+    pool: {
+      required: true,
+    },
+    tokentToNUSD: {
+      required: true,
+    },
+    mainValue: {
+      required: true,
+    },
+    pairValue: {
+      required: true,
+    },
+    maxPairValue: {
+      required: true,
+    },
   },
   data() {
     return {
-      multipliers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      sliderValue: "1",
     };
   },
   computed: {
-    userRisk() {
-      if (this.multiplier > 7) return "hight";
-      if (this.multiplier > 3) return "medium";
-
-      return "safe";
+    sliderValueFormatted() {
+      let sliderValue = Number(this.sliderValue);
+      return sliderValue.toFixed(2);
     },
-    rangeWidth() {
-      if (this.multiplier === 1) {
-        return 0;
+    leverageData() {
+      const borrowPerc =
+        (100 - this.$store.getters.getBorrowFee(this.pool.id)) / 100;
+      const amountMultiplyer =
+        (this.pairValue * this.pool.ltv) / this.maxPairValue / 100;
+      let startAmount = this.pairValue * borrowPerc;
+      let finalBorrowAmount = 0;
+
+      for (let i = this.sliderValue; i > 0; i--) {
+        if (i > 1) {
+          finalBorrowAmount += +startAmount;
+          startAmount = startAmount * amountMultiplyer;
+        } else {
+          finalBorrowAmount += +startAmount * i;
+        }
       }
-
-      const max = this.multipliers.length - 1;
-      const value = this.multiplier - 1;
-
-      return (value / max) * 100;
+      const resultCollateral =
+        +this.$store.getters.getUserCollateralShare(this.pool.id) +
+        +this.mainValue +
+        finalBorrowAmount / this.tokentToNUSD;
+      const resultBorrow =
+        +this.$store.getters.getUserBorrowPart(this.pool.id) +
+        finalBorrowAmount;
+      const liquidationPrice =
+        resultBorrow / ((resultCollateral * this.pool.ltv) / 100);
+      const priceDifferens = this.tokentToNUSD - liquidationPrice;
+      const liquidationRisk = (priceDifferens / this.tokentToNUSD) * 100;
+      return {
+        liquidationRisk: liquidationRisk.toFixed(2),
+        expectedNXUSDAmount: (
+          +finalBorrowAmount +
+          +this.$store.getters.getUserBorrowPart(this.pool.id)
+        ).toFixed(4),
+        liquidationPrice: liquidationPrice.toFixed(4),
+      };
     },
   },
   methods: {
-    setActive(val) {
-      this.$emit("update", val);
+    testOnChangeValue(val) {
+      this.sliderValue = val;
+      this.$emit("update", +val);
     },
+  },
+  components: {
+    Slider,
   },
 };
 </script>
@@ -85,12 +133,10 @@ export default {
 }
 
 .leverage-bar {
-  .bar-title {
-    text-align: left;
-  }
-
   .bar-wrap {
     margin-top: 20px;
+    display: flex;
+    flex-direction: column;
   }
 
   .multipliers-wrap {
@@ -126,30 +172,34 @@ export default {
     }
   }
 
-  .range-track {
-    background: #606060;
-    border-radius: 4px;
+  .slider-wrapper {
+    margin: 4px 0 4px;
+  }
+
+  .liquidation-price-text {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    text-align: left;
+    color: #ffffff;
+    margin-bottom: 24px;
+  }
+
+  .item-main {
     display: flex;
-    height: 12px;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    line-height: 20px;
+    margin-bottom: 16px;
+  }
 
-    .range {
-      height: 100%;
-      width: 39%;
-      border-radius: 39px;
-      transition: all 0.3s ease;
-
-      &.safe {
-        background: #fdd33f;
-      }
-
-      &.medium {
-        background: #fdd33f;
-      }
-
-      &.hight {
-        background: #fdd33f;
-      }
-    }
+  .liquid-text {
+    text-align: left;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    color: #ffffff;
   }
 }
 </style>
