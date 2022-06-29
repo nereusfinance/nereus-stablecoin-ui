@@ -40,12 +40,6 @@ export default {
     hideMenu() {
       this.$store.commit("closePopups");
     },
-    networkClickHandler() {
-      this.$store.commit("setPopupState", {
-        type: "network",
-        isShow: true,
-      });
-    },
     showSwapPopup() {
       this.$store.commit("setPopupState", {
         type: "swap",

@@ -40,7 +40,6 @@
           <ConnectButton />
         </div>
       </nav>
-
       <img
         alt=""
         class="mobile-btn"
@@ -53,18 +52,9 @@
 
 <script>
 const ConnectButton = () => import("@/components/UiComponents/ConnectButton");
-//const TokenButton = () => import("@/components/UiComponents/AddTokenBtn");
 
 export default {
   computed: {
-    isSwapEnable() {
-      return !!this.$store.getters.getSwapObject;
-    },
-    showLogoBg() {
-      const pages = ["Stand"];
-
-      return pages.indexOf(this.$route.name) !== -1;
-    },
     itsTransparent() {
       const pages = ["Docs", "Tech", "Liquidations"];
 
@@ -277,6 +267,17 @@ export default {
     }
   }
 
+  @media screen and(min-width: 1201px) {
+    .mobile-btn {
+      display: none;
+    }
+  }
+}
+
+@media screen and(max-width: 1200px) {
+  .app-header .logo {
+    width: 146px;
+  }
   .mobile-btn {
     width: 24px;
     height: auto;
@@ -284,16 +285,6 @@ export default {
     cursor: pointer;
     margin-right: 20px;
   }
-  .mobile-connect-btn {
-    display: none;
-  }
-}
-
-@media screen and(max-width: 1280px) {
-  .app-header .logo {
-    width: 146px;
-  }
-
   .app-header nav .markets-btn .dashboard-btn {
     font-size: 16px;
   }
@@ -304,13 +295,14 @@ export default {
     width: 170px;
   }
 
-  .app-header nav .markets-btn .dashboard-btn {
-    font-size: 16px;
-  }
-
-  .app-header nav,
-  .app-header nav .btn-margin {
+  .btn-margin {
     margin-left: 15px;
+  }
+  .app-header.transparent .logo-bg {
+    display: none;
+  }
+  .app-header nav {
+    display: none;
   }
 }
 
@@ -321,7 +313,9 @@ export default {
   .app-header nav {
     display: none;
   }
-
+  .mobile-btn {
+    margin-right: 6px;
+  }
   .app-header .mobile-connect-btn {
     display: flex;
   }
