@@ -1,7 +1,6 @@
 <template>
   <div class="stake" v-if="isConnected">
     <div class="stake-view">
-      <add-token-btn :token-name="'NXUSD'"/>
       <h1 class="stake-text">Earn</h1>
       <div class="stake-wrapper">
         <div class="stake-item stake-item-one" v-if="!actionStatus">
@@ -43,7 +42,6 @@ import DepositWithdraw from "@/components/Stake/DepositWithdraw";
 const ActionComponent = () =>
   import("@/components/UiComponents/ActionComponent");
 import stake from "@/mixins/stake.js";
-import AddTokenBtn from "@/components/UiComponents/AddTokenBtn";
 export default {
   mixins: [stake],
   name: "Stake",
@@ -64,7 +62,6 @@ export default {
     };
   },
   components: {
-    AddTokenBtn,
     ActionComponent,
     DepositWithdraw,
     ExpectedInterest,
