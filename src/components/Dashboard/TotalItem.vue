@@ -38,10 +38,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .token-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  @include respond-to(sm) {
+    justify-content: flex-start;
+  }
 }
 
 .total-item {
@@ -50,6 +55,10 @@ export default {
   padding: 24px;
   min-height: 100%;
   position: relative;
+  @include respond-to(sm) {
+    padding: 16px;
+    max-height: 105px;
+  }
 
   .left-bg {
     width: 58px;
@@ -72,6 +81,10 @@ export default {
     line-height: 28px;
     margin-bottom: 40px;
     text-align: left;
+    @include respond-to(sm) {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
   }
 
   .img-wrap {
@@ -93,6 +106,10 @@ export default {
     line-height: 36px;
     text-transform: uppercase;
     padding-bottom: 8px;
+    @include respond-to(sm) {
+      font-size: 28px;
+      margin-right: 8px;
+    }
   }
 
   .token-text {
@@ -100,6 +117,9 @@ export default {
     line-height: 44px;
     text-transform: uppercase;
     padding-bottom: 8px;
+    @include respond-to(sm) {
+      font-size: 14px;
+    }
   }
 
   .info-text {
@@ -107,6 +127,9 @@ export default {
     line-height: 24px;
     text-align: left;
     color: #8a8a8a;
+    @include respond-to(sm) {
+      display: none;
+    }
   }
 }
 </style>

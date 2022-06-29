@@ -1,11 +1,11 @@
 <template>
   <div class="statistics-block">
-    <div class="item-wrap" v-for="(item, idx) in userStats" :key="idx">
+    <div v-for="(item, idx) in userStats" :key="idx" class="item-wrap">
       <TotalItem
-        :type="item.type"
-        :icon="item.icon"
         :amount="item.amount"
         :count="item.count"
+        :icon="item.icon"
+        :type="item.type"
       />
     </div>
 
@@ -85,6 +85,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .statistics-block {
   display: flex;
   justify-content: space-between;
@@ -101,9 +103,11 @@ export default {
 @media screen and(max-width: 1024px) {
   .statistics-block {
     flex-wrap: wrap;
+
     .item-wrap {
-      margin-bottom: 20px;
+      margin-bottom: 8px;
       width: 49%;
+
       &.cdp-item {
         width: 100%;
         margin-bottom: 0;
@@ -114,10 +118,11 @@ export default {
 
 @media screen and(max-width: 780px) {
   .statistics-block {
-    padding-left: 15px;
-    padding-right: 15px;
+    padding: 16px;
   }
-
+  .item-wrap {
+    margin-bottom: 8px;
+  }
   .statistics-block .item-wrap {
     width: 100%;
   }

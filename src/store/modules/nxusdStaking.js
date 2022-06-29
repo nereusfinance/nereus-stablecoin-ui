@@ -1,12 +1,27 @@
 import { ethers } from "ethers";
 export default {
   state: {
-    tableRewards: [],
-    totalTableRewards: [
-      ethers.BigNumber.from("0"),
-      ethers.BigNumber.from("0"),
-      ethers.BigNumber.from("0"),
-      ethers.BigNumber.from("0"),
+    tableRewards: [
+      {
+        rewardsTier1: ethers.BigNumber.from("0"),
+        rewardsTier2: ethers.BigNumber.from("0"),
+        rewardsTotal: ethers.BigNumber.from("0"),
+      },
+      {
+        rewardsTier1: ethers.BigNumber.from("0"),
+        rewardsTier2: ethers.BigNumber.from("0"),
+        rewardsTotal: ethers.BigNumber.from("0"),
+      },
+      {
+        rewardsTier1: ethers.BigNumber.from("0"),
+        rewardsTier2: ethers.BigNumber.from("0"),
+        rewardsTotal: ethers.BigNumber.from("0"),
+      },
+      {
+        rewardsTier1: ethers.BigNumber.from("0"),
+        rewardsTier2: ethers.BigNumber.from("0"),
+        rewardsTotal: ethers.BigNumber.from("0"),
+      },
     ],
     apyDataConfig: [],
     config: [],
@@ -52,9 +67,6 @@ export default {
     setTableRewards(state, payload) {
       state.tableRewards = payload;
     },
-    setTotalTableRewards(state, payload) {
-      state.totalTableRewards = payload;
-    },
     setAPYDataConfig(state, payload) {
       state.apyDataConfig = payload;
     },
@@ -78,10 +90,6 @@ export default {
         (new Date().getTime() / 1000).toFixed(0)
       );
       console.log("Table rewards data", tableRewards);
-      const totalTableRewards = tableRewards.map((rewards) => {
-        return rewards[0].add(rewards[1]);
-      });
-      commit("setTotalTableRewards", totalTableRewards);
       commit("setTableRewards", tableRewards);
     },
     async checkConfigCurrentVersion({ getters, commit }) {
@@ -127,7 +135,6 @@ export default {
   getters: {
     getUserWXTLock: (state) => state.userWXTLock,
     getTableRewards: (state) => state.tableRewards,
-    getTotalTableRewards: (state) => state.totalTableRewards,
     getUserData: (state) => state.userData,
     getAPYDataConfig: (state) => state.apyDataConfig,
     getConfig: (state) => state.config,

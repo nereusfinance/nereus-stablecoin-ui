@@ -3,14 +3,14 @@
     <template v-if="!checkInProcess">
       <Header></Header>
       <!-- <Banner v-if="showBanner" /> -->
-      <transition name="fade" mode="out-in">
+      <transition mode="out-in" name="fade">
         <router-view></router-view>
       </transition>
-      <Footer></Footer>
+      <Footer class="footer"></Footer>
       <PopupsWrapper v-if="showPopup" />
     </template>
 
-    <ConnectionChecker @checkSuccess="checkSuccess" @checkError="checkError" />
+    <ConnectionChecker @checkError="checkError" @checkSuccess="checkSuccess" />
 
     <NotificationContainer />
   </div>
@@ -88,11 +88,18 @@ export default {
 @import url("styles/_fonts.scss");
 @import url("styles/_animations.scss");
 @import "~normalize.css";
+@import "src/mixins/screen-size";
 
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+}
+
+.footer-container {
+  @include respond-to(sm) {
+    display: none;
+  }
 }
 
 h1,
@@ -285,10 +292,14 @@ h3 {
 }
 
 @media screen and(max-width: 780px) {
-  $containerSidePadding: 15px;
+  $containerSidePadding: 16px;
   .container {
     width: 100%;
     padding: 0 $containerSidePadding;
+  }
+
+  footer.app-footer.footer {
+    display: none;
   }
 }
 </style>

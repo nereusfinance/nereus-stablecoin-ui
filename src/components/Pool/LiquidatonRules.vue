@@ -4,33 +4,33 @@
       <p class="price-text">
         Liquidation price <span>${{ liquidationPriceFormatted }}</span>
       </p>
-      <button class="safe-status" :class="{ medium: statusText === 'Medium' }">
+      <button :class="{ medium: statusText === 'Medium' }" class="safe-status">
         {{ statusText }}
       </button>
     </div>
     <div class="block-body">
       <div
-        class="percent-item"
-        :class="{ active: item == value, disabled: item > maxValue }"
         v-for="(item, idx) in percentItems"
         :key="idx"
+        :class="{ active: item == value, disabled: item > maxValue }"
+        class="percent-item"
         @click="setItemActive(item)"
       >
         <p>{{ item }}%</p>
       </div>
       <label
-        class="percent-item custom"
         :class="{
           error: customErr,
           active: customValue == value && value !== '',
         }"
+        class="percent-item custom"
         @click="setCustomState(true)"
       >
         <input
           v-if="isCustom"
           v-model.trim="customValue"
-          type="number"
           placeholder="Custom"
+          type="number"
           @input="setCustomValue($event.target.value)"
         />
         <p v-else>Custom</p>
@@ -125,11 +125,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
 .liquid-rules-block {
   .block-head {
     display: flex;
@@ -141,6 +144,7 @@ input::-webkit-inner-spin-button {
   .price-text {
     font-size: 14px;
     line-height: 20px;
+
     span {
       padding-left: 10px;
       font-weight: 700;
@@ -210,6 +214,11 @@ input::-webkit-inner-spin-button {
     color: $clrText;
     padding: 0 5px;
     transition: all 0.3s ease;
+    @include respond-to(sm) {
+      padding: 2px 8px;
+      height: 16px;
+      font-size: 10px;
+    }
 
     &.medium {
       background: $clrOrange;

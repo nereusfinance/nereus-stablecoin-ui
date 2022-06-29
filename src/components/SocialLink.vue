@@ -43,6 +43,16 @@ export default {
   }
 }
 .icons:last-child {
-  padding-right: 0px;
+  padding-right: 0;
+}
+
+@media screen and(max-width: 780px) {
+  .icons {
+    filter: brightness(100);
+    &.hover {
+      filter: brightness(100);
+      color: white;
+    }
+  }
 }
 </style>

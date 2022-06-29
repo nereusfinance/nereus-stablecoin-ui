@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper" v-if="!isStake">
+  <div v-if="!isStake" class="wrapper">
     <div
       :class="{
         focus: isFocus,
@@ -35,10 +35,10 @@
       />
 
       <div
-        class="max-btn"
         v-if="parseFloat(max) && showMax"
-        @click="setMax"
         :style="{ cursor: disabled ? 'not-allowed' : 'pointer' }"
+        class="max-btn"
+        @click="setMax"
       >
         <p>MAX</p>
       </div>
@@ -62,49 +62,49 @@
     </div>
     <p v-if="errorText" class="error-text">{{ errorText }}</p>
   </div>
-  <div class="wrapper" v-else-if="isStake">
+  <div v-else-if="isStake" class="wrapper">
     <div
-      class="val-input"
       :class="{
         focus: isFocus,
         error,
       }"
+      class="val-input"
     >
       <div
+        :class="{ 'values-choose': values.length }"
         class="value-type"
         style="padding-left: 0"
-        :class="{ 'values-choose': values.length }"
         @click="openSelect"
       >
         <TokenIcon :token="valueName" />
         <img
           v-if="values.length"
-          src="@/assets/images/select-pixel-arrow.svg"
           alt=""
           class="arrow-icon"
+          src="@/assets/images/select-pixel-arrow.svg"
         />
       </div>
 
       <input
-        type="text"
-        class="input-stake"
-        placeholder="Amount"
-        @focus="setFocus(true)"
-        @blur="setFocus(false)"
         v-model="value"
         :disabled="disabled"
+        class="input-stake"
+        placeholder="Amount"
+        type="text"
+        @blur="setFocus(false)"
+        @focus="setFocus(true)"
       />
 
-      <div class="max-btn" v-if="parseFloat(max) && showMax" @click="setMax">
+      <div v-if="parseFloat(max) && showMax" class="max-btn" @click="setMax">
         <p class="max-btn-text">MAX</p>
       </div>
 
       <transition name="fade">
-        <div class="values-select" v-if="showSelect">
+        <div v-if="showSelect" class="values-select">
           <div
-            class="balance-item"
             v-for="(token, idx) in values"
             :key="idx"
+            class="balance-item"
             @click="changeValue(token.tokenIdx)"
           >
             <div class="value-select-type">
@@ -116,7 +116,7 @@
         </div>
       </transition>
     </div>
-    <p class="error-text" v-if="errorText">{{ errorText }}</p>
+    <p v-if="errorText" class="error-text">{{ errorText }}</p>
   </div>
 </template>
 
@@ -216,6 +216,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .error-text {
   color: $clrTextError;
   font-size: 10px;
@@ -277,6 +279,10 @@ export default {
   position: relative;
   width: 100%;
   transition: border 0.3s ease;
+  @include respond-to(sm) {
+    background: #353535;
+    border: 1px solid #8a8a8a;
+  }
 
   &.error {
     border: 1px solid $clrInputError;
@@ -320,6 +326,9 @@ export default {
 
     p {
       margin-right: 10px;
+      @include respond-to(sm) {
+        font-size: 16px;
+      }
     }
   }
 
@@ -351,13 +360,18 @@ export default {
     border-radius: 12px;
     font-size: 14px;
   }
+
   .max-btn-text {
     cursor: pointer;
     font-weight: 400;
     font-size: 16px;
     line-height: 24px;
     color: #55bcc0;
+    @include respond-to(sm) {
+      font-size: 14px;
+    }
   }
+
   .input-stake {
     font-weight: 400;
     font-size: 16px;
@@ -370,7 +384,6 @@ export default {
   .val-input .value-type {
     width: 90px;
     justify-content: flex-start;
-    padding-left: 5px;
   }
 
   .val-input .value-type .type-icon {

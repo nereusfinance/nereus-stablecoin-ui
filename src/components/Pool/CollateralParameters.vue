@@ -48,7 +48,9 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .coll-params-block {
   background: $clrBg2;
   border-radius: 4px;
@@ -62,9 +64,19 @@ export default {
     margin-bottom: 16px;
   }
 
+  .btm-text {
+    @include respond-to(sm) {
+      margin-bottom: 8px;
+    }
+  }
+
   h2 {
     padding: 16px 24px;
     border-bottom: 1px solid #1c1c1c;
+    @include respond-to(sm) {
+      padding: 16px 16px;
+      font-size: 16px;
+    }
   }
 
   .items-wrap {
@@ -73,13 +85,15 @@ export default {
     overflow-y: auto;
     padding-right: 5px;
     margin-bottom: auto;
+    @include respond-to(sm) {
+      padding-right: 0;
+    }
   }
 }
 
 @media screen and(max-width: 780px) {
   .coll-params-block {
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-bottom: 8px;
   }
 }
 </style>

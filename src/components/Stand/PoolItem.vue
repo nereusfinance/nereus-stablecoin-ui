@@ -1,7 +1,7 @@
 <template>
   <div
-    class="stand-table-item"
     :class="{ 'stand-table-disable': !pool.isEnabled }"
+    class="stand-table-item"
     @click="toPool"
   >
     <div class="table-col pool-name">
@@ -12,10 +12,10 @@
             {{ pool.name }}
             <img
               v-if="isWTXPool"
-              src="@/assets/images/i-icon.svg"
+              v-tooltip="'This is a private market.'"
               alt=""
               class="info-icon"
-              v-tooltip="'This is a private market.'"
+              src="@/assets/images/i-icon.svg"
             />
           </p>
         </div>
@@ -117,7 +117,9 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .stand-table-item {
   display: flex;
   align-items: center;
@@ -185,6 +187,7 @@ export default {
       span {
         color: #8a8a8a;
       }
+
       font-size: 16px;
       line-height: 24px;
     }
@@ -193,15 +196,18 @@ export default {
   .val-item {
     display: flex;
     align-items: center;
+
     .token-icon-wrap {
       .token-icon {
         max-width: none !important;
       }
     }
+
     .item-wrapper {
       display: flex;
       flex-direction: row;
       align-items: center;
+
       .info-icon {
         margin: 0;
       }
@@ -215,20 +221,28 @@ export default {
     margin-right: 10px;
   }
 }
+
 .stand-table-disable {
   cursor: not-allowed;
+
   &:hover {
     box-shadow: none;
   }
 }
+
 @media screen and(max-width: 780px) {
   .stand-table-item {
     flex-wrap: wrap;
     justify-content: center;
-    min-height: 100px;
+    min-height: 80px;
+    padding: 12px 20px;
 
     .table-col {
-      width: 20%;
+      width: 25%;
+    }
+
+    .stand-table-item .table-col p {
+      font-size: 16px;
     }
 
     .action-col {
@@ -252,13 +266,17 @@ export default {
 
 @media screen and(max-width: 640px) {
   .stand-table-item {
-    padding-left: 20px;
-    padding-right: 20px;
+    min-height: 80px;
+    padding: 12px 20px;
     justify-content: space-between;
+
+    .table-col {
+      width: 21%;
+    }
   }
 
   .stand-table-item .table-col p {
-    font-size: 12px;
+    font-size: 16px;
   }
 
   .stand-table-item .val-icon {
@@ -269,9 +287,11 @@ export default {
   .stand-table-item .val-item {
     flex-direction: column;
     align-items: flex-start;
+
     .token-icon-wrap {
       margin: 0;
     }
+
     .item-wrapper {
       display: flex;
       flex-direction: column;

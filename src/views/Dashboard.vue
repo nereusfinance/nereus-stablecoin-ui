@@ -111,6 +111,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .dashboard-view {
   padding-top: 40px;
   padding-bottom: 40px;
@@ -121,6 +123,9 @@ export default {
     line-height: 36px;
     margin-bottom: 20px;
     text-align: left;
+    @include respond-to(sm) {
+      margin-bottom: 24px;
+    }
   }
 
   .transaction-btn {
@@ -144,13 +149,20 @@ export default {
     border-radius: 100px;
     padding: 2px;
     margin-bottom: 24px;
+    @include respond-to(sm) {
+      width: 100%;
+      margin-bottom: 54px;
+    }
 
     .btn {
       width: 73px;
-      height: 28px;
+      height: 32px;
       font-size: 14px;
       line-height: 20px;
       background: #262626;
+      @include respond-to(sm) {
+        width: 50%;
+      }
 
       &:hover {
         //background-color: $clrBlue5;
@@ -162,7 +174,7 @@ export default {
 
       &.active {
         color: black;
-        background-color: $clrBg3;
+        background-color: white;
       }
     }
   }
@@ -177,7 +189,7 @@ export default {
 
 @media screen and(max-width: 1024px) {
   .dashboard-view {
-    padding-top: 80px;
+    padding-top: 40px;
   }
 
   .dashboard-view .btns-group {

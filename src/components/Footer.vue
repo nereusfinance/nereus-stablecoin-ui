@@ -1,5 +1,5 @@
 <template>
-  <footer class="app-footer" :class="{ transparent: itsTransparent }">
+  <footer :class="{ transparent: itsTransparent }" class="app-footer">
     <div class="container">
       <div class="leftLinks">
         <SocialLink
@@ -84,13 +84,21 @@ export default {
   },
 };
 </script>
-<style scoped lang="scss">
+<style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .app-footer {
   z-index: 1;
   height: $footerHeight;
   background: #262626;
   display: flex;
   align-items: center;
+  @include respond-to(sm) {
+    background: transparent;
+    position: absolute;
+    bottom: 0;
+    width: calc(100% - 30px);
+  }
 
   &.transparent {
     position: absolute;
@@ -108,6 +116,9 @@ export default {
     margin: auto;
     justify-content: space-between;
     width: 100%;
+    @include respond-to(sm) {
+      padding: 0 !important;
+    }
   }
 
   .rightLinks {
@@ -126,8 +137,25 @@ export default {
     display: none;
   }
 }
+@media screen and(max-width: 767px) {
+  .app-footer {
+    display: none;
+  }
+}
 
+@media screen and(min-width: 768px) and(max-width: 1000px) {
+  .app-footer {
+    display: none;
+  }
+}
 @media screen and(max-width: 780px) {
+  .app-footer {
+    position: fixed;
+    margin: 16px 0 16px 0;
+    width: 304px;
+    bottom: 0;
+    right: 0;
+  }
   .app-footer .container .links-wrap .link-item.ml {
     margin-left: 30px;
   }

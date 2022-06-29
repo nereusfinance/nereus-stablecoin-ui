@@ -51,10 +51,10 @@
           @borrow="borrowHandler"
           @borrowMultiple="addMultiBorrowHandler"
           @removeAndRepay="removeAndRepayHandler"
-          @repayWithDeleverage="repayWithDeleverageHandler"
           @removeAndRepayMax="removeAndRepayMaxHandler"
           @removeCollateral="removeCollateralHandler"
           @repay="repayHandler"
+          @repayWithDeleverage="repayWithDeleverageHandler"
         />
 
         <CollateralParameters
@@ -2902,6 +2902,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .pool-view {
   padding: 40px 0;
   flex: 1;
@@ -2912,6 +2914,9 @@ export default {
     grid-template-columns: 600px 375px;
     column-gap: 20px;
     margin-top: 50px;
+    @include respond-to(sm) {
+      margin-top: 40px;
+    }
   }
 
   .btns-group {
@@ -2922,6 +2927,9 @@ export default {
     background: #262626;
     border-radius: 100px;
     padding: 2px;
+    @include respond-to(sm) {
+      width: 100%;
+    }
 
     .btn {
       width: 73px;
@@ -2929,6 +2937,10 @@ export default {
       font-size: 14px;
       line-height: 20px;
       background: #262626;
+      @include respond-to(sm) {
+        width: 50%;
+        height: 32px;
+      }
 
       &:hover {
         //background-color: $clrBlue5;
@@ -2941,6 +2953,9 @@ export default {
       &.active {
         color: black;
         background-color: $clrBg3;
+        @include respond-to(sm) {
+          background-color: white;
+        }
       }
     }
   }
@@ -2981,7 +2996,7 @@ export default {
 @media screen and(max-width: 640px) {
   .pool-view .btns-group {
     justify-content: center;
-    margin-bottom: 30px;
+    margin-bottom: 28px;
   }
 
   .pool-view .pool-head-bar {

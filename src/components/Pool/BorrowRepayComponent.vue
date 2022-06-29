@@ -336,7 +336,12 @@ export default {
       return (200 - this.ltv) / 100;
     },
     showMax() {
-      return !(this.actionType === "borrow");
+      return (
+        this.actionType === "repay" ||
+        (this.actionType === "borrow" &&
+          +this.$store.getters.getUserCollateralShare(this.poolId) +
+            +this.mainValue)
+      );
     },
     maxMainValueWithoutDeleverage() {
       const balance = this.getAVAXStatus()
@@ -931,11 +936,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .deposit-borrow-block {
   padding: 0 24px;
   background: $clrBg2;
   border-radius: 4px;
   width: 100%;
+  @include respond-to(sm) {
+    margin-bottom: 16px;
+  }
 
   .estimate-box {
     background: rgba(255, 255, 255, 0.02);
@@ -943,6 +953,9 @@ export default {
     border: 1px solid #606060;
     padding: 16px 12px;
     margin-bottom: 8px;
+    @include respond-to(sm) {
+      margin-bottom: 16px;
+    }
   }
 
   .config-box {
@@ -951,6 +964,9 @@ export default {
     border: 1px solid #606060;
     padding: 16px 12px;
     margin-bottom: 8px;
+    @include respond-to(sm) {
+      padding: 16px;
+    }
   }
 
   .checkbox-wrap {
@@ -967,6 +983,11 @@ export default {
       width: 13px;
       height: 13px;
       margin-left: 5px;
+      @include respond-to(sm) {
+        width: 24px;
+        height: 24px;
+        margin-left: 10px;
+      }
     }
 
     .box-wrap {
@@ -1018,6 +1039,11 @@ export default {
     align-items: center;
     justify-content: space-between;
     margin: 16px 0 24px;
+    @include respond-to(sm) {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
   }
 
   h3 {
@@ -1029,6 +1055,9 @@ export default {
 
   .input-wrap {
     margin: 16px 0;
+    @include respond-to(sm) {
+      margin: 18px 0;
+    }
   }
 
   .action-btn {
@@ -1036,6 +1065,13 @@ export default {
     margin-left: auto;
     width: 200px;
     height: 32px;
+    @include respond-to(sm) {
+      margin-top: 28px;
+      margin-left: 0;
+      width: 100%;
+      height: 48px;
+      font-size: 18px;
+    }
   }
 
   .btn {
@@ -1047,11 +1083,11 @@ export default {
 
 @media screen and(max-width: 780px) {
   .deposit-borrow-block {
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
-  .deposit-borrow-block .config-box {
+  .deposit-borrow-block {
     padding: 10px;
   }
 }
