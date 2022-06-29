@@ -4,9 +4,14 @@
       <div class="column">
         Tier 1 amount
         <h2>
-          <span v-tooltip="tierOne" style="cursor: pointer; color: white">{{
-            tierOne | formatNumber
-          }}</span>
+          <span
+            v-tooltip="
+              'Part of your total NXUSD deposit with increased APY accruals'
+            "
+            style="cursor: pointer; color: white"
+          >
+            {{ tierOne | formatNumber }}
+          </span>
           NXUSD
         </h2>
         <p class="apy">{{ apyTierOne }}%<span>APY</span></p>
@@ -15,9 +20,14 @@
       <div class="column">
         Tier 2 amount
         <h2>
-          <span v-tooltip="tierTwo" style="cursor: pointer; color: white">{{
-            tierTwo | formatNumber
-          }}</span>
+          <span
+            v-tooltip="
+              'Part of your total NXUSD deposit above the Tier 1 amount - with standard APY accruals'
+            "
+            style="cursor: pointer; color: white"
+          >
+            {{ tierTwo | formatNumber }}
+          </span>
           NXUSD
         </h2>
         <p class="apy">{{ apyTierTwo }}%<span>APY</span></p>
@@ -25,7 +35,12 @@
     </div>
     <div class="column last-column">
       Yearly earn
-      <h1 v-tooltip="yearlyEarn" style="cursor: pointer">
+      <h1
+        v-tooltip="
+          'The estimated yearly value of the NXUSD interest you earn based on your current total NXUSD deposit and the amount of WXT locked'
+        "
+        style="cursor: pointer"
+      >
         {{ yearlyEarn | formatNumber }}<span>NXUSD</span>
       </h1>
     </div>

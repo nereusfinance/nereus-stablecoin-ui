@@ -6,7 +6,9 @@
         src="@/assets/images/icon-info.svg"
         alt=""
         class="fist-info-icon"
-        v-tooltip="'Approximated interest for now'"
+        v-tooltip="
+          'The estimated daily/weekly/monthly/yearly value of the NXUSD interest you earn based on your current total NXUSD deposit and the amount of WXT locked'
+        "
       />
     </div>
     <div class="container-interest">
@@ -56,7 +58,9 @@
           src="@/assets/images/icon-info.svg"
           alt=""
           class="info-icon"
-          v-tooltip="'Total earned rewards without deposit amount'"
+          v-tooltip="
+            'The total value of the NXUSD interest you have earned with your current NXUSD deposit'
+          "
         />
       </div>
       <div class="total-amount">
