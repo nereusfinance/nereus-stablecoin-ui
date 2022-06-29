@@ -2,7 +2,7 @@ export default [
   {
     name: "NXUSDStaking",
     contractChain: "0xa86a",
-    address: "0xa0f3b348998a766664e7a1372c1db7ba1628753e",
+    address: "0xab72433cfdc81be4e3f5b8c9cf5f369c496de471",
     stakingToken: {
       name: "NXUSD",
       decimals: 18,
@@ -420,6 +420,19 @@ export default [
         type: "event",
       },
       {
+        inputs: [],
+        name: "WXTLockContract",
+        outputs: [
+          {
+            internalType: "contract IWXTLock",
+            name: "",
+            type: "address",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
         inputs: [
           {
             internalType: "address[]",
@@ -579,6 +592,25 @@ export default [
       {
         inputs: [
           {
+            internalType: "address",
+            name: "user",
+            type: "address",
+          },
+        ],
+        name: "getWXTLockBalance",
+        outputs: [
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [
+          {
             internalType: "uint256",
             name: "compoundResult",
             type: "uint256",
@@ -688,6 +720,19 @@ export default [
           },
         ],
         name: "setConfig",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
+        inputs: [
+          {
+            internalType: "contract IWXTLock",
+            name: "newContract",
+            type: "address",
+          },
+        ],
+        name: "setWXTLockContract",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",

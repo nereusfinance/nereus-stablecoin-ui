@@ -2,18 +2,13 @@ export default [
   {
     name: "NXUSDStakingCalculation",
     contractChain: "0xa86a",
-    address: "0x1c56a2a65031d22bccbb73de8cbd34d9051a5b30",
+    address: "0xdfc75a3f0aad43cb6c9c0046c0122cc7b9214d6f",
     abi: [
       {
         inputs: [
           {
             internalType: "contract INXUSDStaking",
             name: "_NXUSDStaking",
-            type: "address",
-          },
-          {
-            internalType: "contract IMultiFeeDistribution",
-            name: "_multiFeeDistribution",
             type: "address",
           },
         ],
@@ -31,6 +26,62 @@ export default [
           },
         ],
         stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [
+          {
+            internalType: "uint256",
+            name: "amount",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "NXUSDByTier1",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "APYTier1",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "APYTier2",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "time",
+            type: "uint256",
+          },
+        ],
+        name: "calculateRewardsForPeriod",
+        outputs: [
+          {
+            components: [
+              {
+                internalType: "uint256",
+                name: "rewardsTier1",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "rewardsTier2",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "rewardsTotal",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct NXUSDStakingCalculation.Rewards",
+            name: "rewards",
+            type: "tuple",
+          },
+        ],
+        stateMutability: "pure",
         type: "function",
       },
       {
@@ -58,6 +109,11 @@ export default [
               {
                 internalType: "uint256",
                 name: "rewardsTier2",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "rewardsTotal",
                 type: "uint256",
               },
             ],
@@ -130,19 +186,6 @@ export default [
           },
         ],
         stateMutability: "pure",
-        type: "function",
-      },
-      {
-        inputs: [],
-        name: "multiFeeDistribution",
-        outputs: [
-          {
-            internalType: "contract IMultiFeeDistribution",
-            name: "",
-            type: "address",
-          },
-        ],
-        stateMutability: "view",
         type: "function",
       },
     ],

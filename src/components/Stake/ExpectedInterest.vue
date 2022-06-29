@@ -39,11 +39,12 @@
         <p class="total-text">Total</p>
         <div
           class="column-tier total"
-          v-for="(reward, i) in rewardsForPeriodTotal"
+          v-for="(reward, i) in rewardsForPeriod"
           :key="i"
         >
           <span
-            >{{ formatBNValues(reward) }}<span class="value-text">NXUSD</span>
+            >{{ formatBNValues(reward.rewardsTotal)
+            }}<span class="value-text">NXUSD</span>
           </span>
         </div>
       </div>
@@ -74,6 +75,13 @@ export default {
       period: ["Daily", "Weekly", "Monthly", "Yearly"],
     };
   },
+  async mounted() {
+    await this.$store.dispatch("checkUserCurrentRewards");
+    await this.$store.dispatch(
+      "calculateTableRewards",
+      [86400, 604800, 2629746, 31556952]
+    );
+  },
   computed: {
     rewardsForPeriod() {
       const tableRewards = this.$store.getters.getTableRewards;
@@ -81,16 +89,10 @@ export default {
         return {
           rewardsTier1: this.normalizeBNValues(reward.rewardsTier1),
           rewardsTier2: this.normalizeBNValues(reward.rewardsTier2),
+          rewardsTotal: this.normalizeBNValues(reward.rewardsTotal),
         };
       });
       return tableRewardsFormated;
-    },
-    rewardsForPeriodTotal() {
-      const totalTableRewards = this.$store.getters.getTotalTableRewards;
-      const totalTableRewardsFormated = totalTableRewards.map((reward) => {
-        return this.normalizeBNValues(reward);
-      });
-      return totalTableRewardsFormated;
     },
     totalEarnedRewards() {
       const currentRewards = this.$store.getters.getUserCurrentRewards.sub(
