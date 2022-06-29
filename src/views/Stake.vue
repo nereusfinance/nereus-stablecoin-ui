@@ -27,65 +27,66 @@
 </template>
 
 <script>
-import TotalDeposit from "@/components/Stake/TotalDeposit";
-import LockedToken from "@/components/Stake/LockedToken";
-import InfoBlock from "@/components/Stake/InfoBlock";
-import ExpectedInterest from "@/components/Stake/ExpectedInterest";
-import DepositWithdraw from "@/components/Stake/DepositWithdraw";
-import stake from "@/mixins/stake.js";
+import TotalDeposit from '@/components/Stake/TotalDeposit'
+import LockedToken from '@/components/Stake/LockedToken'
+import InfoBlock from '@/components/Stake/InfoBlock'
+import ExpectedInterest from '@/components/Stake/ExpectedInterest'
+import DepositWithdraw from '@/components/Stake/DepositWithdraw'
+import stake from '@/mixins/stake.js'
 export default {
   mixins: [stake],
-  name: "Stake",
-  data() {
+  // eslint-disable-next-line vue/multi-word-component-names
+  name: 'Stake',
+  data () {
     return {
       actionStatus: false,
-      actionType: "",
-      tier1Array: [""],
-      tier2Array: [""],
+      actionType: '',
+      tier1Array: [''],
+      tier2Array: [''],
       rewardsForPeriod: [],
-      totalEarnedRewards: "",
-      yearlyEarn: "",
-      windowWidth: 0,
-    };
+      totalEarnedRewards: '',
+      yearlyEarn: '',
+      windowWidth: 0
+    }
   },
   components: {
     DepositWithdraw,
     ExpectedInterest,
     InfoBlock,
     LockedToken,
-    TotalDeposit,
+    TotalDeposit
   },
-  async created() {
+  async created () {
     if (!this.isConnected) {
-      await this.$router.push({ name: "Stand" });
-      return false;
+      await this.$router.push({ name: 'Stand' })
+      return false
     }
-    window.addEventListener("resize", this.handleResize);
-    this.handleResize();
-    await this.getAllParameters();
+    window.addEventListener('resize', this.handleResize)
+    this.handleResize()
+    await this.getAllParameters()
   },
-  destroyed() {
-    window.removeEventListener("resize", this.handleResize);
+  destroyed () {
+    window.removeEventListener('resize', this.handleResize)
   },
   methods: {
-    handleResize() {
-      this.windowWidth = window.innerWidth;
+    handleResize () {
+      this.windowWidth = window.innerWidth
     },
-    setActionType(selectedType) {
+    setActionType (selectedType) {
       if (!selectedType) {
-        this.actionStatus = false;
+        this.actionStatus = false
       } else {
-        this.actionStatus = this.windowWidth < 768 && true;
+        this.actionStatus = this.windowWidth < 768 && true
       }
-      this.actionType = selectedType;
-    },
+      this.actionType = selectedType
+    }
   },
   computed: {
-    isConnected() {
-      return this.$store.getters.getWalletIsConnected;
-    },
-  },
-};
+    isConnected () {
+      return this.$store.getters.getWalletIsConnected
+    }
+  }
+}
 </script>
 
 <style scoped lang="scss">
