@@ -1,35 +1,28 @@
 <template>
-  <div class="stake" v-if="isConnected">
-    <div class="stake-view">
-      <h1 class="stake-text">Earn</h1>
-      <div class="stake-wrapper">
-        <div class="stake-item stake-item-one" v-if="!actionStatus">
-          <TotalDeposit :actionType="actionType" :onClick="setActionType" />
-          <LockedToken />
+  <div className="stake">
+    <div className="stake-view">
+      <h1 className="stake-text" v-if="!actionStatus">Earn</h1>
+      <div className="stake-wrapper">
+        <div className="stake-item stake-item-one" v-if="!actionStatus">
+          <TotalDeposit :actionType="actionType" :onClick="setActionType"/>
+          <LockedToken class="compScreenVersion"/>
         </div>
-        <div class="stake-item stake-item-two">
+        <div className="stake-item stake-item-two">
           <DepositWithdraw
-            v-if="actionType"
-            :actionType="actionType"
-            :onClick="setActionType"
+              v-if="actionType"
+              :actionType="actionType"
+              :onClick="setActionType"
           />
-          <InfoBlock v-if="!actionType" />
+          <InfoBlock v-if="!actionType"/>
+          <LockedToken class="mobileVersion" v-if="!actionType"/>
           <ExpectedInterest
-            v-if="!actionType"
-            :rewardsForPeriod="rewardsForPeriod"
-            :totalEarnedRewards="totalEarnedRewards"
+              v-if="!actionType"
+              :rewardsForPeriod="rewardsForPeriod"
+              :totalEarnedRewards="totalEarnedRewards"
           />
         </div>
       </div>
     </div>
-  </div>
-  <div v-else class="action-view">
-    <ActionComponent
-      :text="text"
-      :name="name"
-      :onClick="walletBtnHandler"
-      :disabled-status="disabledStatus"
-    />
   </div>
 </template>
 
@@ -39,18 +32,13 @@ import LockedToken from "@/components/Stake/LockedToken";
 import InfoBlock from "@/components/Stake/InfoBlock";
 import ExpectedInterest from "@/components/Stake/ExpectedInterest";
 import DepositWithdraw from "@/components/Stake/DepositWithdraw";
-const ActionComponent = () =>
-  import("@/components/UiComponents/ActionComponent");
 import stake from "@/mixins/stake.js";
+
 export default {
   mixins: [stake],
   name: "Stake",
   data() {
     return {
-      text: "Please connect your wallet",
-      name: "Connect",
-      disabledStatus: false,
-
       actionStatus: false,
       actionType: "",
       tier1Array: [""],
@@ -62,7 +50,6 @@ export default {
     };
   },
   components: {
-    ActionComponent,
     DepositWithdraw,
     ExpectedInterest,
     InfoBlock,
@@ -70,6 +57,10 @@ export default {
     TotalDeposit,
   },
   async created() {
+    if (!this.isConnected) {
+      await this.$router.push({name: "Stand"});
+      return false;
+    }
     window.addEventListener("resize", this.handleResize);
     this.handleResize();
     await this.getAllParameters();
@@ -89,16 +80,6 @@ export default {
       }
       this.actionType = selectedType;
     },
-    async walletBtnHandler() {
-      if (this.isConnected) {
-        return false;
-      }
-
-      this.$store.commit("setPopupState", {
-        type: "connectWallet",
-        isShow: true,
-      });
-    },
   },
   computed: {
     isConnected() {
@@ -114,11 +95,13 @@ export default {
   flex: 1;
   background: #1c1c1c;
 }
+
 .stake {
   flex: 1;
   padding-top: 40px;
   padding-bottom: 40px;
 }
+
 .stake-view {
   max-width: 1000px;
   display: flex;
@@ -145,14 +128,23 @@ export default {
     justify-content: flex-start;
     align-items: flex-start;
   }
+
   .stake-item-two {
     margin-left: 20px;
     width: 59.2%;
   }
+
   .stake-item-one {
     width: 38.8%;
   }
 }
+
+@media screen and(min-width: 768px) {
+  .mobileVersion {
+    display: none;
+  }
+}
+
 @media screen and(min-width: 768px) and(max-width: 1000px) {
   .stake-view .stake-wrapper {
     padding: 20px 28px;
@@ -160,7 +152,11 @@ export default {
   .stake-text {
     margin-left: 28px;
   }
+  .stake-view .stake-item-two {
+    margin-left: 8px;
+  }
 }
+
 @media screen and(max-width: 767px) {
   .stake {
     padding-top: 24px;
@@ -168,6 +164,10 @@ export default {
   }
   .stake-view {
     max-width: 450px;
+
+    .compScreenVersion {
+      display: none;
+    }
 
     .stake-wrapper {
       flex-wrap: wrap;
@@ -179,6 +179,7 @@ export default {
       width: 100%;
       margin-left: 0;
     }
+
     .stake-text {
       margin-left: 16px;
       margin-bottom: 0;
