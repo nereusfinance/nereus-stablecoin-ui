@@ -19,8 +19,8 @@
         <div class="available-amount">
           <span class="form-header-text">Available to deposit</span>
           <span class="form-header-value">
-            {{ formatBNValues(stakingTokenInfo.balance)
-            }}<span class="form-symbol">{{ stakingTokenInfo.name }}</span>
+            {{ formatBNValues(stakingTokenInfo.balance) }}
+            <span class="form-symbol">{{ stakingTokenInfo.name }}</span>
           </span>
         </div>
         <ValueInput
@@ -49,9 +49,9 @@
         <div class="available-amount">
           <span class="form-header-text">Available to withdraw</span>
           <span class="form-header-value"
-            >{{ formatBNValues(availableWithdraw)
-            }}<span class="form-symbol">{{ stakingTokenInfo.name }}</span></span
-          >
+            >{{ formatBNValues(availableWithdraw) }}
+            <span class="form-symbol">{{ stakingTokenInfo.name }}</span>
+          </span>
         </div>
         <ValueInput
           :error="valueError"
@@ -286,7 +286,6 @@ export default {
       }
     },
     async action(tx) {
-      //let tx = 1;
       if (tx === "finished") {
         this.transactionPending = "finished";
       }
@@ -303,9 +302,6 @@ export default {
         console.log("transaction pending", this.transactionPending);
       }
     },
-    // toStake() {
-    //   this.overview = false;
-    // },
     async toOverview() {
       this.transactionPending = "wait for action";
       this.approwed = await this.isApprowed();
@@ -347,6 +343,10 @@ export default {
         await this.action("finished");
         await this.$store.dispatch("checkUserData");
         await this.$store.dispatch("checkUserCurrentRewards");
+        await this.$store.dispatch(
+          "calculateTableRewards",
+          [86400, 604800, 2629746, 31556952]
+        );
       }
     },
     async unstakeHandler() {
