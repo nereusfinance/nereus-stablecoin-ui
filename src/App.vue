@@ -291,6 +291,11 @@ h3 {
   }
 }
 
+@media screen and(max-width: 1200px) {
+  footer.app-footer.footer {
+    display: none;
+  }
+}
 @media screen and(max-width: 780px) {
   $containerSidePadding: 16px;
   .container {

@@ -132,26 +132,11 @@ export default {
   }
 }
 
-@media screen and(max-width: 980px) {
-  .app-footer .container .footer-nav {
-    display: none;
-  }
-}
-@media screen and(max-width: 767px) {
-  .app-footer {
-    display: none;
-  }
-}
-
-@media screen and(min-width: 768px) and(max-width: 1000px) {
-  .app-footer {
-    display: none;
-  }
-}
-@media screen and(max-width: 780px) {
+@media screen and(max-width: 1200px) {
   .app-footer {
     position: fixed;
     margin: 16px 0 16px 0;
+    padding: 0 16px;
     width: 304px;
     bottom: 0;
     right: 0;
@@ -161,9 +146,7 @@ export default {
   }
   .app-footer .container {
     height: auto;
-    //width: 45px;
   }
-
   .app-footer .container {
     transform: translateY(25%);
     margin-left: 0;

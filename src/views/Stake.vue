@@ -57,7 +57,7 @@ export default {
   },
   async created() {
     if (!this.isConnected) {
-      this.$router.push({ name: "Stand" });
+      await this.$router.push({ name: "Stand" });
       return false;
     }
     window.addEventListener("resize", this.handleResize);
