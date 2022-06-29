@@ -1,12 +1,11 @@
 <template>
-  <div class="stake" v-if="isConnected">
+  <div class="stake">
     <div class="stake-view">
-      <add-token-btn :token-name="'NXUSD'"/>
-      <h1 class="stake-text">Earn</h1>
+      <h1 class="stake-text" v-if="!actionStatus">Earn</h1>
       <div class="stake-wrapper">
         <div class="stake-item stake-item-one" v-if="!actionStatus">
           <TotalDeposit :actionType="actionType" :onClick="setActionType" />
-          <LockedToken />
+          <LockedToken class="compScreenVersion" />
         </div>
         <div class="stake-item stake-item-two">
           <DepositWithdraw
@@ -15,6 +14,7 @@
             :onClick="setActionType"
           />
           <InfoBlock v-if="!actionType" />
+          <LockedToken class="mobileVersion" v-if="!actionType" />
           <ExpectedInterest
             v-if="!actionType"
             :rewardsForPeriod="rewardsForPeriod"
@@ -24,14 +24,6 @@
       </div>
     </div>
   </div>
-  <div v-else class="action-view">
-    <ActionComponent
-      :text="text"
-      :name="name"
-      :onClick="walletBtnHandler"
-      :disabled-status="disabledStatus"
-    />
-  </div>
 </template>
 
 <script>
@@ -40,19 +32,12 @@ import LockedToken from "@/components/Stake/LockedToken";
 import InfoBlock from "@/components/Stake/InfoBlock";
 import ExpectedInterest from "@/components/Stake/ExpectedInterest";
 import DepositWithdraw from "@/components/Stake/DepositWithdraw";
-const ActionComponent = () =>
-  import("@/components/UiComponents/ActionComponent");
 import stake from "@/mixins/stake.js";
-import AddTokenBtn from "@/components/UiComponents/AddTokenBtn";
 export default {
   mixins: [stake],
   name: "Stake",
   data() {
     return {
-      text: "Please connect your wallet",
-      name: "Connect",
-      disabledStatus: false,
-
       actionStatus: false,
       actionType: "",
       tier1Array: [""],
@@ -64,8 +49,6 @@ export default {
     };
   },
   components: {
-    AddTokenBtn,
-    ActionComponent,
     DepositWithdraw,
     ExpectedInterest,
     InfoBlock,
@@ -73,6 +56,10 @@ export default {
     TotalDeposit,
   },
   async created() {
+    if (!this.isConnected) {
+      this.$router.push({ name: "Stand" });
+      return false;
+    }
     window.addEventListener("resize", this.handleResize);
     this.handleResize();
     await this.getAllParameters();
@@ -91,16 +78,6 @@ export default {
         this.actionStatus = this.windowWidth < 768 && true;
       }
       this.actionType = selectedType;
-    },
-    async walletBtnHandler() {
-      if (this.isConnected) {
-        return false;
-      }
-
-      this.$store.commit("setPopupState", {
-        type: "connectWallet",
-        isShow: true,
-      });
     },
   },
   computed: {
@@ -156,12 +133,21 @@ export default {
     width: 38.8%;
   }
 }
+
+@media screen and(min-width: 768px) {
+  .mobileVersion {
+    display: none;
+  }
+}
 @media screen and(min-width: 768px) and(max-width: 1000px) {
   .stake-view .stake-wrapper {
     padding: 20px 28px;
   }
   .stake-text {
     margin-left: 28px;
+  }
+  .stake-view .stake-item-two {
+    margin-left: 8px;
   }
 }
 @media screen and(max-width: 767px) {
@@ -171,6 +157,9 @@ export default {
   }
   .stake-view {
     max-width: 450px;
+    .compScreenVersion {
+      display: none;
+    }
 
     .stake-wrapper {
       flex-wrap: wrap;
