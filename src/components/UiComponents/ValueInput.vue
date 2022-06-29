@@ -193,8 +193,10 @@ export default {
       this.isFocus = payload;
     },
     setMax() {
-      if (!this.disabled) {
+      if (!this.disabled && !this.isStake) {
         this.value = floorToFixed(this.max, 6);
+      } else if (!this.disabled && this.isStake) {
+        this.value = this.max;
       }
     },
     openSelect() {
@@ -360,6 +362,7 @@ export default {
   }
 
   .max-btn-text {
+    cursor: pointer;
     font-weight: 400;
     font-size: 16px;
     line-height: 24px;
