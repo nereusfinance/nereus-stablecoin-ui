@@ -54,7 +54,7 @@ export default {
           return parseFloat(value) >= item.value;
         });
       return (
-        (parseFloat(value) / item.value).toFixed(2).replace(rx, "$1") +
+        (parseFloat(value) / (item.value || 1)).toFixed(2).replace(rx, "$1") +
         item.symbol
       );
     },
