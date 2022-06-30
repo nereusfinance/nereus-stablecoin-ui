@@ -22,7 +22,7 @@
         <router-link :to="{ name: 'Stake' }" class="nav-link">Earn</router-link>
       </nav>
       <hr />
-      <Footer />
+      <Footer :mobile="true" />
     </div>
   </div>
 </template>

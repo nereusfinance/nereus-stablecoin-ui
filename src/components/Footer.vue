@@ -1,7 +1,7 @@
 <template>
   <footer :class="{ transparent: itsTransparent }" class="app-footer">
     <div class="container">
-      <div class="leftLinks">
+      <div class="leftLinks" :class="{ active: mobile }">
         <SocialLink
           v-for="(item, index) in filteredLeftIcons"
           :key="index"
@@ -10,7 +10,7 @@
           :type="item.type"
         />
       </div>
-      <div class="rightLinks">
+      <div class="rightLinks" :class="{ active: mobile }">
         <SocialLink
           v-for="(item, index) in filteredRightIcons"
           :key="index"
@@ -61,6 +61,12 @@ export default {
       filteredRightIcons: [],
       filteredLeftIcons: [],
     };
+  },
+  props: {
+    mobile: {
+      type: Boolean,
+      default: false,
+    },
   },
   components: {
     // eslint-disable-next-line vue/no-unused-components
@@ -156,6 +162,12 @@ export default {
   .app-footer .container {
     transform: translateY(25%);
     margin-left: 0;
+  }
+  .leftLinks.active,
+  .rightLinks.active {
+    .icons {
+      filter: brightness(100);
+    }
   }
 }
 </style>
