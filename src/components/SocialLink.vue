@@ -46,7 +46,7 @@ export default {
   padding-right: 0;
 }
 
-@media screen and(max-width: 1200px) {
+@media screen and(max-width: 767px) {
   .icons {
     filter: brightness(100);
     &.hover {

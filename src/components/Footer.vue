@@ -108,7 +108,6 @@ export default {
   }
 
   .container {
-    padding: 0 20px;
     height: 100%;
     display: flex;
     align-items: center;
@@ -132,14 +131,21 @@ export default {
   }
 }
 
+@media screen and(min-width: 1201px) {
+  .container {
+    padding: 0 80px;
+  }
+}
 @media screen and(max-width: 1200px) {
   .app-footer {
     position: fixed;
-    margin: 16px 0 16px 0;
-    padding: 0 16px;
-    width: 304px;
-    bottom: 0;
+    padding: 0 20px;
+    width: 100%;
+    bottom: 0px;
     right: 0;
+  }
+  .container {
+    padding: 0 0 16px 0;
   }
   .app-footer .container .links-wrap .link-item.ml {
     margin-left: 30px;
