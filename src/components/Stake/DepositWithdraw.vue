@@ -49,7 +49,7 @@
         <div class="available-amount">
           <span class="form-header-text">Available to withdraw</span>
           <span class="form-header-value"
-          >{{ formatBNValues(availableWithdraw) }}
+          >{{ formatValues(availableWithdraw) }}
             <span class="form-symbol">{{ stakingTokenInfo.name }}</span>
           </span>
         </div>
@@ -188,7 +188,8 @@ export default {
       const NXUSDByTier2 = Number(
           this.normalizeBNValues(userData[2].sub(userData[0][1]))
       );
-      return NXUSDByTier1 + NXUSDByTier2;
+      const total = NXUSDByTier1 + NXUSDByTier2;
+      return total.toString();
     },
     NXUSDStakingContract() {
       return this.$store.getters.getNXUSDStakingContract;
@@ -199,7 +200,7 @@ export default {
         maxValue = this.normalizeBNValues(this.stakingTokenInfo.balance);
       }
       if (this.actionType === "Withdraw") {
-        maxValue = this.normalizeBNValues(this.availableWithdraw);
+        maxValue = this.availableWithdraw;
       }
 
       return maxValue;
@@ -221,6 +222,11 @@ export default {
       const normalizedValue = this.normalizeBNValues(value);
       return new Intl.NumberFormat("en-EN").format(
           parseFloat(normalizedValue).toFixed(2)
+      );
+    },
+    formatValues(value) {
+      return new Intl.NumberFormat("en-EN").format(
+          parseFloat(value).toFixed(2)
       );
     },
     getBentoBoxContract() {
