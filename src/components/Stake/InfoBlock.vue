@@ -2,29 +2,59 @@
   <div class="info-block">
     <div class="columns">
       <div class="column">
-        Tier 1 amount
+        <div class="title">
+          <div>Tier 1 amount</div>
+          <img
+            src="@/assets/images/icon-info.svg"
+            alt=""
+            class="info-icon"
+            v-tooltip="
+              'Part of your total NXUSD deposit with increased APY accruals'
+            "
+          />
+        </div>
         <h2>
-          <span v-tooltip="tierOne" style="cursor: pointer; color: white">{{
-            tierOne | formatNumber
-          }}</span>
+          <span v-tooltip="tierOne" style="cursor: pointer; color: white">
+            {{ tierOne | formatNumber }}
+          </span>
           NXUSD
         </h2>
         <p class="apy">{{ apyTierOne }}%<span>APY</span></p>
       </div>
 
       <div class="column">
-        Tier 2 amount
+        <div class="title">
+          <div>Tier 2 amount</div>
+          <img
+            src="@/assets/images/icon-info.svg"
+            alt=""
+            class="info-icon"
+            v-tooltip="
+              'Part of your total NXUSD deposit above the Tier 1 amount - with standard APY accruals'
+            "
+          />
+        </div>
         <h2>
-          <span v-tooltip="tierTwo" style="cursor: pointer; color: white">{{
-            tierTwo | formatNumber
-          }}</span>
+          <span v-tooltip="tierTwo" style="cursor: pointer; color: white">
+            {{ tierTwo | formatNumber }}
+          </span>
           NXUSD
         </h2>
         <p class="apy">{{ apyTierTwo }}%<span>APY</span></p>
       </div>
     </div>
     <div class="column last-column">
-      Yearly earn
+      <div class="title">
+        <div>Yearly earn</div>
+        <img
+          src="@/assets/images/icon-info.svg"
+          alt=""
+          class="info-icon"
+          v-tooltip="
+            'The estimated yearly value of the NXUSD interest you earn based on your current total NXUSD deposit and the amount of WXT locked'
+          "
+        />
+      </div>
       <h1 v-tooltip="yearlyEarn" style="cursor: pointer">
         {{ yearlyEarn | formatNumber }}<span>NXUSD</span>
       </h1>
@@ -158,7 +188,11 @@ export default {
   .last-column {
     margin-bottom: 0;
   }
-
+  .title {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+  }
   p.apy {
     font-weight: 600;
     font-size: 60px;
@@ -184,6 +218,9 @@ export default {
       font-size: 24px;
       color: #55bcc0;
     }
+  }
+  .info-icon {
+    width: 13px;
   }
 }
 
