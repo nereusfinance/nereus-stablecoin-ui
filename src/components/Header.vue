@@ -40,12 +40,15 @@
           <ConnectButton />
         </div>
       </nav>
-      <img
-        alt=""
-        class="mobile-btn"
-        src="@/assets/images/mobile-menu.svg"
-        @click="menuClickHandler"
-      />
+      <div class="mobile-connect-btn">
+        <img
+            src="@/assets/images/mobile-menu.svg"
+            alt=""
+            class="mobile-btn"
+            @click="menuClickHandler"
+        />
+        <ConnectButton :class="'connected'"/>
+      </div>
     </div>
   </header>
 </template>
@@ -139,6 +142,13 @@ export default {
     position: relative;
     padding: 0 16px;
     width: 100%;
+  }
+
+  .mobile-connect-btn {
+    display: none;
+    .connected{
+      margin-left: 20px;
+    }
   }
 
   .containerS {
@@ -276,23 +286,10 @@ export default {
 
 @media screen and(max-width: 1200px) {
   .app-header .logo {
-    width: 146px;
-  }
-  .mobile-btn {
-    width: 24px;
-    height: auto;
-    object-fit: contain;
-    cursor: pointer;
-    margin-right: 20px;
-  }
-  .app-header nav .markets-btn .dashboard-btn {
-    font-size: 16px;
-  }
-}
-
-@media screen and(max-width: 1200px) {
-  .app-header .logo {
     width: 170px;
+  }
+  .app-header .mobile-connect-btn {
+    display: flex;
   }
 
   .btn-margin {
