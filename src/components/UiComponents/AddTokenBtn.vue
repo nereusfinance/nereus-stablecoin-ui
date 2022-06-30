@@ -37,6 +37,7 @@ export default {
       if (!this.account) {
         return false;
       }
+
       this.disabled = true;
       const { ethereum } = window;
       if (this.tokenName === "NXUSD") {
@@ -50,7 +51,8 @@ export default {
                 address: "0xF14f4CE569cB3679E99d5059909E23B07bd2F387", // The address that the token is at.
                 symbol: "NXUSD", // A ticker symbol or shorthand, up to 5 chars.
                 decimals: 18, // The number of decimals in the token
-                image: require(`@/assets/images/tokens-icon/Token_NXUSD.svg`), // A string url of the token logo
+                image:
+                  "https://nxusd.nereus.finance/img/Token_NXUSD.e269f352.svg", // A string url of the token logo
               },
             },
           });
