@@ -42,9 +42,9 @@
           v-for="(reward, i) in rewardsForPeriod"
           :key="i"
         >
-          <span
-            >{{ formatBNValues(reward.rewardsTotal)
-            }}<span class="value-text">NXUSD</span>
+          <span>
+            {{ formatBNValues(reward.rewardsTotal) }}
+            <span class="value-text"> NXUSD </span>
           </span>
         </div>
       </div>
@@ -60,8 +60,8 @@
         />
       </div>
       <div class="total-amount">
-        {{ formatBNValues(totalEarnedRewards)
-        }}<span class="value-text">NXUSD</span>
+        {{ formatBNValues(totalEarnedRewards) }}
+        <span class="value-text"> NXUSD </span>
       </div>
     </div>
   </div>
