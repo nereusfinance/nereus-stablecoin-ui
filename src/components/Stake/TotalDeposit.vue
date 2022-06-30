@@ -43,7 +43,6 @@
 </template>
 
 <script>
-
 export default {
   name: "TotalDeposit",
   data() {
