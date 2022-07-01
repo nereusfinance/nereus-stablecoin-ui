@@ -1,13 +1,17 @@
 <template>
   <div class="expected-interest-block">
     <div class="expected-interest-title">
-      <div>Expected interest</div>
-      <img
-        src="@/assets/images/icon-info.svg"
-        alt=""
-        class="fist-info-icon"
-        v-tooltip="'Approximated interest for now'"
-      />
+      <div class="expected-interest-title">
+        <div>Expected interest</div>
+        <img
+          src="@/assets/images/icon-info.svg"
+          alt=""
+          class="fist-info-icon"
+          v-tooltip="
+            'The estimated daily/weekly/monthly/yearly value of the NXUSD interest you earn based on your current total NXUSD deposit and the amount of WXT locked'
+          "
+        />
+      </div>
     </div>
     <div class="container-interest">
       <div>
@@ -56,7 +60,9 @@
           src="@/assets/images/icon-info.svg"
           alt=""
           class="info-icon"
-          v-tooltip="'Total earned rewards without deposit amount'"
+          v-tooltip="
+            'The total value of the NXUSD interest you have earned with your current NXUSD deposit'
+          "
         />
       </div>
       <div class="total-amount">
@@ -133,6 +139,8 @@ export default {
     text-align: left;
   }
   .expected-interest-title {
+    display: flex;
+    flex-direction: row;
     color: white;
     text-align: left;
     font-size: 20px;

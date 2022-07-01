@@ -22,7 +22,7 @@
         <router-link :to="{ name: 'Stake' }" class="nav-link">Earn</router-link>
       </nav>
       <hr />
-      <Footer />
+      <Footer :mobile="true" />
     </div>
   </div>
 </template>
@@ -103,7 +103,14 @@ export default {
     text-align: center;
     overflow-y: auto;
   }
-
+  .app-footer {
+    position: fixed;
+    margin: 16px 0 16px 0;
+    padding: 0 16px;
+    width: 304px;
+    bottom: 0;
+    right: 0;
+  }
   .nav-link {
     font-style: normal;
     font-weight: normal;

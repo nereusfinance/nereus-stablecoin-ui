@@ -1,7 +1,7 @@
 <template>
   <footer :class="{ transparent: itsTransparent }" class="app-footer">
     <div class="container">
-      <div class="leftLinks">
+      <div class="leftLinks" :class="{ active: mobile }">
         <SocialLink
           v-for="(item, index) in filteredLeftIcons"
           :key="index"
@@ -10,7 +10,7 @@
           :type="item.type"
         />
       </div>
-      <div class="rightLinks">
+      <div class="rightLinks" :class="{ active: mobile }">
         <SocialLink
           v-for="(item, index) in filteredRightIcons"
           :key="index"
@@ -62,6 +62,12 @@ export default {
       filteredLeftIcons: [],
     };
   },
+  props: {
+    mobile: {
+      type: Boolean,
+      default: false,
+    },
+  },
   components: {
     // eslint-disable-next-line vue/no-unused-components
     SocialLink,
@@ -108,7 +114,6 @@ export default {
   }
 
   .container {
-    padding: 0 20px;
     height: 100%;
     display: flex;
     align-items: center;
@@ -132,14 +137,21 @@ export default {
   }
 }
 
+@media screen and(min-width: 1201px) {
+  .container {
+    padding: 0 80px;
+  }
+}
 @media screen and(max-width: 1200px) {
   .app-footer {
     position: fixed;
-    margin: 16px 0 16px 0;
-    padding: 0 16px;
-    width: 304px;
-    bottom: 0;
+    padding: 0 20px;
+    width: 100%;
+    bottom: 0px;
     right: 0;
+  }
+  .container {
+    padding: 0 0 16px 0;
   }
   .app-footer .container .links-wrap .link-item.ml {
     margin-left: 30px;
@@ -150,6 +162,12 @@ export default {
   .app-footer .container {
     transform: translateY(25%);
     margin-left: 0;
+  }
+  .leftLinks.active,
+  .rightLinks.active {
+    .icons {
+      filter: brightness(100);
+    }
   }
 }
 </style>

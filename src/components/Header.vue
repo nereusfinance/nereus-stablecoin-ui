@@ -137,7 +137,6 @@ export default {
     align-items: center;
     justify-content: space-between;
     position: relative;
-    padding: 0 16px;
     width: 100%;
   }
 
@@ -271,6 +270,9 @@ export default {
     .mobile-btn {
       display: none;
     }
+    .container {
+      padding: 0 80px;
+    }
   }
 }
 
@@ -290,6 +292,11 @@ export default {
   }
 }
 
+@media screen and(max-width: 1200px) and(min-width: 768px) {
+  .container {
+    padding: 0 20px;
+  }
+}
 @media screen and(max-width: 1200px) {
   .app-header .logo {
     width: 170px;
