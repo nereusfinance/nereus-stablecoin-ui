@@ -2,7 +2,7 @@ export default [
   {
     name: "NXUSDStaking",
     contractChain: "0xa86a",
-    address: "0xab72433cfdc81be4e3f5b8c9cf5f369c496de471",
+    address: "",
     stakingToken: {
       name: "NXUSD",
       decimals: 18,
@@ -274,7 +274,7 @@ export default [
             type: "address",
           },
           {
-            internalType: "contract IERC20",
+            internalType: "address",
             name: "_stakingToken",
             type: "address",
           },
@@ -582,8 +582,25 @@ export default [
         outputs: [
           {
             internalType: "uint256",
-            name: "",
+            name: "rewards",
             type: "uint256",
+          },
+          {
+            components: [
+              {
+                internalType: "uint256",
+                name: "rewardsTier1",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "rewardsTier2",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct NXUSDStaking.HistoryRewards",
+            name: "historyRewards",
+            type: "tuple",
           },
         ],
         stateMutability: "view",
@@ -602,6 +619,30 @@ export default [
           {
             internalType: "uint256",
             name: "",
+            type: "uint256",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [
+          {
+            internalType: "address",
+            name: "",
+            type: "address",
+          },
+        ],
+        name: "historyUserRewards",
+        outputs: [
+          {
+            internalType: "uint256",
+            name: "rewardsTier1",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "rewardsTier2",
             type: "uint256",
           },
         ],
@@ -755,7 +796,7 @@ export default [
         name: "stakingToken",
         outputs: [
           {
-            internalType: "contract IERC20",
+            internalType: "address",
             name: "",
             type: "address",
           },
