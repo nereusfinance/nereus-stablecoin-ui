@@ -19,10 +19,6 @@ export default {
       const NXUSDStakingContractInfoByChainId = NXUSDStakingContractInfo.find(
         (contract) => contract.contractChain === this.chainId
       );
-      console.log(
-        "NXUSDStakingContractInfoByChainId",
-        NXUSDStakingContractInfoByChainId
-      );
       const nxusdStakingContract = new this.$ethers.Contract(
         NXUSDStakingContractInfoByChainId.address,
         JSON.stringify(NXUSDStakingContractInfoByChainId.abi),
@@ -87,6 +83,8 @@ export default {
       await this.$store.dispatch("getConfig", configCurrentVersion);
 
       await this.$store.dispatch("checkUserWXTLock");
+
+      await this.$store.dispatch("checkHistoryUserRewards");
 
       await this.$store.dispatch("checkUserCurrentRewards");
 
