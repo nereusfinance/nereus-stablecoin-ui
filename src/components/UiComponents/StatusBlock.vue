@@ -32,7 +32,7 @@
         <h1
             :class="{
             error: transactionPending === 'error',
-            active: transactionPending === '1' || transactionPending === '2'|| transactionPending === 'wait for action',
+            active: transactionPending === '1' || transactionPending === '2'|| transactionPending === 'wait for action'||statusType.length > 2,
           }"
         >
           {{ statusType[0] }}

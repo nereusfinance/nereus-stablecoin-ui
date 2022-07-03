@@ -374,7 +374,11 @@ export default {
         this.tx = receipt.transactionHash;
         await this.action(2);
       } catch (e) {
-        await this.action(3);
+        if (this.actionAmount.length > 2) {
+          await this.action(6);
+        } else {
+          await this.action(3);
+        }
         console.log("error unstake:", e)
       }
 
@@ -434,7 +438,12 @@ export default {
         await this.action("finished");
       } catch (e) {
         if (this.transactionPending !== "finished") {
-          await this.action(3);
+          if (this.actionAmount > 2) {
+            await this.action(6);
+          } else {
+            await this.action(3);
+          }
+
         }
         console.log("stake err:", e);
       }
