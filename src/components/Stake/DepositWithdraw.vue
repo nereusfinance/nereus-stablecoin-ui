@@ -188,7 +188,7 @@ export default {
       const NXUSDByTier2 = Number(
           this.normalizeBNValues(userData[2].sub(userData[0][1]))
       );
-      const total = NXUSDByTier1 + NXUSDByTier2;
+      const total = (NXUSDByTier1 + NXUSDByTier2).toFixed(18);
       return total.toString();
     },
     NXUSDStakingContract() {
