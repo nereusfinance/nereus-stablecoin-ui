@@ -7,9 +7,13 @@
             <img alt="" class="logo" src="@/assets/images/text-logo.svg" />
           </router-link>
         </div>
-        <a class="nereus-btn" href="https://app.nereus.finance/#/markets"
-          >Nereus Markets</a
+        <a
+          class="nereus-btn"
+          href="https://app.nereus.finance/#/markets"
+          target="_blank"
         >
+          Lend/Borrow
+        </a>
       </div>
 
       <nav>
@@ -237,7 +241,7 @@ export default {
   .nereus-btn {
     padding: 6px 16px;
     height: 32px;
-    width: 139px;
+    width: auto;
     border-radius: 16px;
 
     margin-left: 40px;
