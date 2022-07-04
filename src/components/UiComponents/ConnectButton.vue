@@ -10,7 +10,7 @@
       <ButtonLoader v-if="connectLoader" />
       <template v-else-if="itsHover">Disconnect</template>
       <template v-else>
-        <div>
+        <div class="text-connect-block">
           {{ walletBtnText }}
           <p class="slicedAddress" data-cy="account-address">
             {{ slicedAccountAddress }}
@@ -198,16 +198,15 @@ export default {
   }
   .connected-btn {
     width: auto;
-    padding: 0;
     font-weight: 400;
-    font-size: 18px;
-    line-height: 24px;
+    font-size: 12px;
+    line-height: 16px;
     margin: 0;
   }
   .slicedAddress {
     width: auto;
     font-weight: 400;
-    font-size: 14px;
+    font-size: 12px;
     line-height: 16px;
   }
 

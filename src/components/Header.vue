@@ -42,12 +42,12 @@
       </nav>
       <div class="mobile-connect-btn">
         <img
-            src="@/assets/images/mobile-menu.svg"
-            alt=""
-            class="mobile-btn"
-            @click="menuClickHandler"
+          src="@/assets/images/mobile-menu.svg"
+          alt=""
+          class="mobile-btn"
+          @click="menuClickHandler"
         />
-        <ConnectButton :class="'connected'"/>
+        <ConnectButton :class="'connected'" />
       </div>
     </div>
   </header>
@@ -146,7 +146,7 @@ export default {
 
   .mobile-connect-btn {
     display: none;
-    .connected{
+    .connected {
       margin-left: 20px;
     }
   }
