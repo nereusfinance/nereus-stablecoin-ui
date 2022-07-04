@@ -140,7 +140,6 @@ export default {
     align-items: center;
     justify-content: space-between;
     position: relative;
-    padding: 0 16px;
     width: 100%;
   }
 
@@ -281,9 +280,33 @@ export default {
     .mobile-btn {
       display: none;
     }
+    .container {
+      padding: 0 80px;
+    }
   }
 }
 
+@media screen and(max-width: 1200px) {
+  .app-header .logo {
+    width: 146px;
+  }
+  .mobile-btn {
+    width: 24px;
+    height: auto;
+    object-fit: contain;
+    cursor: pointer;
+    margin-right: 20px;
+  }
+  .app-header nav .markets-btn .dashboard-btn {
+    font-size: 16px;
+  }
+}
+
+@media screen and(max-width: 1200px) and(min-width: 768px) {
+  .container {
+    padding: 0 20px;
+  }
+}
 @media screen and(max-width: 1200px) {
   .app-header .logo {
     width: 170px;

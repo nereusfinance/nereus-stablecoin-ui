@@ -1,13 +1,17 @@
 <template>
   <div class="expected-interest-block">
     <div class="expected-interest-title">
-      <div>Expected interest</div>
-      <img
-        src="@/assets/images/icon-info.svg"
-        alt=""
-        class="fist-info-icon"
-        v-tooltip="'Approximated interest for now'"
-      />
+      <div class="expected-interest-title">
+        <div>Expected interest</div>
+        <img
+          src="@/assets/images/icon-info.svg"
+          alt=""
+          class="fist-info-icon"
+          v-tooltip="
+            'The estimated daily/weekly/monthly/yearly value of the NXUSD interest you earn based on your current total NXUSD deposit and the amount of WXT locked'
+          "
+        />
+      </div>
     </div>
     <div class="container-interest">
       <div>
@@ -56,11 +60,25 @@
           src="@/assets/images/icon-info.svg"
           alt=""
           class="info-icon"
-          v-tooltip="'Total earned rewards without deposit amount'"
+          v-tooltip="
+            'The total value of the NXUSD interest you have earned with your current NXUSD deposit'
+          "
         />
       </div>
-      <div class="total-amount">
-        {{ formatBNValues(totalEarnedRewards) }}
+      <div class="tier1-amount">
+        <span v-tooltip="earnedRewards.rewardsTier1">{{
+          formatBNValues(earnedRewards.rewardsTier1)
+        }}</span>
+      </div>
+      <div class="tier2-amount">
+        <span v-tooltip="earnedRewards.rewardsTier2">{{
+          formatBNValues(earnedRewards.rewardsTier2)
+        }}</span>
+      </div>
+      <div class="total-earned-amount">
+        <span v-tooltip="earnedRewards.total">{{
+          formatBNValues(earnedRewards.total)
+        }}</span>
         <span class="value-text"> NXUSD </span>
       </div>
     </div>
@@ -75,13 +93,6 @@ export default {
       period: ["Daily", "Weekly", "Monthly", "Yearly"],
     };
   },
-  async mounted() {
-    await this.$store.dispatch("checkUserCurrentRewards");
-    await this.$store.dispatch(
-      "calculateTableRewards",
-      [86400, 604800, 2629746, 31556952]
-    );
-  },
   computed: {
     rewardsForPeriod() {
       const tableRewards = this.$store.getters.getTableRewards;
@@ -94,11 +105,29 @@ export default {
       });
       return tableRewardsFormated;
     },
-    totalEarnedRewards() {
-      const currentRewards = this.$store.getters.getUserCurrentRewards.sub(
-        this.$store.getters.getUserData[1]
+    earnedRewards() {
+      const earnedRewards = {};
+      earnedRewards.rewardsTier1 = this.normalizeBNValues(
+        this.$store.getters.getUserCurrentRewards.historyRewards.rewardsTier1.add(
+          this.$store.getters.getHistoryUserRewards.rewardsTier1
+        )
       );
-      return this.normalizeBNValues(currentRewards);
+      earnedRewards.rewardsTier2 = this.normalizeBNValues(
+        this.$store.getters.getUserCurrentRewards.historyRewards.rewardsTier2.add(
+          this.$store.getters.getHistoryUserRewards.rewardsTier2
+        )
+      );
+      earnedRewards.total = this.normalizeBNValues(
+        this.$store.getters.getUserCurrentRewards.historyRewards.rewardsTier1
+          .add(
+            this.$store.getters.getUserCurrentRewards.historyRewards
+              .rewardsTier2
+          )
+          .add(this.$store.getters.getHistoryUserRewards.rewardsTier1)
+          .add(this.$store.getters.getHistoryUserRewards.rewardsTier2)
+      );
+      console.log("currentRewards", earnedRewards);
+      return earnedRewards;
     },
   },
   methods: {
@@ -125,6 +154,8 @@ export default {
   .total-earned-rewards {
     display: flex;
     justify-content: space-between;
+    font-size: 14px;
+    line-height: 20px;
   }
 
   h1 {
@@ -133,6 +164,8 @@ export default {
     text-align: left;
   }
   .expected-interest-title {
+    display: flex;
+    flex-direction: row;
     color: white;
     text-align: left;
     font-size: 20px;
@@ -150,11 +183,6 @@ export default {
   }
   .total-title img {
     margin-left: 5px;
-  }
-
-  .total-earned-rewards {
-    font-size: 14px;
-    line-height: 20px;
   }
 
   p {
@@ -182,6 +210,7 @@ export default {
   .column-interest {
     display: flex;
     flex-direction: column;
+    width: 103px;
 
     font-weight: 400;
     font-size: 14px;

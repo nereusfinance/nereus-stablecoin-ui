@@ -37,9 +37,7 @@ export default {
         const walletConnectProvider = new WalletConnectProvider({
           rpc: {
             43113: "https://api.avax-test.network/ext/bc/C/rpc",
-            // 43114: "https://api.avax.network/ext/bc/C/rpc",
-            43114:
-              "https://rpc.tenderly.co/fork/2db64d6a-e1a8-4065-b5ea-2f5dc1eb19f8",
+            43114: "https://api.avax.network/ext/bc/C/rpc",
           },
         });
         const connector = walletConnectProvider.connector;
@@ -138,9 +136,7 @@ export default {
         const walletConnectProvider = new WalletConnectProvider({
           rpc: {
             43113: "https://api.avax-test.network/ext/bc/C/rpc",
-            // 43114: "https://api.avax.network/ext/bc/C/rpc",
-            43114:
-              "https://rpc.tenderly.co/fork/2db64d6a-e1a8-4065-b5ea-2f5dc1eb19f8",
+            43114: "https://api.avax.network/ext/bc/C/rpc",
           },
         });
         const accounts = await walletConnectProvider.enable();

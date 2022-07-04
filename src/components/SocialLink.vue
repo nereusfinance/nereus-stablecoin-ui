@@ -45,14 +45,4 @@ export default {
 .icons:last-child {
   padding-right: 0;
 }
-
-@media screen and(max-width: 1200px) {
-  .icons {
-    filter: brightness(100);
-    &.hover {
-      filter: brightness(100);
-      color: white;
-    }
-  }
-}
 </style>

@@ -40,7 +40,17 @@ export default {
     MultiFeeDistributionContract: {},
     userWXTLock: ethers.BigNumber.from("0"),
     configCurrentVersion: ethers.BigNumber.from("0"),
-    userCurrentRewards: ethers.BigNumber.from("0"),
+    userCurrentRewards: {
+      rewards: ethers.BigNumber.from("0"),
+      historyRewards: {
+        rewardsTier1: ethers.BigNumber.from("0"),
+        rewardsTier2: ethers.BigNumber.from("0"),
+      },
+    },
+    historyUserRewards: {
+      rewardsTier1: ethers.BigNumber.from("0"),
+      rewardsTier2: ethers.BigNumber.from("0"),
+    },
   },
   mutations: {
     setConfigCurrentVersion(state, payload) {
@@ -72,6 +82,9 @@ export default {
     },
     setConfig(state, payload) {
       state.config = payload;
+    },
+    setHistoryUserRewards(state, payload) {
+      state.historyUserRewards = payload;
     },
   },
   actions: {
@@ -112,6 +125,13 @@ export default {
         );
       commit("setUserCurrentRewards", userCurrentRewards);
     },
+    async checkHistoryUserRewards({ getters, commit }) {
+      const historyUserRewards =
+        await getters.getNXUSDStakingContract.historyUserRewards(
+          getters.getAccount
+        );
+      commit("setHistoryUserRewards", historyUserRewards);
+    },
     async getAPYDataConfig({ getters, commit }, configVersion) {
       const apyDataConfig =
         await getters.getNXUSDStakingContract.getAPYDataConfig(configVersion);
@@ -145,5 +165,6 @@ export default {
       state.MultiFeeDistributionContract,
     getConfigCurrentVersion: (state) => state.configCurrentVersion,
     getUserCurrentRewards: (state) => state.userCurrentRewards,
+    getHistoryUserRewards: (state) => state.historyUserRewards,
   },
 };
