@@ -95,7 +95,7 @@
         @focus="setFocus(true)"
       />
 
-      <div v-if="parseFloat(max) && showMax" class="max-btn" @click="clickMax">
+      <div v-if="parseFloat(max) && showMax" class="max-btn" @click="setMax">
         <p class="max-btn-text">MAX</p>
       </div>
 
@@ -193,13 +193,6 @@ export default {
     },
   },
   methods: {
-    clickMax(event) {
-      this.setMax();
-      if (event) {
-        console.log("eventttt");
-        this.maxWithdraw(true);
-      }
-    },
     setFocus(payload) {
       this.isFocus = payload;
     },
