@@ -90,7 +90,7 @@
             :token="stakingTokenInfo.name"
           />
           <div>
-            {{ valueAmount }}
+            {{ formatValues(valueAmount) }}
             {{ stakingTokenInfo.name }}
           </div>
         </div>

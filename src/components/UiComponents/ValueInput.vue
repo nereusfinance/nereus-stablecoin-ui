@@ -95,7 +95,7 @@
         @focus="setFocus(true)"
       />
 
-      <div v-if="parseFloat(max) && showMax" class="max-btn" @click="setMax">
+      <div v-if="parseFloat(max) && showMax" class="max-btn" @click="clickMax">
         <p class="max-btn-text">MAX</p>
       </div>
 
@@ -125,13 +125,6 @@ const TokenIcon = () => import("@/components/UiComponents/TokenIcon");
 import { floorToFixed } from "@/utils/fiexdMath/fixedMath";
 
 export default {
-  mounted() {
-    const btn = this.$el.querySelector(".max-btn");
-    const change = () => {
-      this.maxWithdraw(true);
-    };
-    btn.addEventListener("click", change);
-  },
   props: {
     cyData: {
       type: String,
@@ -192,7 +185,7 @@ export default {
         this.value = oldValue;
         return false;
       }
-      this.maxWithdraw(false);
+      if (value !== this.max) this.maxWithdraw(false);
       this.$emit("onchange", value);
     },
     parentValue(value) {
@@ -200,6 +193,13 @@ export default {
     },
   },
   methods: {
+    clickMax(event) {
+      this.setMax();
+      if (event) {
+        console.log("eventttt");
+        this.maxWithdraw(true);
+      }
+    },
     setFocus(payload) {
       this.isFocus = payload;
     },
@@ -208,6 +208,7 @@ export default {
         this.value = floorToFixed(this.max, 6);
       } else if (!this.disabled && this.isStake) {
         this.value = this.max;
+        this.maxWithdraw(true);
       }
     },
     openSelect() {
