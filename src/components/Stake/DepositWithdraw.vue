@@ -184,12 +184,7 @@ export default {
     },
     availableWithdraw() {
       const userData = this.$store.getters.getUserData;
-      const NXUSDByTier1 = Number(this.normalizeBNValues(userData[0][1]));
-      const NXUSDByTier2 = Number(
-          this.normalizeBNValues(userData[2].sub(userData[0][1]))
-      );
-      const total = (NXUSDByTier1 + NXUSDByTier2).toFixed(18);
-      return total.toString();
+      return this.normalizeBNValues(userData[2]);
     },
     NXUSDStakingContract() {
       return this.$store.getters.getNXUSDStakingContract;

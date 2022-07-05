@@ -60,20 +60,11 @@ export default {
   computed: {
     balanceWithDecimals() {
       const userData = this.$store.getters.getUserData;
-      const NXUSDByTier1 = Number(this.normalizeBNValues(userData[0][1]));
-      const NXUSDByTier2 = Number(
-          this.normalizeBNValues(userData[2].sub(userData[0][1]))
-      );
-      return parseFloat(NXUSDByTier1 + NXUSDByTier2).toFixed(18);
+      return this.normalizeBNValues(userData[2]);
     },
     balance() {
       const userData = this.$store.getters.getUserData;
-      const NXUSDByTier1 = Number(this.normalizeBNValues(userData[0][1]));
-      const NXUSDByTier2 = Number(
-          this.normalizeBNValues(userData[2].sub(userData[0][1]))
-      );
-      const total = NXUSDByTier1 + NXUSDByTier2;
-      return total.toFixed(2);
+      return Number(this.normalizeBNValues(userData[2])).toFixed(2);
     },
     isDisabled() {
       return Number(this.balance) === 0;
