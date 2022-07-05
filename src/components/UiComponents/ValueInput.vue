@@ -125,6 +125,13 @@ const TokenIcon = () => import("@/components/UiComponents/TokenIcon");
 import { floorToFixed } from "@/utils/fiexdMath/fixedMath";
 
 export default {
+  mounted() {
+    const btn = this.$el.querySelector(".max-btn");
+    const change = () => {
+      this.maxWithdraw(true);
+    };
+    btn.addEventListener("click", change);
+  },
   props: {
     cyData: {
       type: String,
@@ -160,6 +167,9 @@ export default {
       type: Boolean,
       default: false,
     },
+    maxWithdraw: {
+      type: Function,
+    },
   },
   data() {
     return {
@@ -182,6 +192,7 @@ export default {
         this.value = oldValue;
         return false;
       }
+      this.maxWithdraw(false);
       this.$emit("onchange", value);
     },
     parentValue(value) {
@@ -228,7 +239,7 @@ export default {
 
 .values-select {
   background: $clrBg2;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
   position: absolute;
   top: calc(100% + 5px);

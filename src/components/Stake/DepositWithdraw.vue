@@ -140,7 +140,7 @@ export default {
   name: "DepositWithdraw",
   data() {
     return {
-      withdrawAllowed: false,
+      isFullWithdraw: false,
       bentoBoxContract: undefined,
       stakingTokenContract: undefined,
       isDisabled: false,
@@ -215,7 +215,7 @@ export default {
   },
   methods: {
     maxWithdraw(value) {
-      this.withdrawAllowed = value === this.maxValue;
+      this.isFullWithdraw = value;
     },
     goBack() {
       this.onClick("");
@@ -338,7 +338,6 @@ export default {
         this.isDisabled = true;
         return false;
       } else if (value && value > 0.0) {
-        this.maxWithdraw(value);
         this.valueError = "";
         this.valueAmount = value;
         this.isDisabled = false;
@@ -370,7 +369,7 @@ export default {
       console.log("ADD UNSTAKE HANDLER");
       const nxusdStaking = this.$store.getters.getNXUSDStakingContract;
       let value = this.$ethers.utils.parseUnits(this.valueAmount, 18);
-      const tx = await nxusdStaking.unstake(value, this.withdrawAllowed);
+      const tx = await nxusdStaking.unstake(value, this.isFullWithdraw);
       await this.wrapperStatusTx(tx);
       const receipt = await tx.wait();
       this.tx = receipt.transactionHash;
