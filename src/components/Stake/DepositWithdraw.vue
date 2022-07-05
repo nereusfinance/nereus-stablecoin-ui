@@ -61,6 +61,7 @@
           :show-max="true"
           valueName="NXUSD"
           @onchange="updateValue"
+          :maxWithdraw="maxWithdraw"
         />
         <button :disabled="isDisabled" class="continue" @click="toOverview">
           Continue
