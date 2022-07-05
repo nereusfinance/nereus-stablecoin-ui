@@ -170,9 +170,10 @@ export default {
       type: Function,
     },
   },
-  mounted() {
+  async mounted() {
     this.getBentoBoxContract();
-    this.getStakingTokenInfo();
+    await this.getStakingTokenInfo();
+    await this.$store.dispatch("checkUserCurrentRewards");
   },
   computed: {
     signer() {
@@ -185,13 +186,9 @@ export default {
       return this.$store.getters.getChainId;
     },
     availableWithdraw() {
-      const userData = this.$store.getters.getUserData;
-      const NXUSDByTier1 = Number(this.normalizeBNValues(userData[0][1]));
-      const NXUSDByTier2 = Number(
-        this.normalizeBNValues(userData[2].sub(userData[0][1]))
+      return this.normalizeBNValues(
+        this.$store.getters.getUserCurrentRewards.rewards
       );
-      const total = (NXUSDByTier1 + NXUSDByTier2).toFixed(18);
-      return total.toString();
     },
     NXUSDStakingContract() {
       return this.$store.getters.getNXUSDStakingContract;
@@ -202,7 +199,9 @@ export default {
         maxValue = this.normalizeBNValues(this.stakingTokenInfo.balance);
       }
       if (this.actionType === "Withdraw") {
-        maxValue = this.availableWithdraw;
+        maxValue = this.normalizeBNValues(
+          this.$store.getters.getUserCurrentRewards.rewards
+        );
       }
 
       return maxValue;
@@ -362,6 +361,8 @@ export default {
         await this.action("finished");
         await this.$store.dispatch("checkUserData");
         await this.$store.dispatch("checkUserCurrentRewards");
+        await this.$store.dispatch("checkHistoryUserRewards");
+        await this.$store.dispatch("checkUserWXTLock");
         await this.$store.dispatch(
           "calculateTableRewards",
           [86400, 604800, 2629746, 31556952]

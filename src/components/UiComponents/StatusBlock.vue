@@ -3,69 +3,73 @@
     <div v-if="transactionPending !== 'finished'" class="status-block">
       <div class="icon-text">
         <img
-            v-if="transactionPending === 'wait for action'"
-            alt=""
-            class="status-icon"
-            src="@/assets/images/icon-one.svg"
+          v-if="transactionPending === 'wait for action'"
+          alt=""
+          class="status-icon"
+          src="@/assets/images/icon-one.svg"
         />
         <img
-            v-if="transactionPending === '1'"
-            alt=""
-            class="status-icon"
-            src="@/assets/images/icon-one.svg"
+          v-if="transactionPending === '1'"
+          alt=""
+          class="status-icon"
+          src="@/assets/images/icon-one.svg"
         />
         <img
-            v-if="
+          v-if="
             (transactionPending === '2' || transactionPending === '3') &&
             statusType.length > 2
           "
-            alt=""
-            class="status-icon"
-            src="@/assets/images/icon-done.svg"
+          alt=""
+          class="status-icon"
+          src="@/assets/images/icon-done.svg"
         />
         <img
-            v-if="transactionPending === 'error'"
-            alt=""
-            class="status-icon"
-            src="@/assets/images/icon-one-red.svg"
+          v-if="transactionPending === 'error'"
+          alt=""
+          class="status-icon"
+          src="@/assets/images/icon-one-red.svg"
         />
         <h1
-            :class="{
+          :class="{
             error: transactionPending === 'error',
-            active: transactionPending === '1' || transactionPending === '2'|| transactionPending === 'wait for action'||statusType.length > 2,
+            active:
+              transactionPending === '1' ||
+              transactionPending === '2' ||
+              transactionPending === 'wait for action' ||
+              statusType.length > 2,
           }"
         >
           {{ statusType[0] }}
         </h1>
       </div>
       <hr
-          :class="{
+        :class="{
           active: transactionPending === '2' || transactionPending === '3',
           error: transactionPending === 'error',
         }"
       />
       <div class="icon-text">
         <img
-            v-if="transactionPending !== '3'"
-            :class="{ active: transactionPending === '2' }"
-            alt=""
-            class="status-icon"
-            src="@/assets/images/icon-two.svg"
+          v-if="transactionPending !== '3'"
+          :class="{ active: transactionPending === '2' }"
+          alt=""
+          class="status-icon"
+          src="@/assets/images/icon-two.svg"
         />
         <img
-            v-if="transactionPending === '3'"
-            alt=""
-            class="status-icon"
-            src="@/assets/images/icon-done.svg"
+          v-if="transactionPending === '3'"
+          alt=""
+          class="status-icon"
+          src="@/assets/images/icon-done.svg"
         />
         <img
-            v-if="transactionPending === 'error' && statusType.length > 2"
-            alt=""
-            class="status-icon"
-            src="@/assets/images/icon-two-red.svg"
+          v-if="transactionPending === 'error' && statusType.length > 2"
+          alt=""
+          class="status-icon"
+          src="@/assets/images/icon-two-red.svg"
         />
         <h1
-            :class="{
+          :class="{
             active: transactionPending === '2' || transactionPending === '3',
             error: transactionPending === 'error' && statusType.length > 2,
           }"
@@ -74,15 +78,15 @@
         </h1>
       </div>
       <hr
-          v-if="statusType.length > 2"
-          :class="{ active: transactionPending === '3' }"
+        v-if="statusType.length > 2"
+        :class="{ active: transactionPending === '3' }"
       />
       <div v-if="statusType.length > 2" class="icon-text">
         <img
-            :class="{ active: transactionPending === '3' }"
-            alt=""
-            class="status-icon"
-            src="@/assets/images/icon-three.svg"
+          :class="{ active: transactionPending === '3' }"
+          alt=""
+          class="status-icon"
+          src="@/assets/images/icon-three.svg"
         />
         <h1 :class="{ active: transactionPending === '3' }">
           {{ statusType[2] }}
@@ -93,17 +97,17 @@
     <!--    Finished-->
     <div v-if="transactionPending === 'finished'" class="status-block-finished">
       <div class="icon-text">
-        <img alt="" class="status-icon" src="@/assets/images/icon-done.svg"/>
+        <img alt="" class="status-icon" src="@/assets/images/icon-done.svg" />
         <h1>{{ statusType[0] }}</h1>
       </div>
-      <hr/>
+      <hr />
       <div class="icon-text">
-        <img alt="" class="status-icon" src="@/assets/images/icon-done.svg"/>
+        <img alt="" class="status-icon" src="@/assets/images/icon-done.svg" />
         <h1>{{ statusType[1] }}</h1>
       </div>
-      <hr v-if="statusType.length > 2"/>
+      <hr v-if="statusType.length > 2" />
       <div v-if="statusType.length > 2" class="icon-text">
-        <img alt="" class="status-icon" src="@/assets/images/icon-done.svg"/>
+        <img alt="" class="status-icon" src="@/assets/images/icon-done.svg" />
         <h1>{{ statusType[2] }}</h1>
       </div>
     </div>
