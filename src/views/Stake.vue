@@ -1,5 +1,5 @@
 <template>
-  <div class="stake">
+  <div v-if="isConnected" class="stake">
     <div class="stake-view">
       <h1 class="stake-text" v-if="!actionStatus">Earn</h1>
       <div class="stake-wrapper">
@@ -24,6 +24,14 @@
       </div>
     </div>
   </div>
+  <div v-else class="stand-action-view">
+    <ActionComponent
+        :disabled-status="disabledStatus"
+        :name="btnName"
+        :onClick="walletBtnHandler"
+        :text="text"
+    />
+  </div>
 </template>
 
 <script>
@@ -32,12 +40,17 @@ import LockedToken from "@/components/Stake/LockedToken";
 import InfoBlock from "@/components/Stake/InfoBlock";
 import ExpectedInterest from "@/components/Stake/ExpectedInterest";
 import DepositWithdraw from "@/components/Stake/DepositWithdraw";
+const ActionComponent = () =>
+    import("@/components/UiComponents/ActionComponent");
 import stake from "@/mixins/stake.js";
 export default {
   mixins: [stake],
   name: "Stake",
   data() {
     return {
+      text: "Please connect your wallet",
+      btnName: "Connect",
+      disabledStatus: false,
       actionStatus: false,
       actionType: "",
       tier1Array: [""],
@@ -54,12 +67,9 @@ export default {
     InfoBlock,
     LockedToken,
     TotalDeposit,
+    ActionComponent,
   },
   async created() {
-    if (!this.isConnected) {
-      await this.$router.push({ name: "Stand" });
-      return false;
-    }
     window.addEventListener("resize", this.handleResize);
     this.handleResize();
     await this.getAllParameters();
@@ -70,6 +80,15 @@ export default {
   methods: {
     handleResize() {
       this.windowWidth = window.innerWidth;
+    },
+    async walletBtnHandler() {
+      if (this.isConnected) {
+        return false;
+      }
+      this.$store.commit("setPopupState", {
+        type: "connectWallet",
+        isShow: true,
+      });
     },
     setActionType(selectedType) {
       if (!selectedType) {
@@ -89,6 +108,18 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "src/mixins/screen-size";
+
+.stand-action-view {
+  position: relative;
+  flex: 1;
+  background: #1c1c1c;
+  @include respond-to(sm) {
+    display: flex;
+    justify-content: center;
+  }
+}
+
 .action-view {
   position: relative;
   flex: 1;

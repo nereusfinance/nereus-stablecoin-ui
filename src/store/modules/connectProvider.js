@@ -1,5 +1,6 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { providers, utils } from "ethers";
+import { providers, utils, constants } from "ethers";
+import { getDefaultRPCURL } from "@/utils/helpers.js";
 
 export default {
   state: {
@@ -33,6 +34,13 @@ export default {
   actions: {
     async connectProvider({ commit }) {
       const walletType = localStorage.getItem("walletType");
+      const provider = new providers.JsonRpcProvider(getDefaultRPCURL());
+      const defaultChainId = utils.hexlify((await provider.getNetwork()).chainId);
+      commit("setWalletProviderName", "Default");
+      commit("setChainId", defaultChainId);
+      commit("setProvider", provider);
+      commit("setSigner", provider);
+      commit("setAccount", constants.AddressZero);
       if (walletType === "walletConnect") {
         const walletConnectProvider = new WalletConnectProvider({
           rpc: {
@@ -78,7 +86,7 @@ export default {
         }
         delete window.localStorage.walletType;
       }
-      return false;
+      return provider;
     },
 
     async fetchMetamaskChain({ commit }, provider) {

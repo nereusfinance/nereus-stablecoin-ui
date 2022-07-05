@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard-view">
+  <div v-if="isConnected" class="dashboard-view">
     <div class="container mini">
       <h1>Dashboard</h1>
 
@@ -40,12 +40,22 @@
       </template>
     </div>
   </div>
+  <div v-else class="stand-action-view">
+    <ActionComponent
+        :disabled-status="disabledStatus"
+        :name="name"
+        :onClick="walletBtnHandler"
+        :text="text"
+    />
+  </div>
 </template>
 
 <script>
 const StatisticsBlock = () => import("@/components/Dashboard/StatisticsBlock");
 const OpenPoolItem = () => import("@/components/Dashboard/OpenPoolItem");
 const EmptyPoolsState = () => import("@/components/Dashboard/EmptyPoolsState");
+const ActionComponent = () =>
+    import("@/components/UiComponents/ActionComponent");
 
 import sspellToken from "@/mixins/sspellToken.js";
 
@@ -53,12 +63,18 @@ export default {
   mixins: [sspellToken],
   data() {
     return {
+      text: "Please connect your wallet",
+      name: "Connect",
+      disabledStatus: false,
       shortcutState: "borrow",
     };
   },
   computed: {
     pools() {
       return this.$store.getters.getPools;
+    },
+    isConnected() {
+      return this.$store.getters.getWalletIsConnected;
     },
     userPools() {
       return this.pools.filter(
@@ -73,6 +89,15 @@ export default {
     },
     toTransactions() {
       // this.$router.push({ name: "Transactions" });
+    },
+    async walletBtnHandler() {
+      if (this.isConnected) {
+        return false;
+      }
+      this.$store.commit("setPopupState", {
+        type: "connectWallet",
+        isShow: true,
+      });
     },
     async getUserBorrowPart(poolContract) {
       try {
@@ -94,11 +119,6 @@ export default {
     },
   },
   async created() {
-    const isConnected = this.$store.getters.getWalletIsConnected;
-    if (!isConnected) {
-      this.$router.push({ name: "Stand" });
-      return false;
-    }
     this.createStakePool();
   },
   mounted() {},
@@ -106,12 +126,23 @@ export default {
     StatisticsBlock,
     OpenPoolItem,
     EmptyPoolsState,
+    ActionComponent,
   },
 };
 </script>
 
 <style lang="scss" scoped>
 @import "src/mixins/screen-size";
+
+.stand-action-view {
+  position: relative;
+  flex: 1;
+  background: #1c1c1c;
+  @include respond-to(sm) {
+    display: flex;
+    justify-content: center;
+  }
+}
 
 .dashboard-view {
   padding-top: 40px;
