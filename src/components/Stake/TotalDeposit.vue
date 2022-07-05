@@ -3,17 +3,17 @@
     <p class="container-top">
       Total deposit
       <img
-        v-tooltip="'Your total deposited NXUSD amount'"
-        alt=""
-        class="info-icon"
-        src="@/assets/images/icon-info.svg"
+          v-tooltip="'Your total deposited NXUSD amount'"
+          alt=""
+          class="info-icon"
+          src="@/assets/images/icon-info.svg"
       />
     </p>
     <div class="total-balance">
       <img
-        alt=""
-        class="token-icon"
-        src="@/assets/images/tokens-icon/Token_NXUSD.svg"
+          alt=""
+          class="token-icon"
+          src="@/assets/images/tokens-icon/Token_NXUSD.svg"
       />
       <p v-tooltip="balanceWithDecimals" class="info-tooltip">
         {{ balance }} NXUSD
@@ -21,20 +21,20 @@
     </div>
     <div class="btns">
       <button
-        :class="{ notActive: actionType === 'Withdraw' }"
-        :disabled="actionType === 'Withdraw'"
-        class="deposit-btn"
-        @click="onClick('Deposit')"
+          :class="{ notActive: actionType === 'Withdraw' }"
+          :disabled="actionType === 'Withdraw'"
+          class="deposit-btn"
+          @click="onClick('Deposit')"
       >
         Deposit
       </button>
       <button
-        :class="{
+          :class="{
           notActive: actionType === 'Deposit' || isDisabled,
         }"
-        :disabled="isDisabled || actionType === 'Deposit'"
-        class="withdraw-btn"
-        @click="onClick('Withdraw')"
+          :disabled="isDisabled || actionType === 'Deposit'"
+          class="withdraw-btn"
+          @click="onClick('Withdraw')"
       >
         Withdraw
       </button>
@@ -62,17 +62,15 @@ export default {
       const userData = this.$store.getters.getUserData;
       const NXUSDByTier1 = Number(this.normalizeBNValues(userData[0][1]));
       const NXUSDByTier2 = Number(
-        this.normalizeBNValues(userData[2].sub(userData[0][1]))
+          this.normalizeBNValues(userData[2].sub(userData[0][1]))
       );
-      return new Intl.NumberFormat("en-EN", {
-        maximumSignificantDigits: 18,
-      }).format(parseFloat(NXUSDByTier1 + NXUSDByTier2));
+      return parseFloat(NXUSDByTier1 + NXUSDByTier2).toFixed(18);
     },
     balance() {
       const userData = this.$store.getters.getUserData;
       const NXUSDByTier1 = Number(this.normalizeBNValues(userData[0][1]));
       const NXUSDByTier2 = Number(
-        this.normalizeBNValues(userData[2].sub(userData[0][1]))
+          this.normalizeBNValues(userData[2].sub(userData[0][1]))
       );
       const total = NXUSDByTier1 + NXUSDByTier2;
       return total.toFixed(2);
@@ -157,14 +155,14 @@ export default {
       cursor: not-allowed;
       color: #8a8a8a;
       background: linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)),
-        #353535;
+      #353535;
     }
   }
 
   .deposit-btn:hover {
     color: black;
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
-      #e7fc6e;
+    #e7fc6e;
   }
 
   .info-icon {
@@ -196,15 +194,16 @@ export default {
       cursor: not-allowed;
       color: #8a8a8a;
       background: linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)),
-        #353535;
+      #353535;
     }
   }
 
   .withdraw-btn:hover {
     color: black;
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
-      #e7fc6e;
+    #e7fc6e;
   }
+
   .total-balance {
     display: flex;
     flex-direction: row;
@@ -253,6 +252,7 @@ export default {
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 8px;
+
     .info-icon {
       width: 20px;
     }
@@ -267,12 +267,15 @@ export default {
       font-weight: 400;
       font-size: 20px;
     }
+
     .container-top {
       margin-bottom: 16px;
     }
+
     .total-balance {
       margin-bottom: 24px;
     }
+
     .btns {
       display: flex;
       flex-direction: column;

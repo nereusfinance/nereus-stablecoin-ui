@@ -1,15 +1,15 @@
 <template>
   <div class="transaction-status-block">
     <StatusBlock
-      :transactionPending="transactionPending"
-      :statusType="statusType"
-      :actionAmount="actionAmount"
+        :actionAmount="actionAmount"
+        :statusType="statusType"
+        :transactionPending="transactionPending"
     />
-    <hr />
+    <hr/>
     <!--  Central block-->
     <div
-      class="central-block"
-      v-if="transactionPending === 'wait for action' && statusType.length === 2"
+        v-if="transactionPending === 'wait for action' && statusType.length === 2"
+        class="central-block"
     >
       <h3 v-if="statusType[0] === 'Deposit'">Please submit to deposit</h3>
       <h3 v-if="statusType[0] === 'Withdraw'">Please submit to withdraw</h3>
@@ -17,15 +17,14 @@
         {{ statusType[0] }}
       </button>
     </div>
-
     <!--  Central block for approve-->
     <div
-      class="central-block-default"
-      v-if="transactionPending === 'wait for action' && statusType.length > 2"
+        v-if="transactionPending === 'wait for action' && statusType.length > 2"
+        class="central-block-default"
     >
       <h2>
         1/{{ statusType.length }} {{ statusType[0] }}
-        <br />
+        <br/>
         <h3>Please approve before deposit</h3>
       </h2>
       <button class="action-button" @click="actionHandler">
@@ -34,19 +33,19 @@
     </div>
 
     <!--    Both-->
-    <div class="central-block" v-if="transactionPending === '1'">
+    <div v-if="transactionPending === '1'" class="central-block">
       <p>Transaction(s) Pending</p>
     </div>
 
     <!--    Deposit approved-->
     <div
-      class="central-block-default"
-      style="padding-top: 16px; padding-bottom: 9px"
-      v-if="transactionPending === '2' && statusType[0] === 'Approve'"
+        v-if="transactionPending === '2' && statusType[0] === 'Approve'"
+        class="central-block-default"
+        style="padding-top: 16px; padding-bottom: 9px"
     >
       <h2>
         2/{{ statusType.length }} {{ statusType[1] }}
-        <br />
+        <br/>
         <h3>Please submit to deposit</h3>
       </h2>
       <button class="action-button" @click="actionHandler">
@@ -54,48 +53,65 @@
       </button>
     </div>
 
-    <div class="central-block" v-if="transactionPending === '3'">
+    <div v-if="transactionPending === '3'" class="central-block">
       <p>Please submit to deposit</p>
     </div>
 
     <!--    Finished-->
-    <div class="finished" v-if="transactionPending === 'finished'">
+    <div v-if="transactionPending === 'finished'" class="finished">
       <h1>{{ statusType.length }}/{{ statusType.length }} Success!</h1>
       <button class="dashboard-btn" @click="goBack">Finish</button>
     </div>
-
-    <hr v-if="transactionPending !== 'wait for action'" />
+    <div v-if="transactionPending === 'error'" class="finished">
+      <h1 class="error-text">Transaction failed with the reason: User denied transaction signature</h1>
+      <button class="dashboard-btn" @click="goBack">Back</button>
+    </div>
+    <hr v-if="transactionPending !== 'wait for action'"/>
     <!--    Bottom block-->
     <div class="bottom-block">
-      <div class="bottom-text" v-if="transactionPending !== 'wait for action'">
+      <div v-if="transactionPending !== 'wait for action'" class="bottom-text">
         <h1>{{ statusType[0] }}</h1>
-        <h1 v-if="transactionPending === '1'">
-          Pending
+        <h1 v-if="transactionPending === 'error'">
+          Error
           <img
-            src="@/assets/images/icon-loading.svg"
-            alt=""
-            class="loading-icon"
+              alt=""
+              class="done-icon"
+              src="@/assets/images/icon-error.svg"
           />
           Explorer
           <img
-            src="@/assets/images/icon-explorer.svg"
-            alt=""
-            class="explorer-icon"
+              alt=""
+              class="explorer-icon"
+              src="@/assets/images/icon-explorer.svg"
+          />
+        </h1>
+        <h1 v-if="transactionPending === '1'">
+          Pending
+          <img
+              alt=""
+              class="loading-icon"
+              src="@/assets/images/icon-loading.svg"
+          />
+          Explorer
+          <img
+              alt=""
+              class="explorer-icon"
+              src="@/assets/images/icon-explorer.svg"
           />
         </h1>
         <h1 v-if="transactionPending === '2' || transactionPending === '3'">
           Confirmed
           <img
-            src="@/assets/images/icon-completed.svg"
-            alt=""
-            class="loading-icon"
+              alt=""
+              class="loading-icon"
+              src="@/assets/images/icon-completed.svg"
           />
-          <a target="_blank" class="showTX" :href="getApproveLink">
+          <a :href="getApproveLink" class="showTX" target="_blank">
             Explorer
             <img
-              src="@/assets/images/icon-explorer.svg"
-              alt=""
-              class="explorer-icon"
+                alt=""
+                class="explorer-icon"
+                src="@/assets/images/icon-explorer.svg"
             />
           </a>
         </h1>
@@ -103,54 +119,54 @@
         <h1 v-if="transactionPending === 'finished'">
           Completed
           <img
-            src="@/assets/images/icon-completed.svg"
-            alt=""
-            class="done-icon"
+              alt=""
+              class="done-icon"
+              src="@/assets/images/icon-completed.svg"
           />
-          <a target="_blank" class="showTX" :href="getTXLink">
+          <a :href="getTXLink" class="showTX" target="_blank">
             Explorer
             <img
-              src="@/assets/images/icon-explorer.svg"
-              alt=""
-              class="explorer-icon"
+                alt=""
+                class="explorer-icon"
+                src="@/assets/images/icon-explorer.svg"
             />
           </a>
         </h1>
       </div>
       <div
-        class="bottom-text"
-        v-if="
+          v-if="
           transactionPending === '3' ||
           (statusType.length > 2 && transactionPending === 'finished')
         "
+          class="bottom-text"
       >
         <h1>{{ statusType[1] }}</h1>
         <h1 v-if="transactionPending === '3'">
           Pending
           <img
-            src="@/assets/images/icon-loading.svg"
-            alt=""
-            class="loading-icon"
+              alt=""
+              class="loading-icon"
+              src="@/assets/images/icon-loading.svg"
           />
           Explorer
           <img
-            src="@/assets/images/icon-explorer.svg"
-            alt=""
-            class="explorer-icon"
+              alt=""
+              class="explorer-icon"
+              src="@/assets/images/icon-explorer.svg"
           />
         </h1>
         <h1 v-if="transactionPending === 'finished'">
           Completed
           <img
-            src="@/assets/images/icon-completed.svg"
-            alt=""
-            class="loading-icon"
+              alt=""
+              class="loading-icon"
+              src="@/assets/images/icon-completed.svg"
           />
           Explorer
           <img
-            src="@/assets/images/icon-explorer.svg"
-            alt=""
-            class="explorer-icon"
+              alt=""
+              class="explorer-icon"
+              src="@/assets/images/icon-explorer.svg"
           />
         </h1>
       </div>
@@ -160,9 +176,10 @@
 
 <script>
 import StatusBlock from "@/components/UiComponents/StatusBlock";
+
 export default {
   name: "Status",
-  components: { StatusBlock },
+  components: {StatusBlock},
 
   props: {
     statusType: {
@@ -215,8 +232,8 @@ export default {
 
       if (this.statusType[0] === "Approve") {
         if (
-          this.transactionPending === "wait for action" &&
-          this.transactionPending !== "3"
+            this.transactionPending === "wait for action" &&
+            this.transactionPending !== "3"
         ) {
           this.action(1);
           this.$emit("stakeHandler");
@@ -236,7 +253,14 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
+.error-text {
+  margin-right: 16px;
+  font-size: 14px;
+  color: #FE3366;
+  text-align: left;
+}
+
 .transaction-status-block {
   width: 100%;
   height: auto;
@@ -278,6 +302,7 @@ export default {
         font-size: 14px;
       }
     }
+
     .action-button {
       border: none;
       cursor: pointer;
@@ -293,10 +318,12 @@ export default {
     padding-top: 16px;
     display: flex;
     flex-direction: column;
+
     h3 {
       font-size: 14px;
       margin-bottom: 16px;
     }
+
     button {
       border: none;
       gap: 10px;
@@ -309,6 +336,7 @@ export default {
       background: #e7fc6e;
       border-radius: 20px;
     }
+
     p {
       margin-bottom: 16px;
       font-weight: 400;
@@ -378,9 +406,11 @@ export default {
           transform: rotate(359deg);
         }
       }
+
       .loading-icon {
         animation: spin 2s linear infinite;
       }
+
       .done-icon,
       .loading-icon {
         margin-left: 4px;
@@ -391,6 +421,7 @@ export default {
         margin-left: 4px;
         cursor: pointer;
       }
+
       .showTX {
         font-weight: 400;
         font-size: 12px;
@@ -426,6 +457,7 @@ export default {
     }
   }
 }
+
 @media screen and(max-width: 767px) {
   .transaction-status-block {
     width: 328px;
@@ -452,19 +484,23 @@ export default {
         border: none;
       }
     }
+
     .central-block {
       width: 328px;
+
       button,
       .action-button {
         width: 296px;
         border-radius: 24px;
       }
     }
+
     .bottom-block {
       .bottom-text {
         width: 328px;
       }
     }
+
     .finished {
       width: 328px;
     }

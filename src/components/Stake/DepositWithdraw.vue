@@ -190,7 +190,7 @@ export default {
       const NXUSDByTier2 = Number(
         this.normalizeBNValues(userData[2].sub(userData[0][1]))
       );
-      const total = NXUSDByTier1 + NXUSDByTier2;
+      const total = (NXUSDByTier1 + NXUSDByTier2).toFixed(18);
       return total.toString();
     },
     NXUSDStakingContract() {
@@ -302,6 +302,7 @@ export default {
       }
     },
     async action(tx) {
+      console.log("tx", tx);
       if (tx === "finished") {
         this.transactionPending = "finished";
       }
@@ -311,10 +312,12 @@ export default {
         else if (tx === 2) this.transactionPending = "2";
         else if (tx === 3) this.transactionPending = "3";
         else if (tx === 4) this.transactionPending = "finished";
+        else if (tx === 5) this.transactionPending = "error";
       }
       if (this.actionAmount.length === 2) {
         if (tx === 1) this.transactionPending = "1";
         else if (tx === 2) this.transactionPending = "finished";
+        else if (tx === 3) this.transactionPending = "error";
         console.log("transaction pending", this.transactionPending);
       }
     },
@@ -323,7 +326,7 @@ export default {
       this.approwed = await this.isApprowed();
       if (!this.approwed) {
         this.depositStatus = ["Approve", "Deposit", "Finished"];
-        this.actionAmount = [1, 2, 3, 4, 5]; //approve, pending approve, deposit, pending deposit, finished
+        this.actionAmount = [1, 2, 3, 4, 5, 6]; //approve, pending approve, deposit, pending deposit, finished, error
         this.approved = false;
       }
       this.overview = true;
@@ -369,11 +372,21 @@ export default {
       console.log("ADD UNSTAKE HANDLER");
       const nxusdStaking = this.$store.getters.getNXUSDStakingContract;
       let value = this.$ethers.utils.parseUnits(this.valueAmount, 18);
-      const tx = await nxusdStaking.unstake(value, this.isFullWithdraw);
-      await this.wrapperStatusTx(tx);
-      const receipt = await tx.wait();
-      this.tx = receipt.transactionHash;
-      await this.action(2);
+      try {
+        console.log("this.isFullWithdraw",this.isFullWithdraw);
+        const tx = await nxusdStaking.unstake(value, this.isFullWithdraw);
+        await this.wrapperStatusTx(tx);
+        const receipt = await tx.wait();
+        this.tx = receipt.transactionHash;
+        await this.action(2);
+      } catch (e) {
+        if (this.actionAmount.length > 2) {
+          await this.action(6);
+        } else {
+          await this.action(3);
+        }
+        console.log("error unstake:", e);
+      }
     },
 
     async stakeHandler() {
@@ -429,6 +442,13 @@ export default {
         await this.wrapperStatusTx(tx);
         await this.action("finished");
       } catch (e) {
+        if (this.transactionPending !== "finished") {
+          if (this.actionAmount > 2) {
+            await this.action(6);
+          } else {
+            await this.action(3);
+          }
+        }
         console.log("stake err:", e);
       }
     },
