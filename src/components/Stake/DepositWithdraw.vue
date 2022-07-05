@@ -373,7 +373,6 @@ export default {
       const nxusdStaking = this.$store.getters.getNXUSDStakingContract;
       let value = this.$ethers.utils.parseUnits(this.valueAmount, 18);
       try {
-        console.log("this.isFullWithdraw",this.isFullWithdraw);
         const tx = await nxusdStaking.unstake(value, this.isFullWithdraw);
         await this.wrapperStatusTx(tx);
         const receipt = await tx.wait();
