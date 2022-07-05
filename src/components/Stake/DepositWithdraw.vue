@@ -61,6 +61,7 @@
           :show-max="true"
           valueName="NXUSD"
           @onchange="updateValue"
+          :maxWithdraw="maxWithdraw"
         />
         <button :disabled="isDisabled" class="continue" @click="toOverview">
           Continue
@@ -89,7 +90,7 @@
             :token="stakingTokenInfo.name"
           />
           <div>
-            {{ valueAmount }}
+            {{ formatValues(valueAmount) }}
             {{ stakingTokenInfo.name }}
           </div>
         </div>
@@ -139,6 +140,7 @@ export default {
   name: "DepositWithdraw",
   data() {
     return {
+      isFullWithdraw: false,
       bentoBoxContract: undefined,
       stakingTokenContract: undefined,
       isDisabled: false,
@@ -212,6 +214,9 @@ export default {
     },
   },
   methods: {
+    maxWithdraw(value) {
+      this.isFullWithdraw = value;
+    },
     goBack() {
       this.onClick("");
     },
@@ -297,7 +302,7 @@ export default {
       }
     },
     async action(tx) {
-      console.log("tx", tx)
+      console.log("tx", tx);
       if (tx === "finished") {
         this.transactionPending = "finished";
       }
@@ -368,7 +373,7 @@ export default {
       const nxusdStaking = this.$store.getters.getNXUSDStakingContract;
       let value = this.$ethers.utils.parseUnits(this.valueAmount, 18);
       try {
-        const tx = await nxusdStaking.unstake(value, false);
+        const tx = await nxusdStaking.unstake(value, this.isFullWithdraw);
         await this.wrapperStatusTx(tx);
         const receipt = await tx.wait();
         this.tx = receipt.transactionHash;
@@ -379,9 +384,8 @@ export default {
         } else {
           await this.action(3);
         }
-        console.log("error unstake:", e)
+        console.log("error unstake:", e);
       }
-
     },
 
     async stakeHandler() {
@@ -443,7 +447,6 @@ export default {
           } else {
             await this.action(3);
           }
-
         }
         console.log("stake err:", e);
       }
