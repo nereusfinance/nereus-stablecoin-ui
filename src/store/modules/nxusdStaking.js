@@ -144,11 +144,10 @@ export default {
       commit("setConfig", config);
     },
     async checkUserWXTLock({ getters, commit }) {
-      const userWXTLock = (
-        await getters.getMultiFeeDistributionContract.lockedBalances(
+      const userWXTLock =
+        await getters.getNXUSDStakingContract.getWXTLockBalance(
           getters.getAccount
-        )
-      ).total;
+        );
       commit("setUserWXTLock", userWXTLock);
     },
   },
