@@ -23,7 +23,7 @@
             active="onclick"
             class="markets-btn"
           >
-            Markets
+            Borrow NXUSD
           </router-link>
           <router-link
             :to="{ name: 'Stake' }"
