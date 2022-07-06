@@ -71,7 +71,7 @@ export default {
       ).toFixed(2);
     },
     isDisabled() {
-      return Number(this.balance) === 0;
+      return Number(this.$store.getters.getUserCurrentRewards.rewards) === 0;
     },
   },
   methods: {
