@@ -14,7 +14,7 @@
       <hr class="hr-top" />
       <nav>
         <router-link :to="{ name: 'Stand' }" class="nav-link"
-          >Markets</router-link
+          >Borrow NXUSD</router-link
         >
         <router-link :to="{ name: 'Dashboard' }" class="nav-link"
           >My Dashboard</router-link
