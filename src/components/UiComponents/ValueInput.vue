@@ -185,7 +185,7 @@ export default {
         this.value = oldValue;
         return false;
       }
-      if (value !== this.max) this.maxWithdraw(false);
+      if (this.maxWithdraw && value !== this.max) this.maxWithdraw(false);
       this.$emit("onchange", value);
     },
     parentValue(value) {
@@ -201,7 +201,7 @@ export default {
         this.value = floorToFixed(this.max, 6);
       } else if (!this.disabled && this.isStake) {
         this.value = this.max;
-        this.maxWithdraw(true);
+        if (this.maxWithdraw) this.maxWithdraw(true);
       }
     },
     openSelect() {

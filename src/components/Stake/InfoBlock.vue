@@ -114,20 +114,26 @@ export default {
     },
     tierOne() {
       const userData = this.$store.getters.getUserData;
-      const userStoredReward = this.normalizeBNValues(userData[2]);
+      const currentRewards = this.normalizeBNValues(
+        this.$store.getters.getUserCurrentRewards.rewards
+      );
       const NXUSDByTier1 = this.normalizeBNValues(userData[0][1]);
-      if (parseFloat(userStoredReward) > parseFloat(NXUSDByTier1)) {
+      if (parseFloat(currentRewards) > parseFloat(NXUSDByTier1)) {
         return NXUSDByTier1;
       } else {
-        return userStoredReward;
+        return currentRewards;
       }
     },
     tierTwo() {
       const userData = this.$store.getters.getUserData;
-      const userStoredReward = this.normalizeBNValues(userData[2]);
+      const currentRewards = this.normalizeBNValues(
+        this.$store.getters.getUserCurrentRewards.rewards
+      );
       const NXUSDByTier1 = this.normalizeBNValues(userData[0][1]);
-      if (parseFloat(userStoredReward) > parseFloat(NXUSDByTier1)) {
-        return this.normalizeBNValues(userData[2].sub(userData[0][1]));
+      if (parseFloat(currentRewards) > parseFloat(NXUSDByTier1)) {
+        return this.normalizeBNValues(
+          this.$store.getters.getUserCurrentRewards.rewards.sub(userData[0][1])
+        );
       } else {
         return "0.0";
       }
