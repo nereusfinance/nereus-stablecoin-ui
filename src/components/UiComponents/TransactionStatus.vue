@@ -75,12 +75,11 @@
         <h1>{{ statusType[0] }}</h1>
         <h1 v-if="transactionPending === 'error'">
           Error
-          <img alt="" class="done-icon" src="@/assets/images/icon-error.svg" />
-          Explorer
           <img
             alt=""
-            class="explorer-icon"
-            src="@/assets/images/icon-explorer.svg"
+            class="done-icon"
+            src="@/assets/images/icon-error.svg"
+            style="margin-right: 0"
           />
         </h1>
         <h1 v-if="transactionPending === '1'">
@@ -89,12 +88,7 @@
             alt=""
             class="loading-icon"
             src="@/assets/images/icon-loading.svg"
-          />
-          Explorer
-          <img
-            alt=""
-            class="explorer-icon"
-            src="@/assets/images/icon-explorer.svg"
+            style="margin-right: 0"
           />
         </h1>
         <h1 v-if="transactionPending === '2' || transactionPending === '3'">
@@ -103,15 +97,8 @@
             alt=""
             class="loading-icon"
             src="@/assets/images/icon-completed.svg"
+            style="margin-right: 0; animation: none"
           />
-          <a :href="getApproveLink" class="showTX" target="_blank">
-            Explorer
-            <img
-              alt=""
-              class="explorer-icon"
-              src="@/assets/images/icon-explorer.svg"
-            />
-          </a>
         </h1>
 
         <h1 v-if="transactionPending === 'finished'">
@@ -145,12 +132,7 @@
             alt=""
             class="loading-icon"
             src="@/assets/images/icon-loading.svg"
-          />
-          Explorer
-          <img
-            alt=""
-            class="explorer-icon"
-            src="@/assets/images/icon-explorer.svg"
+            style="margin-right: 0"
           />
         </h1>
         <h1 v-if="transactionPending === 'finished'">
@@ -158,6 +140,7 @@
           <img
             alt=""
             class="loading-icon"
+            style="animation: none"
             src="@/assets/images/icon-completed.svg"
           />
           Explorer
