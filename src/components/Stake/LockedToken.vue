@@ -2,8 +2,8 @@
   <div class="locked-wrapper">
     <span class="locked-header">Locked {{ lockedTokenName }}</span>
     <div class="locked-balance">
-      <TokenIcon :token="lockedTokenName"/>
-      <p v-tooltip="formatBNValues(balance)" class="info-tooltip">
+      <TokenIcon :token="lockedTokenName" />
+      <p v-tooltip="normalizeBNValues(balance)" class="info-tooltip">
         {{ formatBNValuesRounded(balance) }}
         {{ lockedTokenName }}
       </p>
@@ -13,11 +13,11 @@
       <div class="locked-table-header-item">Tier 1 amount NXUSD</div>
     </div>
     <div
-        v-for="(item, index) in config"
-        v-show="index > 0"
-        :key="index"
-        :class="{ selected: isActive(config, index) }"
-        class="locked-table-row"
+      v-for="(item, index) in config"
+      v-show="index > 0"
+      :key="index"
+      :class="{ selected: isActive(config, index) }"
+      class="locked-table-row"
     >
       <div v-if="index > 0" class="locked-table-item">
         {{ normalizeBNValues(item[0]) | formatNumber }}
@@ -31,7 +31,7 @@
 
 <script>
 import TokenIcon from "@/components/UiComponents/TokenIcon";
-import {ethers} from "ethers";
+import { ethers } from "ethers";
 
 export default {
   name: "LockedToken",
@@ -74,7 +74,7 @@ export default {
     formatBNValuesRounded(value) {
       const normalizedValue = this.normalizeBNValues(value);
       return new Intl.NumberFormat("en-EN").format(
-          parseFloat(normalizedValue).toFixed(2)
+        parseFloat(normalizedValue).toFixed(2)
       );
     },
   },
@@ -84,21 +84,21 @@ export default {
       if (Number(value) === 0) return value;
 
       const lookup = [
-        {value: 0, symbol: ""},
-        {value: 1, symbol: ""},
-        {value: 1e3, symbol: "K"},
-        {value: 1e6, symbol: "M"},
+        { value: 0, symbol: "" },
+        { value: 1, symbol: "" },
+        { value: 1e3, symbol: "K" },
+        { value: 1e6, symbol: "M" },
       ];
       const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
       let item = lookup
-          .slice()
-          .reverse()
-          .find(function (item) {
-            return parseFloat(value) >= item.value;
-          });
+        .slice()
+        .reverse()
+        .find(function (item) {
+          return parseFloat(value) >= item.value;
+        });
       return (
-          (parseFloat(value) / item.value).toFixed(0).replace(rx, "$1") +
-          item.symbol
+        (parseFloat(value) / item.value).toFixed(0).replace(rx, "$1") +
+        item.symbol
       );
     },
   },
