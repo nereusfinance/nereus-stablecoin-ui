@@ -4,27 +4,27 @@
       <div class="expected-interest-title">
         <div>Expected interest</div>
         <img
-          src="@/assets/images/icon-info.svg"
-          alt=""
-          class="fist-info-icon"
-          v-tooltip="
+            v-tooltip="
             'The estimated daily/weekly/monthly/yearly value of the NXUSD interest you earn based on your current total NXUSD deposit and the amount of WXT locked'
           "
+            alt=""
+            class="fist-info-icon"
+            src="@/assets/images/icon-info.svg"
         />
       </div>
     </div>
     <div class="container-interest">
       <div>
-        <div class="column-interest" v-for="time in period" :key="time">
+        <div v-for="time in period" :key="time" class="column-interest">
           {{ time }}
         </div>
       </div>
       <div>
         <p>Tier 1</p>
         <div
-          class="column-tier"
-          v-for="(reward, i) in rewardsForPeriod"
-          :key="i"
+            v-for="(reward, i) in rewardsForPeriod"
+            :key="i"
+            class="column-tier"
         >
           {{ formatBNValues(reward.rewardsTier1) }}
         </div>
@@ -32,9 +32,9 @@
       <div>
         <p>Tier 2</p>
         <div
-          class="column-tier"
-          v-for="(reward, i) in rewardsForPeriod"
-          :key="i"
+            v-for="(reward, i) in rewardsForPeriod"
+            :key="i"
+            class="column-tier"
         >
           {{ formatBNValues(reward.rewardsTier2) }}
         </div>
@@ -42,9 +42,9 @@
       <div style="flex-direction: row">
         <p class="total-text">Total</p>
         <div
-          class="column-tier total"
-          v-for="(reward, i) in rewardsForPeriod"
-          :key="i"
+            v-for="(reward, i) in rewardsForPeriod"
+            :key="i"
+            class="column-tier total"
         >
           <span>
             {{ formatBNValues(reward.rewardsTotal) }}
@@ -57,28 +57,28 @@
       <div class="total-title">
         <div>Total earned</div>
         <img
-          src="@/assets/images/icon-info.svg"
-          alt=""
-          class="info-icon"
-          v-tooltip="
+            v-tooltip="
             'The total value of the NXUSD interest you have earned with your current NXUSD deposit'
           "
+            alt=""
+            class="info-icon"
+            src="@/assets/images/icon-info.svg"
         />
       </div>
       <div class="tier1-amount">
         <span v-tooltip="earnedRewards.rewardsTier1">{{
-          formatBNValues(earnedRewards.rewardsTier1)
-        }}</span>
+            formatBNValues(earnedRewards.rewardsTier1)
+          }}</span>
       </div>
       <div class="tier2-amount">
         <span v-tooltip="earnedRewards.rewardsTier2">{{
-          formatBNValues(earnedRewards.rewardsTier2)
-        }}</span>
+            formatBNValues(earnedRewards.rewardsTier2)
+          }}</span>
       </div>
       <div class="total-earned-amount">
         <span v-tooltip="earnedRewards.total">{{
-          formatBNValues(earnedRewards.total)
-        }}</span>
+            formatBNValues(earnedRewards.total)
+          }}</span>
         <span class="value-text"> NXUSD </span>
       </div>
     </div>
@@ -108,23 +108,23 @@ export default {
     earnedRewards() {
       const earnedRewards = {};
       earnedRewards.rewardsTier1 = this.normalizeBNValues(
-        this.$store.getters.getUserCurrentRewards.historyRewards.rewardsTier1.add(
-          this.$store.getters.getHistoryUserRewards.rewardsTier1
-        )
+          this.$store.getters.getUserCurrentRewards.historyRewards.rewardsTier1.add(
+              this.$store.getters.getHistoryUserRewards.rewardsTier1
+          )
       );
       earnedRewards.rewardsTier2 = this.normalizeBNValues(
-        this.$store.getters.getUserCurrentRewards.historyRewards.rewardsTier2.add(
-          this.$store.getters.getHistoryUserRewards.rewardsTier2
-        )
+          this.$store.getters.getUserCurrentRewards.historyRewards.rewardsTier2.add(
+              this.$store.getters.getHistoryUserRewards.rewardsTier2
+          )
       );
       earnedRewards.total = this.normalizeBNValues(
-        this.$store.getters.getUserCurrentRewards.historyRewards.rewardsTier1
-          .add(
-            this.$store.getters.getUserCurrentRewards.historyRewards
-              .rewardsTier2
-          )
-          .add(this.$store.getters.getHistoryUserRewards.rewardsTier1)
-          .add(this.$store.getters.getHistoryUserRewards.rewardsTier2)
+          this.$store.getters.getUserCurrentRewards.historyRewards.rewardsTier1
+              .add(
+                  this.$store.getters.getUserCurrentRewards.historyRewards
+                      .rewardsTier2
+              )
+              .add(this.$store.getters.getHistoryUserRewards.rewardsTier1)
+              .add(this.$store.getters.getHistoryUserRewards.rewardsTier2)
       );
       console.log("currentRewards", earnedRewards);
       return earnedRewards;
@@ -136,14 +136,24 @@ export default {
     },
     formatBNValues(value) {
       return new Intl.NumberFormat("en-EN").format(
-        parseFloat(value).toFixed(2)
+          parseFloat(value).toFixed(2)
       );
     },
   },
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
+.tier1-amount, .tier2-amount {
+  width: 40px;
+  text-align: right;
+}
+
+.total-earned-amount {
+  width: 90px;
+  text-align: right;
+}
+
 .expected-interest-block {
   width: 100%;
   padding: 32px 24px 24px 24px;
@@ -163,6 +173,7 @@ export default {
     font-size: 20px;
     text-align: left;
   }
+
   .expected-interest-title {
     display: flex;
     flex-direction: row;
@@ -173,14 +184,18 @@ export default {
     gap: 6px;
     margin-bottom: 16px;
   }
+
   .fist-info-icon {
     width: 13px;
   }
+
   .total-title {
+    width: 110px;
     display: flex;
     align-items: center;
     color: #8a8a8a;
   }
+
   .total-title img {
     margin-left: 5px;
   }
@@ -200,6 +215,7 @@ export default {
   .total-text {
     padding-right: 56px;
   }
+
   .container-interest {
     display: flex;
     flex-direction: row;
@@ -207,10 +223,11 @@ export default {
     border-bottom: 1px solid #363637;
     margin-bottom: 12px;
   }
+
   .column-interest {
     display: flex;
     flex-direction: column;
-    width: 103px;
+    width: 110px;
 
     font-weight: 400;
     font-size: 14px;
@@ -220,10 +237,12 @@ export default {
     text-align: left;
     margin-bottom: 8px;
   }
+
   .column-interest:last-child {
     //padding-top: 25px;
     margin-bottom: 12px;
   }
+
   .column-interest:first-child {
     margin-top: 28px;
   }
@@ -238,6 +257,11 @@ export default {
 
     text-align: right;
     margin-bottom: 8px;
+    width: 40px;
+  }
+
+  .column-tier.total {
+    width: 90px;
   }
 
   .value-text {
@@ -262,6 +286,7 @@ export default {
       left: -2.4%;
       right: 8.34%;
     }
+
     .fist-info-icon {
       width: 13px;
     }
@@ -276,17 +301,21 @@ export default {
     margin-top: 24px;
 
     padding: 0;
+
     .fist-info-icon {
       width: 20px;
     }
+
     .total-text {
       padding-right: 0;
       text-align: right;
     }
+
     .value-text {
       margin-left: 8px;
       display: none;
     }
+
     .expected-interest-title {
       font-size: 20px;
       margin-bottom: 12px;
@@ -297,9 +326,11 @@ export default {
       padding-top: 10px;
       width: 50px;
     }
+
     img {
       width: 20px;
     }
+
     .info-icon {
       width: 20px;
       top: 90.05% !important;
