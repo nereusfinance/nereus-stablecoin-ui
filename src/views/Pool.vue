@@ -1,5 +1,5 @@
 <template>
-  <div class="pool-view">
+  <div v-if="isConnected" class="pool-view">
     <div class="container mini">
       <BackButton :text="'Back'" @click="toStand" />
 
@@ -69,6 +69,14 @@
       </div>
     </div>
   </div>
+  <div v-else class="stand-action-view">
+    <ActionComponent
+        :disabled-status="disabledStatus"
+        :name="name"
+        :onClick="walletBtnHandler"
+        :text="text"
+    />
+  </div>
 </template>
 
 <script>
@@ -80,16 +88,24 @@ const Balances = () => import("@/components/Pool/Balances");
 const InfoBlock = () => import("@/components/Pool/InfoBlock");
 const BackButton = () => import("@/components/UiComponents/BackButton");
 const LiquidationBar = () => import("@/components/Pool/LiquidationBar");
+const ActionComponent = () =>
+    import("@/components/UiComponents/ActionComponent");
 
 export default {
   data() {
     return {
+      text: "Please connect your wallet",
+      name: "Connect",
+      disabledStatus: false,
       actionType: "borrow",
       // pool: null,
       gasLimitConst: 1000,
     };
   },
   computed: {
+    isConnected() {
+      return this.$store.getters.getWalletIsConnected;
+    },
     tokenPrice() {
       return this.$store.getters.getTokenPrice(this.pool.id);
     },
@@ -151,6 +167,15 @@ export default {
       if (status) {
         await this.updateBalancesAndCollateralInfo();
       }
+    },
+    async walletBtnHandler() {
+      if (this.isConnected) {
+        return false;
+      }
+      this.$store.commit("setPopupState", {
+        type: "connectWallet",
+        isShow: true,
+      });
     },
     async updateBalancesAndCollateralInfo() {
       this.useAVAX
@@ -2859,13 +2884,6 @@ export default {
     },
   },
   async created() {
-    const isConnected = this.$store.getters.getWalletIsConnected;
-
-    if (!isConnected) {
-      this.$router.push({ name: "Stand" });
-      return false;
-    }
-
     if (!this.pool.isEnabled) {
       this.$router.push({ name: "Stand" });
       return false;
@@ -2897,12 +2915,23 @@ export default {
     InfoBlock,
     BackButton,
     LiquidationBar,
+    ActionComponent,
   },
 };
 </script>
 
 <style lang="scss" scoped>
 @import "src/mixins/screen-size";
+
+.stand-action-view {
+  position: relative;
+  flex: 1;
+  background: #1c1c1c;
+  @include respond-to(sm) {
+    display: flex;
+    justify-content: center;
+  }
+}
 
 .pool-view {
   padding: 40px 0;
