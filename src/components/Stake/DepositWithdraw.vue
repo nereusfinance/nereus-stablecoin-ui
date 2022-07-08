@@ -31,8 +31,14 @@
           :show-max="true"
           valueName="NXUSD"
           @onchange="updateValue"
+          data-cy="stake-input"
         />
-        <button :disabled="isDisabled" class="continue" @click="toOverview">
+        <button
+          :disabled="isDisabled"
+          class="continue"
+          @click="toOverview"
+          data-cy="stake-continue"
+        >
           Continue
         </button>
       </div>
@@ -62,8 +68,14 @@
           valueName="NXUSD"
           @onchange="updateValue"
           :maxWithdraw="maxWithdraw"
+          data-cy="unstake-input"
         />
-        <button :disabled="isDisabled" class="continue" @click="toOverview">
+        <button
+          :disabled="isDisabled"
+          class="continue"
+          @click="toOverview"
+          data-cy="unstake-continue"
+        >
           Continue
         </button>
       </div>

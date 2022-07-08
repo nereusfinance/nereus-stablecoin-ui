@@ -2,7 +2,7 @@ export default [
   {
     name: "NXUSDStaking",
     contractChain: "0xa86a",
-    address: "",
+    address: "0xa683E0e3bF71ef63e7354067B39f98f53A525753",
     stakingToken: {
       name: "NXUSD",
       decimals: 18,

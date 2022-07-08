@@ -71,10 +71,10 @@
   </div>
   <div v-else class="stand-action-view">
     <ActionComponent
-        :disabled-status="disabledStatus"
-        :name="name"
-        :onClick="walletBtnHandler"
-        :text="text"
+      :disabled-status="disabledStatus"
+      :name="name"
+      :onClick="walletBtnHandler"
+      :text="text"
     />
   </div>
 </template>
@@ -89,7 +89,7 @@ const InfoBlock = () => import("@/components/Pool/InfoBlock");
 const BackButton = () => import("@/components/UiComponents/BackButton");
 const LiquidationBar = () => import("@/components/Pool/LiquidationBar");
 const ActionComponent = () =>
-    import("@/components/UiComponents/ActionComponent");
+  import("@/components/UiComponents/ActionComponent");
 
 export default {
   data() {

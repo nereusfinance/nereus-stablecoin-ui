@@ -13,7 +13,11 @@
     >
       <h3 v-if="statusType[0] === 'Deposit'">Please submit to deposit</h3>
       <h3 v-if="statusType[0] === 'Withdraw'">Please submit to withdraw</h3>
-      <button class="action-button" @click="actionHandler">
+      <button
+        class="action-button"
+        @click="actionHandler"
+        data-cy="deposit-withdraw-button"
+      >
         {{ statusType[0] }}
       </button>
     </div>
@@ -60,7 +64,9 @@
     <!--    Finished-->
     <div v-if="transactionPending === 'finished'" class="finished">
       <h1>{{ statusType.length }}/{{ statusType.length }} Success!</h1>
-      <button class="dashboard-btn" @click="goBack">Finish</button>
+      <button class="dashboard-btn" @click="goBack" data-cy="finish-button">
+        Finish
+      </button>
     </div>
     <div v-if="transactionPending === 'error'" class="finished">
       <h1 class="error-text">

@@ -4,12 +4,12 @@
       <div class="expected-interest-title">
         <div>Expected interest</div>
         <img
-            v-tooltip="
+          v-tooltip="
             'The estimated daily/weekly/monthly/yearly value of the NXUSD interest you earn based on your current total NXUSD deposit and the amount of WXT locked'
           "
-            alt=""
-            class="fist-info-icon"
-            src="@/assets/images/icon-info.svg"
+          alt=""
+          class="fist-info-icon"
+          src="@/assets/images/icon-info.svg"
         />
       </div>
     </div>
@@ -22,9 +22,9 @@
       <div>
         <p>Tier 1</p>
         <div
-            v-for="(reward, i) in rewardsForPeriod"
-            :key="i"
-            class="column-tier"
+          v-for="(reward, i) in rewardsForPeriod"
+          :key="i"
+          class="column-tier"
         >
           {{ formatBNValues(reward.rewardsTier1) }}
         </div>
@@ -32,9 +32,9 @@
       <div>
         <p>Tier 2</p>
         <div
-            v-for="(reward, i) in rewardsForPeriod"
-            :key="i"
-            class="column-tier"
+          v-for="(reward, i) in rewardsForPeriod"
+          :key="i"
+          class="column-tier"
         >
           {{ formatBNValues(reward.rewardsTier2) }}
         </div>
@@ -42,9 +42,9 @@
       <div style="flex-direction: row">
         <p class="total-text">Total</p>
         <div
-            v-for="(reward, i) in rewardsForPeriod"
-            :key="i"
-            class="column-tier total"
+          v-for="(reward, i) in rewardsForPeriod"
+          :key="i"
+          class="column-tier total"
         >
           <span>
             {{ formatBNValues(reward.rewardsTotal) }}
@@ -57,28 +57,28 @@
       <div class="total-title">
         <div>Total earned</div>
         <img
-            v-tooltip="
+          v-tooltip="
             'The total value of the NXUSD interest you have earned with your current NXUSD deposit'
           "
-            alt=""
-            class="info-icon"
-            src="@/assets/images/icon-info.svg"
+          alt=""
+          class="info-icon"
+          src="@/assets/images/icon-info.svg"
         />
       </div>
       <div class="tier1-amount">
         <span v-tooltip="earnedRewards.rewardsTier1">{{
-            formatBNValues(earnedRewards.rewardsTier1)
-          }}</span>
+          formatBNValues(earnedRewards.rewardsTier1)
+        }}</span>
       </div>
       <div class="tier2-amount">
         <span v-tooltip="earnedRewards.rewardsTier2">{{
-            formatBNValues(earnedRewards.rewardsTier2)
-          }}</span>
+          formatBNValues(earnedRewards.rewardsTier2)
+        }}</span>
       </div>
       <div class="total-earned-amount">
         <span v-tooltip="earnedRewards.total">{{
-            formatBNValues(earnedRewards.total)
-          }}</span>
+          formatBNValues(earnedRewards.total)
+        }}</span>
         <span class="value-text"> NXUSD </span>
       </div>
     </div>
@@ -108,23 +108,23 @@ export default {
     earnedRewards() {
       const earnedRewards = {};
       earnedRewards.rewardsTier1 = this.normalizeBNValues(
-          this.$store.getters.getUserCurrentRewards.historyRewards.rewardsTier1.add(
-              this.$store.getters.getHistoryUserRewards.rewardsTier1
-          )
+        this.$store.getters.getUserCurrentRewards.historyRewards.rewardsTier1.add(
+          this.$store.getters.getHistoryUserRewards.rewardsTier1
+        )
       );
       earnedRewards.rewardsTier2 = this.normalizeBNValues(
-          this.$store.getters.getUserCurrentRewards.historyRewards.rewardsTier2.add(
-              this.$store.getters.getHistoryUserRewards.rewardsTier2
-          )
+        this.$store.getters.getUserCurrentRewards.historyRewards.rewardsTier2.add(
+          this.$store.getters.getHistoryUserRewards.rewardsTier2
+        )
       );
       earnedRewards.total = this.normalizeBNValues(
-          this.$store.getters.getUserCurrentRewards.historyRewards.rewardsTier1
-              .add(
-                  this.$store.getters.getUserCurrentRewards.historyRewards
-                      .rewardsTier2
-              )
-              .add(this.$store.getters.getHistoryUserRewards.rewardsTier1)
-              .add(this.$store.getters.getHistoryUserRewards.rewardsTier2)
+        this.$store.getters.getUserCurrentRewards.historyRewards.rewardsTier1
+          .add(
+            this.$store.getters.getUserCurrentRewards.historyRewards
+              .rewardsTier2
+          )
+          .add(this.$store.getters.getHistoryUserRewards.rewardsTier1)
+          .add(this.$store.getters.getHistoryUserRewards.rewardsTier2)
       );
       console.log("currentRewards", earnedRewards);
       return earnedRewards;
@@ -136,7 +136,7 @@ export default {
     },
     formatBNValues(value) {
       return new Intl.NumberFormat("en-EN").format(
-          parseFloat(value).toFixed(2)
+        parseFloat(value).toFixed(2)
       );
     },
   },
@@ -144,7 +144,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.tier1-amount, .tier2-amount {
+.tier1-amount,
+.tier2-amount {
   width: 40px;
   text-align: right;
 }

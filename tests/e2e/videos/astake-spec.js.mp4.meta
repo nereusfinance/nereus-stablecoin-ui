@@ -1,0 +1,11 @@
+;FFMETADATA1
+[CHAPTER]
+TIMEBASE=1/1000
+START=-87209
+END=25888
+title=Stake tests Stake screen should make deposit
+[CHAPTER]
+TIMEBASE=1/1000
+START=51619
+END=139019
+title=Stake tests Stake screen should make withdraw

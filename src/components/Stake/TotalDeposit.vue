@@ -25,6 +25,7 @@
         :disabled="actionType === 'Withdraw'"
         class="deposit-btn"
         @click="onClick('Deposit')"
+        data-cy="stake-button"
       >
         Deposit
       </button>
@@ -35,6 +36,7 @@
         :disabled="isDisabled || actionType === 'Deposit'"
         class="withdraw-btn"
         @click="onClick('Withdraw')"
+        data-cy="unstake-button"
       >
         Withdraw
       </button>
