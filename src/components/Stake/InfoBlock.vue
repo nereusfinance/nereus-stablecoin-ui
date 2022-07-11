@@ -5,12 +5,12 @@
         <div class="title">
           <div>Tier 1 amount</div>
           <img
-            src="@/assets/images/icon-info.svg"
-            alt=""
-            class="info-icon"
-            v-tooltip="
+              v-tooltip="
               'Part of your total NXUSD deposit with increased APY accruals'
             "
+              alt=""
+              class="info-icon"
+              src="@/assets/images/icon-info.svg"
           />
         </div>
         <h2>
@@ -26,12 +26,12 @@
         <div class="title">
           <div>Tier 2 amount</div>
           <img
-            src="@/assets/images/icon-info.svg"
-            alt=""
-            class="info-icon"
-            v-tooltip="
+              v-tooltip="
               'Part of your total NXUSD deposit above the Tier 1 amount - with standard APY accruals'
             "
+              alt=""
+              class="info-icon"
+              src="@/assets/images/icon-info.svg"
           />
         </div>
         <h2>
@@ -47,12 +47,12 @@
       <div class="title">
         <div>Yearly earn</div>
         <img
-          src="@/assets/images/icon-info.svg"
-          alt=""
-          class="info-icon"
-          v-tooltip="
+            v-tooltip="
             'The estimated yearly value of the NXUSD interest you earn based on your current total NXUSD deposit and the amount of WXT locked'
           "
+            alt=""
+            class="info-icon"
+            src="@/assets/images/icon-info.svg"
         />
       </div>
       <h1 v-tooltip="yearlyEarn" style="cursor: pointer">
@@ -71,21 +71,21 @@ export default {
       if (Number(value) === 0) return value;
 
       const lookup = [
-        { value: 0, symbol: "" },
-        { value: 1, symbol: "" },
-        { value: 1e3, symbol: "K" },
-        { value: 1e6, symbol: "M" },
+        {value: 0, symbol: ""},
+        {value: 1, symbol: ""},
+        {value: 1e3, symbol: "K"},
+        {value: 1e6, symbol: "M"},
       ];
       const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
       let item = lookup
-        .slice()
-        .reverse()
-        .find(function (item) {
-          return parseFloat(value) >= item.value;
-        });
+          .slice()
+          .reverse()
+          .find(function (item) {
+            return parseFloat(value) >= item.value;
+          });
       return (
-        (parseFloat(value) / (item.value || 1)).toFixed(2).replace(rx, "$1") +
-        item.symbol
+          (parseFloat(value) / (item.value || 1)).toFixed(2).replace(rx, "$1") +
+          item.symbol
       );
     },
   },
@@ -93,7 +93,7 @@ export default {
     yearlyEarn() {
       const yearlyRewards = this.$store.getters.getTableRewards;
       return this.normalizeBNValues(
-        yearlyRewards[yearlyRewards.length - 1].rewardsTotal
+          yearlyRewards[yearlyRewards.length - 1].rewardsTotal
       );
     },
     apyTierOne() {
@@ -194,11 +194,13 @@ export default {
   .last-column {
     margin-bottom: 0;
   }
+
   .title {
     display: flex;
     flex-direction: row;
     gap: 5px;
   }
+
   p.apy {
     font-weight: 600;
     font-size: 60px;
@@ -225,6 +227,7 @@ export default {
       color: #55bcc0;
     }
   }
+
   .info-icon {
     width: 13px;
   }
@@ -232,17 +235,19 @@ export default {
 
 @media screen and(min-width: 768px) and(max-width: 1000px) {
   .info-block {
-    width: 424px;
+    width: 464px;
     height: 280px;
     padding: 24px 16px 16px 16px;
 
     .columns {
       height: 136px;
     }
+
     .column {
       margin-right: 36px;
       margin-bottom: 32px;
     }
+
     h1 {
       font-size: 80px;
     }
@@ -281,10 +286,12 @@ export default {
         }
       }
     }
+
     .column.last-column {
       margin-right: auto;
       margin-left: 0;
     }
+
     h2 {
       font-weight: 400;
       font-size: 16px;

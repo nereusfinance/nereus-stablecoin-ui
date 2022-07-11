@@ -144,13 +144,27 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "./src/mixins/screen-size";
+
 .tier1-amount, .tier2-amount {
-  width: 40px;
+  width: 100px;
   text-align: right;
+  @include respond-to(sm) {
+    width: 100px;
+  }
+  @include respond-to(md) {
+    width: 80px;
+  }
 }
 
 .total-earned-amount {
-  width: 90px;
+  width: 150px;
+  @include respond-to(sm) {
+    width: 100px;
+  }
+  @include respond-to(md) {
+    width: 140px;
+  }
   text-align: right;
 }
 
@@ -213,7 +227,7 @@ export default {
   }
 
   .total-text {
-    padding-right: 56px;
+    padding-right: 62px;
   }
 
   .container-interest {
@@ -257,11 +271,23 @@ export default {
 
     text-align: right;
     margin-bottom: 8px;
-    width: 40px;
+    width: 100px;
+    @include respond-to(md) {
+      width: 80px;
+    }
+    @include respond-to(sm) {
+      width: 80px;
+    }
   }
 
   .column-tier.total {
-    width: 90px;
+    width: 150px;
+    @include respond-to(sm) {
+      width: 100px;
+    }
+    @include respond-to(md) {
+      width: 140px;
+    }
   }
 
   .value-text {
@@ -276,7 +302,7 @@ export default {
 
 @media screen and(min-width: 768px) and(max-width: 1000px) {
   .expected-interest-block {
-    width: 424px;
+    width: 464px;
     height: 280px;
     padding: 32px 16px 16px 16px;
 
