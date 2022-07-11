@@ -227,7 +227,7 @@ export default {
   }
 
   .total-text {
-    padding-right: 56px;
+    padding-right: 62px;
   }
 
   .container-interest {
@@ -276,7 +276,7 @@ export default {
       width: 80px;
     }
     @include respond-to(sm) {
-      width: 100px;
+      width: 80px;
     }
   }
 
