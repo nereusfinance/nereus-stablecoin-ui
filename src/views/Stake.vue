@@ -26,10 +26,10 @@
   </div>
   <div v-else class="stand-action-view">
     <ActionComponent
-        :disabled-status="disabledStatus"
-        :name="btnName"
-        :onClick="walletBtnHandler"
-        :text="text"
+      :disabled-status="disabledStatus"
+      :name="btnName"
+      :onClick="walletBtnHandler"
+      :text="text"
     />
   </div>
 </template>
@@ -41,7 +41,7 @@ import InfoBlock from "@/components/Stake/InfoBlock";
 import ExpectedInterest from "@/components/Stake/ExpectedInterest";
 import DepositWithdraw from "@/components/Stake/DepositWithdraw";
 const ActionComponent = () =>
-    import("@/components/UiComponents/ActionComponent");
+  import("@/components/UiComponents/ActionComponent");
 import stake from "@/mixins/stake.js";
 export default {
   mixins: [stake],
