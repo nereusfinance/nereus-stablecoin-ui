@@ -19,7 +19,7 @@
           </div>
         </div>
         <div class="total-title">
-          <div style="text-align: left">Total earned</div>
+          <div>Total earned</div>
           <img
             v-tooltip="
               'The total value of the NXUSD interest you have earned with your current NXUSD deposit'
