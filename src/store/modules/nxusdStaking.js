@@ -36,8 +36,11 @@ export default {
       ethers.BigNumber.from("0"),
     ],
     NXUSDStakingContract: {},
+    NXUSDStakingInterface: {},
+    MulticallContract: {},
     NXUSDStakingCalculationContract: {},
     MultiFeeDistributionContract: {},
+    NXUSDStakingCalculationInterface: {},
     userWXTLock: ethers.BigNumber.from("0"),
     configCurrentVersion: ethers.BigNumber.from("0"),
     userCurrentRewards: {
@@ -65,8 +68,17 @@ export default {
     setNXUSDStakingContract(state, payload) {
       state.NXUSDStakingContract = payload;
     },
+    setNXUSDStakingInterface(state, payload) {
+      state.NXUSDStakingInterface = payload;
+    },
+    setMulticallContract(state, payload) {
+      state.MulticallContract = payload;
+    },
     setNXUSDStakingCalculationContract(state, payload) {
       state.NXUSDStakingCalculationContract = payload;
+    },
+    setNXUSDStakingCalculationInterface(state, payload) {
+      state.NXUSDStakingCalculationInterface = payload;
     },
     setMultiFeeDistributionContract(state, payload) {
       state.MultiFeeDistributionContract = payload;
@@ -158,8 +170,12 @@ export default {
     getAPYDataConfig: (state) => state.apyDataConfig,
     getConfig: (state) => state.config,
     getNXUSDStakingContract: (state) => state.NXUSDStakingContract,
+    getNXUSDStakingInterface: (state) => state.NXUSDStakingInterface,
+    getMulticallContract: (state) => state.MulticallContract,
     getNXUSDStakingCalculationContract: (state) =>
       state.NXUSDStakingCalculationContract,
+    getNXUSDStakingCalculationInterface: (state) =>
+      state.NXUSDStakingCalculationInterface,
     getMultiFeeDistributionContract: (state) =>
       state.MultiFeeDistributionContract,
     getConfigCurrentVersion: (state) => state.configCurrentVersion,
