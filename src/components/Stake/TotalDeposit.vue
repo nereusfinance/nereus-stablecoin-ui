@@ -212,6 +212,7 @@ export default {
   .total-deposit-block {
     height: 186px;
     padding: 24px 16px 24px 16px;
+    margin-bottom: 8px;
 
     p {
       font-size: 20px;
@@ -244,9 +245,7 @@ export default {
   .total-deposit-block {
     height: 248px;
     padding: 24px 16px 20px 16px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 8px;
+    margin: 0 auto 8px;
 
     .info-icon {
       width: 20px;
