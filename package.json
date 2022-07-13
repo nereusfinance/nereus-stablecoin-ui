@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test": "npx synpress run -c baseUrl=http://localhost:8080"
+    "test": "npx env-cmd synpress run -c baseUrl=http://localhost:8080",
+    "test:DAImarket": "npx env-cmd synpress run -c baseUrl=http://localhost:8080 -s tests/e2e/specs/borrow-repay-DAI-spec.js"
   },
   "dependencies": {
     "@ethersproject/hardware-wallets": "^5.3.0",
@@ -16,6 +17,7 @@
     "@walletconnect/web3-provider": "^1.7.7",
     "axios": "^0.21.1",
     "core-js": "^3.10.1",
+    "env-cmd": "^10.1.0",
     "ethers": "^5.1.4",
     "moment": "^2.29.1",
     "normalize.css": "^8.0.1",
