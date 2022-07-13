@@ -58,14 +58,6 @@ const routes = [
     },
     component: () => import("../views/Stake.vue"),
   },
-  {
-    path: "/mobileStake",
-    name: "MobileStake",
-    meta: {
-      needConnection: true,
-    },
-    component: () => import("../views/MobileStake.vue"),
-  },
   // {
   //   path: "/transactions",
   //   name: "Transactions",

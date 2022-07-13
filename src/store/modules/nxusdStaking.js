@@ -100,6 +100,54 @@ export default {
     },
   },
   actions: {
+    async multicall({ commit, getters }, data) {
+      const callData = data.map((item) => {
+        return {
+          target: item.target,
+          callData: item.interface.encodeFunctionData(
+            item.function,
+            item.arguments
+          ),
+        };
+      });
+
+      const tryAggregate =
+        await getters.getMulticallContract.callStatic.tryAggregate(
+          true,
+          callData
+        );
+
+      for (let i = 0; i < tryAggregate.length; i++) {
+        const result = data[i].interface.decodeFunctionResult(
+          data[i].function,
+          tryAggregate[i].returnData
+        );
+
+        switch (data[i].function) {
+          case "userData":
+            commit("setUserData", result);
+            break;
+          case "getAPYDataConfig":
+            commit("setAPYDataConfig", result[0]);
+            break;
+          case "config":
+            commit("setConfig", result);
+            break;
+          case "getWXTLockBalance":
+            commit("setUserWXTLock", result[0]);
+            break;
+          case "historyUserRewards":
+            commit("setHistoryUserRewards", result);
+            break;
+          case "getUserRewards":
+            commit("setUserCurrentRewards", result);
+            break;
+          case "calculateTableRewards":
+            commit("setTableRewards", result[0]);
+            break;
+        }
+      }
+    },
     async calculateTableRewards({ getters, commit }, periods) {
       console.log(
         "Calculating start time in seconds:",

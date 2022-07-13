@@ -111,13 +111,7 @@ export default {
         "checkConfigCurrentVersion"
       );
 
-      console.log("NXUSDStakingInterface", NXUSDStakingInterface);
-      console.log(
-        "this.$store.getters.getNXUSDStakingCalculationInterface",
-        this.$store.getters.getNXUSDStakingCalculationInterface
-      );
-
-      const funcAndArgs = [
+      const data = [
         {
           function: "userData",
           arguments: [account],
@@ -163,60 +157,7 @@ export default {
         },
       ];
 
-      const callData = funcAndArgs.map((item) => {
-        return {
-          target: item.target,
-          callData: item.interface.encodeFunctionData(
-            item.function,
-            item.arguments
-          ),
-        };
-      });
-
-      const tryAggregate =
-        await this.$store.getters.getMulticallContract.callStatic.tryAggregate(
-          true,
-          callData
-        );
-
-      for (let i = 0; i < tryAggregate.length; i++) {
-        const result = funcAndArgs[i].interface.decodeFunctionResult(
-          funcAndArgs[i].function,
-          tryAggregate[i].returnData
-        );
-        if (funcAndArgs[i].function === "userData") {
-          this.$store.commit("setUserData", result);
-        } else if (funcAndArgs[i].function === "getAPYDataConfig") {
-          this.$store.commit("setAPYDataConfig", result[0]);
-        } else if (funcAndArgs[i].function === "config") {
-          this.$store.commit("setConfig", result);
-        } else if (funcAndArgs[i].function === "getWXTLockBalance") {
-          this.$store.commit("setUserWXTLock", result[0]);
-        } else if (funcAndArgs[i].function === "historyUserRewards") {
-          this.$store.commit("setHistoryUserRewards", result);
-        } else if (funcAndArgs[i].function === "getUserRewards") {
-          this.$store.commit("setUserCurrentRewards", result);
-        } else if (funcAndArgs[i].function === "calculateTableRewards") {
-          this.$store.commit("setTableRewards", result[0]);
-        }
-      }
-
-      // await this.$store.dispatch("checkUserData");
-      //
-      // await this.$store.dispatch("getAPYDataConfig", configCurrentVersion);
-      //
-      // await this.$store.dispatch("getConfig", configCurrentVersion);
-      //
-      // await this.$store.dispatch("checkUserWXTLock");
-      //
-      // await this.$store.dispatch("checkHistoryUserRewards");
-      //
-      // await this.$store.dispatch("checkUserCurrentRewards");
-
-      // await this.$store.dispatch(
-      //   "calculateTableRewards",
-      //   [86400, 604800, 2629746, 31556952]
-      // );
+      await this.$store.dispatch("multicall", data);
     },
   },
 };

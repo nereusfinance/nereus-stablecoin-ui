@@ -2,7 +2,7 @@ export default [
   {
     name: "Multicall",
     contractChain: "0xa86a",
-    address: "0xf9a061036f3D6F9A2D7C575504F2852db84783cD",
+    address: "",
     abi: [
       {
         inputs: [
