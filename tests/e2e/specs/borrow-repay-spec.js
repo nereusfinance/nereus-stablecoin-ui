@@ -7,8 +7,7 @@ describe("Borrow-repay tests", () => {
   before(() => {
     cy.addMetamaskNetwork({
       networkName: "Test NXUSD",
-      rpcUrl:
-        "https://rpc.tenderly.co/fork/42860c15-ac06-48a3-b42e-15261167a129",
+      rpcUrl: "http://127.0.0.1:8545/",
       chainId: "43114",
       symbol: "AVAX",
       blockExplorer: "",
@@ -21,7 +20,6 @@ describe("Borrow-repay tests", () => {
     });
   });
   beforeEach(() => {
-    cy.disconnectMetamaskWalletFromAllDapps();
     dashboardPage.visit();
     dashboardPage.connectBrowserWallet();
   });
@@ -46,6 +44,8 @@ describe("Borrow-repay tests", () => {
         const value = 5;
         tradePage.inputPair(value.toString());
         tradePage.clickBorrowRepay();
+        cy.wait(5000);
+        tradePage.confirmMetamaskTransaction();
         cy.wait(5000);
         tradePage.confirmMetamaskTransaction();
         cy.wait(5000);

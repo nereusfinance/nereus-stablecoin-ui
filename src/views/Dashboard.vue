@@ -42,10 +42,10 @@
   </div>
   <div v-else class="stand-action-view">
     <ActionComponent
-        :disabled-status="disabledStatus"
-        :name="name"
-        :onClick="walletBtnHandler"
-        :text="text"
+      :disabled-status="disabledStatus"
+      :name="name"
+      :onClick="walletBtnHandler"
+      :text="text"
     />
   </div>
 </template>
@@ -55,7 +55,7 @@ const StatisticsBlock = () => import("@/components/Dashboard/StatisticsBlock");
 const OpenPoolItem = () => import("@/components/Dashboard/OpenPoolItem");
 const EmptyPoolsState = () => import("@/components/Dashboard/EmptyPoolsState");
 const ActionComponent = () =>
-    import("@/components/UiComponents/ActionComponent");
+  import("@/components/UiComponents/ActionComponent");
 
 import sspellToken from "@/mixins/sspellToken.js";
 

@@ -25,6 +25,7 @@
       :class="{ load: connectLoader, connected: isConnected }"
       class="btn mini connect-btn"
       @click="walletBtnHandler"
+      data-cy="connect-button-head"
     >
       <ButtonLoader v-if="connectLoader" />
       <template v-else> </template>

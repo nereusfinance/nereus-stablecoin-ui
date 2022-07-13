@@ -87,7 +87,10 @@ export default {
       return this.$store.getters.getPools;
     },
     isConnected() {
-      return this.$store.getters.getWalletIsConnected || this.$store.getters.getWalletProviderName === 'Default';
+      return (
+        this.$store.getters.getWalletIsConnected ||
+        this.$store.getters.getWalletProviderName === "Default"
+      );
     },
     filteredList() {
       let sortedArray = this.pools;

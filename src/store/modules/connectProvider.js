@@ -35,7 +35,9 @@ export default {
     async connectProvider({ commit }) {
       const walletType = localStorage.getItem("walletType");
       const provider = new providers.JsonRpcProvider(getDefaultRPCURL());
-      const defaultChainId = utils.hexlify((await provider.getNetwork()).chainId);
+      const defaultChainId = utils.hexlify(
+        (await provider.getNetwork()).chainId
+      );
       commit("setWalletProviderName", "Default");
       commit("setChainId", defaultChainId);
       commit("setProvider", provider);
