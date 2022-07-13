@@ -78,6 +78,14 @@ export default class TradePage extends Page {
       .click();
   }
 
+  connectBrowserWallet() {
+    cy.findAllByText("Connect").spread((firstButton) => {
+      firstButton.click();
+    });
+    cy.findByText("Metamask").click();
+    this.acceptMetamaskAccessRequest();
+  }
+
   transferAllNXUSD() {
     const provider = new providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
