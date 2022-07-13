@@ -1,85 +1,92 @@
 <template>
   <div class="expected-interest-block">
     <div class="expected-interest-title">
-      <div class="expected-interest-title">
-        <div>Expected interest</div>
-        <img
-          v-tooltip="
-            'The estimated daily/weekly/monthly/yearly value of the NXUSD interest you earn based on your current total NXUSD deposit and the amount of WXT locked'
-          "
-          alt=""
-          class="fist-info-icon"
-          src="@/assets/images/icon-info.svg"
-        />
-      </div>
+      <div>Expected interest</div>
+      <img
+        v-tooltip="
+          'The estimated daily/weekly/monthly/yearly value of the NXUSD interest you earn based on your current total NXUSD deposit and the amount of WXT locked'
+        "
+        alt=""
+        class="fist-info-icon"
+        src="@/assets/images/icon-info.svg"
+      />
     </div>
     <div class="container-interest">
-      <div>
-        <div v-for="time in period" :key="time" class="column-interest">
-          {{ time }}
+      <div class="wrapper">
+        <div>
+          <div v-for="time in period" :key="time" class="column-interest">
+            {{ time }}
+          </div>
+        </div>
+        <div class="total-title">
+          <div>Total earned</div>
+          <img
+            v-tooltip="
+              'The total value of the NXUSD interest you have earned with your current NXUSD deposit'
+            "
+            alt=""
+            class="info-icon"
+            src="@/assets/images/icon-info.svg"
+          />
         </div>
       </div>
-      <div>
-        <p>Tier 1</p>
-        <div
-          v-for="(reward, i) in rewardsForPeriod"
-          :key="i"
-          class="column-tier"
-        >
-          {{ formatBNValues(reward.rewardsTier1) }}
+      <div class="wrapper">
+        <div>
+          <p>Tier 1</p>
+          <div
+            v-for="(reward, i) in rewardsForPeriod"
+            :key="i"
+            class="column-tier"
+          >
+            {{ formatBNValues(reward.rewardsTier1) }}
+          </div>
+        </div>
+        <div class="tier-amount">
+          <span v-tooltip="earnedRewards.rewardsTier1">{{
+            formatBNValues(earnedRewards.rewardsTier1)
+          }}</span>
+          <span class="value-text mobile"> NXUSD </span>
         </div>
       </div>
-      <div>
-        <p>Tier 2</p>
-        <div
-          v-for="(reward, i) in rewardsForPeriod"
-          :key="i"
-          class="column-tier"
-        >
-          {{ formatBNValues(reward.rewardsTier2) }}
+      <div class="wrapper">
+        <div>
+          <p>Tier 2</p>
+          <div
+            v-for="(reward, i) in rewardsForPeriod"
+            :key="i"
+            class="column-tier"
+          >
+            {{ formatBNValues(reward.rewardsTier2) }}
+          </div>
+        </div>
+        <div class="tier-amount">
+          <span v-tooltip="earnedRewards.rewardsTier2">{{
+            formatBNValues(earnedRewards.rewardsTier2)
+          }}</span>
+          <span class="value-text mobile"> NXUSD </span>
         </div>
       </div>
-      <div style="flex-direction: row">
-        <p class="total-text">Total</p>
-        <div
-          v-for="(reward, i) in rewardsForPeriod"
-          :key="i"
-          class="column-tier total"
-        >
-          <span>
-            {{ formatBNValues(reward.rewardsTotal) }}
+      <div class="wrapper">
+        <div>
+          <p class="total-text">Total</p>
+          <div
+            v-for="(reward, i) in rewardsForPeriod"
+            :key="i"
+            class="column-tier total"
+          >
+            <span>
+              {{ formatBNValues(reward.rewardsTotal) }}
+              <span class="value-text"> NXUSD </span>
+            </span>
+          </div>
+        </div>
+        <div class="tier-amount total">
+          <span v-tooltip="earnedRewards.total"
+            >{{ formatBNValues(earnedRewards.total) }}
             <span class="value-text"> NXUSD </span>
           </span>
+          <span class="value-text mobile"> NXUSD </span>
         </div>
-      </div>
-    </div>
-    <div class="total-earned-rewards">
-      <div class="total-title">
-        <div>Total earned</div>
-        <img
-          v-tooltip="
-            'The total value of the NXUSD interest you have earned with your current NXUSD deposit'
-          "
-          alt=""
-          class="info-icon"
-          src="@/assets/images/icon-info.svg"
-        />
-      </div>
-      <div class="tier1-amount">
-        <span v-tooltip="earnedRewards.rewardsTier1">{{
-          formatBNValues(earnedRewards.rewardsTier1)
-        }}</span>
-      </div>
-      <div class="tier2-amount">
-        <span v-tooltip="earnedRewards.rewardsTier2">{{
-          formatBNValues(earnedRewards.rewardsTier2)
-        }}</span>
-      </div>
-      <div class="total-earned-amount">
-        <span v-tooltip="earnedRewards.total">{{
-          formatBNValues(earnedRewards.total)
-        }}</span>
-        <span class="value-text"> NXUSD </span>
       </div>
     </div>
   </div>
@@ -144,16 +151,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.tier1-amount,
-.tier2-amount {
-  width: 40px;
-  text-align: right;
-}
-
-.total-earned-amount {
-  width: 90px;
-  text-align: right;
-}
+@import "./src/mixins/screen-size";
 
 .expected-interest-block {
   width: 100%;
@@ -161,13 +159,6 @@ export default {
 
   display: flex;
   flex-direction: column;
-
-  .total-earned-rewards {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    line-height: 20px;
-  }
 
   h1 {
     font-weight: 400;
@@ -190,17 +181,6 @@ export default {
     width: 13px;
   }
 
-  .total-title {
-    width: 110px;
-    display: flex;
-    align-items: center;
-    color: #8a8a8a;
-  }
-
-  .total-title img {
-    margin-left: 5px;
-  }
-
   p {
     text-align: right;
     align-items: center;
@@ -214,21 +194,38 @@ export default {
   }
 
   .total-text {
-    padding-right: 56px;
+    padding-right: 62px;
   }
 
   .container-interest {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    border-bottom: 1px solid #363637;
-    margin-bottom: 12px;
+
+    .total-title {
+      flex-direction: row;
+    }
+
+    .total-title img {
+      margin-left: 5px;
+    }
   }
 
-  .column-interest {
+  .value-text.mobile {
+    display: none;
+  }
+
+  .wrapper {
+    flex-grow: 1;
+  }
+  .wrapper:first-child {
+    flex-grow: 0;
+  }
+
+  .column-interest,
+  .total-title {
     display: flex;
     flex-direction: column;
-    width: 110px;
 
     font-weight: 400;
     font-size: 14px;
@@ -239,30 +236,27 @@ export default {
     margin-bottom: 8px;
   }
 
-  .column-interest:last-child {
-    //padding-top: 25px;
-    margin-bottom: 12px;
-  }
-
   .column-interest:first-child {
     margin-top: 28px;
   }
 
-  .column-tier {
+  .column-tier:last-child,
+  .column-interest:last-child {
+    border-bottom: 1px solid #363637;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+  }
+
+  .column-tier,
+  .tier-amount {
     display: flex;
     flex-direction: column;
 
-    font-weight: 400;
     font-size: 14px;
     line-height: 20px;
 
     text-align: right;
     margin-bottom: 8px;
-    width: 40px;
-  }
-
-  .column-tier.total {
-    width: 90px;
   }
 
   .value-text {
@@ -277,18 +271,19 @@ export default {
 
 @media screen and(min-width: 768px) and(max-width: 1000px) {
   .expected-interest-block {
-    width: 424px;
+    width: 100%;
     height: 280px;
     padding: 32px 16px 16px 16px;
-
     .info-icon {
       width: 13px;
-      position: relative;
-      left: -2.4%;
-      right: 8.34%;
+    }
+
+    .total-title {
+      width: 116px;
     }
 
     .fist-info-icon {
+      margin-left: 2px;
       width: 13px;
     }
   }
@@ -296,9 +291,6 @@ export default {
 
 @media screen and(max-width: 767px) {
   .expected-interest-block {
-    height: auto;
-    margin-left: auto;
-    margin-right: auto;
     margin-top: 24px;
 
     padding: 0;
@@ -306,7 +298,9 @@ export default {
     .fist-info-icon {
       width: 20px;
     }
-
+    .total-title {
+      width: 56px;
+    }
     .total-text {
       padding-right: 0;
       text-align: right;
@@ -323,9 +317,8 @@ export default {
       gap: 6px;
     }
 
-    .column-interest:last-child {
-      padding-top: 10px;
-      width: 50px;
+    .value-text.mobile {
+      display: block;
     }
 
     img {
@@ -333,9 +326,8 @@ export default {
     }
 
     .info-icon {
+      margin-top: 15px;
       width: 20px;
-      top: 90.05% !important;
-      left: 95px;
     }
   }
 }
