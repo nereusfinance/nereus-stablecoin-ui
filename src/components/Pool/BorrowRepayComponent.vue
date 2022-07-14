@@ -823,7 +823,7 @@ export default {
           value.toString().includes(".") &&
           value.toString().split(".")[1].length > this.mainValueDecimals
       ) {
-        this.mainValueError = "Cant have more than 18 digits after coma";
+        this.mainValueError = "Cant have more than " + this.mainValueDecimals + " digits after coma"
         return false;
       }
       this.mainValueError = "";
@@ -866,7 +866,7 @@ export default {
           value.toString().includes(".") &&
           value.toString().split(".")[1].length > this.pairValueDecimals
       ) {
-        this.pairValueError = "Cant have more than 18 digits after coma";
+        this.pairValueError = "Cant have more than " + this.pairValueDecimals + " digits after coma";
         return false;
       }
       if (this.actionType === "repay") {
