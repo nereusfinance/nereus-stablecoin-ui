@@ -64,7 +64,7 @@ export default {
     async useConnector(connector) {
       try {
         await this.$store.dispatch(connector);
-        this.closeModal();
+        window.location.reload();
       } catch (e) {
         console.log("e:", e);
       }
