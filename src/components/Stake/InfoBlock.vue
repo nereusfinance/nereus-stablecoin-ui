@@ -98,10 +98,13 @@ export default {
     },
     apyTierOne() {
       let APYTier1 = this.$store.getters.getUserData[0][2];
-      if (APYTier1) {
+      if (APYTier1 && Number(APYTier1)) {
         return parseFloat(this.normalizeBNValuesToUnits(APYTier1)).toFixed();
       } else {
-        return 0;
+        const configVersion = (this.$store.getters.getConfigCurrentVersion).toString();
+        const configData = this.$store.getters.getAPYDataConfig;
+        const defaultAPYTier1 = configData[configVersion].APYTier1;
+        return parseFloat(this.normalizeBNValuesToUnits(defaultAPYTier1)).toFixed();
       }
     },
     apyTierTwo() {
