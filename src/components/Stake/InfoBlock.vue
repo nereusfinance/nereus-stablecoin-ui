@@ -101,9 +101,8 @@ export default {
       if (APYTier1 && Number(APYTier1)) {
         return parseFloat(this.normalizeBNValuesToUnits(APYTier1)).toFixed();
       } else {
-        const configVersion = (this.$store.getters.getConfigCurrentVersion).toString();
         const configData = this.$store.getters.getAPYDataConfig;
-        const defaultAPYTier1 = configData[configVersion].APYTier1;
+        const defaultAPYTier1 = configData[1].APYTier1;
         return parseFloat(this.normalizeBNValuesToUnits(defaultAPYTier1)).toFixed();
       }
     },
