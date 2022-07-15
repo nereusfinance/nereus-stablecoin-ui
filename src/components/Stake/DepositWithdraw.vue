@@ -143,7 +143,6 @@ import TokenIcon from "@/components/UiComponents/TokenIcon";
 import TransactionStatus from "@/components/UiComponents/TransactionStatus";
 import AddTokenBtn from "@/components/UiComponents/AddTokenBtn";
 import NXUSDStakingContractInfo from "@/utils/contracts/NXUSDStaking";
-import masterContractInfo from "@/utils/contracts/master";
 import { ethers } from "ethers";
 
 const BackButton = () => import("@/components/UiComponents/BackButton");
@@ -246,7 +245,7 @@ export default {
       );
     },
     getBentoBoxContract() {
-      const bentoBox = masterContractInfo.find(
+      const { bentoBox } = NXUSDStakingContractInfo.find(
         (contract) => contract.contractChain === this.chainId
       );
       this.bentoBoxContract = new this.$ethers.Contract(
