@@ -1,20 +1,21 @@
 <template>
-  <div class="pool-view">
+  <div v-if="isConnected" class="pool-view">
     <div class="container mini">
       <BackButton :text="'Back'" @click="toStand" />
 
       <div class="pool-head-bar">
         <div class="btns-group">
           <button
-            class="btn mini borrow-btn"
             :class="{ active: actionType === 'borrow' }"
+            class="btn mini borrow-btn"
             @click="setActionType('borrow')"
           >
             Borrow
           </button>
           <button
-            class="btn mini replay-btn"
             :class="{ active: actionType === 'repay' }"
+            class="btn mini replay-btn"
+            data-cy="repay-button"
             @click="setActionType('repay')"
           >
             Repay
@@ -26,38 +27,39 @@
         </template>
       </div>
 
-      <div class="pool-content" v-if="pool">
+      <div v-if="pool" class="pool-content">
         <BorrowRepayComponent
-          :poolId="pool.id"
           :actionType="actionType"
           :balance="pool.userBalance"
           :balanceNativeToken="pool.userBalanceNativeToken"
+          :exchangeRate="pool.tokenPrice"
+          :isUpdatePrice="pool.askUpdatePrice"
+          :ltv="pool.ltv"
           :pairBalance="pool.userPairBalance"
+          :poolId="pool.id"
+          :tokenDecimals="pool.token.decimals"
+          :tokenName="pool.token.name"
+          :tokenPair="pool.tokenPairPrice"
+          :tokenPairDecimals="pool.pairToken.decimals"
+          :tokenPairName="pool.pairToken.name"
+          :tokenToUsd="pool.tokenPrice"
+          :userTotalBorrowed="pool.userBorrowPart"
+          :userTotalCollateral="pool.userCollateralShare"
           @addAndBorrow="addAndBorrowHandler"
+          @addAndBorrowMultiple="addMultiBorrowHandler"
           @addCollateral="addCollateralHandler"
           @borrow="borrowHandler"
+          @borrowMultiple="addMultiBorrowHandler"
           @removeAndRepay="removeAndRepayHandler"
           @removeAndRepayMax="removeAndRepayMaxHandler"
-          @repay="repayHandler"
           @removeCollateral="removeCollateralHandler"
-          @addAndBorrowMultiple="addMultiBorrowHandler"
-          @borrowMultiple="addMultiBorrowHandler"
-          :isUpdatePrice="pool.askUpdatePrice"
-          :tokenName="pool.token.name"
-          :tokenToUsd="pool.tokenPrice"
-          :tokenDecimals="pool.token.decimals"
-          :tokenPair="pool.tokenPairPrice"
-          :tokenPairName="pool.pairToken.name"
-          :tokenPairDecimals="pool.pairToken.decimals"
-          :userTotalCollateral="pool.userCollateralShare"
-          :userTotalBorrowed="pool.userBorrowPart"
-          :ltv="pool.ltv"
-          :exchangeRate="pool.tokenPrice"
+          @repay="repayHandler"
+          @repayWithDeleverage="repayWithDeleverageHandler"
         />
 
         <CollateralParameters
-          :infoItems="collateralInfo"
           :exchangeRate="tokenPrice"
+          :infoItems="collateralInfo"
           :tokenName="pool.token.name"
         />
 
@@ -66,6 +68,14 @@
         <InfoBlock :infoItems="pool.mainInfo" />
       </div>
     </div>
+  </div>
+  <div v-else class="stand-action-view">
+    <ActionComponent
+      :disabled-status="disabledStatus"
+      :name="name"
+      :onClick="walletBtnHandler"
+      :text="text"
+    />
   </div>
 </template>
 
@@ -78,16 +88,24 @@ const Balances = () => import("@/components/Pool/Balances");
 const InfoBlock = () => import("@/components/Pool/InfoBlock");
 const BackButton = () => import("@/components/UiComponents/BackButton");
 const LiquidationBar = () => import("@/components/Pool/LiquidationBar");
+const ActionComponent = () =>
+  import("@/components/UiComponents/ActionComponent");
 
 export default {
   data() {
     return {
+      text: "Please connect your wallet",
+      name: "Connect",
+      disabledStatus: false,
       actionType: "borrow",
       // pool: null,
       gasLimitConst: 1000,
     };
   },
   computed: {
+    isConnected() {
+      return this.$store.getters.getWalletIsConnected;
+    },
     tokenPrice() {
       return this.$store.getters.getTokenPrice(this.pool.id);
     },
@@ -150,6 +168,15 @@ export default {
         await this.updateBalancesAndCollateralInfo();
       }
     },
+    async walletBtnHandler() {
+      if (this.isConnected) {
+        return false;
+      }
+      this.$store.commit("setPopupState", {
+        type: "connectWallet",
+        isShow: true,
+      });
+    },
     async updateBalancesAndCollateralInfo() {
       this.useAVAX
         ? await this.$store.dispatch("checkBalanceNativeToken", this.pool.id)
@@ -203,7 +230,7 @@ export default {
 
       let isTokenToCookApprove = await this.isTokenApprowed(
         this.pool.token.contract,
-        this.pool.masterContractInstance.address
+        this.pool.masterContractInstance.address.toLowerCase()
       );
 
       if (!isTokenToCookApprove) {
@@ -327,6 +354,26 @@ export default {
       );
       if (approveResult) this.cookRemoveAndRepay(data, isApprowed);
     },
+    async repayWithDeleverageHandler(data) {
+      console.log("REPAY WITH DELEVERAGE HANDLER", data);
+      const isTokenApprowed = await this.isTokenApprowed(
+        this.pool.pairTokenContract,
+        this.pool.masterContractInstance.address
+      );
+
+      const isApprowed = await this.isApprowed();
+
+      if (isTokenApprowed) {
+        this.cookRepayWithDeleverage(data, isApprowed);
+        return false;
+      }
+
+      const approveResult = await this.approveToken(
+        this.pool.pairTokenContract,
+        this.pool.masterContractInstance.address
+      );
+      if (approveResult) this.cookRepayWithDeleverage(data, isApprowed);
+    },
     async repayHandler(data) {
       console.log("REPAY HANDLER", data);
 
@@ -365,6 +412,7 @@ export default {
       const isApprowed = await this.isApprowed();
 
       if (isTokenApprowed) {
+        // (this.valueAmount < isTokenApprowed)
         this.cookRemoveAndRepayMax(data, isApprowed);
         return false;
       }
@@ -1180,6 +1228,127 @@ export default {
         await this.wrapperStatusTx(result);
 
         console.log(result);
+      }
+    },
+    // @params
+    // updatePrice: update price or not
+    // collateralAmount: amount of collateral to swap
+    // walletAmount: amount user has to pay from his wallet
+    // isApproved: approval check result
+    // amount: total amount to repay
+    async cookRepayWithDeleverage(
+      { updatePrice, collateralAmount, walletAmount, amount },
+      isApprowed
+    ) {
+      const swapperAddress = this.pool.reverseSwapContract.address;
+      const userAddress = this.account;
+      const emptyAddress = "0x0000000000000000000000000000000000000000";
+
+      const events = [];
+      const values = [];
+      const datas = [];
+      const gasPrice = await this.getGasPrice();
+      console.log("GAS PRICE:", gasPrice.toString());
+
+      if (!isApprowed) {
+        const approvalEncode = await this.getApprovalEncode();
+        if (approvalEncode === "ledger") {
+          const approvalMaster = await this.approveMasterContract();
+          console.log("approveMasterContract resp: ", approvalMaster);
+          if (!approvalMaster) return false;
+        } else {
+          eventsArray.push(24);
+          valuesArray.push(0);
+          datasArray.push(approvalEncode);
+        }
+      }
+      if (updatePrice) {
+        events.push(11);
+        values.push(0);
+        datas.push(this.getUpdateRateEncode());
+      }
+
+      // Remove collateral from user address to swapper
+      const removeCollateralData = this.$ethers.utils.defaultAbiCoder.encode(
+        ["int256", "address"],
+        [collateralAmount, swapperAddress]
+      );
+      events.push(4);
+      values.push(0);
+      datas.push(removeCollateralData);
+
+      // Swap collateral
+      const swapStaticTx =
+        await this.pool.reverseSwapContract.populateTransaction.swap(
+          emptyAddress,
+          emptyAddress,
+          userAddress,
+          "0",
+          collateralAmount,
+          {
+            gasLimit: 10000000,
+          }
+        );
+      const swapCallByte = swapStaticTx.data;
+      console.log("TX byte", swapCallByte);
+
+      const getCallEncode2 = this.$ethers.utils.defaultAbiCoder.encode(
+        ["address", "bytes", "bool", "bool", "uint8"],
+        [swapperAddress, swapCallByte, false, false, 2]
+      );
+      console.log("swapperAddress", swapperAddress);
+      console.log("Call encode2: ", getCallEncode2);
+      events.push(30);
+      values.push(0);
+      datas.push(getCallEncode2);
+
+      // Deposit if necessary
+      if (walletAmount && !walletAmount.isZero()) {
+        const depositEncode = this.$ethers.utils.defaultAbiCoder.encode(
+          ["address", "address", "int256", "int256"],
+          [this.pool.pairToken.address, userAddress, walletAmount, "0x0"]
+        );
+        events.push(20);
+        values.push(0);
+        datas.push(depositEncode);
+      }
+
+      // Repay
+      const repayEncode = this.$ethers.utils.defaultAbiCoder.encode(
+        ["int256", "address", "bool"],
+        [amount, userAddress, false]
+      );
+      events.push(2);
+      values.push(0);
+      datas.push(repayEncode);
+
+      // Send tx
+      try {
+        const estimateGas = await this.pool.contractInstance.estimateGas.cook(
+          events,
+          values,
+          datas,
+          {
+            value: "0",
+          }
+        );
+        const gasLimit = this.gasLimitConst + +estimateGas.toString();
+        console.log("GAS LIMIT:", gasLimit.toString());
+
+        const result = await this.pool.contractInstance.cook(
+          events,
+          values,
+          datas,
+          {
+            value: "0",
+            gasLimit,
+          }
+        );
+
+        await this.wrapperStatusTx(result);
+        console.log(result);
+      } catch (e) {
+        console.log(e);
       }
     },
     async cookRemoveAndRepay(
@@ -2255,10 +2424,9 @@ export default {
       { collateralAmount, amount, updatePrice, minExpected },
       isApprowed
     ) {
-      const tokenAddr = this.pool.token.address;
       const swapperAddres = this.pool.swapContract.address;
       const userAddr = this.account;
-
+      const depositAmount = this.getAVAXStatus() ? collateralAmount : 0;
       const eventsArray = [];
       const valuesArray = [];
       const datasArray = [];
@@ -2293,13 +2461,10 @@ export default {
 
       if (collateralAmount) {
         //20
-        const getDepositEncode1 = this.$ethers.utils.defaultAbiCoder.encode(
-          ["address", "address", "int256", "int256"],
-          [tokenAddr, userAddr, collateralAmount, "0"]
-        );
+        const getDepositEncode1 = this.getDepositEncode(collateralAmount);
 
         eventsArray.push(20);
-        valuesArray.push(0);
+        valuesArray.push(depositAmount);
         datasArray.push(getDepositEncode1);
 
         eventsArray.push(10);
@@ -2366,7 +2531,7 @@ export default {
           cookData.values,
           cookData.datas,
           {
-            value: 0,
+            value: depositAmount,
           }
         );
 
@@ -2379,7 +2544,7 @@ export default {
           cookData.values,
           cookData.datas,
           {
-            value: 0,
+            value: depositAmount,
             gasLimit,
           }
         );
@@ -2433,7 +2598,7 @@ export default {
         [pairToken, this.account, amount, "0x0"]
       );
     },
-    async getApprovalEncode() {
+    getApprovalEncode: async function () {
       const account = this.account;
 
       const verifyingContract = await this.getVerifyingContract();
@@ -2719,13 +2884,6 @@ export default {
     },
   },
   async created() {
-    const isConnected = this.$store.getters.getWalletIsConnected;
-
-    if (!isConnected) {
-      this.$router.push({ name: "Stand" });
-      return false;
-    }
-
     if (!this.pool.isEnabled) {
       this.$router.push({ name: "Stand" });
       return false;
@@ -2757,11 +2915,24 @@ export default {
     InfoBlock,
     BackButton,
     LiquidationBar,
+    ActionComponent,
   },
 };
 </script>
 
 <style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
+.stand-action-view {
+  position: relative;
+  flex: 1;
+  background: #1c1c1c;
+  @include respond-to(sm) {
+    display: flex;
+    justify-content: center;
+  }
+}
+
 .pool-view {
   padding: 40px 0;
   flex: 1;
@@ -2772,6 +2943,9 @@ export default {
     grid-template-columns: 600px 375px;
     column-gap: 20px;
     margin-top: 50px;
+    @include respond-to(sm) {
+      margin-top: 40px;
+    }
   }
 
   .btns-group {
@@ -2782,6 +2956,9 @@ export default {
     background: #262626;
     border-radius: 100px;
     padding: 2px;
+    @include respond-to(sm) {
+      width: 100%;
+    }
 
     .btn {
       width: 73px;
@@ -2789,6 +2966,10 @@ export default {
       font-size: 14px;
       line-height: 20px;
       background: #262626;
+      @include respond-to(sm) {
+        width: 50%;
+        height: 32px;
+      }
 
       &:hover {
         //background-color: $clrBlue5;
@@ -2801,6 +2982,9 @@ export default {
       &.active {
         color: black;
         background-color: $clrBg3;
+        @include respond-to(sm) {
+          background-color: white;
+        }
       }
     }
   }
@@ -2841,7 +3025,7 @@ export default {
 @media screen and(max-width: 640px) {
   .pool-view .btns-group {
     justify-content: center;
-    margin-bottom: 30px;
+    margin-bottom: 28px;
   }
 
   .pool-view .pool-head-bar {

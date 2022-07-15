@@ -2,15 +2,15 @@
   <div class="statistics-stand">
     <div class="btns-group">
       <button
-        class="btn mini borrow-btn"
         :class="{ active: actionType === 'share' }"
+        class="btn mini borrow-btn"
         @click="setActionType('share')"
       >
         My share
       </button>
       <button
-        class="btn mini replay-btn"
         :class="{ active: actionType === 'reserves' }"
+        class="btn mini replay-btn"
         @click="setActionType('reserves')"
       >
         Currency reserves
@@ -47,6 +47,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .statistics-stand {
   padding: 30px 20px;
   background: $clrBg2;

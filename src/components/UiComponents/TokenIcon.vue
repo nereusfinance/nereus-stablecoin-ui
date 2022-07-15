@@ -1,7 +1,7 @@
 <template>
   <div
-    class="token-icon-wrap"
     :class="{ 'mim-wrap': token === 'MIM' || full, pair: itsGroup, mini }"
+    class="token-icon-wrap"
   >
     <!--    <img :src="bgIcon" alt="" class="bg" />-->
     <img :src="tokenIcon" alt="" class="token-icon" />
@@ -57,6 +57,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .token-icon-wrap {
   width: 32px;
   height: 32px;
@@ -64,11 +66,19 @@ export default {
   min-height: 16px;
   margin-right: 16px;
   position: relative;
+  @include respond-to(sm) {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    margin-top: 5px;
+  }
+
   &.mini {
     width: 16px;
     height: 16px;
     min-width: 16px;
     min-height: 16px;
+
     &.pair {
       width: 20px;
       height: 20px;
@@ -76,12 +86,14 @@ export default {
       min-height: 20px;
     }
   }
+
   &.pair {
     width: 46px;
     height: 40px;
     min-width: 46px;
     min-height: 40px;
   }
+
   &.mim-wrap {
     .token-icon {
       width: 32px;
@@ -89,15 +101,18 @@ export default {
       object-fit: contain;
       max-width: 100%;
     }
+
     .bg {
       opacity: 0;
     }
   }
+
   .bg {
     width: 100%;
     height: 100%;
     object-fit: contain;
   }
+
   .token-icon {
     max-width: 100%;
     height: auto;
@@ -105,6 +120,10 @@ export default {
     top: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
+    @include respond-to(sm) {
+      width: 24px;
+      height: 24px;
+    }
   }
 }
 </style>

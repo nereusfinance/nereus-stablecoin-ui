@@ -1,6 +1,6 @@
 <template>
   <div class="slipage-block">
-    <p class="slipage-title">Choose your slipage</p>
+    <p class="slipage-title">Swap Tolerance</p>
 
     <div class="items-wrap">
       <div
@@ -12,6 +12,23 @@
       >
         <p>{{ item }}%</p>
       </div>
+      <label
+        class="splipage-item custom"
+        :class="{
+          error: customErr,
+          active: customValue == slipage && customValue !== '',
+        }"
+        @click="activateCustomState()"
+      >
+        <input
+          v-if="isCustom"
+          v-model.trim="customValue"
+          type="number"
+          placeholder="Custom"
+          @input="setCustomValue($event.target.value)"
+        />
+        <p v-else>Custom</p>
+      </label>
     </div>
   </div>
 </template>
@@ -20,55 +37,107 @@
 export default {
   props: {
     slipage: {
-      type: Number,
       required: true,
     },
   },
   data() {
     return {
-      slipageItems: [0.5, 1, 3],
+      slipageItems: [0.5, 1, 3, 5],
+      isCustom: false,
+      customValue: "",
+      customErr: false,
+      maxValue: 100,
     };
   },
   methods: {
     setSlipage(item) {
+      this.customErr = false;
+      this.isCustom = false;
+      this.customValue = "";
       this.$emit("update", item);
+    },
+    setCustomValue(value) {
+      this.customErr = false;
+      if (isNaN(value) || value < 0 || value > this.maxValue) {
+        this.customErr = true;
+        this.$emit("update", 0);
+      }
+
+      this.$emit("update", value);
+    },
+    activateCustomState() {
+      this.isCustom = true;
+      this.$emit("update", 0);
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .slipage-block {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   margin-top: 20px;
 
   .slipage-title {
     text-align: left;
+    line-height: 20px;
+    font-size: 14px;
   }
 
   .items-wrap {
     display: flex;
     align-items: center;
-    margin-top: 20px;
+    margin-top: 16px;
   }
 
   .splipage-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.06);
-    padding: 6px 14px;
-    border-radius: 100px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-right: 10px;
     font-size: 14px;
     line-height: 20px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 100px;
+    padding: 6px 14px;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    transition: border 0.3s ease;
+    margin-right: 8px;
 
-    &:hover,
-    &.active {
-      background: #e7fc6e;
+    &.custom {
+      margin-right: 0;
+    }
+
+    input {
+      background-color: transparent;
+      border: none;
+      //height: 100%;
+      text-align: center;
       color: #1c1c1c;
+      outline: none;
+      max-width: 82px;
+      //padding-left: 20px;
+      //padding-right: 20px;
+    }
+
+    &.disabled {
+      pointer-events: none;
+      color: grey;
+    }
+
+    &.active,
+    &:hover {
+      //border: 1px solid #7b79f7;
+      color: #1c1c1c;
+      background-color: $clrBg3;
+    }
+
+    &.error {
+      border: 1px solid $clrInputError;
     }
   }
 }

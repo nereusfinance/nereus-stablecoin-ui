@@ -37,6 +37,7 @@ export default {
       const chainPools = poolsInfo.filter(
         (pool) => pool.contractChain === this.chainId
       );
+      //pools
       const pools = await Promise.all(
         chainPools.map((pool) => this.createPool(pool, masterContract))
       );
@@ -48,6 +49,7 @@ export default {
         this.createPools(masterContract);
       });
     },
+
     createWhitelistManager(address) {
       const whitelistContract = new this.$ethers.Contract(
         address,
@@ -62,6 +64,7 @@ export default {
         JSON.stringify(pool.contract.abi),
         this.signer
       );
+
       pool.isEnabled = true;
       if (pool.name === "WXT") {
         const whitelistContract = this.createWhitelistManager(
@@ -81,11 +84,17 @@ export default {
         this.signer
       );
 
-      // const swapContract = new this.$ethers.Contract(
-      //   pool.swapContractInfo.address,
-      //   JSON.stringify(pool.swapContractInfo.abi),
-      //   this.signer
-      // );
+      const swapContract = new this.$ethers.Contract(
+        pool.swapContractInfo.address,
+        JSON.stringify(pool.swapContractInfo.abi),
+        this.signer
+      );
+
+      const reverseSwapContract = new this.$ethers.Contract(
+        pool.reverseSwapContractInfo.address,
+        JSON.stringify(pool.reverseSwapContractInfo.abi),
+        this.signer
+      );
 
       const oracleExchangeRate = await this.getOracleExchangeRate(
         pool.token.oracleId,
@@ -257,7 +266,8 @@ export default {
           oracleDatas: pool.token.oracleDatas,
           oracleExchangeRate: tokenPairRate,
         },
-        // swapContract: swapContract,
+        swapContract: swapContract,
+        reverseSwapContract: reverseSwapContract,
       };
     },
     async getContractExchangeRate(contract) {

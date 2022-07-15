@@ -1,7 +1,7 @@
 <template>
-  <footer class="app-footer" :class="{ transparent: itsTransparent }">
+  <footer :class="{ transparent: itsTransparent }" class="app-footer">
     <div class="container">
-      <div class="leftLinks">
+      <div class="leftLinks" :class="{ active: mobile }">
         <SocialLink
           v-for="(item, index) in filteredLeftIcons"
           :key="index"
@@ -10,7 +10,7 @@
           :type="item.type"
         />
       </div>
-      <div class="rightLinks">
+      <div class="rightLinks" :class="{ active: mobile }">
         <SocialLink
           v-for="(item, index) in filteredRightIcons"
           :key="index"
@@ -62,6 +62,12 @@ export default {
       filteredLeftIcons: [],
     };
   },
+  props: {
+    mobile: {
+      type: Boolean,
+      default: false,
+    },
+  },
   components: {
     // eslint-disable-next-line vue/no-unused-components
     SocialLink,
@@ -84,13 +90,21 @@ export default {
   },
 };
 </script>
-<style scoped lang="scss">
+<style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .app-footer {
   z-index: 1;
   height: $footerHeight;
   background: #262626;
   display: flex;
   align-items: center;
+  @include respond-to(sm) {
+    background: transparent;
+    position: absolute;
+    bottom: 0;
+    width: calc(100% - 30px);
+  }
 
   &.transparent {
     position: absolute;
@@ -100,7 +114,6 @@ export default {
   }
 
   .container {
-    padding: 0 20px;
     height: 100%;
     display: flex;
     align-items: center;
@@ -108,6 +121,9 @@ export default {
     margin: auto;
     justify-content: space-between;
     width: 100%;
+    @include respond-to(sm) {
+      padding: 0 !important;
+    }
   }
 
   .rightLinks {
@@ -121,24 +137,37 @@ export default {
   }
 }
 
-@media screen and(max-width: 980px) {
-  .app-footer .container .footer-nav {
-    display: none;
+@media screen and(min-width: 1201px) {
+  .container {
+    padding: 0 80px;
   }
 }
-
-@media screen and(max-width: 780px) {
+@media screen and(max-width: 1200px) {
+  .app-footer {
+    position: fixed;
+    padding: 0 20px;
+    width: 100%;
+    bottom: 0px;
+    right: 0;
+  }
+  .container {
+    padding: 0 0 16px 0;
+  }
   .app-footer .container .links-wrap .link-item.ml {
     margin-left: 30px;
   }
   .app-footer .container {
     height: auto;
-    //width: 45px;
   }
-
   .app-footer .container {
     transform: translateY(25%);
     margin-left: 0;
+  }
+  .leftLinks.active,
+  .rightLinks.active {
+    .icons {
+      filter: brightness(100);
+    }
   }
 }
 </style>
