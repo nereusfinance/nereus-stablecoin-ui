@@ -143,7 +143,6 @@ import TokenIcon from "@/components/UiComponents/TokenIcon";
 import TransactionStatus from "@/components/UiComponents/TransactionStatus";
 import AddTokenBtn from "@/components/UiComponents/AddTokenBtn";
 import NXUSDStakingContractInfo from "@/utils/contracts/NXUSDStaking";
-import masterContractInfo from "@/utils/contracts/master";
 import {ethers} from "ethers";
 
 const BackButton = () => import("@/components/UiComponents/BackButton");
@@ -246,8 +245,8 @@ export default {
       );
     },
     getBentoBoxContract() {
-      const { bentoBox } = NXUSDStakingContractInfo.find(
-        (contract) => contract.contractChain === this.chainId
+      const {bentoBox} = NXUSDStakingContractInfo.find(
+          (contract) => contract.contractChain === this.chainId
       );
       this.bentoBoxContract = new this.$ethers.Contract(
           bentoBox.address,
@@ -377,9 +376,9 @@ export default {
         await this.action("finished");
 
         const NXUSDStakingInterface =
-          this.$store.getters.getNXUSDStakingInterface;
+            this.$store.getters.getNXUSDStakingInterface;
         const NXUSDStakingAddress =
-          this.$store.getters.getNXUSDStakingContract.address;
+            this.$store.getters.getNXUSDStakingContract.address;
 
         const data = [
           {
@@ -410,7 +409,7 @@ export default {
             function: "calculateTableRewards",
             arguments: [this.account, [86400, 604800, 2629746, 31556952]],
             target:
-              this.$store.getters.getNXUSDStakingCalculationContract.address,
+            this.$store.getters.getNXUSDStakingCalculationContract.address,
             interface: this.$store.getters.getNXUSDStakingCalculationInterface,
           },
         ];
@@ -424,8 +423,8 @@ export default {
       let value = this.$ethers.utils.parseUnits(this.valueAmount, 18);
       try {
         const estimnatedTx = await nxusdStaking.estimateGas.unstake(
-          value,
-          this.isFullWithdraw
+            value,
+            this.isFullWithdraw
         );
         const gasLimit = estimnatedTx.mul(110).div(100);
         const tx = await nxusdStaking.unstake(value, this.isFullWithdraw, {
@@ -492,7 +491,7 @@ export default {
       try {
         const estimnatedTx = await contract.estimateGas.stake(value);
         const gasLimit = estimnatedTx.mul(110).div(100);
-        const tx = await contract.stake(value, { gasLimit });
+        const tx = await contract.stake(value, {gasLimit});
         const receipt = await tx.wait();
         this.tx = receipt.transactionHash;
         console.log(this.tx);
@@ -513,7 +512,7 @@ export default {
     async approveMasterContract(approval) {
       try {
         const NXUSDStaking =
-          this.$store.getters.getNXUSDStakingContract.address;
+            this.$store.getters.getNXUSDStakingContract.address;
 
         const tx = await this.bentoBoxContract.setMasterContractApproval(
             this.account,
