@@ -375,14 +375,47 @@ export default {
       const status = await result.wait();
       if (status) {
         await this.action("finished");
-        await this.$store.dispatch("checkUserData");
-        await this.$store.dispatch("checkUserCurrentRewards");
-        await this.$store.dispatch("checkHistoryUserRewards");
-        await this.$store.dispatch("checkUserWXTLock");
-        await this.$store.dispatch(
-            "calculateTableRewards",
-            [86400, 604800, 2629746, 31556952]
-        );
+
+        const NXUSDStakingInterface =
+          this.$store.getters.getNXUSDStakingInterface;
+        const NXUSDStakingAddress =
+          this.$store.getters.getNXUSDStakingContract.address;
+
+        const data = [
+          {
+            function: "userData",
+            arguments: [this.account],
+            target: NXUSDStakingAddress,
+            interface: NXUSDStakingInterface,
+          },
+          {
+            function: "getWXTLockBalance",
+            arguments: [this.account],
+            target: NXUSDStakingAddress,
+            interface: NXUSDStakingInterface,
+          },
+          {
+            function: "historyUserRewards",
+            arguments: [this.account],
+            target: NXUSDStakingAddress,
+            interface: NXUSDStakingInterface,
+          },
+          {
+            function: "getUserRewards",
+            arguments: [this.account],
+            target: NXUSDStakingAddress,
+            interface: NXUSDStakingInterface,
+          },
+          {
+            function: "calculateTableRewards",
+            arguments: [this.account, [86400, 604800, 2629746, 31556952]],
+            target:
+              this.$store.getters.getNXUSDStakingCalculationContract.address,
+            interface: this.$store.getters.getNXUSDStakingCalculationInterface,
+          },
+        ];
+
+        await this.$store.dispatch("multicall", data);
       }
     },
     async unstakeHandler() {
@@ -479,8 +512,8 @@ export default {
     },
     async approveMasterContract(approval) {
       try {
-        const NXUSDStaking = await this.$store.getters.getNXUSDStakingContract
-            .address;
+        const NXUSDStaking =
+          this.$store.getters.getNXUSDStakingContract.address;
 
         const tx = await this.bentoBoxContract.setMasterContractApproval(
             this.account,
@@ -503,10 +536,10 @@ export default {
       const account = this.account;
       console.log("account", this.account);
 
-      const verifyingContract = await this.bentoBoxContract.address;
+      const verifyingContract = this.bentoBoxContract.address;
       console.log("verifyingContract", verifyingContract);
 
-      const masterContract = await this.NXUSDStakingContract.address;
+      const masterContract = this.NXUSDStakingContract.address;
       console.log("masterContract", masterContract);
 
       const nonce = await this.getNonce();
