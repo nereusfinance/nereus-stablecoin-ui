@@ -36,8 +36,11 @@ export default {
       ethers.BigNumber.from("0"),
     ],
     NXUSDStakingContract: {},
+    NXUSDStakingInterface: {},
+    MulticallContract: {},
     NXUSDStakingCalculationContract: {},
     MultiFeeDistributionContract: {},
+    NXUSDStakingCalculationInterface: {},
     userWXTLock: ethers.BigNumber.from("0"),
     configCurrentVersion: ethers.BigNumber.from("0"),
     userCurrentRewards: {
@@ -65,8 +68,17 @@ export default {
     setNXUSDStakingContract(state, payload) {
       state.NXUSDStakingContract = payload;
     },
+    setNXUSDStakingInterface(state, payload) {
+      state.NXUSDStakingInterface = payload;
+    },
+    setMulticallContract(state, payload) {
+      state.MulticallContract = payload;
+    },
     setNXUSDStakingCalculationContract(state, payload) {
       state.NXUSDStakingCalculationContract = payload;
+    },
+    setNXUSDStakingCalculationInterface(state, payload) {
+      state.NXUSDStakingCalculationInterface = payload;
     },
     setMultiFeeDistributionContract(state, payload) {
       state.MultiFeeDistributionContract = payload;
@@ -88,6 +100,54 @@ export default {
     },
   },
   actions: {
+    async multicall({ commit, getters }, data) {
+      const callData = data.map((item) => {
+        return {
+          target: item.target,
+          callData: item.interface.encodeFunctionData(
+            item.function,
+            item.arguments
+          ),
+        };
+      });
+
+      const tryAggregate =
+        await getters.getMulticallContract.callStatic.tryAggregate(
+          true,
+          callData
+        );
+
+      for (let i = 0; i < tryAggregate.length; i++) {
+        const result = data[i].interface.decodeFunctionResult(
+          data[i].function,
+          tryAggregate[i].returnData
+        );
+
+        switch (data[i].function) {
+          case "userData":
+            commit("setUserData", result);
+            break;
+          case "getAPYDataConfig":
+            commit("setAPYDataConfig", result[0]);
+            break;
+          case "config":
+            commit("setConfig", result);
+            break;
+          case "getWXTLockBalance":
+            commit("setUserWXTLock", result[0]);
+            break;
+          case "historyUserRewards":
+            commit("setHistoryUserRewards", result);
+            break;
+          case "getUserRewards":
+            commit("setUserCurrentRewards", result);
+            break;
+          case "calculateTableRewards":
+            commit("setTableRewards", result[0]);
+            break;
+        }
+      }
+    },
     async calculateTableRewards({ getters, commit }, periods) {
       console.log(
         "Calculating start time in seconds:",
@@ -158,8 +218,12 @@ export default {
     getAPYDataConfig: (state) => state.apyDataConfig,
     getConfig: (state) => state.config,
     getNXUSDStakingContract: (state) => state.NXUSDStakingContract,
+    getNXUSDStakingInterface: (state) => state.NXUSDStakingInterface,
+    getMulticallContract: (state) => state.MulticallContract,
     getNXUSDStakingCalculationContract: (state) =>
       state.NXUSDStakingCalculationContract,
+    getNXUSDStakingCalculationInterface: (state) =>
+      state.NXUSDStakingCalculationInterface,
     getMultiFeeDistributionContract: (state) =>
       state.MultiFeeDistributionContract,
     getConfigCurrentVersion: (state) => state.configCurrentVersion,
