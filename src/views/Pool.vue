@@ -192,6 +192,38 @@ export default {
     },
     async checkCollateralInfo() {
       // await this.$store.commit("setTokenPrice", this.pool.tokenPrice);
+      const data = [
+        {
+          function: "userCollateralShare",
+          arguments: [this.account],
+          target: this.pool.contractInstance.address,
+          interface: ,
+        },
+        {
+          function: "userBorrowPart",
+          arguments: [this.account],
+          target: this.pool.contractInstance.address,
+          interface: ,
+        },
+        {
+          function: "totalBorrow",
+          arguments: [],
+          target: this.pool.contractInstance.address,
+          interface: ,
+        },
+        {
+          function: "",
+          arguments: [],
+          target: ,
+          interface: ,
+        },
+        {
+          function: "",
+          arguments: [],
+          target: ,
+          interface: ,
+        },
+      ];
       await this.$store.dispatch("checkUserCollateralShare", {
         contract: this.pool.contractInstance,
         decimals: this.pool.token.decimals,
