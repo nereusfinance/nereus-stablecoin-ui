@@ -178,72 +178,85 @@ export default {
       });
     },
     async updateBalancesAndCollateralInfo() {
-      this.useAVAX
-        ? await this.$store.dispatch("checkBalanceNativeToken", this.pool.id)
-        : await this.$store.dispatch("checkBalanceToken", {
-            contract: this.pool.token.contract,
-            id: this.pool.id,
-          });
-      await this.$store.dispatch("checkBalancePairToken", {
-        contract: this.pool.pairTokenContract,
-        id: this.pool.id,
-      });
+      if (this.useAVAX) {
+        await this.$store.dispatch("checkBalanceNativeToken", this.pool.id);
+      }
       await this.checkCollateralInfo();
     },
     async checkCollateralInfo() {
-      // await this.$store.commit("setTokenPrice", this.pool.tokenPrice);
+      const parsedDecimals = this.$ethers.BigNumber.from(
+        Math.pow(10, this.pool.token.oracleDatas.decimals).toLocaleString(
+          "fullwide",
+          {
+            useGrouping: false,
+          }
+        )
+      );
       const data = [
+        {
+          function: "balanceOf",
+          arguments: [this.account],
+          target: this.pool.token.contract.address,
+          interface: this.pool.token.contractInterface,
+          type: "checkBalanceToken",
+          id: this.pool.id,
+        },
+        {
+          function: "balanceOf",
+          arguments: [this.account],
+          target: this.pool.pairTokenContract.address,
+          interface: this.pool.pairTokenContractInterface,
+          type: "checkBalancePairToken",
+          id: this.pool.id,
+        },
         {
           function: "userCollateralShare",
           arguments: [this.account],
           target: this.pool.contractInstance.address,
-          interface: ,
+          interface: this.pool.contractInterface,
+          decimals: this.pool.token.decimals,
+          id: this.pool.id,
         },
         {
           function: "userBorrowPart",
           arguments: [this.account],
           target: this.pool.contractInstance.address,
-          interface: ,
+          interface: this.pool.contractInterface,
+          id: this.pool.id,
         },
         {
           function: "totalBorrow",
           arguments: [],
           target: this.pool.contractInstance.address,
-          interface: ,
+          interface: this.pool.contractInterface,
+          id: this.pool.id,
         },
         {
-          function: "",
-          arguments: [],
-          target: ,
-          interface: ,
+          function: "peekSpot",
+          arguments: [
+            this.$ethers.utils.defaultAbiCoder.encode(
+              ["address", "address", "uint256"],
+              [
+                this.pool.token.oracleDatas.multiply,
+                this.pool.token.oracleDatas.divide,
+                parsedDecimals,
+              ]
+            ),
+          ],
+          target: this.pool.oracleInstance.address,
+          interface: this.pool.oracleInterface,
+          id: this.pool.id,
         },
         {
-          function: "",
+          function: "exchangeRate",
           arguments: [],
-          target: ,
-          interface: ,
+          target: this.pool.contractInstance.address,
+          interface: this.pool.contractInterface,
+          decimals: this.pool.token.decimals,
+          id: this.pool.id,
         },
       ];
-      await this.$store.dispatch("checkUserCollateralShare", {
-        contract: this.pool.contractInstance,
-        decimals: this.pool.token.decimals,
-        id: this.pool.id,
-      });
-      await this.$store.dispatch("checkUserBorrowPart", {
-        contract: this.pool.contractInstance,
-        id: this.pool.id,
-      });
-      await this.$store.dispatch("checkTotalBorrow", {
-        contract: this.pool.contractInstance,
-        id: this.pool.id,
-      });
-      await this.$store.dispatch("checkTokenPairRateAndPrice", {
-        contract: this.pool.contractInstance,
-        oracleId: this.pool.token.oracleId,
-        oracleDatas: this.pool.token.oracleDatas,
-        decimals: this.pool.token.decimals,
-        id: this.pool.id,
-      });
+      await this.$store.dispatch("multicallMarkets", data);
       await this.$store.dispatch("createCollateralInfo", this.pool.id);
     },
     getAVAXStatus() {

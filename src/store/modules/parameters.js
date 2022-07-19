@@ -13,6 +13,7 @@ export default {
     askUpdatePrice: {},
     borrowFee: {},
     collateralInfo: {},
+    peekSpot: {},
   },
   mutations: {
     setAskUpdatePrice(state, payload) {
@@ -84,21 +85,29 @@ export default {
         [payload.id]: payload.collateralInfo,
       };
     },
+
+    setPeekSpot(state, payload) {
+      state.peekSpot = {
+        ...state.peekSpot,
+        [payload.id]: payload.rate,
+      };
+    },
   },
   actions: {
-    async checkTokenPairRateAndPrice(
-      { commit, dispatch },
-      { contract, oracleId, oracleDatas, decimals, id }
+    checkTokenPairRateAndPrice(
+      { commit, getters },
+      { contractExchangeRate, decimals, id }
     ) {
-      const oracleExchangeRate = await dispatch("getOracleExchangeRate", {
-        oracleId,
-        oracleDatas,
-      });
+      // const oracleExchangeRate = await dispatch("getOracleExchangeRate", {
+      //   oracleId,
+      //   oracleDatas,
+      // });
+      const oracleExchangeRate = getters.getPeekSpot(id);
 
-      const contractExchangeRate = await dispatch(
-        "getContractExchangeRate",
-        contract
-      );
+      // const contractExchangeRate = await dispatch(
+      //   "getContractExchangeRate",
+      //   contract
+      // );
 
       let tokenPairRate;
       let askUpdatePrice = false;
@@ -184,14 +193,14 @@ export default {
       commit("setTotalCollateralShare", { totalCollateralShare, id });
     },
 
-    async checkUserCollateralShare(
-      { getters, commit },
-      { contract, decimals, id }
+    checkUserCollateralShare(
+      { commit },
+      { userCollateralShare, decimals, id }
     ) {
       try {
-        const userCollateralShare = await contract.userCollateralShare(
-          getters.getAccount
-        );
+        // const userCollateralShare = await contract.userCollateralShare(
+        //   getters.getAccount
+        // );
 
         const parsedCollateral = ethers.utils.formatUnits(
           userCollateralShare.toString(),
@@ -207,11 +216,11 @@ export default {
       }
     },
 
-    async checkUserBorrowPart({ getters, commit }, { contract, id }) {
+    checkUserBorrowPart({ commit }, { userBorrowPart, id }) {
       try {
-        const userBorrowPart = await contract.userBorrowPart(
-          getters.getAccount
-        );
+        // const userBorrowPart = await contract.userBorrowPart(
+        //   getters.getAccount
+        // );
 
         const parsedBorrowed = ethers.utils.formatUnits(
           userBorrowPart.toString()
@@ -294,5 +303,6 @@ export default {
     getTokenPrice: (state) => (id) => state.tokenPrice[id],
     getCollateralInfo: (state) => (id) => state.collateralInfo[id],
     getBorrowFee: (state) => (id) => state.borrowFee[id],
+    getPeekSpot: (state) => (id) => state.peekSpot[id],
   },
 };
