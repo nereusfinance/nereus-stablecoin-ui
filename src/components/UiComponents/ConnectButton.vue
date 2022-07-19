@@ -8,7 +8,7 @@
       @mouseleave="itsHover = false"
     >
       <ButtonLoader v-if="connectLoader" />
-      <template v-else-if="itsHover">Disconnect</template>
+      <template v-else-if="itsHover || isIncorrectCorrectNetwork">Disconnect</template>
       <template v-else>
         <div class="text-connect-block">
           {{ walletBtnText }}
@@ -103,6 +103,13 @@ export default {
       let endAddr = account.slice(-4);
 
       return `${startAddr}...${endAddr}`;
+    },
+    isIncorrectCorrectNetwork() {
+      const chainId = this.$store.getters.getChainId;
+      let networkObject = this.networks.find(
+          (item) => item.chainid == chainId
+      );
+      return !networkObject;
     },
     isConnected() {
       return this.$store.getters.getWalletIsConnected;

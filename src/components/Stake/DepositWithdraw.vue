@@ -246,8 +246,8 @@ export default {
       );
     },
     getBentoBoxContract() {
-      const bentoBox = masterContractInfo.find(
-          (contract) => contract.contractChain === this.chainId
+      const { bentoBox } = NXUSDStakingContractInfo.find(
+        (contract) => contract.contractChain === this.chainId
       );
       this.bentoBoxContract = new this.$ethers.Contract(
           bentoBox.address,
@@ -390,7 +390,14 @@ export default {
       const nxusdStaking = this.$store.getters.getNXUSDStakingContract;
       let value = this.$ethers.utils.parseUnits(this.valueAmount, 18);
       try {
-        const tx = await nxusdStaking.unstake(value, this.isFullWithdraw);
+        const estimnatedTx = await nxusdStaking.estimateGas.unstake(
+          value,
+          this.isFullWithdraw
+        );
+        const gasLimit = estimnatedTx.mul(110).div(100);
+        const tx = await nxusdStaking.unstake(value, this.isFullWithdraw, {
+          gasLimit,
+        });
         await this.wrapperStatusTx(tx);
         const receipt = await tx.wait();
         this.tx = receipt.transactionHash;
@@ -450,7 +457,9 @@ export default {
       const contract = this.$store.getters.getNXUSDStakingContract;
       let value = this.$ethers.utils.parseUnits(this.valueAmount, 18);
       try {
-        const tx = await contract.stake(value);
+        const estimnatedTx = await contract.estimateGas.stake(value);
+        const gasLimit = estimnatedTx.mul(110).div(100);
+        const tx = await contract.stake(value, { gasLimit });
         const receipt = await tx.wait();
         this.tx = receipt.transactionHash;
         console.log(this.tx);
