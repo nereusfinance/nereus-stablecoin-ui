@@ -8,16 +8,15 @@
     />
 
     <p class="title">
-      please change the network <br />
-      to use the application
+      Please change the network to use the applications
     </p>
 
-    <p class="subtitle">
-      Change to<br />
-      Avalanche Network
-    </p>
-
-    <img src="@/assets/images/browser-warn-logo.svg" alt="" class="main-img" />
+    <button
+        class="switch-btn"
+        @click="switchNetwork"
+    >
+      Change to Avalanche Network
+    </button>
   </div>
 </template>
 
@@ -27,6 +26,37 @@ export default {
     closePopup() {
       this.$emit("close");
     },
+    async switchNetwork() {
+      const targetChain = "0xa86a";
+      const web3Provider = this.$store.getters.getProvider;
+      if (web3Provider) {
+        try {
+          await web3Provider.provider.request({
+            method: 'wallet_switchEthereumChain',
+            params: [
+              {
+                chainId: targetChain,
+              },
+            ],
+          });
+        } catch (e) {
+          console.log(e);
+          console.log(e.code);
+          if (e.code === 4902 || e.code === undefined) {
+            await web3Provider.provider.request({
+              method: 'wallet_addEthereumChain',
+              params: [
+                {
+                  chainName: 'Avalanche Mainnet C-Chain',
+                  chainId: targetChain,
+                  rpcUrls: ['https://api.avax.network/ext/bc/C/rpc']
+                }
+              ]
+            });
+          }
+        }
+      }
+    },
   },
 };
 </script>
@@ -34,12 +64,11 @@ export default {
 <style lang="scss" scoped>
 .browser-popup {
   padding: 35px 20px;
-  padding-bottom: 35px;
   background: $clrBg2;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.25);
-  border-radius: 20px;
-  width: 95%;
-  max-width: 590px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  max-width: 500px;
+  max-height: 208px;
   position: relative;
   margin-left: auto;
   margin-right: auto;
@@ -48,36 +77,48 @@ export default {
     position: absolute;
     top: 20px;
     right: 20px;
-    width: 20px;
-    height: 20px;
+    width: 13px;
+    height: 13px;
     cursor: pointer;
     object-fit: contain;
   }
 
+  .switch-btn {
+    cursor: pointer;
+    text-align: center;
+    padding: 8px 16px;
+
+    height: 40px;
+
+    background: $clrBg3;
+    border: none;
+    border-radius: 16px;
+
+    font-size: 18px;
+    color: black;
+  }
+
   .title {
-    font-size: 24px;
-    line-height: 1.7;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  .subtitle {
     font-size: 20px;
-    line-height: 1.7;
-    text-transform: uppercase;
-    color: $clrBlue;
-  }
-
-  .main-img {
-    width: 110px;
-    height: auto;
-    margin-top: 30px;
+    line-height: 24px;
+    margin: 0 12px 40px 12px ;
   }
 }
 
-@media screen and(max-width: 640px) {
-  .browser-popup .title {
-    font-size: 22px;
+@media screen and(max-width: 540px) {
+  .browser-popup {
+    max-width: 100%;
+    margin-top: 35%;
+    width: 328px;
+    height: 232px;
+    .title {
+      margin: 21px 0 40px 0;
+      font-size: 18px;
+    }
+    .switch-btn {
+      padding: 12px 12px;
+      line-height: 12px;
+    }
   }
 }
 </style>
