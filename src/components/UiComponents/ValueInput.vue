@@ -192,7 +192,6 @@ export default {
       ) {
         value = value.toString().split(".")[0] + "." + value.toString().split(".")[1].substring(0, 18)
       }
-      console.log(value)
       if (this.maxWithdraw && value !== this.max) this.maxWithdraw(false);
       this.value = value;
       this.$emit("onchange", value);
