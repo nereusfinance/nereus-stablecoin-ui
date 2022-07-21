@@ -415,7 +415,7 @@ export default {
           },
         ];
 
-        await this.$store.dispatch("multicall", data);
+        await this.$store.dispatch("multicallStaking", data);
       }
     },
     async unstakeHandler() {

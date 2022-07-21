@@ -2,6 +2,8 @@ import poolsInfo from "@/utils/contracts/pools.js";
 import masterContractInfo from "@/utils/contracts/master.js";
 import oracleContractsInfo from "@/utils/contracts/oracle.js";
 import whitelistContractInfo from "@/utils/contracts/whitelistManager";
+import MulticallContractInfo from "@/utils/contracts/Multicall";
+import { ethers } from "ethers";
 
 export default {
   computed: {
@@ -24,6 +26,8 @@ export default {
         console.log("No master Contract");
         return false;
       }
+
+      this.createMulticall();
 
       const masterContract = new this.$ethers.Contract(
         chainMasterContract.address,
@@ -50,6 +54,18 @@ export default {
       });
     },
 
+    createMulticall() {
+      const MulticallContractInfoByChainId = MulticallContractInfo.find(
+        (contract) => contract.contractChain === this.chainId
+      );
+      const multicallContract = new this.$ethers.Contract(
+        MulticallContractInfoByChainId.address,
+        JSON.stringify(MulticallContractInfoByChainId.abi),
+        this.signer
+      );
+
+      this.$store.commit("setMulticallContract", multicallContract);
+    },
     createWhitelistManager(address) {
       const whitelistContract = new this.$ethers.Contract(
         address,
@@ -65,6 +81,10 @@ export default {
         this.signer
       );
 
+      const poolContractInterface = new this.$ethers.utils.Interface(
+        pool.contract.abi
+      );
+
       pool.isEnabled = true;
       if (pool.name === "WXT") {
         const whitelistContract = this.createWhitelistManager(
@@ -77,11 +97,17 @@ export default {
         JSON.stringify(pool.token.abi),
         this.signer
       );
+      const tokenContractInterface = new this.$ethers.utils.Interface(
+        pool.token.abi
+      );
 
       const pairTokenContract = new this.$ethers.Contract(
         pool.pairToken.address,
-        JSON.stringify(pool.token.abi),
+        JSON.stringify(pool.pairToken.abi),
         this.signer
+      );
+      const pairTokenContractInterface = new this.$ethers.utils.Interface(
+        pool.pairToken.abi
       );
 
       const swapContract = new this.$ethers.Contract(
@@ -95,6 +121,108 @@ export default {
         JSON.stringify(pool.reverseSwapContractInfo.abi),
         this.signer
       );
+
+      const oracleContractInfo = oracleContractsInfo.find(
+        (item) => item.id === pool.token.oracleId
+      );
+
+      const oracleContract = new this.$ethers.Contract(
+        oracleContractInfo.address,
+        JSON.stringify(oracleContractInfo.abi),
+        this.signer
+      );
+      const oracleContractInterface = new this.$ethers.utils.Interface(
+        oracleContractInfo.abi
+      );
+
+      const parsedDecimals = ethers.BigNumber.from(
+        Math.pow(10, pool.token.oracleDatas.decimals).toLocaleString(
+          "fullwide",
+          {
+            useGrouping: false,
+          }
+        )
+      );
+
+      const data = [
+        {
+          function: "balanceOf",
+          arguments: [this.account],
+          target: tokenContract.address,
+          interface: tokenContractInterface,
+          type: "checkBalanceToken",
+          id: pool.id,
+        },
+        {
+          function: "balanceOf",
+          arguments: [this.account],
+          target: pairTokenContract.address,
+          interface: pairTokenContractInterface,
+          type: "checkBalancePairToken",
+          id: pool.id,
+        },
+        {
+          function: "userCollateralShare",
+          arguments: [this.account],
+          target: poolContract.address,
+          interface: poolContractInterface,
+          decimals: pool.token.decimals,
+          id: pool.id,
+        },
+        {
+          function: "userBorrowPart",
+          arguments: [this.account],
+          target: poolContract.address,
+          interface: poolContractInterface,
+          id: pool.id,
+        },
+        {
+          function: "totalBorrow",
+          arguments: [],
+          target: poolContract.address,
+          interface: poolContractInterface,
+          id: pool.id,
+        },
+        {
+          function: "totalCollateralShare",
+          arguments: [],
+          target: poolContract.address,
+          interface: poolContractInterface,
+          id: pool.id,
+        },
+        {
+          function: "peekSpot",
+          arguments: [
+            this.$ethers.utils.defaultAbiCoder.encode(
+              ["address", "address", "uint256"],
+              [
+                pool.token.oracleDatas.multiply,
+                pool.token.oracleDatas.divide,
+                parsedDecimals,
+              ]
+            ),
+          ],
+          target: oracleContract.address,
+          interface: oracleContractInterface,
+          id: pool.id,
+        },
+        {
+          function: "exchangeRate",
+          arguments: [],
+          target: poolContract.address,
+          interface: poolContractInterface,
+          decimals: pool.token.decimals,
+          id: pool.id,
+        },
+        {
+          function: "BORROW_OPENING_FEE",
+          arguments: [],
+          target: poolContract.address,
+          interface: poolContractInterface,
+          id: pool.id,
+        },
+      ];
+      await this.$store.dispatch("multicallMarkets", data);
 
       const oracleExchangeRate = await this.getOracleExchangeRate(
         pool.token.oracleId,
@@ -119,37 +247,15 @@ export default {
         tokenPairRate = oracleExchangeRate;
       }
 
-      await this.$store.dispatch("checkTokenPairRateAndPrice", {
-        contract: poolContract,
-        oracleId: pool.token.oracleId,
-        oracleDatas: pool.token.oracleDatas,
-        decimals: pool.token.decimals,
-        id: pool.id,
-      });
-
       const userBorrowPart = await this.getUserBorrowPart(poolContract);
       const userCollateralShare = await this.getUserCollateralShare(
         poolContract,
         pool.token.decimals
       );
 
-      await this.$store.dispatch("checkUserBorrowPart", {
-        contract: poolContract,
-        id: pool.id,
-      });
-      await this.$store.dispatch("checkUserCollateralShare", {
-        contract: poolContract,
-        decimals: pool.token.decimals,
-        id: pool.id,
-      });
-
       let totalCollateralShare;
       try {
         totalCollateralShare = await poolContract.totalCollateralShare();
-        await this.$store.dispatch("checkTotalCollateralShare", {
-          contract: poolContract,
-          id: pool.id,
-        });
       } catch (e) {
         console.log("totalCollateralShare Err:", e);
       }
@@ -158,10 +264,6 @@ export default {
       try {
         const totalBorrowResp = await poolContract.totalBorrow();
         totalBorrow = totalBorrowResp.base;
-        await this.$store.dispatch("checkTotalBorrow", {
-          contract: poolContract,
-          id: pool.id,
-        });
       } catch (e) {
         console.log("totalBorrow Err:", e);
       }
@@ -180,10 +282,6 @@ export default {
           userBalanceNativeToken =
             await this.$store.getters.getProvider.getBalance(this.account);
         }
-        await this.$store.dispatch("checkBalanceToken", {
-          contract: tokenContract,
-          id: pool.id,
-        });
         userBalance = await tokenContract.balanceOf(this.account, {
           gasLimit: 600000,
         });
@@ -193,10 +291,6 @@ export default {
 
       let userPairBalance;
       try {
-        await this.$store.dispatch("checkBalancePairToken", {
-          contract: pairTokenContract,
-          id: pool.id,
-        });
         userPairBalance = await pairTokenContract.balanceOf(this.account, {
           gasLimit: 600000,
         });
@@ -204,15 +298,11 @@ export default {
         console.log("userBalance Err:", e);
       }
 
-      const borrowFee =
-        (await poolContract.BORROW_OPENING_FEE()).toNumber() / 1000;
-      this.$store.commit("setBorrowFee", { fee: borrowFee, id: pool.id });
-
       const mainInfo = this.getMainInfo(
         pool.ltv,
         pool.stabilityFee,
         pool.interest,
-        borrowFee
+        this.$store.getters.getBorrowFee(pool.id)
       );
 
       const tokenPairPrice = 1;
@@ -239,6 +329,9 @@ export default {
         userBorrowPart,
         userCollateralShare,
         contractInstance: poolContract,
+        contractInterface: poolContractInterface,
+        oracleInstance: oracleContract,
+        oracleInterface: oracleContractInterface,
         masterContractInstance: masterContract,
         totalCollateralShare,
         totalBorrow,
@@ -252,6 +345,7 @@ export default {
         initialMax: pool.initialMax,
         pairToken: pool.pairToken,
         pairTokenContract,
+        pairTokenContractInterface,
         tokenPairPrice,
         tokenPrice,
         dynamicBorrowAmount,
@@ -259,6 +353,7 @@ export default {
         collateralInfo,
         token: {
           contract: tokenContract,
+          contractInterface: tokenContractInterface,
           name: pool.token.name,
           address: pool.token.address,
           decimals: pool.token.decimals,

@@ -1,5 +1,4 @@
 import NXUSDStakingContractInfo from "@/utils/contracts/NXUSDStaking";
-import MulticallContractInfo from "@/utils/contracts/Multicall";
 import NXUSDStakingCalculationInfo from "@/utils/contracts/NXUSDStakingCalculation";
 import MultiFeeDistributionInfo from "@/utils/contracts/MultiFeeDistribution";
 
@@ -34,20 +33,6 @@ export default {
       this.$store.commit("setNXUSDStakingContract", nxusdStakingContract);
 
       return nxusdStakingContract;
-    },
-    createMulticall() {
-      const MulticallContractInfoByChainId = MulticallContractInfo.find(
-        (contract) => contract.contractChain === this.chainId
-      );
-      const multicallContract = new this.$ethers.Contract(
-        MulticallContractInfoByChainId.address,
-        JSON.stringify(MulticallContractInfoByChainId.abi),
-        this.signer
-      );
-
-      this.$store.commit("setMulticallContract", multicallContract);
-
-      return multicallContract;
     },
     createNXUSDStakingCalculation() {
       const NXUSDStakingCalculationInfoByChainId =
@@ -97,7 +82,6 @@ export default {
 
     async getAllParameters() {
       this.createNXUSDStaking();
-      this.createMulticall();
       this.createNXUSDStakingCalculation();
       this.createMultiFeeDistribution();
 
@@ -157,7 +141,7 @@ export default {
         },
       ];
 
-      await this.$store.dispatch("multicall", data);
+      await this.$store.dispatch("multicallStaking", data);
     },
   },
 };
