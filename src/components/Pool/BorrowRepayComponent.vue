@@ -814,18 +814,18 @@ export default {
       this.percentValue = "";
     },
     updateMainValue(value) {
+      if (
+          value.toString().includes(".") &&
+          value.toString().split(".")[1].length > this.mainValueDecimals
+      ) {
+        value = value.toString().split(".")[0] + "." + value.toString().split(".")[1].substring(0, 18)
+      }
       this.mainValue = value;
       if (parseFloat(value) > parseFloat(this.maxMainValue)) {
         this.mainValueError = `Insufficient amount. The value available ${this.maxMainValue}`;
         return false;
       }
-      if (
-          value.toString().includes(".") &&
-          value.toString().split(".")[1].length > this.mainValueDecimals
-      ) {
-        this.mainValueError = "Cant have more than " + this.mainValueDecimals + " digits after coma"
-        return false;
-      }
+
       this.mainValueError = "";
 
       if (this.actionType === "repay") {
@@ -866,8 +866,9 @@ export default {
           value.toString().includes(".") &&
           value.toString().split(".")[1].length > this.pairValueDecimals
       ) {
-        this.pairValueError = "Cant have more than " + this.pairValueDecimals + " digits after coma";
-        return false;
+        // this.pairValueError = "Cant have more than " + this.pairValueDecimals + " digits after coma";
+        // return false;
+        value = value.toString().split(".")[0] + "." + value.toString().split(".")[1].substring(0, 18)
       }
       if (this.actionType === "repay") {
         if (!value) {

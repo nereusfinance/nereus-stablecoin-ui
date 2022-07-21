@@ -1,44 +1,44 @@
 <template>
   <div v-if="!isStake" class="wrapper">
     <div
-      :class="{
+        :class="{
         focus: isFocus,
         error,
       }"
-      class="val-input"
+        class="val-input"
     >
       <div
-        :class="{ 'values-choose': values.length }"
-        class="value-type"
-        @click="openSelect"
+          :class="{ 'values-choose': values.length }"
+          class="value-type"
+          @click="openSelect"
       >
-        <TokenIcon :token="valueName" />
+        <TokenIcon :token="valueName"/>
 
         <p>{{ valueName }}</p>
 
         <img
-          v-if="values.length"
-          alt=""
-          class="arrow-icon"
-          src="@/assets/images/select-pixel-arrow.svg"
+            v-if="values.length"
+            alt=""
+            class="arrow-icon"
+            src="@/assets/images/select-pixel-arrow.svg"
         />
       </div>
 
       <input
-        v-model="value"
-        :data-cy="cyData"
-        :disabled="disabled"
-        placeholder="0.0"
-        type="text"
-        @blur="setFocus(false)"
-        @focus="setFocus(true)"
+          v-model="value"
+          :data-cy="cyData"
+          :disabled="disabled"
+          placeholder="0.0"
+          type="text"
+          @blur="setFocus(false)"
+          @focus="setFocus(true)"
       />
 
       <div
-        v-if="parseFloat(max) && showMax"
-        :style="{ cursor: disabled ? 'not-allowed' : 'pointer' }"
-        class="max-btn"
-        @click="setMax"
+          v-if="parseFloat(max) && showMax"
+          :style="{ cursor: disabled ? 'not-allowed' : 'pointer' }"
+          class="max-btn"
+          @click="setMax"
       >
         <p>MAX</p>
       </div>
@@ -46,13 +46,13 @@
       <transition name="fade">
         <div v-if="showSelect" class="values-select">
           <div
-            v-for="(token, idx) in values"
-            :key="idx"
-            class="balance-item"
-            @click="changeValue(token.tokenIdx)"
+              v-for="(token, idx) in values"
+              :key="idx"
+              class="balance-item"
+              @click="changeValue(token.tokenIdx)"
           >
             <div class="value-select-type">
-              <TokenIcon :token="token.name" />
+              <TokenIcon :token="token.name"/>
               <p>{{ token.name }}</p>
             </div>
             <p class="value-text">{{ token.balance }}</p>
@@ -64,35 +64,35 @@
   </div>
   <div v-else-if="isStake" class="wrapper">
     <div
-      :class="{
+        :class="{
         focus: isFocus,
         error,
       }"
-      class="val-input"
+        class="val-input"
     >
       <div
-        :class="{ 'values-choose': values.length }"
-        class="value-type"
-        style="padding-left: 0"
-        @click="openSelect"
+          :class="{ 'values-choose': values.length }"
+          class="value-type"
+          style="padding-left: 0"
+          @click="openSelect"
       >
-        <TokenIcon :token="valueName" />
+        <TokenIcon :token="valueName"/>
         <img
-          v-if="values.length"
-          alt=""
-          class="arrow-icon"
-          src="@/assets/images/select-pixel-arrow.svg"
+            v-if="values.length"
+            alt=""
+            class="arrow-icon"
+            src="@/assets/images/select-pixel-arrow.svg"
         />
       </div>
 
       <input
-        v-model="value"
-        :disabled="disabled"
-        class="input-stake"
-        placeholder="Amount"
-        type="text"
-        @blur="setFocus(false)"
-        @focus="setFocus(true)"
+          v-model="value"
+          :disabled="disabled"
+          class="input-stake"
+          placeholder="Amount"
+          type="text"
+          @blur="setFocus(false)"
+          @focus="setFocus(true)"
       />
 
       <div v-if="parseFloat(max) && showMax" class="max-btn" @click="setMax">
@@ -102,13 +102,13 @@
       <transition name="fade">
         <div v-if="showSelect" class="values-select">
           <div
-            v-for="(token, idx) in values"
-            :key="idx"
-            class="balance-item"
-            @click="changeValue(token.tokenIdx)"
+              v-for="(token, idx) in values"
+              :key="idx"
+              class="balance-item"
+              @click="changeValue(token.tokenIdx)"
           >
             <div class="value-select-type">
-              <TokenIcon :token="token.name" />
+              <TokenIcon :token="token.name"/>
               <p>{{ token.name }}</p>
             </div>
             <p class="value-text">{{ token.balance }}</p>
@@ -122,7 +122,7 @@
 
 <script>
 const TokenIcon = () => import("@/components/UiComponents/TokenIcon");
-import { floorToFixed } from "@/utils/fiexdMath/fixedMath";
+import {floorToFixed} from "@/utils/fiexdMath/fixedMath";
 
 export default {
   props: {
@@ -181,14 +181,30 @@ export default {
       }
     },
     value(value, oldValue) {
+
       if (isNaN(value)) {
         this.value = oldValue;
         return false;
       }
+      if (
+          value.toString().includes(".") &&
+          value.toString().split(".")[1].length > 18
+      ) {
+        value = value.toString().split(".")[0] + "." + value.toString().split(".")[1].substring(0, 18)
+      }
+      console.log(value)
       if (this.maxWithdraw && value !== this.max) this.maxWithdraw(false);
+      this.value = value;
       this.$emit("onchange", value);
     },
     parentValue(value) {
+      if (
+          value.toString().includes(".") &&
+          value.toString().split(".")[1].length > 18
+      ) {
+        value = value.toString().split(".")[0] + "." + value.toString().split(".")[1].substring(0, 18)
+      }
+
       this.value = value;
     },
   },

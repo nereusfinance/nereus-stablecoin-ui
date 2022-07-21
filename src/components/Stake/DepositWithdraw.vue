@@ -348,8 +348,9 @@ export default {
         return false;
       }
       if (value.includes(".") && value.split(".")[1].length > 18) {
-        this.valueError = "Cant have more than 18 digits after coma";
-        return false;
+        // this.valueError = "Cant have more than 18 digits after coma";
+        // return false;
+        value = value.toString().split(".")[0] + "." + value.toString().split(".")[1].substring(0, 18)
       }
       if (parseFloat(value) > parseFloat(this.maxValue)) {
         this.valueError = `Insufficient amount. The value available ${this.maxValue}`;
