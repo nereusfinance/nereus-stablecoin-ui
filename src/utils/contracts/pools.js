@@ -4,7 +4,7 @@ import nxusdAbi from "@/utils/contracts/abis/nxusdAbi.json";
 import swapperAbi from "@/utils/contracts/abis/swapperAbi.json";
 import usdcAbi from "@/utils/contracts/abis/usdcAbi.json";
 import sAvaxAbi from "@/utils/contracts/abis/sAvaxAbi.json";
-import reverseSwapperContractAbiV1 from "./reverseSwapperContractAbiV1";
+import reverseSwapperContractAbiV1 from "@/utils/contracts/abis/reverseSwapperContractAbiV1";
 
 export default [
   {
@@ -281,7 +281,7 @@ export default [
     ltv: 75,
     initialMax: 20,
     swapContractInfo: {
-      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      address: "0x7c1d8225504ded5874b7b41313c57bc6e516c1f0",
       abi: swapperAbi,
     },
     reverseSwapContractInfo: {
@@ -321,7 +321,7 @@ export default [
     ltv: 85,
     initialMax: 20,
     swapContractInfo: {
-      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      address: "0xb3658a7d82dcecac7116f6692155c1cc9c1dd70d",
       abi: swapperAbi,
     },
     reverseSwapContractInfo: {
