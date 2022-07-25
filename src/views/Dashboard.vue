@@ -1,9 +1,9 @@
 <template>
-  <div class="dashboard-view">
+  <div v-if="isConnected" class="dashboard-view">
     <div class="container mini">
       <h1>Dashboard</h1>
 
-      <div class="transaction-btn" @click="toTransactions" v-if="false">
+      <div v-if="false" class="transaction-btn" @click="toTransactions">
         <p>Transactions</p>
       </div>
 
@@ -12,33 +12,41 @@
 
         <div class="btns-group">
           <button
-            class="btn mini borrow-btn"
             :class="{ active: shortcutState === 'borrow' }"
+            class="btn mini borrow-btn"
             @click="setShortcutType('borrow')"
           >
             Borrow
           </button>
           <button
-            class="btn mini replay-btn"
             :class="{ active: shortcutState === 'repay' }"
+            class="btn mini replay-btn"
             @click="setShortcutType('repay')"
           >
             Repay
           </button>
         </div>
 
-        <div class="items-wrap" v-if="userPools.length">
+        <div v-if="userPools.length" class="items-wrap">
           <OpenPoolItem
             v-for="pool in userPools"
-            :pool="pool"
             :key="pool.id"
             :actionType="shortcutState"
+            :pool="pool"
           />
         </div>
 
-        <EmptyPoolsState :blockType="shortcutState" v-else />
+        <EmptyPoolsState v-else :blockType="shortcutState" />
       </template>
     </div>
+  </div>
+  <div v-else class="stand-action-view">
+    <ActionComponent
+      :disabled-status="disabledStatus"
+      :name="name"
+      :onClick="walletBtnHandler"
+      :text="text"
+    />
   </div>
 </template>
 
@@ -46,6 +54,8 @@
 const StatisticsBlock = () => import("@/components/Dashboard/StatisticsBlock");
 const OpenPoolItem = () => import("@/components/Dashboard/OpenPoolItem");
 const EmptyPoolsState = () => import("@/components/Dashboard/EmptyPoolsState");
+const ActionComponent = () =>
+  import("@/components/UiComponents/ActionComponent");
 
 import sspellToken from "@/mixins/sspellToken.js";
 
@@ -53,12 +63,18 @@ export default {
   mixins: [sspellToken],
   data() {
     return {
+      text: "Please connect your wallet",
+      name: "Connect",
+      disabledStatus: false,
       shortcutState: "borrow",
     };
   },
   computed: {
     pools() {
       return this.$store.getters.getPools;
+    },
+    isConnected() {
+      return this.$store.getters.getWalletIsConnected;
     },
     userPools() {
       return this.pools.filter(
@@ -73,6 +89,15 @@ export default {
     },
     toTransactions() {
       // this.$router.push({ name: "Transactions" });
+    },
+    async walletBtnHandler() {
+      if (this.isConnected) {
+        return false;
+      }
+      this.$store.commit("setPopupState", {
+        type: "connectWallet",
+        isShow: true,
+      });
     },
     async getUserBorrowPart(poolContract) {
       try {
@@ -94,11 +119,6 @@ export default {
     },
   },
   async created() {
-    const isConnected = this.$store.getters.getWalletIsConnected;
-    if (!isConnected) {
-      this.$router.push({ name: "Stand" });
-      return false;
-    }
     this.createStakePool();
   },
   mounted() {},
@@ -106,11 +126,24 @@ export default {
     StatisticsBlock,
     OpenPoolItem,
     EmptyPoolsState,
+    ActionComponent,
   },
 };
 </script>
 
 <style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
+.stand-action-view {
+  position: relative;
+  flex: 1;
+  background: #1c1c1c;
+  @include respond-to(sm) {
+    display: flex;
+    justify-content: center;
+  }
+}
+
 .dashboard-view {
   padding-top: 40px;
   padding-bottom: 40px;
@@ -121,6 +154,9 @@ export default {
     line-height: 36px;
     margin-bottom: 20px;
     text-align: left;
+    @include respond-to(sm) {
+      margin-bottom: 24px;
+    }
   }
 
   .transaction-btn {
@@ -144,13 +180,20 @@ export default {
     border-radius: 100px;
     padding: 2px;
     margin-bottom: 24px;
+    @include respond-to(sm) {
+      width: 100%;
+      margin-bottom: 54px;
+    }
 
     .btn {
       width: 73px;
-      height: 28px;
+      height: 32px;
       font-size: 14px;
       line-height: 20px;
       background: #262626;
+      @include respond-to(sm) {
+        width: 50%;
+      }
 
       &:hover {
         //background-color: $clrBlue5;
@@ -162,7 +205,7 @@ export default {
 
       &.active {
         color: black;
-        background-color: $clrBg3;
+        background-color: white;
       }
     }
   }
@@ -177,7 +220,7 @@ export default {
 
 @media screen and(max-width: 1024px) {
   .dashboard-view {
-    padding-top: 80px;
+    padding-top: 40px;
   }
 
   .dashboard-view .btns-group {

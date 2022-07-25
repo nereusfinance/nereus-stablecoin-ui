@@ -22,4 +22,8 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
+# Tests videos
+tests/e2e/videos/*.mp4
+
 .gitlab-ci.yml
+yarn.lock

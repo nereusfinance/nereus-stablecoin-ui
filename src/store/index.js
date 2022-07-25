@@ -11,6 +11,8 @@ import notification from "@/store/modules/notification";
 import avaxStatus from "@/store/modules/avaxStatus";
 import balances from "@/store/modules/balances";
 import parameters from "@/store/modules/parameters";
+import nxusdStaking from "@/store/modules/nxusdStaking";
+import multicall from "@/store/modules/multicall";
 
 Vue.use(Vuex);
 
@@ -39,5 +41,7 @@ export default new Vuex.Store({
     avaxStatus,
     balances,
     parameters,
+    nxusdStaking,
+    multicall,
   },
 });

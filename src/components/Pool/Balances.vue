@@ -2,7 +2,7 @@
   <div class="balances-block">
     <h2>Your Balances</h2>
 
-    <BalanceItem v-for="(item, idx) in balanceItems" :item="item" :key="idx" />
+    <BalanceItem v-for="(item, idx) in balanceItems" :key="idx" :item="item" />
   </div>
 </template>
 
@@ -32,7 +32,9 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .balances-block {
   //padding: 16px 24px;
   background: $clrBg2;
@@ -44,13 +46,15 @@ export default {
     margin-bottom: 16px;
     padding: 16px 24px;
     border-bottom: 1px solid #1c1c1c;
+    @include respond-to(sm) {
+      padding: 16px;
+    }
   }
 }
 
 @media screen and(max-width: 780px) {
   .balances-block {
-    padding-left: 10px;
-    padding-right: 10px;
+    padding: 0;
   }
 }
 </style>

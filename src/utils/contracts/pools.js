@@ -4,6 +4,7 @@ import nxusdAbi from "@/utils/contracts/abis/nxusdAbi.json";
 import swapperAbi from "@/utils/contracts/abis/swapperAbi.json";
 import usdcAbi from "@/utils/contracts/abis/usdcAbi.json";
 import sAvaxAbi from "@/utils/contracts/abis/sAvaxAbi.json";
+import reverseSwapperContractAbiV1 from "./reverseSwapperContractAbiV1";
 
 export default [
   {
@@ -41,6 +42,10 @@ export default [
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
       abi: swapperAbi,
     },
+    reverseSwapContractInfo: {
+      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      abi: reverseSwapperContractAbiV1,
+    },
   },
   {
     name: "WETH",
@@ -76,6 +81,10 @@ export default [
     swapContractInfo: {
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
       abi: swapperAbi,
+    },
+    reverseSwapContractInfo: {
+      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      abi: reverseSwapperContractAbiV1,
     },
   },
   {
@@ -113,6 +122,10 @@ export default [
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
       abi: swapperAbi,
     },
+    reverseSwapContractInfo: {
+      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      abi: reverseSwapperContractAbiV1,
+    },
   },
   {
     name: "DAI",
@@ -148,6 +161,10 @@ export default [
     swapContractInfo: {
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
       abi: swapperAbi,
+    },
+    reverseSwapContractInfo: {
+      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      abi: reverseSwapperContractAbiV1,
     },
   },
   {
@@ -186,6 +203,10 @@ export default [
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
       abi: swapperAbi,
     },
+    reverseSwapContractInfo: {
+      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      abi: reverseSwapperContractAbiV1,
+    },
   },
   {
     name: "WXT",
@@ -223,6 +244,10 @@ export default [
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
       abi: swapperAbi,
     },
+    reverseSwapContractInfo: {
+      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      abi: reverseSwapperContractAbiV1,
+    },
   },
   {
     name: "AVAX",
@@ -258,6 +283,10 @@ export default [
     swapContractInfo: {
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
       abi: swapperAbi,
+    },
+    reverseSwapContractInfo: {
+      address: "0xDe694A5A3B16A93549f61480833A2CAf122C7681",
+      abi: reverseSwapperContractAbiV1,
     },
   },
   {
@@ -295,6 +324,10 @@ export default [
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
       abi: swapperAbi,
     },
+    reverseSwapContractInfo: {
+      address: "0x24577fb3FF3368a3883F2821B1Cd8ed04f6eAc7e",
+      abi: reverseSwapperContractAbiV1,
+    },
   },
   {
     name: "WBTC",
@@ -328,8 +361,12 @@ export default [
     ltv: 85,
     initialMax: 20,
     swapContractInfo: {
-      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      address: "0x6931536784c64CCF942E170EC842e3B45c60C352",
       abi: swapperAbi,
+    },
+    reverseSwapContractInfo: {
+      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      abi: reverseSwapperContractAbiV1,
     },
   },
   {
@@ -403,6 +440,10 @@ export default [
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
       abi: swapperAbi,
     },
+    reverseSwapContractInfo: {
+      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      abi: reverseSwapperContractAbiV1,
+    },
   },
   {
     name: "av3CRV",
@@ -438,6 +479,10 @@ export default [
     swapContractInfo: {
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
       abi: swapperAbi,
+    },
+    reverseSwapContractInfo: {
+      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      abi: reverseSwapperContractAbiV1,
     },
   },
   {
@@ -475,6 +520,10 @@ export default [
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
       abi: swapperAbi,
     },
+    reverseSwapContractInfo: {
+      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      abi: reverseSwapperContractAbiV1,
+    },
   },
   {
     name: "JOE",
@@ -510,6 +559,10 @@ export default [
     swapContractInfo: {
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
       abi: swapperAbi,
+    },
+    reverseSwapContractInfo: {
+      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      abi: reverseSwapperContractAbiV1,
     },
   },
   {
@@ -547,6 +600,10 @@ export default [
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
       abi: swapperAbi,
     },
+    reverseSwapContractInfo: {
+      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      abi: reverseSwapperContractAbiV1,
+    },
   },
   {
     name: "BTC.b",
@@ -583,6 +640,10 @@ export default [
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
       abi: swapperAbi,
     },
+    reverseSwapContractInfo: {
+      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      abi: reverseSwapperContractAbiV1,
+    },
   },
   {
     name: "AVAX-USDC JLP",
@@ -618,6 +679,10 @@ export default [
     swapContractInfo: {
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
       abi: swapperAbi,
+    },
+    reverseSwapContractInfo: {
+      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      abi: reverseSwapperContractAbiV1,
     },
   },
 ];

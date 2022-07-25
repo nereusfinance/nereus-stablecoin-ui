@@ -1,52 +1,58 @@
 <template>
-  <div class="wrapper">
+  <div v-if="!isStake" class="wrapper">
     <div
-      class="val-input"
-      :class="{
+        :class="{
         focus: isFocus,
         error,
       }"
+        class="val-input"
     >
       <div
-        class="value-type"
-        :class="{ 'values-choose': values.length }"
-        @click="openSelect"
+          :class="{ 'values-choose': values.length }"
+          class="value-type"
+          @click="openSelect"
       >
-        <TokenIcon :token="valueName" />
+        <TokenIcon :token="valueName"/>
 
         <p>{{ valueName }}</p>
 
         <img
-          v-if="values.length"
-          src="@/assets/images/select-pixel-arrow.svg"
-          alt=""
-          class="arrow-icon"
+            v-if="values.length"
+            alt=""
+            class="arrow-icon"
+            src="@/assets/images/select-pixel-arrow.svg"
         />
       </div>
 
       <input
-        type="text"
-        placeholder="0.0"
-        @focus="setFocus(true)"
-        @blur="setFocus(false)"
-        v-model="value"
-        :disabled="disabled"
+          v-model="value"
+          :data-cy="cyData"
+          :disabled="disabled"
+          placeholder="0.0"
+          type="text"
+          @blur="setFocus(false)"
+          @focus="setFocus(true)"
       />
 
-      <div class="max-btn" v-if="parseFloat(max) && showMax" @click="setMax">
+      <div
+          v-if="parseFloat(max) && showMax"
+          :style="{ cursor: disabled ? 'not-allowed' : 'pointer' }"
+          class="max-btn"
+          @click="setMax"
+      >
         <p>MAX</p>
       </div>
 
       <transition name="fade">
-        <div class="values-select" v-if="showSelect">
+        <div v-if="showSelect" class="values-select">
           <div
-            class="balance-item"
-            v-for="(token, idx) in values"
-            :key="idx"
-            @click="changeValue(token.tokenIdx)"
+              v-for="(token, idx) in values"
+              :key="idx"
+              class="balance-item"
+              @click="changeValue(token.tokenIdx)"
           >
             <div class="value-select-type">
-              <TokenIcon :token="token.name" />
+              <TokenIcon :token="token.name"/>
               <p>{{ token.name }}</p>
             </div>
             <p class="value-text">{{ token.balance }}</p>
@@ -54,15 +60,76 @@
         </div>
       </transition>
     </div>
-    <p class="error-text" v-if="errorText">{{ errorText }}</p>
+    <p v-if="errorText" class="error-text">{{ errorText }}</p>
+  </div>
+  <div v-else-if="isStake" class="wrapper">
+    <div
+        :class="{
+        focus: isFocus,
+        error,
+      }"
+        class="val-input"
+    >
+      <div
+          :class="{ 'values-choose': values.length }"
+          class="value-type"
+          style="padding-left: 0"
+          @click="openSelect"
+      >
+        <TokenIcon :token="valueName"/>
+        <img
+            v-if="values.length"
+            alt=""
+            class="arrow-icon"
+            src="@/assets/images/select-pixel-arrow.svg"
+        />
+      </div>
+
+      <input
+          v-model="value"
+          :disabled="disabled"
+          class="input-stake"
+          placeholder="Amount"
+          type="text"
+          @blur="setFocus(false)"
+          @focus="setFocus(true)"
+      />
+
+      <div v-if="parseFloat(max) && showMax" class="max-btn" @click="setMax">
+        <p class="max-btn-text">MAX</p>
+      </div>
+
+      <transition name="fade">
+        <div v-if="showSelect" class="values-select">
+          <div
+              v-for="(token, idx) in values"
+              :key="idx"
+              class="balance-item"
+              @click="changeValue(token.tokenIdx)"
+          >
+            <div class="value-select-type">
+              <TokenIcon :token="token.name"/>
+              <p>{{ token.name }}</p>
+            </div>
+            <p class="value-text">{{ token.balance }}</p>
+          </div>
+        </div>
+      </transition>
+    </div>
+    <p v-if="errorText" class="error-text">{{ errorText }}</p>
   </div>
 </template>
 
 <script>
 const TokenIcon = () => import("@/components/UiComponents/TokenIcon");
+import {floorToFixed} from "@/utils/fiexdMath/fixedMath";
 
 export default {
   props: {
+    cyData: {
+      type: String,
+      default: "",
+    },
     showMax: {
       type: Boolean,
       default: true,
@@ -89,6 +156,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    isStake: {
+      type: Boolean,
+      default: false,
+    },
+    maxWithdraw: {
+      type: Function,
+    },
   },
   data() {
     return {
@@ -107,13 +181,29 @@ export default {
       }
     },
     value(value, oldValue) {
+
       if (isNaN(value)) {
         this.value = oldValue;
         return false;
       }
+      if (
+          value.toString().includes(".") &&
+          value.toString().split(".")[1].length > 18
+      ) {
+        value = value.toString().split(".")[0] + "." + value.toString().split(".")[1].substring(0, 18)
+      }
+      if (this.maxWithdraw && value !== this.max) this.maxWithdraw(false);
+      this.value = value;
       this.$emit("onchange", value);
     },
     parentValue(value) {
+      if (
+          value.toString().includes(".") &&
+          value.toString().split(".")[1].length > 18
+      ) {
+        value = value.toString().split(".")[0] + "." + value.toString().split(".")[1].substring(0, 18)
+      }
+
       this.value = value;
     },
   },
@@ -122,7 +212,12 @@ export default {
       this.isFocus = payload;
     },
     setMax() {
-      this.value = this.max;
+      if (!this.disabled && !this.isStake) {
+        this.value = floorToFixed(this.max, 6);
+      } else if (!this.disabled && this.isStake) {
+        this.value = this.max;
+        if (this.maxWithdraw) this.maxWithdraw(true);
+      }
     },
     openSelect() {
       if (this.values.length) {
@@ -141,6 +236,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .error-text {
   color: $clrTextError;
   font-size: 10px;
@@ -151,7 +248,7 @@ export default {
 
 .values-select {
   background: $clrBg2;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
   position: absolute;
   top: calc(100% + 5px);
@@ -202,10 +299,10 @@ export default {
   position: relative;
   width: 100%;
   transition: border 0.3s ease;
-
-  //&.focus {
-  //  border: 1px solid #605ee8;
-  //}
+  @include respond-to(sm) {
+    background: #353535;
+    border: 1px solid #8a8a8a;
+  }
 
   &.error {
     border: 1px solid $clrInputError;
@@ -249,6 +346,9 @@ export default {
 
     p {
       margin-right: 10px;
+      @include respond-to(sm) {
+        font-size: 16px;
+      }
     }
   }
 
@@ -266,16 +366,37 @@ export default {
     &::placeholder {
       color: rgba(255, 255, 255, 0.6);
     }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
   }
 
   .max-btn {
     position: absolute;
     right: 12px;
-    cursor: pointer;
     display: flex;
     align-items: center;
     border-radius: 12px;
     font-size: 14px;
+  }
+
+  .max-btn-text {
+    cursor: pointer;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: #55bcc0;
+    @include respond-to(sm) {
+      font-size: 14px;
+    }
+  }
+
+  .input-stake {
+    font-weight: 400;
+    font-size: 16px;
+    text-align: left;
+    padding-left: 44px;
   }
 }
 
@@ -283,7 +404,6 @@ export default {
   .val-input .value-type {
     width: 90px;
     justify-content: flex-start;
-    padding-left: 5px;
   }
 
   .val-input .value-type .type-icon {
@@ -320,6 +440,17 @@ export default {
   .balance-item .value-select-type .type-icon {
     width: 35px;
     height: 35px;
+  }
+  .token-icon-wrap {
+    width: 19.5px;
+    height: 9.5px;
+    position: relative;
+
+    .bg {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
   }
 }
 </style>

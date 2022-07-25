@@ -2,6 +2,10 @@ import axios from "axios";
 import Web3 from "web3";
 const web3 = new Web3();
 
+export const getDefaultRPCURL = () => {
+  return "https://api.avax.network/ext/bc/C/rpc";
+};
+
 export const fromWei = (value, weiFormat) => {
   return web3.utils.fromWei(value, weiFormat);
 };

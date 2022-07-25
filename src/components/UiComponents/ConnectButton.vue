@@ -1,18 +1,20 @@
 <template>
-  <div v-if="isConnected">
+  <div class="btn-text" v-if="isConnected">
     <button
-      class="btn mini connected-btn"
       :class="{ load: connectLoader, connected: isConnected }"
+      class="btn mini connected-btn"
       @click="disconnect"
       @mouseenter="itsHover = true"
       @mouseleave="itsHover = false"
     >
       <ButtonLoader v-if="connectLoader" />
-      <template v-else-if="itsHover">Disconnect</template>
+      <template v-else-if="itsHover || isIncorrectCorrectNetwork">Disconnect</template>
       <template v-else>
-        <div>
+        <div class="text-connect-block">
           {{ walletBtnText }}
-          <p class="slicedAddress">{{ slicedAccountAddress }}</p>
+          <p class="slicedAddress" data-cy="account-address">
+            {{ slicedAccountAddress }}
+          </p>
         </div>
       </template>
     </button>
@@ -20,14 +22,13 @@
 
   <div v-else>
     <button
-      class="btn mini connect-btn"
       :class="{ load: connectLoader, connected: isConnected }"
+      class="btn mini connect-btn"
       @click="walletBtnHandler"
+      data-cy="connect-button-head"
     >
       <ButtonLoader v-if="connectLoader" />
-      <template v-else>
-        {{ connectBtnText }}
-      </template>
+      <template v-else> </template>
     </button>
   </div>
 </template>
@@ -52,7 +53,6 @@ export default {
     return {
       itsHover: false,
       connectLoader: false,
-      btnText: "Connect",
 
       networks: [
         // {
@@ -104,8 +104,12 @@ export default {
 
       return `${startAddr}...${endAddr}`;
     },
-    connectBtnText() {
-      return this.btnText;
+    isIncorrectCorrectNetwork() {
+      const chainId = this.$store.getters.getChainId;
+      let networkObject = this.networks.find(
+          (item) => item.chainid == chainId
+      );
+      return !networkObject;
     },
     isConnected() {
       return this.$store.getters.getWalletIsConnected;
@@ -122,8 +126,8 @@ export default {
       });
     },
     async disconnect() {
-      const walletType = localStorage.getItem('walletType');
-      if(walletType==='walletConnect') {
+      const walletType = localStorage.getItem("walletType");
+      if (walletType === "walletConnect") {
         const walletConnectProvider = new WalletConnectProvider({
           bridge: "https://bridge.walletconnect.org",
           rpc: {
@@ -131,9 +135,9 @@ export default {
             43114: "https://api.avax.network/ext/bc/C/rpc",
           },
         });
-        await walletConnectProvider.killSession()
+        await walletConnectProvider.killSession();
       }
-      delete window.localStorage.walletType
+      delete window.localStorage.walletType;
       window.location.reload();
     },
   },
@@ -177,12 +181,15 @@ export default {
   }
 }
 
+.connect-btn:before {
+  content: "Connect";
+}
 .connect-btn {
   background: #e7fc6e;
   border-radius: 21px;
 
-  height: 32px;
-  width: 90px;
+  height: 100%;
+  width: 100%;
   padding: 6px 16px;
   font-style: normal;
   font-weight: normal;
@@ -191,5 +198,36 @@ export default {
 
   text-align: center;
   color: #000000;
+}
+
+@media screen and(max-width: 980px) {
+  .btn-text {
+    margin: 0;
+  }
+  .connected-btn {
+    width: auto;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    margin: 0;
+  }
+  .slicedAddress {
+    width: auto;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  .connect-btn {
+    height: 48px;
+    width: 272px;
+    background: #e7fc6e;
+    border-radius: 24px;
+    font-size: 18px;
+  }
+
+  .connect-btn:before {
+    content: "Connect wallet";
+  }
 }
 </style>

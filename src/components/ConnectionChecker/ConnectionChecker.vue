@@ -4,6 +4,7 @@
 
 <script>
 import WalletConnectProvider from "@walletconnect/client";
+
 export default {
   data() {
     return {
@@ -29,6 +30,8 @@ export default {
         this.$emit("checkSuccess");
       }
     },
+    // call again the method if the route changes
+    '$route': 'checkProvider'
   },
   methods: {
     async checkProvider() {
@@ -55,7 +58,7 @@ export default {
     },
     compareNetworkSupport(chainId) {
       const networkObject = this.availableNetworks.find(
-        (network) => network.chainId === chainId
+          (network) => network.chainId === chainId
       );
 
       if (chainId !== "0xa86a" && chainId !== "0x539" && chainId !== "0xa869") {
@@ -65,7 +68,7 @@ export default {
         });
 
         const routeName = this.$route.name;
-        if (routeName !== "Stand") this.$router.push({ name: "Stand" });
+        if (routeName !== "Stand") this.$router.push({name: "Stand"});
       }
 
       if (networkObject) this.$store.commit("setActiveNetwork", chainId);
@@ -73,9 +76,9 @@ export default {
     async setAccountListeners() {
       let accounts;
       const walletType = localStorage.getItem("walletType");
-      if(walletType === "Metamask" && window.ethereum){
-        accounts = await window.ethereum.request({ method: 'eth_accounts' });
-        }
+      if (walletType === "Metamask" && window.ethereum) {
+        accounts = await window.ethereum.request({method: "eth_accounts"});
+      }
       if (accounts && accounts.length > 0) {
         window.ethereum.on("chainChanged", this.reload);
         window.ethereum.on("accountsChanged", this.onAccountChange);
@@ -83,7 +86,7 @@ export default {
           this.updatePoolData();
         });
         console.log("SET METAMASK ACCOUNT LISTENERS FUNC");
-      } else if (walletType==="walletConnect") {
+      } else if (walletType === "walletConnect") {
         const walletConnectProvider = new WalletConnectProvider({
           bridge: "https://bridge.walletconnect.org",
           rpc: {
@@ -105,7 +108,6 @@ export default {
     },
     onAccountChange(accounts) {
       if (accounts.length === 0) {
-
         this.disconnectHandler();
       } else {
         this.$store.commit("setAccount", accounts[0]);
@@ -127,11 +129,12 @@ export default {
       this.$store.commit("setSwapObject", null);
 
       const routeName = this.$route.name;
-      if (routeName !== "Stand") this.$router.push({ name: "Stand" });
+      if (routeName !== "Stand") this.$router.push({name: "Stand"});
     },
   },
   created() {
     this.checkProvider();
   },
+
 };
 </script>

@@ -21,24 +21,26 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .info-block {
   padding: 24px 0;
   background: $clrBg2;
   border-radius: 4px;
+  @include respond-to(sm) {
+    padding: 16px 0 0 0;
+  }
 
   .items-wrap {
     min-height: 150px;
     max-height: 200px;
     overflow-y: auto;
     padding-right: 5px;
-  }
-}
-
-@media screen and(max-width: 780px) {
-  .info-block {
-    padding-left: 10px;
-    padding-right: 10px;
+    @include respond-to(sm) {
+      padding: 0;
+      min-height: 0;
+    }
   }
 }
 </style>

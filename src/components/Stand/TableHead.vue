@@ -1,10 +1,10 @@
 <template>
-  <div class="stand-table-head" :class="{ deposit: tableType === 2 }">
+  <div :class="{ deposit: tableType === 2 }" class="stand-table-head">
     <div v-for="(item, idx) in tableCols" :key="idx" class="table-col">
       <p>{{ item }}</p>
     </div>
 
-    <div class="action-col" v-if="colsGetTitles === 1"></div>
+    <div v-if="colsGetTitles === 1" class="action-col"></div>
   </div>
 </template>
 
@@ -34,7 +34,9 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
+@import "src/mixins/screen-size";
+
 .stand-table-head {
   display: flex;
   align-items: center;
@@ -44,6 +46,9 @@ export default {
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   margin-bottom: 1px;
+  @include respond-to(sm) {
+    padding: 10px 24px;
+  }
 
   .action-col {
     width: 150px;
@@ -61,6 +66,7 @@ export default {
       //max-width: 120px;
     }
   }
+
   .table-col:first-child {
     text-align: left;
     padding-right: 0;
@@ -84,6 +90,7 @@ export default {
 
     .table-col {
       width: 20%;
+
       p {
         font-size: 10px;
       }
