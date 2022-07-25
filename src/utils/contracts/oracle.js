@@ -106,4 +106,11 @@ export default [
     address: "0x7D9e9b0c5dab2202d2B3b29371DAa8e0f11d49B6",
     abi: oracleAbi,
   },
+  {
+    name: "JLPWAVAXUSDCOracle",
+    id: 17,
+    contractChain: "0xa86a",
+    address: "0xE6D29A8F7086B71EAEc58b572fE5916AC699E3fe",
+    abi: oracleAbi,
+  },
 ];
