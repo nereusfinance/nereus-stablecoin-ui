@@ -404,6 +404,10 @@ export default [
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
       abi: swapperAbi,
     },
+    reverseSwapContractInfo: {
+      address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
+      abi: reverseSwapperContractAbiV1,
+    },
   },
   {
     name: "USDC",
