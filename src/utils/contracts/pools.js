@@ -659,7 +659,7 @@ export default [
       abi: cauldronV2Abi,
     },
     token: {
-      name: "AVAX-USDC JLP",
+      name: "AVAX-USDC-JLP",
       decimals: 18,
       address: "0xf4003F4efBE8691B60249E6afbD307aBE7758adb",
       oracleId: 17,
