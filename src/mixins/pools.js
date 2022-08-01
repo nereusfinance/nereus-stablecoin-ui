@@ -48,9 +48,13 @@ export default {
 
       console.log("STAND CREATED POOLS:", pools);
       this.$store.commit("setPools", pools);
-      const provider = await this.$store.getters.getProvider;
+      const provider = this.$store.getters.getProvider;
+      const timeout = 30000;
       provider.once("block", () => {
-        this.createPools(masterContract);
+        clearTimeout(
+          setTimeout(() => this.createPools(masterContract), timeout)
+        );
+        setTimeout(() => this.createPools(masterContract), timeout);
       });
     },
 
