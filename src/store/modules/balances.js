@@ -6,14 +6,12 @@ export default {
   },
   mutations: {
     setBalanceNativeToken(state, payload) {
-      // state.balanceNativeToken[payload.id] = payload.balance;
       state.balanceNativeToken = {
         ...state.balanceNativeToken,
         [payload.id]: payload.balance,
       };
     },
     setBalanceToken(state, payload) {
-      // state.balanceToken[payload.id] = payload.balance;
       state.balanceToken = {
         ...state.balanceToken,
         [payload.id]: payload.balance,
@@ -38,6 +36,13 @@ export default {
     async checkBalancePairToken({ getters, commit }, { contract, id }) {
       const balance = await contract.balanceOf(getters.getAccount);
       commit("setBalancePairToken", { balance, id });
+    },
+    checkBalance({ commit }, { balance, type, id }) {
+      if (type === "checkBalanceToken") {
+        commit("setBalanceToken", { balance, id });
+      } else if (type === "checkBalancePairToken") {
+        commit("setBalancePairToken", { balance, id });
+      }
     },
   },
   getters: {
