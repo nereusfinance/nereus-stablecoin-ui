@@ -207,6 +207,7 @@ export default {
       display: flex;
       flex-direction: row;
       align-items: center;
+      white-space: nowrap;
 
       .info-icon {
         margin: 0;
