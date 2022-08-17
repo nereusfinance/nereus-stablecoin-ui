@@ -1,5 +1,5 @@
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import { providers, utils, constants } from "ethers";
+import { providers, utils, constants, getDefaultProvider } from "ethers";
 import { getDefaultRPCURL } from "@/utils/helpers.js";
 
 export default {
@@ -47,7 +47,8 @@ export default {
         const walletConnectProvider = new WalletConnectProvider({
           rpc: {
             43113: "https://api.avax-test.network/ext/bc/C/rpc",
-            43114: "https://api.avax.network/ext/bc/C/rpc",
+            43114:
+              "https://frequent-cool-sound.avalanche-mainnet.quiknode.pro/a7130ea906e22f5cf3c33395202d55c5df69dce4/ext/bc/C/rpc",
           },
         });
         const connector = walletConnectProvider.connector;
@@ -74,13 +75,16 @@ export default {
           });
           if (accounts.length > 0) {
             const signer = provider.getSigner();
+            const defaultProvider = getDefaultProvider(
+              "https://frequent-cool-sound.avalanche-mainnet.quiknode.pro/a7130ea906e22f5cf3c33395202d55c5df69dce4/ext/bc/C/rpc"
+            );
             const chainId = await window.ethereum.request({
               method: "eth_chainId",
             });
             commit("setWalletProviderName", "Metamask");
             commit("setChainId", chainId);
             commit("setAccount", accounts[0]);
-            commit("setProvider", provider);
+            commit("setProvider", defaultProvider);
             commit("setSigner", signer);
             commit("setWalletConnection", true);
             return signer;
@@ -146,7 +150,8 @@ export default {
         const walletConnectProvider = new WalletConnectProvider({
           rpc: {
             43113: "https://api.avax-test.network/ext/bc/C/rpc",
-            43114: "https://api.avax.network/ext/bc/C/rpc",
+            43114:
+              "https://frequent-cool-sound.avalanche-mainnet.quiknode.pro/a7130ea906e22f5cf3c33395202d55c5df69dce4/ext/bc/C/rpc",
           },
         });
         const accounts = await walletConnectProvider.enable();
