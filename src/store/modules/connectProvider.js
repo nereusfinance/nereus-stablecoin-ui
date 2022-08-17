@@ -5,6 +5,7 @@ import { getDefaultRPCURL } from "@/utils/helpers.js";
 export default {
   state: {
     provider: null,
+    metamaskProvider: null,
     signer: null,
     account: null,
     chainId: null,
@@ -14,6 +15,9 @@ export default {
   mutations: {
     setProvider(state, payload) {
       state.provider = payload;
+    },
+    setMetamaskProvider(state, payload) {
+      state.metamaskProvider = payload;
     },
     setSigner(state, payload) {
       state.signer = payload;
@@ -85,6 +89,7 @@ export default {
             commit("setChainId", chainId);
             commit("setAccount", accounts[0]);
             commit("setProvider", defaultProvider);
+            commit("setMetamaskProvider", provider);
             commit("setSigner", signer);
             commit("setWalletConnection", true);
             return signer;
@@ -183,6 +188,7 @@ export default {
   },
   getters: {
     getProvider: (state) => state.provider,
+    getMetamaskProvider: (state) => state.metamaskProvider,
     getSigner: (state) => state.signer,
     getAccount: (state) => state.account,
     getChainId: (state) => state.chainId,
