@@ -851,7 +851,6 @@ export default {
         this.updatePairValue(this.pairValue);
       }
 
-      console.log("1this.percentValue", this.percentValue);
       if (this.percentValue && value) {
         this.pairValue = (this.maxPairValue * this.percentValue) / this.ltv;
       }
@@ -893,7 +892,6 @@ export default {
       );
     },
     updatePercentValue(value, fromPair) {
-      console.log(">>updatePercentValue", value);
       this.percentValue = value;
 
       if (fromPair) return false;
