@@ -2915,17 +2915,18 @@ export default {
       return price.USD;
     },
     async updatePrices() {
-      this.pool.tokenPrice =
-        1 / (await this.getTokenPrice(this.pool.token.name));
-      this.pool.tokenPairPrice = await this.getTokenPrice(
-        this.pool.pairToken.name
-      );
+      const tokenPrice = 1 / (await this.getTokenPrice(this.pool.token.name));
+      const tokenPairPrice = await this.getTokenPrice(this.pool.pairToken.name);
 
-      console.log(
-        "PAIR PRICES UPDATE",
-        this.pool.tokenPrice,
-        this.pool.tokenPairPrice
-      );
+      if (tokenPrice) {
+        this.pool.tokenPrice = tokenPrice;
+        this.pool.tokenPairPrice = tokenPairPrice;
+        console.log(
+          "PAIR PRICES UPDATE",
+          this.pool.tokenPrice,
+          this.pool.tokenPairPrice
+        );
+      }
     },
   },
   async created() {
