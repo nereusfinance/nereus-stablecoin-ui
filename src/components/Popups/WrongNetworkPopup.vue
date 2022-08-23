@@ -7,14 +7,9 @@
       @click="closePopup"
     />
 
-    <p class="title">
-      Please change the network to use the applications
-    </p>
+    <p class="title">Please change the network to use the applications</p>
 
-    <button
-        class="switch-btn"
-        @click="switchNetwork"
-    >
+    <button class="switch-btn" @click="switchNetwork">
       Change to Avalanche Network
     </button>
   </div>
@@ -28,11 +23,11 @@ export default {
     },
     async switchNetwork() {
       const targetChain = "0xa86a";
-      const web3Provider = this.$store.getters.getProvider;
+      const web3Provider = this.$store.getters.getMetamaskProvider;
       if (web3Provider) {
         try {
           await web3Provider.provider.request({
-            method: 'wallet_switchEthereumChain',
+            method: "wallet_switchEthereumChain",
             params: [
               {
                 chainId: targetChain,
@@ -44,14 +39,14 @@ export default {
           console.log(e.code);
           if (e.code === 4902 || e.code === undefined) {
             await web3Provider.provider.request({
-              method: 'wallet_addEthereumChain',
+              method: "wallet_addEthereumChain",
               params: [
                 {
-                  chainName: 'Avalanche Mainnet C-Chain',
+                  chainName: "Avalanche Mainnet C-Chain",
                   chainId: targetChain,
-                  rpcUrls: ['https://api.avax.network/ext/bc/C/rpc']
-                }
-              ]
+                  rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
+                },
+              ],
             });
           }
         }
@@ -101,7 +96,7 @@ export default {
   .title {
     font-size: 20px;
     line-height: 24px;
-    margin: 0 12px 40px 12px ;
+    margin: 0 12px 40px 12px;
   }
 }
 
