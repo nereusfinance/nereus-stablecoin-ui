@@ -3,7 +3,10 @@ import Web3 from "web3";
 const web3 = new Web3();
 
 export const getDefaultRPCURL = () => {
-  return "https://frequent-cool-sound.avalanche-mainnet.quiknode.pro/a7130ea906e22f5cf3c33395202d55c5df69dce4/ext/bc/C/rpc";
+  return (
+    process?.env?.VUE_APP_RPC_URL ??
+    "https://frequent-cool-sound.avalanche-mainnet.quiknode.pro/a7130ea906e22f5cf3c33395202d55c5df69dce4/ext/bc/C/rpc"
+  );
 };
 
 export const fromWei = (value, weiFormat) => {

@@ -41,6 +41,7 @@
 // import fantomIcon from "@/assets/images/networks/fantom-icon.svg";
 import avaxIcon from "@/assets/images/networks/avalanche-avax-icon.svg";
 import WalletConnectProvider from "@walletconnect/client";
+import { getDefaultRPCURL } from "@/utils/helpers";
 
 const ButtonLoader = () => import("@/components/UiComponents/ButtonLoader");
 
@@ -132,8 +133,7 @@ export default {
           bridge: "https://bridge.walletconnect.org",
           rpc: {
             43113: "https://api.avax-test.network/ext/bc/C/rpc",
-            43114:
-              "https://frequent-cool-sound.avalanche-mainnet.quiknode.pro/a7130ea906e22f5cf3c33395202d55c5df69dce4/ext/bc/C/rpc",
+            43114: getDefaultRPCURL(),
           },
         });
         await walletConnectProvider.killSession();

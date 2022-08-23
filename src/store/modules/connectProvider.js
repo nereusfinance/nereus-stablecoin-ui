@@ -51,8 +51,7 @@ export default {
         const walletConnectProvider = new WalletConnectProvider({
           rpc: {
             43113: "https://api.avax-test.network/ext/bc/C/rpc",
-            43114:
-              "https://frequent-cool-sound.avalanche-mainnet.quiknode.pro/a7130ea906e22f5cf3c33395202d55c5df69dce4/ext/bc/C/rpc",
+            43114: getDefaultRPCURL(),
           },
         });
         const connector = walletConnectProvider.connector;
@@ -79,9 +78,7 @@ export default {
           });
           if (accounts.length > 0) {
             const signer = provider.getSigner();
-            const defaultProvider = getDefaultProvider(
-              "https://frequent-cool-sound.avalanche-mainnet.quiknode.pro/a7130ea906e22f5cf3c33395202d55c5df69dce4/ext/bc/C/rpc"
-            );
+            const defaultProvider = getDefaultProvider(getDefaultRPCURL());
             const chainId = await window.ethereum.request({
               method: "eth_chainId",
             });
@@ -155,8 +152,7 @@ export default {
         const walletConnectProvider = new WalletConnectProvider({
           rpc: {
             43113: "https://api.avax-test.network/ext/bc/C/rpc",
-            43114:
-              "https://frequent-cool-sound.avalanche-mainnet.quiknode.pro/a7130ea906e22f5cf3c33395202d55c5df69dce4/ext/bc/C/rpc",
+            43114: getDefaultRPCURL(),
           },
         });
         const accounts = await walletConnectProvider.enable();
