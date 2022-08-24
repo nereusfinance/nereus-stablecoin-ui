@@ -82,10 +82,6 @@ export default {
       if (accounts && accounts.length > 0) {
         window.ethereum.on("chainChanged", this.reload);
         window.ethereum.on("accountsChanged", this.onAccountChange);
-        window.ethereum.on("block", () => {
-          this.updatePoolData();
-        });
-        console.log("SET METAMASK ACCOUNT LISTENERS FUNC");
       } else if (walletType === "walletConnect") {
         const walletConnectProvider = new WalletConnectProvider({
           bridge: "https://bridge.walletconnect.org",
@@ -96,15 +92,7 @@ export default {
         });
         walletConnectProvider.on("disconnect", this.reload);
         walletConnectProvider.on("session_update", this.reload);
-        walletConnectProvider.on("block", () => {
-          this.updatePoolData();
-        });
-        console.log("SET WALLETCONNECT ACCOUNT LISTENERS FUNC");
       }
-    },
-    updatePoolData() {
-      const poolData = this.$store.getters.getPools;
-      console.log("poolData", poolData[0]);
     },
     onAccountChange(accounts) {
       if (accounts.length === 0) {
@@ -117,8 +105,6 @@ export default {
       window.location.reload();
     },
     disconnectHandler() {
-      console.log("disconnectHandler");
-
       this.$store.commit("closePopups");
       this.$store.commit("setAccount", null);
       this.$store.commit("setWalletConnection", false);

@@ -76,11 +76,11 @@ const routes = [
   //   name: "Tech",
   //   component: () => import("../views/Tech.vue"),
   // },
-  {
-    path: "/liquidations",
-    name: "Liquidations",
-    component: () => import("../views/Liquidations.vue"),
-  },
+  // {
+  //   path: "/liquidations",
+  //   name: "Liquidations",
+  //   component: () => import("../views/Liquidations/Liquidations.vue"),
+  // },
 ];
 
 const router = new VueRouter({

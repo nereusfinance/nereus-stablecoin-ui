@@ -69,10 +69,6 @@ export default {
       type: String,
       required: true,
     },
-    pool: {
-      type: Object,
-      required: true,
-    },
     liquidationPrice: {
       required: true,
     },

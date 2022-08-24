@@ -101,8 +101,6 @@ export default {
           );
 
         this.exactBalance = balance.toString();
-
-        console.log();
       } catch (e) {
         console.log("getUserBalance err:", e);
       }
@@ -133,8 +131,6 @@ export default {
 
         const gasLimit = 1000 + +estimateGas.toString();
 
-        console.log("gasLimit:", gasLimit);
-
         const tx = await this.tokensInfo.stakeToken.contractInstance.approve(
           this.tokensInfo.mainToken.contractInstance.address,
           "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
@@ -163,8 +159,6 @@ export default {
 
         const lockTimestamp = infoResp.lockedUntil.toString();
         const currentTimestamp = moment().unix().toString();
-
-        console.log(lockTimestamp, currentTimestamp);
 
         if (lockTimestamp && lockTimestamp > currentTimestamp)
           return lockTimestamp;

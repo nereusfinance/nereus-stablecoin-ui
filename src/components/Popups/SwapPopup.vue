@@ -197,8 +197,6 @@ export default {
       let balance;
 
       try {
-        console.log("BALANCE OF: ", this.account);
-
         const userBalance = await token.contractInstance.balanceOf(
           this.account,
           {
@@ -210,8 +208,6 @@ export default {
           userBalance.toString(),
           token.decimals
         );
-
-        console.log("BALANCE", token.name, balance);
       } catch (e) {
         console.log("userBalance Err:", e);
       }
@@ -245,8 +241,6 @@ export default {
           );
 
           const gasLimit = 1000 + +estimateGas.toString();
-
-          console.log("gasLimit:", gasLimit);
 
           const tx = await token.contractInstance.approve(
             this.swapObject.contractInstance.address,

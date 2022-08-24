@@ -61,21 +61,7 @@ export default {
           balance.toString()
         );
 
-        console.log("EXACT STRING", balance.toString());
-
-        console.log("EXACT FROM WEI", this.userBalanceExact);
-
-        console.log(
-          "EXACT",
-          balance,
-          balance.toString(),
-          this.userBalanceExact,
-          this.$ethers.utils.formatEther(balance.toString())
-        );
-
         this.userBalance = parseFloat(this.userBalanceExact).toFixed(2);
-
-        console.log("STAKE", parseFloat(this.userBalance));
       } catch (error) {
         console.log(error);
       }

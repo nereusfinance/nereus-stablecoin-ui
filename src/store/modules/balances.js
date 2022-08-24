@@ -1,25 +1,11 @@
 export default {
   state: {
     balanceNativeToken: {},
-    balanceToken: {},
-    balancePairToken: {},
   },
   mutations: {
     setBalanceNativeToken(state, payload) {
       state.balanceNativeToken = {
         ...state.balanceNativeToken,
-        [payload.id]: payload.balance,
-      };
-    },
-    setBalanceToken(state, payload) {
-      state.balanceToken = {
-        ...state.balanceToken,
-        [payload.id]: payload.balance,
-      };
-    },
-    setBalancePairToken(state, payload) {
-      state.balancePairToken = {
-        ...state.balancePairToken,
         [payload.id]: payload.balance,
       };
     },
@@ -29,25 +15,8 @@ export default {
       const balance = await getters.getProvider.getBalance(getters.getAccount);
       commit("setBalanceNativeToken", { balance, id });
     },
-    async checkBalanceToken({ getters, commit }, { contract, id }) {
-      const balance = await contract.balanceOf(getters.getAccount);
-      commit("setBalanceToken", { balance, id });
-    },
-    async checkBalancePairToken({ getters, commit }, { contract, id }) {
-      const balance = await contract.balanceOf(getters.getAccount);
-      commit("setBalancePairToken", { balance, id });
-    },
-    checkBalance({ commit }, { balance, type, id }) {
-      if (type === "checkBalanceToken") {
-        commit("setBalanceToken", { balance, id });
-      } else if (type === "checkBalancePairToken") {
-        commit("setBalancePairToken", { balance, id });
-      }
-    },
   },
   getters: {
     getBalanceNativeToken: (state) => (id) => state.balanceNativeToken[id],
-    getBalanceToken: (state) => (id) => state.balanceToken[id],
-    getBalancePairToken: (state) => (id) => state.balancePairToken[id],
   },
 };

@@ -11,7 +11,12 @@
     </div>
 
     <div class="liquidation-bar-wrap">
-      <LiquidationBar :pool="pool" />
+      <LiquidationBar
+        :tokenCurrentPrice="pool.token.price"
+        :ltv="pool.ltv"
+        :userBorrowPart="pool.userBorrowPart"
+        :userCollateralShare="pool.userCollateralShare"
+      />
     </div>
 
     <div class="valutes-row">
@@ -84,11 +89,11 @@ export default {
   },
   computed: {
     tokenPrice() {
-      const tokenToNUSD = 1 / this.$store.getters.getTokenPrice(this.pool.id);
+      const tokenToNUSD = 1 / this.pool.token.price;
       return tokenToNUSD;
     },
     stableCoinMultiplyer() {
-      if (this.$store.getters.getPoolLtv(this.pool.id) === 90) {
+      if (this.pool.ltv === 90) {
         return 10;
       }
 
@@ -96,10 +101,8 @@ export default {
     },
     liquidationPrice() {
       const liquidationPrice =
-        this.$store.getters.getUserBorrowPart(this.pool.id) /
-        ((this.$store.getters.getUserCollateralShare(this.pool.id) *
-          this.$store.getters.getPoolLtv(this.pool.id)) /
-          100);
+        this.pool.userBorrowPart /
+        ((this.pool.userCollateralShare * this.pool.ltv) / 100);
 
       return liquidationPrice;
     },
@@ -109,10 +112,7 @@ export default {
       return priceDifferens;
     },
     liquidationRisk() {
-      if (
-        +this.$store.getters.getUserBorrowPart(this.pool.id) === 0 ||
-        isNaN(this.liquidationPrice)
-      )
+      if (+this.pool.userBorrowPart === 0 || isNaN(this.liquidationPrice))
         return 0;
 
       const riskPersent =

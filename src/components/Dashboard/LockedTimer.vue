@@ -31,7 +31,6 @@ export default {
       }, 1000);
     },
     checkDuration() {
-      //console.log("CHECK DURR");
       let end = moment.unix(this.finalTime);
       let start = moment(new Date());
 

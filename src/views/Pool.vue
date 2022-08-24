@@ -23,28 +23,35 @@
         </div>
 
         <template v-if="pool">
-          <LiquidationBar :pool="pool" />
+          <LiquidationBar
+            :tokenCurrentPrice="pool.token.price"
+            :ltv="pool.ltv"
+            :userBorrowPart="pool.userBorrowPart"
+            :userCollateralShare="pool.userCollateralShare"
+          />
         </template>
       </div>
 
       <div v-if="pool" class="pool-content">
         <BorrowRepayComponent
           :actionType="actionType"
-          :balance="pool.userBalance"
-          :balanceNativeToken="pool.userBalanceNativeToken"
-          :exchangeRate="pool.tokenPrice"
+          :balance="pool.tokenBalance"
+          :balanceNativeToken="userBalanceNativeToken"
+          :exchangeRate="pool.token.price"
           :isUpdatePrice="pool.askUpdatePrice"
           :ltv="pool.ltv"
-          :pairBalance="pool.userPairBalance"
+          :pairBalance="pool.pairTokenBalance"
           :poolId="pool.id"
+          :poolName="pool.name"
           :tokenDecimals="pool.token.decimals"
           :tokenName="pool.token.name"
           :tokenPair="pool.tokenPairPrice"
           :tokenPairDecimals="pool.pairToken.decimals"
           :tokenPairName="pool.pairToken.name"
-          :tokenToUsd="pool.tokenPrice"
+          :tokenToUsd="pool.token.price"
           :userTotalBorrowed="pool.userBorrowPart"
           :userTotalCollateral="pool.userCollateralShare"
+          :borrowFee="pool.borrowFee"
           @addAndBorrow="addAndBorrowHandler"
           @addAndBorrowMultiple="addMultiBorrowHandler"
           @addCollateral="addCollateralHandler"
@@ -58,8 +65,8 @@
         />
 
         <CollateralParameters
-          :exchangeRate="tokenPrice"
-          :infoItems="collateralInfo"
+          :exchangeRate="pool.token.price"
+          :infoItems="pool.collateralInfo"
           :tokenName="pool.token.name"
         />
 
@@ -91,7 +98,10 @@ const LiquidationBar = () => import("@/components/Pool/LiquidationBar");
 const ActionComponent = () =>
   import("@/components/UiComponents/ActionComponent");
 
+import poolMixin from "@/mixins/pool.js";
+
 export default {
+  mixins: [poolMixin],
   data() {
     return {
       text: "Please connect your wallet",
@@ -103,14 +113,14 @@ export default {
     };
   },
   computed: {
+    blockNumber() {
+      return this.$store.getters.getBlockNumber;
+    },
     isConnected() {
       return this.$store.getters.getWalletIsConnected;
     },
     tokenPrice() {
-      return this.$store.getters.getTokenPrice(this.pool.id);
-    },
-    collateralInfo() {
-      return this.$store.getters.getCollateralInfo(this.pool.id);
+      return this.pool.token.price;
     },
     userBalancesProp() {
       const pool = this.pool;
@@ -121,12 +131,12 @@ export default {
           decimals: "18",
         },
         {
-          balance: this.userBalanceToken,
+          balance: this.pool.tokenBalance,
           token: pool.token.name,
           decimals: pool.token.decimals.toString(),
         },
         {
-          balance: this.userBalancePairToken,
+          balance: this.pool.pairTokenBalance,
           token: pool.pairToken.name,
           decimals: pool.pairToken.decimals.toString(),
         },
@@ -141,15 +151,9 @@ export default {
     userBalanceNativeToken() {
       return this.$store.getters.getBalanceNativeToken(this.pool.id);
     },
-    userBalanceToken() {
-      return this.$store.getters.getBalanceToken(this.pool.id);
-    },
-    userBalancePairToken() {
-      return this.$store.getters.getBalancePairToken(this.pool.id);
-    },
     pool() {
-      const poolId = Number(this.$route.params.id);
-      return this.$store.getters.getPoolById(poolId);
+      const poolInfo = this.$store.getters.getPoolInfo;
+      return poolInfo.isEnabled ? poolInfo : null;
     },
     signer() {
       return this.$store.getters.getSigner;
@@ -165,7 +169,7 @@ export default {
     async wrapperStatusTx(result) {
       const status = await result.wait();
       if (status) {
-        await this.updateBalancesAndCollateralInfo();
+        await this.refreshPoolInfo(this.$route.params.id, this.account);
       }
     },
     async walletBtnHandler() {
@@ -176,88 +180,6 @@ export default {
         type: "connectWallet",
         isShow: true,
       });
-    },
-    async updateBalancesAndCollateralInfo() {
-      if (this.useAVAX) {
-        await this.$store.dispatch("checkBalanceNativeToken", this.pool.id);
-      }
-      await this.checkCollateralInfo();
-    },
-    async checkCollateralInfo() {
-      const parsedDecimals = this.$ethers.BigNumber.from(
-        Math.pow(10, this.pool.token.oracleDatas.decimals).toLocaleString(
-          "fullwide",
-          {
-            useGrouping: false,
-          }
-        )
-      );
-      const data = [
-        {
-          function: "balanceOf",
-          arguments: [this.account],
-          target: this.pool.token.contract.address,
-          interface: this.pool.token.contractInterface,
-          type: "checkBalanceToken",
-          id: this.pool.id,
-        },
-        {
-          function: "balanceOf",
-          arguments: [this.account],
-          target: this.pool.pairTokenContract.address,
-          interface: this.pool.pairTokenContractInterface,
-          type: "checkBalancePairToken",
-          id: this.pool.id,
-        },
-        {
-          function: "userCollateralShare",
-          arguments: [this.account],
-          target: this.pool.contractInstance.address,
-          interface: this.pool.contractInterface,
-          decimals: this.pool.token.decimals,
-          id: this.pool.id,
-        },
-        {
-          function: "userBorrowPart",
-          arguments: [this.account],
-          target: this.pool.contractInstance.address,
-          interface: this.pool.contractInterface,
-          id: this.pool.id,
-        },
-        {
-          function: "totalBorrow",
-          arguments: [],
-          target: this.pool.contractInstance.address,
-          interface: this.pool.contractInterface,
-          id: this.pool.id,
-        },
-        {
-          function: "peekSpot",
-          arguments: [
-            this.$ethers.utils.defaultAbiCoder.encode(
-              ["address", "address", "uint256"],
-              [
-                this.pool.token.oracleDatas.multiply,
-                this.pool.token.oracleDatas.divide,
-                parsedDecimals,
-              ]
-            ),
-          ],
-          target: this.pool.oracleInstance.address,
-          interface: this.pool.oracleInterface,
-          id: this.pool.id,
-        },
-        {
-          function: "exchangeRate",
-          arguments: [],
-          target: this.pool.contractInstance.address,
-          interface: this.pool.contractInterface,
-          decimals: this.pool.token.decimals,
-          id: this.pool.id,
-        },
-      ];
-      await this.$store.dispatch("multicallMarkets", data);
-      await this.$store.dispatch("createCollateralInfo", this.pool.id);
     },
     getAVAXStatus() {
       return this.$store.getters.getUseAVAX;
@@ -2929,22 +2851,7 @@ export default {
     },
   },
   async created() {
-    if (!this.pool.isEnabled) {
-      this.$router.push({ name: "Stand" });
-      return false;
-    }
-
-    const poolId = Number(this.$route.params.id);
-    console.log("THIS IS - POOL ID: ", poolId);
-    const poolItem = this.$store.getters.getPoolById(poolId);
-
-    if (!poolItem) {
-      this.$router.push({ name: "Stand" });
-      console.log("POOL IS UNDEFINED");
-      return false;
-    }
-
-    console.log("POOL:", poolId);
+    await this.refreshPoolInfo(this.$route.params.id, this.account);
 
     if (
       this.$route.query.actionType &&
@@ -2961,6 +2868,18 @@ export default {
     BackButton,
     LiquidationBar,
     ActionComponent,
+  },
+  watch: {
+    blockNumber(value) {
+      console.log(value);
+      this.refreshPoolInfo(this.$route.params.id, this.account);
+    },
+    pool(value) {
+      if (!value.isEnabled) {
+        this.$router.push({ name: "Stand" });
+        return false;
+      }
+    },
   },
 };
 </script>

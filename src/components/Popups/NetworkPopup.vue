@@ -114,8 +114,6 @@ export default {
         this.$store.commit("setActiveNetwork", chainId);
         this.closePopup();
       }
-
-      console.log(resp);
     },
   },
   components: {
