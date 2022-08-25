@@ -22,7 +22,7 @@ export default {
       const blockNumber = await provider.getBlockNumber();
       this.$store.commit("setBlockNumber", blockNumber);
 
-      const timeout = process.env.BLOCK_REFRESH_TIMEOUT;
+      const timeout = process.env.VUE_APP_BLOCK_REFRESH_TIMEOUT || 30000;
       provider.once("block", () => {
         setTimeout(() => this.initBlockRefresh(), timeout);
       });

@@ -27,14 +27,19 @@ export default {
           stabilityFee: pool.stabilityFee,
           isEnabled: pool.isEnabled,
           token: pool.token,
+          pairToken: pool.pairToken,
+          masterContractInstance: pool.masterContractInstance,
+          masterContractInterface: pool.masterContractInterface
         };
 
         poolInfo.totalBorrow = standPoolsFetchData[pool.id].totalBorrow;
-        poolInfo.dynamicBorrowAmount =
-          standPoolsFetchData[pool.id].dynamicBorrowAmount;
+        poolInfo.balanceOfPool = standPoolsFetchData[pool.id].balanceOfPool;
 
         return poolInfo;
       });
+
+      // dynamic borrow amount
+      standPools = await this.updateDynamicBorrow(standPools);
 
       // refresh stand pools
       this.$store.commit("setStandPools", standPools);
@@ -84,30 +89,45 @@ export default {
 
         standPools[pools[i].id] = {
           totalBorrow: totalBorrowResult.base,
-          dynamicBorrowAmount: await this.getMaxBorrow(
-            pools[i].masterContractInstance,
-            pools[i].pairToken.address,
-            poolBalanceOfBentoResult[0]
-          ),
+          balanceOfPool: poolBalanceOfBentoResult[0],
         };
       }
 
       return standPools;
     },
-    async getMaxBorrow(bentoContract, tokenAddr, poolBalance) {
-      try {
-        const toAmount = await bentoContract.toAmount(
-          tokenAddr,
-          poolBalance,
-          false
+    async updateDynamicBorrow(pools) {
+      let multicallData = [];
+      for (let i = 0; i < pools.length; i++) {
+        multicallData.push({
+          function: "toAmount",
+          arguments: [
+            pools[i].pairToken.address,
+            pools[i].balanceOfPool,
+            false,
+          ],
+          target: pools[i].masterContractInstance.address,
+          interface: pools[i].masterContractInterface,
+          id: pools[i].id,
+        });
+      }
+
+      const multicallResult = await this.aggregate(multicallData);
+
+      for (let i = 0; i < pools.length; i++) {
+        const toAmountResult = this.getMulticallResult(
+          multicallData,
+          multicallResult,
+          pools[i].id,
+          "toAmount"
         );
 
-        const parsedAmount = this.$ethers.utils.formatUnits(toAmount, 18);
-        return parsedAmount;
-      } catch (e) {
-        console.log("getMaxBorrow err:", e);
-        return false;
+        pools[i].dynamicBorrowAmount = this.$ethers.utils.formatUnits(
+          toAmountResult[0],
+          18
+        );
       }
+
+      return pools;
     },
   },
 };
