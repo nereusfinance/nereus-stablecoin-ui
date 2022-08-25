@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isConnected" class="pool-view">
+  <div v-if="isConnected && pool" class="pool-view">
     <div class="container mini">
       <BackButton :text="'Back'" @click="toStand" />
 
@@ -120,7 +120,7 @@ export default {
       return this.$store.getters.getWalletIsConnected;
     },
     tokenPrice() {
-      return this.pool.token.price;
+      return this.pool ? this.pool.token.price : 0;
     },
     userBalancesProp() {
       const pool = this.pool;
@@ -152,8 +152,8 @@ export default {
       return this.$store.getters.getBalanceNativeToken(this.pool.id);
     },
     pool() {
-      const poolInfo = this.$store.getters.getPoolInfo;
-      return poolInfo.isEnabled ? poolInfo : null;
+      const pools = this.$store.getters.getPoolInfo;
+      return Object.keys(pools).length > 0 ? pools : null;
     },
     signer() {
       return this.$store.getters.getSigner;
@@ -2859,6 +2859,9 @@ export default {
         this.$route.query.actionType === "repay")
     )
       this.setActionType(this.$route.query.actionType);
+  },
+  destroyed() {
+    this.$store.commit("setPoolInfo", {});
   },
   components: {
     BorrowRepayComponent,
