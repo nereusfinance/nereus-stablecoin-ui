@@ -8,7 +8,9 @@
       @mouseleave="itsHover = false"
     >
       <ButtonLoader v-if="connectLoader" />
-      <template v-else-if="itsHover || isIncorrectCorrectNetwork">Disconnect</template>
+      <template v-else-if="itsHover || isIncorrectCorrectNetwork"
+        >Disconnect</template
+      >
       <template v-else>
         <div class="text-connect-block">
           {{ walletBtnText }}
@@ -106,9 +108,7 @@ export default {
     },
     isIncorrectCorrectNetwork() {
       const chainId = this.$store.getters.getChainId;
-      let networkObject = this.networks.find(
-          (item) => item.chainid == chainId
-      );
+      let networkObject = this.networks.find((item) => item.chainid == chainId);
       return !networkObject;
     },
     isConnected() {
@@ -132,7 +132,8 @@ export default {
           bridge: "https://bridge.walletconnect.org",
           rpc: {
             43113: "https://api.avax-test.network/ext/bc/C/rpc",
-            43114: "https://api.avax.network/ext/bc/C/rpc",
+            43114:
+              "https://frequent-cool-sound.avalanche-mainnet.quiknode.pro/a7130ea906e22f5cf3c33395202d55c5df69dce4/ext/bc/C/rpc",
           },
         });
         await walletConnectProvider.killSession();
