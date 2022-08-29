@@ -44,7 +44,7 @@ export default {
                 {
                   chainName: "Avalanche Mainnet C-Chain",
                   chainId: targetChain,
-                  rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
+                  rpcUrls: ["http://localhost:8545"],
                 },
               ],
             });
