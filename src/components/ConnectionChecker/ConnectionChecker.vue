@@ -4,6 +4,7 @@
 
 <script>
 import WalletConnectProvider from "@walletconnect/client";
+import { getDefaultRPCURL } from "@/utils/helpers";
 
 export default {
   data() {
@@ -31,7 +32,7 @@ export default {
       }
     },
     // call again the method if the route changes
-    '$route': 'checkProvider'
+    $route: "checkProvider",
   },
   methods: {
     async checkProvider() {
@@ -58,7 +59,7 @@ export default {
     },
     compareNetworkSupport(chainId) {
       const networkObject = this.availableNetworks.find(
-          (network) => network.chainId === chainId
+        (network) => network.chainId === chainId
       );
 
       if (chainId !== "0xa86a" && chainId !== "0x539" && chainId !== "0xa869") {
@@ -68,7 +69,7 @@ export default {
         });
 
         const routeName = this.$route.name;
-        if (routeName !== "Stand") this.$router.push({name: "Stand"});
+        if (routeName !== "Stand") this.$router.push({ name: "Stand" });
       }
 
       if (networkObject) this.$store.commit("setActiveNetwork", chainId);
@@ -77,7 +78,7 @@ export default {
       let accounts;
       const walletType = localStorage.getItem("walletType");
       if (walletType === "Metamask" && window.ethereum) {
-        accounts = await window.ethereum.request({method: "eth_accounts"});
+        accounts = await window.ethereum.request({ method: "eth_accounts" });
       }
       if (accounts && accounts.length > 0) {
         window.ethereum.on("chainChanged", this.reload);
@@ -91,7 +92,7 @@ export default {
           bridge: "https://bridge.walletconnect.org",
           rpc: {
             43113: "https://api.avax-test.network/ext/bc/C/rpc",
-            43114: "https://api.avax.network/ext/bc/C/rpc",
+            43114: getDefaultRPCURL(),
           },
         });
         walletConnectProvider.on("disconnect", this.reload);
@@ -129,12 +130,11 @@ export default {
       this.$store.commit("setSwapObject", null);
 
       const routeName = this.$route.name;
-      if (routeName !== "Stand") this.$router.push({name: "Stand"});
+      if (routeName !== "Stand") this.$router.push({ name: "Stand" });
     },
   },
   created() {
     this.checkProvider();
   },
-
 };
 </script>
