@@ -122,7 +122,7 @@
 
 <script>
 const TokenIcon = () => import("@/components/UiComponents/TokenIcon");
-import { floorToFixed } from "@/utils/fiexdMath/fixedMath";
+import { roundToFixed } from "@/utils/fiexdMath/fixedMath";
 
 export default {
   props: {
@@ -217,7 +217,7 @@ export default {
     },
     setMax() {
       if (!this.disabled && !this.isStake) {
-        this.value = floorToFixed(this.max, 6);
+        this.value = roundToFixed(this.max, this.decimals);
       } else if (!this.disabled && this.isStake) {
         this.value = this.max;
         if (this.maxWithdraw) this.maxWithdraw(true);
