@@ -2920,12 +2920,9 @@ export default {
 
       if (tokenPrice) {
         this.pool.tokenPrice = tokenPrice;
+      }
+      if (tokenPairPrice) {
         this.pool.tokenPairPrice = tokenPairPrice;
-        console.log(
-          "PAIR PRICES UPDATE",
-          this.pool.tokenPrice,
-          this.pool.tokenPairPrice
-        );
       }
     },
   },
