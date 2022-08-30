@@ -19,18 +19,17 @@
 <script>
 const Header = () => import("@/components/Header");
 const Footer = () => import("@/components/Footer");
-// const Banner = () => import("@/components/UiComponents/Banner");
 const PopupsWrapper = () => import("@/components/Popups/PopupWrapper");
 const NotificationContainer = () =>
   import("@/components/Notifications/NotificationContainer");
 const ConnectionChecker = () =>
   import("@/components/ConnectionChecker/ConnectionChecker");
-import poolsMixin from "@/mixins/pools.js";
+import initMixin from "@/mixins/init.js";
 import farmPoolsMixin from "@/mixins/farmPools.js";
 import swapMixin from "@/mixins/swap.js";
 
 export default {
-  mixins: [poolsMixin, farmPoolsMixin, swapMixin],
+  mixins: [initMixin, farmPoolsMixin, swapMixin],
   data() {
     return {
       checkInProcess: true,
@@ -38,9 +37,6 @@ export default {
     };
   },
   computed: {
-    // showBanner() {
-    //   return this.$store.getters.getShowBanner === "show";
-    // },
     showPopup() {
       return this.$store.getters.getPopupState;
     },
@@ -50,20 +46,13 @@ export default {
   },
   methods: {
     async checkSuccess() {
-      console.log("CHECK COMPLETE");
-      await this.createContracts();
-      await this.createFarmPools();
-      //.... await this.initSwap();
+      await this.initBlockRefresh();
+      await this.initContracts();
+      //await this.createFarmPools(); // we do not use FarmStand view, so dont need to fetch data for farm pools
       this.checkInProcess = false;
       clearInterval(this.farmPoolsTimer);
-
-      // this.farmPoolsTimer = setInterval(async () => {
-      //   await this.createFarmPools();
-      //   await this.createPools();
-      // }, 5000);
     },
     checkError(message) {
-      console.log("CHECK COMPLETE");
       clearInterval(this.farmPoolsTimer);
       this.checkInProcess = false;
 

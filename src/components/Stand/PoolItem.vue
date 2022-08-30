@@ -45,32 +45,9 @@ export default {
   },
   computed: {
     totalBorrow() {
-      // return parseFloat(
-      //   this.$ethers.utils.formatEther(this.pool.totalBorrow)
-      // ).toFixed(0);
       return parseFloat(
-        this.$ethers.utils.formatEther(
-          this.$store.getters.getTotalBorrow(this.pool.id)
-        )
+        this.$ethers.utils.formatEther(this.pool.totalBorrow)
       ).toFixed(0);
-    },
-    mainTokenPrice() {
-      return (
-        1 /
-        this.$ethers.utils.formatUnits(
-          this.pool.token.oracleExchangeRate,
-          this.pool.token.decimals
-        )
-      );
-    },
-    collateralParsed() {
-      return this.$ethers.utils.formatUnits(
-        this.pool.totalCollateralShare,
-        this.pool.token.decimals
-      );
-    },
-    collateralInUsd() {
-      return this.collateralParsed * this.mainTokenPrice;
     },
     isWTXPool() {
       if (this.pool.token.name === "WXT") {
@@ -207,6 +184,7 @@ export default {
       display: flex;
       flex-direction: row;
       align-items: center;
+      white-space: nowrap;
 
       .info-icon {
         margin: 0;

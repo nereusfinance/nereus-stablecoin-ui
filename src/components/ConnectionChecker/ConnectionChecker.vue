@@ -82,30 +82,19 @@ export default {
       if (accounts && accounts.length > 0) {
         window.ethereum.on("chainChanged", this.reload);
         window.ethereum.on("accountsChanged", this.onAccountChange);
-        window.ethereum.on("block", () => {
-          this.updatePoolData();
-        });
-        console.log("SET METAMASK ACCOUNT LISTENERS FUNC");
       } else if (walletType === "walletConnect") {
         const walletConnectProvider = new WalletConnectProvider({
           bridge: "https://bridge.walletconnect.org",
           rpc: {
             43113: "https://api.avax-test.network/ext/bc/C/rpc",
-            43114:
-              "https://frequent-cool-sound.avalanche-mainnet.quiknode.pro/a7130ea906e22f5cf3c33395202d55c5df69dce4/ext/bc/C/rpc",
+            43114: process.env.VUE_APP_TESTING
+              ? "http://localhost:8545"
+              : "https://frequent-cool-sound.avalanche-mainnet.quiknode.pro/a7130ea906e22f5cf3c33395202d55c5df69dce4/ext/bc/C/rpc",
           },
         });
         walletConnectProvider.on("disconnect", this.reload);
         walletConnectProvider.on("session_update", this.reload);
-        walletConnectProvider.on("block", () => {
-          this.updatePoolData();
-        });
-        console.log("SET WALLETCONNECT ACCOUNT LISTENERS FUNC");
       }
-    },
-    updatePoolData() {
-      const poolData = this.$store.getters.getPools;
-      console.log("poolData", poolData[0]);
     },
     onAccountChange(accounts) {
       if (accounts.length === 0) {
@@ -118,8 +107,6 @@ export default {
       window.location.reload();
     },
     disconnectHandler() {
-      console.log("disconnectHandler");
-
       this.$store.commit("closePopups");
       this.$store.commit("setAccount", null);
       this.$store.commit("setWalletConnection", false);

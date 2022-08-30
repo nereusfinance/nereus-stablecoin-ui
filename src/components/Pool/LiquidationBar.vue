@@ -40,18 +40,26 @@
 <script>
 export default {
   props: {
-    pool: {
-      type: Object,
+    tokenCurrentPrice: {
+      required: true,
+    },
+    ltv: {
+      required: true,
+    },
+    userBorrowPart: {
+      required: true,
+    },
+    userCollateralShare: {
       required: true,
     },
   },
   computed: {
     tokenPrice() {
-      const tokenToNUSD = 1 / this.$store.getters.getTokenPrice(this.pool.id);
+      const tokenToNUSD = 1 / this.tokenCurrentPrice;
       return tokenToNUSD;
     },
     stableCoinMultiplyer() {
-      if (this.$store.getters.getPoolLtv(this.pool.id) === 90) {
+      if (this.ltv === 90) {
         return 10;
       }
 
@@ -59,10 +67,7 @@ export default {
     },
     liquidationPrice() {
       const liquidationPrice =
-        this.$store.getters.getUserBorrowPart(this.pool.id) /
-        ((this.$store.getters.getUserCollateralShare(this.pool.id) *
-          this.$store.getters.getPoolLtv(this.pool.id)) /
-          100);
+        this.userBorrowPart / ((this.userCollateralShare * this.ltv) / 100);
       return liquidationPrice;
     },
     priceDifferens() {
@@ -71,11 +76,7 @@ export default {
       return priceDifferens;
     },
     liquidationRisk() {
-      if (
-        +this.$store.getters.getUserBorrowPart(this.pool.id) === 0 ||
-        isNaN(this.liquidationPrice)
-      )
-        return 0;
+      if (+this.userBorrowPart === 0 || isNaN(this.liquidationPrice)) return 0;
 
       const riskPersent =
         ((this.priceDifferens * this.stableCoinMultiplyer) / this.tokenPrice) *

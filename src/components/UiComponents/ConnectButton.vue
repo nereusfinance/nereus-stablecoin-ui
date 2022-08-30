@@ -132,8 +132,9 @@ export default {
           bridge: "https://bridge.walletconnect.org",
           rpc: {
             43113: "https://api.avax-test.network/ext/bc/C/rpc",
-            43114:
-              "https://frequent-cool-sound.avalanche-mainnet.quiknode.pro/a7130ea906e22f5cf3c33395202d55c5df69dce4/ext/bc/C/rpc",
+            43114: process.env.VUE_APP_TESTING
+              ? "http://localhost:8545"
+              : "https://frequent-cool-sound.avalanche-mainnet.quiknode.pro/a7130ea906e22f5cf3c33395202d55c5df69dce4/ext/bc/C/rpc",
           },
         });
         await walletConnectProvider.killSession();
