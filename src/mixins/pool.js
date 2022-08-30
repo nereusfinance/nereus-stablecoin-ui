@@ -313,27 +313,37 @@ export default {
         {
           title: "Collateral deposited",
           value: collateralDeposited,
+          tooltip: "Amount of Tokens Deposited as Collaterals",
           additional: "",
+          cyData: "collateral-deposited",
         },
         {
           title: "Collateral value",
           value: `$ ${parseFloat(tokenInUsd).toFixed(4)}`,
+          tooltip: "USD Value of the Collateral Deposited in your Position",
           additional: "",
+          cyData: "collateral-value",
         },
         {
           title: "NXUSD borrowed",
           value: `$ ${parseFloat(userBorrowPart).toFixed(4)}`,
+          tooltip: "NXUSD Currently Borrowed in your Position",
           additional: "",
+          cyData: "borrowed-value",
         },
         {
           title: "Liquidation price",
           value: `$ ${parseFloat(liquidationPrice.toString()).toFixed(6)}`,
+          tooltip: "Collateral Price at which your Position will be Liquidated",
           additional: "",
+          cyData: "liquidation-value",
         },
         {
           title: "NXUSD left to borrow",
           value: `${borrowLeftParsed}`,
+          tooltip: "NXUSD Borrowable Given the Collateral Deposited",
           additional: "",
+          cyData: "available-borrow",
         },
       ];
     },

@@ -38,7 +38,8 @@ export default {
         };
 
         poolInfo.userCollateralShare = this.$ethers.utils.formatUnits(
-          dashboardPoolsFetchData[pool.id].userCollateralShare.toString()
+          dashboardPoolsFetchData[pool.id].userCollateralShare.toString(),
+          pool.token.decimals
         );
         poolInfo.userBorrowPart = this.$ethers.utils.formatUnits(
           dashboardPoolsFetchData[pool.id].userBorrowPart.toString()
