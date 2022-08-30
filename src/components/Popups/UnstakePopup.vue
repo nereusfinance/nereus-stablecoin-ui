@@ -63,8 +63,6 @@ export default {
         );
 
         this.userBalance = parseFloat(this.userBalanceExact).toFixed(2);
-
-        console.log("getDeposited", parseFloat(this.userBalance));
       } catch (error) {
         console.log("getDeposited err:", error);
       }

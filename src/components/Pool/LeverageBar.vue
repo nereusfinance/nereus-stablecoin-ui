@@ -47,9 +47,6 @@ export default {
       type: Number,
       required: true,
     },
-    pool: {
-      required: true,
-    },
     tokentToNUSD: {
       required: true,
     },
@@ -60,6 +57,15 @@ export default {
       required: true,
     },
     maxPairValue: {
+      required: true,
+    },
+    borrowFee: {
+      required: true,
+    },
+    userBorrowPart: {
+      required: true,
+    },
+    userCollateralShare: {
       required: true,
     },
   },
@@ -74,8 +80,7 @@ export default {
       return sliderValue.toFixed(2);
     },
     leverageData() {
-      const borrowPerc =
-        (100 - this.$store.getters.getBorrowFee(this.pool.id)) / 100;
+      const borrowPerc = (100 - this.$store.borrowFee) / 100;
       const amountMultiplyer =
         (this.pairValue * this.pool.ltv) / this.maxPairValue / 100;
       let startAmount = this.pairValue * borrowPerc;
@@ -90,12 +95,10 @@ export default {
         }
       }
       const resultCollateral =
-        +this.$store.getters.getUserCollateralShare(this.pool.id) +
+        +this.userCollateralShare +
         +this.mainValue +
         finalBorrowAmount / this.tokentToNUSD;
-      const resultBorrow =
-        +this.$store.getters.getUserBorrowPart(this.pool.id) +
-        finalBorrowAmount;
+      const resultBorrow = +this.userBorrowPart + finalBorrowAmount;
       const liquidationPrice =
         resultBorrow / ((resultCollateral * this.pool.ltv) / 100);
       const priceDifferens = this.tokentToNUSD - liquidationPrice;
@@ -103,8 +106,7 @@ export default {
       return {
         liquidationRisk: liquidationRisk.toFixed(2),
         expectedNXUSDAmount: (
-          +finalBorrowAmount +
-          +this.$store.getters.getUserBorrowPart(this.pool.id)
+          +finalBorrowAmount + +this.userBorrowPart
         ).toFixed(4),
         liquidationPrice: liquidationPrice.toFixed(4),
       };

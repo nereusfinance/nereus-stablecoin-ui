@@ -177,11 +177,8 @@ export default {
       }
     },
     async stake() {
-      console.log("STAKE");
       try {
         const amount = this.$ethers.utils.parseEther(this.amount);
-
-        console.log("AMOUNT", amount.toString());
 
         const estimateGas =
           await this.sSpellTokenObject.mainToken.contractInstance.estimateGas.mint(
@@ -189,8 +186,6 @@ export default {
           );
 
         const gasLimit = 1000 + +estimateGas.toString();
-
-        console.log("gasLimit:", gasLimit);
 
         const tx = await this.sSpellTokenObject.mainToken.contractInstance.mint(
           amount,
@@ -208,11 +203,8 @@ export default {
       }
     },
     async unstake() {
-      console.log("UNSTAKE");
       try {
         const amount = this.$ethers.utils.parseEther(this.amount);
-
-        console.log("AMOUNT", amount.toString());
 
         const estimateGas =
           await this.sSpellTokenObject.mainToken.contractInstance.estimateGas.burn(
@@ -221,8 +213,6 @@ export default {
           );
 
         const gasLimit = 1000 + +estimateGas.toString();
-
-        console.log("gasLimit:", gasLimit);
 
         const tx = await this.sSpellTokenObject.mainToken.contractInstance.burn(
           this.account,
@@ -249,12 +239,6 @@ export default {
             gasLimit: 1000000,
           }
         );
-
-        console.log(
-          "SPELL TOKEN APPROVE:",
-          addressApprowed,
-          parseFloat(addressApprowed.toString()) > 0
-        );
         return parseFloat(addressApprowed.toString()) > 0;
       } catch (e) {
         console.log("SPELL isApprowed err:", e);
@@ -269,8 +253,6 @@ export default {
         );
 
         const gasLimit = 1000 + +estimateGas.toString();
-
-        console.log("gasLimit:", gasLimit);
 
         const tx = await tokenContract.approve(
           this.sSpellTokenObject.mainToken.contractInstance.address,

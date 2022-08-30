@@ -58,8 +58,10 @@
 const StandTable = () => import("@/components/Stand/Table");
 const ActionComponent = () =>
   import("@/components/UiComponents/ActionComponent");
+import standMixin from "@/mixins/stand.js";
 
 export default {
+  mixins: [standMixin],
   data() {
     return {
       text: "Please connect your wallet",
@@ -78,13 +80,16 @@ export default {
       search: "",
     };
   },
+  async created() {
+    await this.refreshStandPools();
+  },
   components: {
     StandTable,
     ActionComponent,
   },
   computed: {
-    pools() {
-      return this.$store.getters.getPools;
+    blockNumber() {
+      return this.$store.getters.getBlockNumber;
     },
     isConnected() {
       return (
@@ -93,7 +98,8 @@ export default {
       );
     },
     filteredList() {
-      let sortedArray = this.pools;
+      let sortedArray = this.$store.getters.getStandPools;
+
       if (this.search.length !== 0) {
         sortedArray = sortedArray.filter((pool) => {
           return pool.name.toLowerCase().includes(this.search.toLowerCase());
@@ -127,17 +133,9 @@ export default {
       return d1.name > d2.name ? 1 : -1;
     },
     sortByTVL(d1, d2) {
-      let borrowD1 = parseFloat(
-        this.$ethers.utils.formatEther(
-          this.$store.getters.getTotalBorrow(d1.id)
-        )
-      );
+      let borrowD1 = parseFloat(this.$ethers.utils.formatEther(d1.totalBorrow));
 
-      let borrowD2 = parseFloat(
-        this.$ethers.utils.formatEther(
-          this.$store.getters.getTotalBorrow(d2.id)
-        )
-      );
+      let borrowD2 = parseFloat(this.$ethers.utils.formatEther(d2.totalBorrow));
       return Number(borrowD1) < Number(borrowD2) ? 1 : -1;
     },
     setSortParam(sortParam) {
@@ -155,12 +153,17 @@ export default {
       });
     },
   },
+  watch: {
+    blockNumber(value) {
+      console.log(value);
+      this.refreshStandPools();
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 @import "src/mixins/screen-size";
-
 .stand-view {
   padding: 40px 0;
   position: relative;
@@ -201,7 +204,8 @@ export default {
 }
 
 .search-input {
-  background: #353535 url(../assets/images/search-icon.svg) 98% center no-repeat;
+  background: #353535 url(../assets/images/search-icon.svg) 98% center
+    no-repeat;
   display: flex;
   height: 32px;
   width: 160px;
@@ -230,7 +234,8 @@ export default {
 }
 
 .stand-sort #select {
-  background: #353535 url(../assets/images/arrow-list.svg) 98% center no-repeat;
+  background: #353535 url(../assets/images/arrow-list.svg) 98% center
+    no-repeat;
   appearance: none;
   color: #8a8a8a;
   display: flex;
@@ -255,7 +260,8 @@ export default {
 }
 
 div#select.active {
-  background: #262626 url(../assets/images/arrow-list.svg) 98% center no-repeat;
+  background: #262626 url(../assets/images/arrow-list.svg) 98% center
+    no-repeat;
   border: 1px solid #ffffff;
   color: white;
 }

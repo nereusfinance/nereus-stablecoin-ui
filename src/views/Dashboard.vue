@@ -7,7 +7,7 @@
         <p>Transactions</p>
       </div>
 
-      <template v-if="pools">
+      <template>
         <StatisticsBlock :pools="userPools" />
 
         <div class="btns-group">
@@ -58,9 +58,10 @@ const ActionComponent = () =>
   import("@/components/UiComponents/ActionComponent");
 
 import sspellToken from "@/mixins/sspellToken.js";
+import dashboardMixin from "@/mixins/dashboard.js";
 
 export default {
-  mixins: [sspellToken],
+  mixins: [sspellToken, dashboardMixin],
   data() {
     return {
       text: "Please connect your wallet",
@@ -70,14 +71,15 @@ export default {
     };
   },
   computed: {
-    pools() {
-      return this.$store.getters.getPools;
+    blockNumber() {
+      return this.$store.getters.getBlockNumber;
     },
     isConnected() {
       return this.$store.getters.getWalletIsConnected;
     },
     userPools() {
-      return this.pools.filter(
+      let pools = this.$store.getters.getDashboardPools;
+      return pools.filter(
         (pool) =>
           pool.userBorrowPart !== "0.0" || pool.userCollateralShare !== "0.0"
       );
@@ -107,21 +109,18 @@ export default {
         console.log("getuserBorrowPartNonce err:", e);
       }
     },
-    async getUserCollateralShare(poolContract) {
-      try {
-        const userCollateralShare = await poolContract.userCollateralShare(
-          this.account
-        );
-        return userCollateralShare;
-      } catch (e) {
-        console.log("getUserCollateralShare err:", e);
-      }
-    },
   },
   async created() {
     this.createStakePool();
+    await this.refreshDashboardPools(this.account);
   },
   mounted() {},
+  watch: {
+    blockNumber(value) {
+      console.log(value);
+      this.refreshDashboardPools(this.account);
+    },
+  },
   components: {
     StatisticsBlock,
     OpenPoolItem,
@@ -133,7 +132,6 @@ export default {
 
 <style lang="scss" scoped>
 @import "src/mixins/screen-size";
-
 .stand-action-view {
   position: relative;
   flex: 1;

@@ -60,9 +60,13 @@
         :nxusdAmount="
           this.actionType === 'borrow' ? this.pairValue : -this.mainValue
         "
-        :pool="pool"
         :tokentToNUSD="tokentToNUSD"
         :value="percentValue"
+        :userBorrowPart="userTotalBorrowed"
+        :tokenCurrentPrice="tokenToUsd"
+        :poolId="poolId"
+        :pairTokenName="tokenPairName"
+        :ltv="ltv"
         @onchange="updatePercentValue"
       />
     </div>
@@ -114,7 +118,9 @@
           :maxPairValue="maxPairValue"
           :multiplier="multiplier"
           :pairValue="pairValue"
-          :pool="pool"
+          :borrowFee="borrowFee"
+          :userBorrowPart="userTotalBorrowed"
+          :userCollateralShare="userTotalCollateral"
           :tokentToNUSD="tokentToNUSD"
           @update="updateMultiplier"
         />
@@ -162,7 +168,6 @@
           :maxCollateralToRemove="this.maxPairValue.toString()"
           :minCollateralToRemove="this.minPairValue.toString()"
           :pairTokenName="pairValueTokenName"
-          :pool="pool"
           @updateAmountToRepay="updateMainValue"
           @updateCollateralToRemove="updatePairValue"
         />
@@ -278,6 +283,13 @@ export default {
     exchangeRate: {
       required: true,
     },
+    poolName: {
+      required: true,
+      type: String,
+    },
+    borrowFee: {
+      required: true,
+    },
   },
   data() {
     return {
@@ -321,10 +333,6 @@ export default {
     },
   },
   computed: {
-    pool() {
-      const poolId = Number(this.$route.params.id);
-      return this.$store.getters.getPoolById(poolId);
-    },
     useAVAX() {
       return this.$store.getters.getUseAVAX;
     },
@@ -335,29 +343,21 @@ export default {
       let show =
         this.actionType === "repay" ||
         (this.actionType === "borrow" &&
-          +this.$store.getters.getUserCollateralShare(this.poolId) +
-            +this.mainValue);
+          +this.userTotalCollateral + +this.mainValue);
       if (show) return true;
       else return false;
     },
     maxMainValueWithoutDeleverage() {
       const balance = this.getAVAXStatus()
-        ? this.$ethers.utils.formatEther(
-            this.$store.getters.getBalanceNativeToken(this.poolId).toString()
-          )
-        : this.$ethers.utils.formatUnits(
-            this.$store.getters.getBalanceToken(this.poolId).toString(),
-            this.tokenDecimals
-          );
+        ? this.$ethers.utils.formatEther(this.balanceNativeToken.toString())
+        : this.$ethers.utils.formatUnits(this.balance, this.tokenDecimals);
 
       if (this.actionType === "borrow") return balance;
       if (this.actionType === "repay") {
-        const userBorrowPart = this.$store.getters.getUserBorrowPart(
-          this.poolId
-        );
-        return parseFloat(userBorrowPart) > parseFloat(this.parsedPairBalance)
+        return parseFloat(this.userTotalBorrowed) >
+          parseFloat(this.parsedPairBalance)
           ? this.parsedPairBalance
-          : userBorrowPart;
+          : this.userTotalBorrowed;
       }
 
       return 0;
@@ -374,9 +374,7 @@ export default {
         parseFloat(this.maxMainValueWithoutDeleverage) +
         this.maxCollateralAvailableForDeleverage * exchangeRateWithSlipage;
       // User can not repay more than he has borrowed
-      const maxValueUserBorrowed = parseFloat(
-        this.$store.getters.getUserBorrowPart(this.poolId)
-      );
+      const maxValueUserBorrowed = parseFloat(this.userTotalBorrowed);
       return Math.min(maxValueForCollateral, maxValueUserBorrowed);
     },
     minPairValue() {
@@ -413,7 +411,7 @@ export default {
     },
     parsedPairBalance() {
       return this.$ethers.utils.formatUnits(
-        this.$store.getters.getBalancePairToken(this.poolId).toString(),
+        this.pairBalance,
         this.tokenPairDecimals
       );
     },
@@ -429,27 +427,19 @@ export default {
         let maxPairValue;
 
         valueInDolars =
-          (+this.$store.getters.getUserCollateralShare(this.poolId) +
-            +this.mainValue) /
-          this.tokenToUsd;
+          (+this.userTotalCollateral + +this.mainValue) / this.tokenToUsd;
         maxPairValue =
-          (valueInDolars / 100) * (this.ltv - 1) -
-          this.$store.getters.getUserBorrowPart(this.poolId);
+          (valueInDolars / 100) * (this.ltv - 1) - this.userTotalBorrowed;
 
         return floorToFixed(
-          maxPairValue *
-            ((100 - this.$store.getters.getBorrowFee(this.poolId)) / 100),
+          maxPairValue * ((100 - this.borrowFee) / 100),
           this.pairValueDecimals
         );
       }
 
       if (this.actionType === "repay") {
-        const borrowedInDolarts =
-          this.$store.getters.getUserBorrowPart(this.poolId) /
-          this.tokenPairToUsd;
-        const collateralInDolarts =
-          this.$store.getters.getUserCollateralShare(this.poolId) /
-          this.tokenToUsd;
+        const borrowedInDolarts = this.userTotalBorrowed / this.tokenPairToUsd;
+        const collateralInDolarts = this.userTotalCollateral / this.tokenToUsd;
 
         let maxAmount;
 
@@ -480,12 +470,8 @@ export default {
       return 0;
     },
     maxCollateralAvailableForDeleverage() {
-      const borrowedInDolarts =
-        this.$store.getters.getUserBorrowPart(this.poolId) /
-        this.tokenPairToUsd;
-      const collateralInDolarts =
-        this.$store.getters.getUserCollateralShare(this.poolId) /
-        this.tokenToUsd;
+      const borrowedInDolarts = this.userTotalBorrowed / this.tokenPairToUsd;
+      const collateralInDolarts = this.userTotalCollateral / this.tokenToUsd;
 
       const collateralInUSDNeedToLeft =
         ((borrowedInDolarts - this.maxMainValueWithoutDeleverage) * 100) /
@@ -522,21 +508,17 @@ export default {
     },
 
     liquidationPrice() {
-      const userCollateralShare = +this.$store.getters.getUserCollateralShare(
-        this.poolId
-      );
+      const userCollateralShare = +this.userTotalCollateral;
 
       if (this.actionType === "borrow") {
         const liquidationPrice =
-          (+this.$store.getters.getUserBorrowPart(this.poolId) +
-            +this.pairValue) /
+          (+this.userTotalBorrowed + +this.pairValue) /
           (((userCollateralShare + +parseFloat(+this.mainValue)) * this.ltv) /
             100);
 
         return liquidationPrice;
       } else {
-        const numerator =
-          +this.$store.getters.getUserBorrowPart(this.poolId) - +this.mainValue;
+        const numerator = +this.userTotalBorrowed - +this.mainValue;
 
         const denominator =
           ((userCollateralShare - +parseFloat(+this.pairValue || 0)) *
@@ -763,8 +745,6 @@ export default {
 
       if (!percentValue) return false;
 
-      console.log("DATA", data);
-
       const slipageMutiplier = (100 - this.slipage) / 100;
 
       const amountMultiplyer = percentValue / 100;
@@ -799,8 +779,6 @@ export default {
         minExpected: minValueParsed,
       };
 
-      console.log("AMOUNT AFTER", type, mimAmount.toString());
-
       this.$emit(type, payload);
     },
     clearData() {
@@ -819,23 +797,11 @@ export default {
 
       this.mainValueError = "";
 
-      if (parseFloat(value) > parseFloat(this.maxMainValue)) {
-        this.mainValueError = `Insufficient amount. The value available ${this.maxMainValue}`;
-        return false;
-      }
-
-      this.mainValueError = "";
-
       if (this.actionType === "repay") {
         const collateralPercent = (this.pairValue / this.maxPairValue) * 100;
-        const borrowPercent =
-          (value / this.$store.getters.getUserBorrowPart(this.poolId)) * 100; //this.userTotalBorrowed
-        const borrowedInDolarts =
-          this.$store.getters.getUserBorrowPart(this.poolId) /
-          this.tokenPairToUsd; //this.userTotalBorrowed
-        const collateralInDolarts =
-          this.$store.getters.getUserCollateralShare(this.poolId) /
-          this.tokenToUsd; //this.userTotalCollateral
+        const borrowPercent = (value / this.userTotalBorrowed) * 100;
+        const borrowedInDolarts = this.userTotalBorrowed / this.tokenPairToUsd;
+        const collateralInDolarts = this.userTotalCollateral / this.tokenToUsd;
         const userHasDolars = collateralInDolarts - borrowedInDolarts;
         const acceptedPercent = (userHasDolars / collateralInDolarts) * 100;
         if (
@@ -908,19 +874,12 @@ export default {
 
       this.userBalance = parsedBalance;
 
-      console.log("FORMAT BALANCE:", this.userBalance);
-
       if (this.balanceNativeToken) {
         const parsedBalanceNativeToken = this.$ethers.utils.formatEther(
           this.balanceNativeToken.toString()
         );
 
         this.userBalanceNativeToken = parsedBalanceNativeToken;
-
-        console.log(
-          "FORMAT BALANCE NATIVE TOKEN:",
-          this.userBalanceNativeToken
-        );
       }
     },
   },

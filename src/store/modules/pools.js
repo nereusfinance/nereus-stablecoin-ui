@@ -3,8 +3,12 @@ export default {
     pools: [],
     farmPools: [],
     mim3Pool: null,
+    blockNumber: null
   },
   mutations: {
+    setBlockNumber(state, payload) {
+      state.blockNumber = payload;
+    },
     setPools(state, payload) {
       state.pools = payload;
     },
@@ -25,5 +29,6 @@ export default {
       return state.farmPools.find((pool) => pool.id === id);
     },
     getMim3Pools: (state) => state.mim3Pool,
+    getBlockNumber: (state) => state.blockNumber,
   },
 };
