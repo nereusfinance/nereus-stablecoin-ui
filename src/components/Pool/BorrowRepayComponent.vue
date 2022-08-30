@@ -427,14 +427,14 @@ export default {
         let maxPairValue;
 
         valueInDolars =
-            (+this.userTotalCollateral + +this.mainValue) / this.tokenToUsd;
+          (+this.userTotalCollateral + +this.mainValue) / this.tokenToUsd;
         maxPairValue =
-            (valueInDolars / 100) * (this.ltv - 1) - this.userTotalBorrowed;
+          (valueInDolars / 100) * (this.ltv - 1) - this.userTotalBorrowed;
         maxPairValue = maxPairValue < 0 ? 0 : maxPairValue;
 
         return roundToFixed(
-            maxPairValue * ((100 - this.borrowFee) / 100),
-            this.pairValueDecimals
+          maxPairValue * ((100 - this.borrowFee) / 100),
+          this.pairValueDecimals
         );
       }
 
@@ -449,21 +449,21 @@ export default {
             ((borrowedInDolarts -
               Math.min(this.mainValue, this.maxMainValueWithoutDeleverage)) *
               100) /
-            this.ltv;
+            (this.ltv - 1);
           let collateralInUSDCanRemove =
-              collateralInDolarts - collateralInUSDNeedToLeft;
+            collateralInDolarts - collateralInUSDNeedToLeft;
           collateralInUSDCanRemove =
-              collateralInUSDCanRemove < 0 ? 0 : collateralInUSDCanRemove;
+            collateralInUSDCanRemove < 0 ? 0 : collateralInUSDCanRemove;
           maxAmount =
             (collateralInUSDCanRemove * this.userTotalCollateral) /
             collateralInDolarts;
         } else {
           const collateralInUSDNeedToLeft =
-            (borrowedInDolarts * 100) / this.ltv;
+            (borrowedInDolarts * 100) / (this.ltv - 1);
           let collateralInUSDCanRemove =
-              collateralInDolarts - collateralInUSDNeedToLeft;
+            collateralInDolarts - collateralInUSDNeedToLeft;
           collateralInUSDCanRemove =
-              collateralInUSDCanRemove < 0 ? 0 : collateralInUSDCanRemove;
+            collateralInUSDCanRemove < 0 ? 0 : collateralInUSDCanRemove;
           maxAmount =
             (collateralInUSDCanRemove * this.userTotalCollateral) /
             collateralInDolarts;
