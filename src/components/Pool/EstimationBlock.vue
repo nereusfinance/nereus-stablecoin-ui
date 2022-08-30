@@ -1,7 +1,7 @@
 <template>
   <div class="estimation-block">
     <div class="item-main">
-      <p>{{ `${this.pool.pairToken.name} Amount` }}</p>
+      <p>{{ `${this.pairTokenName} Amount` }}</p>
       <p class="percent-text"><span>~$ </span>{{ this.nxusdAmountDisplay }}</p>
     </div>
 
@@ -43,11 +43,22 @@ export default {
       type: Number,
       require: true,
     },
-    value: {},
-    pool: {
-      type: Object,
+    userBorrowPart: {
       required: true,
     },
+    tokenCurrentPrice: {
+      required: true,
+    },
+    poolId: {
+      required: true,
+    },
+    pairTokenName: {
+      required: true,
+    },
+    ltv: {
+      required: true,
+    },
+    value: {},
     tokentToNUSD: {
       required: true,
     },
@@ -67,20 +78,19 @@ export default {
   computed: {
     nxusdAmountDisplay() {
       return (
-        parseFloat(this.$store.getters.getUserBorrowPart(this.pool.id)) +
-        parseFloat(this.nxusdAmount || 0)
+        parseFloat(this.userBorrowPart) + parseFloat(this.nxusdAmount || 0)
       ).toFixed(8);
     },
     borrowPart() {
-      const borrowPart = this.$store.getters.getUserBorrowPart(this.pool.id);
+      const borrowPart = this.userBorrowPart;
       return borrowPart.slice(0, 4);
     },
     tokenPrice() {
-      const tokenToNUSD = 1 / this.$store.getters.getTokenPrice(this.pool.id);
+      const tokenToNUSD = 1 / this.tokenCurrentPrice;
       return tokenToNUSD;
     },
     stableCoinMultiplyer() {
-      if (this.$store.getters.getPoolLtv(this.pool.id) === 90) {
+      if (this.ltv === 90) {
         return 10;
       }
       return 1;
@@ -96,9 +106,7 @@ export default {
     },
     liquidationRisk() {
       if (
-        +this.$store.getters.getUserBorrowPart(this.pool.id) +
-          parseFloat(this.nxusdAmount) ===
-          0 ||
+        +this.userBorrowPart + parseFloat(this.nxusdAmount) === 0 ||
         isNaN(this.liquidityPrice)
       )
         return parseFloat("0").toFixed(2);

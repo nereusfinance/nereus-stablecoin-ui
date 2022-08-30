@@ -42,8 +42,6 @@ export default {
           contractInstance: stakeTokenInstance,
         },
       };
-
-      console.log("STAKE TOKEN:", stakeObject);
       this.$store.commit("setSSpellObject", stakeObject);
     },
   },

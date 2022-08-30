@@ -23,8 +23,6 @@ export default {
         chainPools.map((pool) => this.createFarmPool(pool))
       );
 
-      console.log("STAND CREATED FARMS POOLS:", pools);
-
       this.$store.commit("setFarmPools", pools);
     },
     async createFarmPool(farmPoolInfo) {
