@@ -223,7 +223,7 @@ const EstimationBlock = () => import("@/components/Pool/EstimationBlock");
 const LeverageBar = () => import("@/components/Pool/LeverageBar");
 const SlipageBlock = () => import("@/components/Pool/SlipageBlock");
 const DeleverageBar = () => import("@/components/Pool/DeleverageBar");
-import { floorToFixed } from "@/utils/fiexdMath/fixedMath";
+import { roundToFixed } from "@/utils/fiexdMath/fixedMath";
 
 export default {
   props: {
@@ -430,8 +430,9 @@ export default {
           (+this.userTotalCollateral + +this.mainValue) / this.tokenToUsd;
         maxPairValue =
           (valueInDolars / 100) * (this.ltv - 1) - this.userTotalBorrowed;
+        maxPairValue = maxPairValue < 0 ? 0 : maxPairValue;
 
-        return floorToFixed(
+        return roundToFixed(
           maxPairValue * ((100 - this.borrowFee) / 100),
           this.pairValueDecimals
         );
@@ -448,23 +449,27 @@ export default {
             ((borrowedInDolarts -
               Math.min(this.mainValue, this.maxMainValueWithoutDeleverage)) *
               100) /
-            this.ltv;
-          const collateralInUSDCanRemove =
+            (this.ltv - 1);
+          let collateralInUSDCanRemove =
             collateralInDolarts - collateralInUSDNeedToLeft;
+          collateralInUSDCanRemove =
+            collateralInUSDCanRemove < 0 ? 0 : collateralInUSDCanRemove;
           maxAmount =
             (collateralInUSDCanRemove * this.userTotalCollateral) /
             collateralInDolarts;
         } else {
           const collateralInUSDNeedToLeft =
-            (borrowedInDolarts * 100) / this.ltv;
-          const collateralInUSDCanRemove =
+            (borrowedInDolarts * 100) / (this.ltv - 1);
+          let collateralInUSDCanRemove =
             collateralInDolarts - collateralInUSDNeedToLeft;
+          collateralInUSDCanRemove =
+            collateralInUSDCanRemove < 0 ? 0 : collateralInUSDCanRemove;
           maxAmount =
             (collateralInUSDCanRemove * this.userTotalCollateral) /
             collateralInDolarts;
         }
 
-        return floorToFixed(maxAmount, this.pairValueDecimals);
+        return roundToFixed(maxAmount, this.pairValueDecimals);
       }
 
       return 0;
@@ -476,13 +481,15 @@ export default {
       const collateralInUSDNeedToLeft =
         ((borrowedInDolarts - this.maxMainValueWithoutDeleverage) * 100) /
         this.ltv;
-      const collateralInUSDCanRemove =
+      let collateralInUSDCanRemove =
         collateralInDolarts - collateralInUSDNeedToLeft;
+      collateralInUSDCanRemove =
+        collateralInUSDCanRemove < 0 ? 0 : collateralInUSDCanRemove;
       const maxAmount =
         (collateralInUSDCanRemove * this.userTotalCollateral) /
         collateralInDolarts;
 
-      return floorToFixed(maxAmount, this.pairValueDecimals);
+      return roundToFixed(maxAmount, this.pairValueDecimals);
     },
     signer() {
       return this.$store.getters.getSigner;
@@ -581,7 +588,7 @@ export default {
           );
 
           const parsedPair = this.$ethers.utils.parseUnits(
-            this.toFixed(this.pairValue, 6),
+            this.pairValue.toString(),
             this.pairValueDecimals
           );
 
@@ -602,7 +609,7 @@ export default {
 
         if (this.actionType === "repay") {
           let parsedAmount = this.$ethers.utils.parseUnits(
-            this.toFixed(this.mainValue, 6),
+            this.mainValue.toString(),
             this.mainValueDecimals
           );
           let parsedPair = this.$ethers.utils.parseUnits(
@@ -663,7 +670,7 @@ export default {
         }
         if (this.actionType === "repay") {
           const parsedAmount = this.$ethers.utils.parseUnits(
-            this.toFixed(this.mainValue, 6),
+            this.mainValue.toString(),
             this.mainValueDecimals
           );
 
@@ -680,10 +687,7 @@ export default {
               amount: parsedAmount,
               updatePrice: this.updatePrice,
               collateralAmount: this.$ethers.utils.parseUnits(
-                floorToFixed(
-                  this.minPairValue,
-                  this.pairValueDecimals
-                ).toString(),
+                roundToFixed(this.minPairValue, this.pairValueDecimals),
                 this.pairValueDecimals
               ),
             };
@@ -704,10 +708,9 @@ export default {
       if (this.pairValue) {
         if (this.actionType === "borrow") {
           const parsedPair = this.$ethers.utils.parseUnits(
-            this.toFixed(this.pairValue, 6),
+            this.pairValue.toString(),
             this.pairValueDecimals
           );
-
           const payload = {
             amount: parsedPair,
             updatePrice: this.updatePrice,

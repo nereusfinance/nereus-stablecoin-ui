@@ -222,9 +222,7 @@ export default {
         //   getters.getAccount
         // );
 
-        const parsedBorrowed = ethers.utils.formatUnits(
-          userBorrowPart.toString()
-        );
+        const parsedBorrowed = ethers.utils.formatUnits(userBorrowPart);
 
         commit("setUserBorrowPart", { userBorrowPart: parsedBorrowed, id });
       } catch (e) {
@@ -242,7 +240,10 @@ export default {
 
       const maxNUSDBorrow = (tokenInUsd / 100) * (ltv - 1);
 
-      const borrowLeft = parseFloat(maxNUSDBorrow - userBorrowPart).toFixed(20);
+      const borrowLeft =
+        maxNUSDBorrow < userBorrowPart
+          ? "0"
+          : parseFloat(maxNUSDBorrow - userBorrowPart).toFixed(20);
       let re = new RegExp(
         // eslint-disable-next-line no-useless-escape
         `^-?\\d+(?:\.\\d{0,` + (4 || -1) + `})?`

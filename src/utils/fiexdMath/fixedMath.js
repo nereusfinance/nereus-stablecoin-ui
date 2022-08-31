@@ -1,18 +1,15 @@
-export const decimalAdjust = (type, value, exp) => {
-  if (typeof exp === "undefined" || +exp === 0) {
-    return Math[type](value);
-  }
-  value = +value;
-  exp = +exp;
-  if (isNaN(value) || !(typeof exp === "number" && exp % 1 === 0)) {
-    return NaN;
-  }
-  value = value.toString().split("e");
-  value = Math[type](+(value[0] + "e" + (value[1] ? +value[1] - exp : -exp)));
-  value = value.toString().split("e");
-  return +(value[0] + "e" + (value[1] ? +value[1] + exp : exp));
-};
+import { Decimal } from "decimal.js";
 
-export const floorToFixed = (value, decimals) => {
-  return decimalAdjust("floor", value, -decimals);
+export const roundToFixed = (value, decimals) => {
+  try {
+    const val = new Decimal(value).toDecimalPlaces(
+      decimals,
+      Decimal.ROUND_FLOOR
+    );
+    return val.toFixed();
+  } catch (err) {
+    console.error("roundToFixed err", err);
+  }
+
+  return value;
 };
