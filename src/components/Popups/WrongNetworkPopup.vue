@@ -44,11 +44,7 @@ export default {
                 {
                   chainName: "Avalanche Mainnet C-Chain",
                   chainId: targetChain,
-                  rpcUrls: [
-                    process.env.VUE_APP_TESTING
-                      ? "http://localhost:8545"
-                      : "https://api.avax.network/ext/bc/C/rpc",
-                  ],
+                  rpcUrls: ["https://api.avax.network/ext/bc/C/rpc"],
                 },
               ],
             });
