@@ -47,7 +47,7 @@ export default {
                   rpcUrls: [
                     process.env.VUE_APP_TESTING
                       ? "http://localhost:8545"
-                      : "https://frequent-cool-sound.avalanche-mainnet.quiknode.pro/a7130ea906e22f5cf3c33395202d55c5df69dce4/ext/bc/C/rpc",
+                      : "https://api.avax.network/ext/bc/C/rpc",
                   ],
                 },
               ],
