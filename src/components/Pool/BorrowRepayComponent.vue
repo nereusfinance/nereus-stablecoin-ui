@@ -455,8 +455,10 @@ export default {
           collateralInUSDCanRemove =
             collateralInUSDCanRemove < 0 ? 0 : collateralInUSDCanRemove;
           maxAmount =
-            (collateralInUSDCanRemove * this.userTotalCollateral) /
-            collateralInDolarts;
+            collateralInUSDNeedToLeft === 0
+              ? this.userTotalCollateral
+              : (collateralInUSDCanRemove * this.userTotalCollateral) /
+                collateralInDolarts;
         } else {
           const collateralInUSDNeedToLeft =
             (borrowedInDolarts * 100) / (this.ltv - 1);
@@ -465,8 +467,10 @@ export default {
           collateralInUSDCanRemove =
             collateralInUSDCanRemove < 0 ? 0 : collateralInUSDCanRemove;
           maxAmount =
-            (collateralInUSDCanRemove * this.userTotalCollateral) /
-            collateralInDolarts;
+            collateralInUSDNeedToLeft === 0
+              ? this.userTotalCollateral
+              : (collateralInUSDCanRemove * this.userTotalCollateral) /
+                collateralInDolarts;
         }
 
         return roundToFixed(maxAmount, this.pairValueDecimals);
