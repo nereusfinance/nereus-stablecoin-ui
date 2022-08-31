@@ -76,7 +76,7 @@
       </div>
     </div>
   </div>
-  <div v-else class="stand-action-view">
+  <div v-else-if="!isConnected" class="stand-action-view">
     <ActionComponent
       :disabled-status="disabledStatus"
       :name="name"
