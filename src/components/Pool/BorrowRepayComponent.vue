@@ -628,6 +628,7 @@ export default {
           };
 
           if (
+            this.mainValue === this.userTotalBorrowed &&
             this.mainValue === this.maxMainValue &&
             this.pairValue === this.maxPairValue
           ) {
