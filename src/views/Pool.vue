@@ -76,7 +76,7 @@
       </div>
     </div>
   </div>
-  <div v-else class="stand-action-view">
+  <div v-else-if="!isConnected" class="stand-action-view">
     <ActionComponent
       :disabled-status="disabledStatus"
       :name="name"
@@ -2837,17 +2837,15 @@ export default {
       return price.USD;
     },
     async updatePrices() {
-      this.pool.tokenPrice =
-        1 / (await this.getTokenPrice(this.pool.token.name));
-      this.pool.tokenPairPrice = await this.getTokenPrice(
-        this.pool.pairToken.name
-      );
+      const tokenPrice = 1 / (await this.getTokenPrice(this.pool.token.name));
+      const tokenPairPrice = await this.getTokenPrice(this.pool.pairToken.name);
 
-      console.log(
-        "PAIR PRICES UPDATE",
-        this.pool.tokenPrice,
-        this.pool.tokenPairPrice
-      );
+      if (tokenPrice) {
+        this.pool.tokenPrice = tokenPrice;
+      }
+      if (tokenPairPrice) {
+        this.pool.tokenPairPrice = tokenPairPrice;
+      }
     },
   },
   async created() {
