@@ -130,7 +130,7 @@ export default {
         : -1;
     },
     sortByTitle(d1, d2) {
-      return d1.name > d2.name ? 1 : -1;
+      return d1.name.toUpperCase() > d2.name.toUpperCase() ? 1 : -1;
     },
     sortByTVL(d1, d2) {
       let borrowD1 = parseFloat(this.$ethers.utils.formatEther(d1.totalBorrow));
@@ -204,8 +204,7 @@ export default {
 }
 
 .search-input {
-  background: #353535 url(../assets/images/search-icon.svg) 98% center
-    no-repeat;
+  background: #353535 url(../assets/images/search-icon.svg) 98% center no-repeat;
   display: flex;
   height: 32px;
   width: 160px;
@@ -234,8 +233,7 @@ export default {
 }
 
 .stand-sort #select {
-  background: #353535 url(../assets/images/arrow-list.svg) 98% center
-    no-repeat;
+  background: #353535 url(../assets/images/arrow-list.svg) 98% center no-repeat;
   appearance: none;
   color: #8a8a8a;
   display: flex;
@@ -260,8 +258,7 @@ export default {
 }
 
 div#select.active {
-  background: #262626 url(../assets/images/arrow-list.svg) 98% center
-    no-repeat;
+  background: #262626 url(../assets/images/arrow-list.svg) 98% center no-repeat;
   border: 1px solid #ffffff;
   color: white;
 }
