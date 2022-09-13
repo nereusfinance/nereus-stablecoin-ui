@@ -97,22 +97,10 @@ export default {
       );
     },
     apyTierOne() {
-      let APYTier1 = this.$store.getters.getUserData[0][2];
-      if (APYTier1 && Number(APYTier1)) {
-        return parseFloat(this.normalizeBNValuesToUnits(APYTier1)).toFixed();
-      } else {
-        const configData = this.$store.getters.getAPYDataConfig;
-        const defaultAPYTier1 = configData[1].APYTier1;
-        return parseFloat(this.normalizeBNValuesToUnits(defaultAPYTier1)).toFixed();
-      }
+      return "20";
     },
     apyTierTwo() {
-      let apy = this.$store.getters.getConfig.APYTier2;
-      if (apy) {
-        return parseFloat(this.normalizeBNValuesToUnits(apy)).toFixed();
-      } else {
-        return 0;
-      }
+      return "8";
     },
     tierOne() {
       const userData = this.$store.getters.getUserData;
