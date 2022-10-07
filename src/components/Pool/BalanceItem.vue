@@ -3,6 +3,12 @@
     <div class="value-type">
       <TokenIcon :token="this.item.token" />
       <p>{{ this.item.token }}</p>
+      <Redeem
+        v-if="this.item.useRedeem"
+        :contract="this.item.contract"
+        :balance="this.item.balance"
+        v-on="$listeners"
+      />
     </div>
     <p class="value-text">{{ balance }}</p>
   </div>
@@ -10,6 +16,7 @@
 
 <script>
 const TokenIcon = () => import("@/components/UiComponents/TokenIcon");
+const Redeem = () => import("@/components/Pool/Redeem");
 
 export default {
   props: {
@@ -39,6 +46,7 @@ export default {
   },
   components: {
     TokenIcon,
+    Redeem,
   },
 };
 </script>

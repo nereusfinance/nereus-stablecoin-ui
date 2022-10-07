@@ -1,41 +1,8 @@
 import oracleAbi from "@/utils/contracts/abis/oracleAbi.json";
+import tokenizedVaultCompOracleAbi from "@/utils/contracts/abis/tokenizedVaultCompOracleAbi.json";
+import addresses from "@/utils/contracts/addresses.json";
 
 export default [
-  {
-    name: "AVAXOracle",
-    id: 1,
-    contractChain: "0xa869",
-    address: "0x3FB913D0c17AD4e8e5aEFCcA97B9dDEaC403cDc2",
-    abi: oracleAbi,
-  },
-  {
-    name: "ETHOracle",
-    id: 2,
-    contractChain: "0xa869",
-    address: "0xf534d31BdB86F658925c64446c50f69CF485E6d9",
-    abi: oracleAbi,
-  },
-  {
-    name: "BTCOracle",
-    id: 3,
-    contractChain: "0xa869",
-    address: "0x0eD8515D4B74f281BC1A13e9Ed49a712369ae916",
-    abi: oracleAbi,
-  },
-  {
-    name: "DAIOracle",
-    id: 4,
-    contractChain: "0xa869",
-    address: "0x8AB969a41b658Ee9981c2d5AA61EDA98a3a860Cc",
-    abi: oracleAbi,
-  },
-  {
-    name: "WXTOracle",
-    id: 5,
-    contractChain: "0xa869",
-    address: "0x42d3d4b15822b1b7976BF2711514E18513Ab8a49",
-    abi: oracleAbi,
-  },
   {
     name: "WXTOracle",
     id: 6,
@@ -112,5 +79,40 @@ export default [
     contractChain: "0xa86a",
     address: "0xf955a6694C6F5629f5Ecd514094B3bd450b59000",
     abi: oracleAbi,
+  },
+  {
+    name: "aAvaUSDTVOracle",
+    id: 18,
+    contractChain: "0xa86a",
+    address: addresses.aAvaUSDT.oracle,
+    abi: oracleAbi,
+  },
+  {
+    name: "aAvaUSDCVOracle",
+    id: 19,
+    contractChain: "0xa86a",
+    address: addresses.aAvaUSDC.oracle,
+    abi: oracleAbi,
+  },
+  {
+    name: "aAvaDAIVOracle",
+    id: 20,
+    contractChain: "0xa86a",
+    address: addresses.aAvaDAI.oracle,
+    abi: oracleAbi,
+  },
+  {
+    name: "qiDAIVOracle",
+    id: 21,
+    contractChain: "0xa86a",
+    address: addresses.qiDAI.oracle,
+    abi: tokenizedVaultCompOracleAbi,
+  },
+  {
+    name: "qiUSDCnVOracle",
+    id: 22,
+    contractChain: "0xa86a",
+    address: addresses.qiUSDCn.oracle,
+    abi: tokenizedVaultCompOracleAbi,
   },
 ];

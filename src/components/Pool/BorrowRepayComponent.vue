@@ -24,6 +24,32 @@
       <p class="label-text" @click="toggleUseAVAX">Use AVAX</p>
     </div>
 
+    <div
+      v-if="actionType === 'borrow' && !!this.vaultAsset"
+      class="checkbox-wrap"
+    >
+      <div
+        :class="{ active: useVaultAsset }"
+        class="box-wrap"
+        data-cy="use-vault-asset"
+        @click="toggleUseVaultAsset"
+      >
+        <div v-if="!useVaultAsset" class="checkbox">
+          <img
+            alt=""
+            class="checkbox-checked"
+            src="@/assets/images/checkboxChecked.svg"
+          />
+        </div>
+        <div v-else class="checkbox">
+          <img alt="" src="@/assets/images/checkbox.svg" />
+        </div>
+      </div>
+      <p class="label-text" @click="toggleUseVaultAsset">
+        Use {{ this.tokenName }}
+      </p>
+    </div>
+
     <div class="input-wrap">
       <ValueInput
         :cy-data="'main-input'"
@@ -71,7 +97,7 @@
       />
     </div>
 
-    <div v-if="actionType === 'borrow' && !showLeverage" class="config-box">
+    <div v-if="actionType === 'borrow' && false" class="config-box">
       <LiquidationRules
         :liquidationPrice="liquidationPrice"
         :maxValue="ltv"
@@ -112,7 +138,7 @@
       </div>
 
       <template v-if="showLeverage">
-        <SlipageBlock :slipage="slipage" @update="updateSlipage" />
+        <SlippageBlock :slippage="slippage" @update="updateSlippage" />
         <LeverageBar
           :mainValue="mainValue"
           :maxPairValue="maxPairValue"
@@ -158,7 +184,7 @@
         />
       </div>
       <template v-if="showDeleverage">
-        <SlipageBlock :slipage="slipage" @update="updateSlipage" />
+        <SlippageBlock :slippage="slippage" @update="updateSlippage" />
         <DeleverageBar
           :amountToRepay="this.mainValue.toString()"
           :collateralToRemove="this.pairValue ? this.pairValue.toString() : '0'"
@@ -221,7 +247,7 @@ const ValueInput = () => import("@/components/UiComponents/ValueInput");
 const LiquidationRules = () => import("@/components/Pool/LiquidatonRules");
 const EstimationBlock = () => import("@/components/Pool/EstimationBlock");
 const LeverageBar = () => import("@/components/Pool/LeverageBar");
-const SlipageBlock = () => import("@/components/Pool/SlipageBlock");
+const SlippageBlock = () => import("@/components/Pool/SlippageBlock");
 const DeleverageBar = () => import("@/components/Pool/DeleverageBar");
 import { roundToFixed } from "@/utils/fiexdMath/fixedMath";
 
@@ -239,9 +265,16 @@ export default {
     pairBalance: {
       require: true,
     },
+    vaultAssetBalance: {
+      require: false,
+    },
     tokenName: {
       type: String,
       required: true,
+    },
+    vaultAsset: {
+      type: Object,
+      required: false,
     },
     tokenToUsd: {
       type: Number,
@@ -308,10 +341,10 @@ export default {
       updatePrice: this.isUpdatePrice,
 
       multiplier: 1,
-      slipage: 1,
+      slippage: 1,
       showLeverage: false,
       showDeleverage: false,
-      poolsWithoutLeveradge: ["DAI", "AVAX", "WBTC", "WETH", "WXT"],
+      poolsWithoutLeverage: [],
     };
   },
   watch: {
@@ -336,6 +369,9 @@ export default {
     useAVAX() {
       return this.$store.getters.getUseAVAX;
     },
+    useVaultAsset() {
+      return this.$store.getters.getUseVaultAsset;
+    },
     liquidationMultiplier() {
       return (200 - this.ltv) / 100;
     },
@@ -344,13 +380,25 @@ export default {
         this.actionType === "repay" ||
         (this.actionType === "borrow" &&
           +this.userTotalCollateral + +this.mainValue);
-      if (show) return true;
-      else return false;
+      return !!show;
     },
     maxMainValueWithoutDeleverage() {
-      const balance = this.getAVAXStatus()
-        ? this.$ethers.utils.formatEther(this.balanceNativeToken.toString())
-        : this.$ethers.utils.formatUnits(this.balance, this.tokenDecimals);
+      let balance;
+      if (this.getAVAXStatus()) {
+        balance = this.$ethers.utils.formatEther(
+          this.balanceNativeToken.toString()
+        );
+      } else if (this.getVaultAssetStatus()) {
+        balance = this.$ethers.utils.formatUnits(
+          this.vaultAssetBalance,
+          this.vaultAsset.decimals
+        );
+      } else {
+        balance = this.$ethers.utils.formatUnits(
+          this.balance,
+          this.tokenDecimals
+        );
+      }
 
       if (this.actionType === "borrow") return balance;
       if (this.actionType === "repay") {
@@ -367,12 +415,12 @@ export default {
         return this.maxMainValueWithoutDeleverage;
       }
 
-      const exchangeRateWithSlipage =
-        (100 - this.slipage) / 100 / this.exchangeRate;
+      const exchangeRateWithSlippage =
+        (100 - this.slippage) / 100 / this.exchangeRate;
       // Max value that can be repayed using the user collateral
       const maxValueForCollateral =
         parseFloat(this.maxMainValueWithoutDeleverage) +
-        this.maxCollateralAvailableForDeleverage * exchangeRateWithSlipage;
+        this.maxCollateralAvailableForDeleverage * exchangeRateWithSlippage;
       // User can not repay more than he has borrowed
       const maxValueUserBorrowed = parseFloat(this.userTotalBorrowed);
       return Math.min(maxValueForCollateral, maxValueUserBorrowed);
@@ -383,13 +431,20 @@ export default {
       if (parsedValue <= parsedMax) {
         return "0";
       }
-      const exchangeRateWithSlipage =
-        (100 * this.exchangeRate) / (100 - this.slipage);
-      return (parsedValue - parsedMax) * exchangeRateWithSlipage || 0;
+      const exchangeRateWithSlippage =
+        (100 * this.exchangeRate) / (100 - this.slippage);
+      return (parsedValue - parsedMax) * exchangeRateWithSlippage || 0;
     },
     mainValueTokenName() {
-      const tokenSymbol = this.getAVAXStatus() ? "AVAX" : this.tokenName;
-      if (this.actionType === "borrow") return tokenSymbol;
+      if (this.actionType === "borrow") {
+        if (this.getVaultAssetStatus()) {
+          return this.vaultAsset.name;
+        } else if (this.getAVAXStatus()) {
+          return "AVAX";
+        } else {
+          return this.tokenName;
+        }
+      }
       if (this.actionType === "repay") return this.tokenPairName;
       return "XX";
     },
@@ -405,7 +460,13 @@ export default {
       return 18;
     },
     mainValueDecimals() {
-      if (this.actionType === "borrow") return this.tokenDecimals;
+      if (this.actionType === "borrow") {
+        if (this.getVaultAssetStatus()) {
+          return this.vaultAsset.decimals;
+        }
+
+        return this.tokenDecimals;
+      }
       if (this.actionType === "repay") return this.tokenPairDecimals;
       return 18;
     },
@@ -548,11 +609,14 @@ export default {
     getAVAXStatus() {
       return this.$store.getters.getUseAVAX;
     },
+    getVaultAssetStatus() {
+      return this.$store.getters.getUseVaultAsset && !!this.vaultAsset;
+    },
     updateMultiplier(newVal) {
       this.multiplier = newVal;
     },
-    updateSlipage(newVal) {
-      this.slipage = newVal;
+    updateSlippage(newVal) {
+      this.slippage = newVal;
     },
     toggleUpdatePrice() {
       this.updatePrice = !this.updatePrice;
@@ -572,6 +636,12 @@ export default {
     toggleUseAVAX() {
       const AVAXStatus = this.$store.getters.getUseAVAX;
       this.$store.commit("setUseAVAX", !AVAXStatus);
+      this.updateMainValue(this.mainValue);
+      this.updatePairValue(this.pairValue);
+    },
+    toggleUseVaultAsset() {
+      const vaultAssetStatus = this.$store.getters.getUseVaultAsset;
+      this.$store.commit("setUseVaultAsset", !vaultAssetStatus);
       this.updateMainValue(this.mainValue);
       this.updatePairValue(this.pairValue);
     },
@@ -753,9 +823,9 @@ export default {
 
       if (!percentValue) return false;
 
-      const slipageMutiplier = (100 - this.slipage) / 100;
+      const slippageMultiplier = (100 - this.slippage) / 100;
 
-      const amountMultiplyer = percentValue / 100;
+      const amountMultiplier = percentValue / 100;
 
       let startAmount = data.amount * 0.995;
       let finalAmount = 0;
@@ -763,7 +833,7 @@ export default {
       for (let i = this.multiplier; i > 0; i--) {
         if (i > 1) {
           finalAmount += +startAmount;
-          startAmount = startAmount * amountMultiplyer;
+          startAmount = startAmount * amountMultiplier;
         } else {
           finalAmount += +startAmount * i;
         }
@@ -774,7 +844,7 @@ export default {
         this.pairValueDecimals
       );
 
-      const minValue = finalAmount * this.tokenToUsd * slipageMutiplier;
+      const minValue = finalAmount * this.tokenToUsd * slippageMultiplier;
 
       const minValueParsed = this.$ethers.utils.parseUnits(
         this.toFixed(minValue, this.mainValueDecimals),
@@ -899,7 +969,7 @@ export default {
     LiquidationRules,
     EstimationBlock,
     LeverageBar,
-    SlipageBlock,
+    SlippageBlock,
     DeleverageBar,
   },
 };

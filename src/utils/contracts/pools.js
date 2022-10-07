@@ -1,10 +1,13 @@
 import cauldronV2Abi from "@/utils/contracts/abis/cauldronV2Abi.json";
+import tokenizedVaultV1Abi from "@/utils/contracts/abis/tokenizedVaultV1Abi.json";
+import aTokenAbi from "@/utils/contracts/abis/aTokenAbi.json";
 import erc20Abi from "@/utils/contracts/abis/erc20Abi.json";
 import nxusdAbi from "@/utils/contracts/abis/nxusdAbi.json";
 import swapperAbi from "@/utils/contracts/abis/swapperAbi.json";
 import usdcAbi from "@/utils/contracts/abis/usdcAbi.json";
 import sAvaxAbi from "@/utils/contracts/abis/sAvaxAbi.json";
 import reverseSwapperContractAbiV1 from "@/utils/contracts/abis/reverseSwapperContractAbiV1";
+import addresses from "@/utils/contracts/addresses.json";
 
 export default [
   {
@@ -487,5 +490,196 @@ export default [
       address: "0x197De282d7b5cEFfFD8f8B0196c30e8401593CF6",
       abi: reverseSwapperContractAbiV1,
     },
+  },
+  {
+    name: "aAvaUSDTV",
+    contractChain: "0xa86a",
+    id: 18,
+    contract: {
+      name: "CauldronV2",
+      address: addresses.aAvaUSDT.cauldron,
+      abi: cauldronV2Abi,
+    },
+    token: {
+      name: "aAvaUSDTV",
+      decimals: 18,
+      address: addresses.aAvaUSDT.vault,
+      oracleId: 18,
+      oracleDatas: {
+        multiply: "0x0000000000000000000000000000000000000000",
+        divide: "0x0000000000000000000000000000000000000000",
+        decimals: 0,
+      },
+      abi: tokenizedVaultV1Abi,
+    },
+    vaultAsset: {
+      name: "aAvaUSDT",
+      decimals: 6,
+      address: addresses.aAvaUSDT.vaultAsset,
+      abi: aTokenAbi,
+      isERC2612Supported: true,
+      domainName: "Aave Avalanche USDT",
+    },
+    pairToken: {
+      name: "NXUSD",
+      decimals: 18,
+      address: "0xF14f4CE569cB3679E99d5059909E23B07bd2F387",
+      abi: nxusdAbi,
+    },
+    stabilityFee: 5,
+    interest: 0,
+    ltv: 90,
+  },
+  {
+    name: "aAvaUSDCV",
+    contractChain: "0xa86a",
+    id: 19,
+    contract: {
+      name: "CauldronV2",
+      address: addresses.aAvaUSDC.cauldron,
+      abi: cauldronV2Abi,
+    },
+    token: {
+      name: "aAvaUSDCV",
+      decimals: 18,
+      address: addresses.aAvaUSDC.vault,
+      oracleId: 19,
+      oracleDatas: {
+        multiply: "0x0000000000000000000000000000000000000000",
+        divide: "0x0000000000000000000000000000000000000000",
+        decimals: 0,
+      },
+      abi: tokenizedVaultV1Abi,
+    },
+    vaultAsset: {
+      name: "aAvaUSDC",
+      decimals: 6,
+      address: addresses.aAvaUSDC.vaultAsset,
+      abi: aTokenAbi,
+      isERC2612Supported: true,
+      domainName: "Aave Avalanche USDC",
+    },
+    pairToken: {
+      name: "NXUSD",
+      decimals: 18,
+      address: "0xF14f4CE569cB3679E99d5059909E23B07bd2F387",
+      abi: nxusdAbi,
+    },
+    stabilityFee: 5,
+    interest: 0,
+    ltv: 90,
+  },
+  {
+    name: "aAvaDAIV",
+    contractChain: "0xa86a",
+    id: 20,
+    contract: {
+      name: "CauldronV2",
+      address: addresses.aAvaDAI.cauldron,
+      abi: cauldronV2Abi,
+    },
+    token: {
+      name: "aAvaDAIV",
+      decimals: 18,
+      address: addresses.aAvaDAI.vault,
+      oracleId: 20,
+      oracleDatas: {
+        multiply: "0x0000000000000000000000000000000000000000",
+        divide: "0x0000000000000000000000000000000000000000",
+        decimals: 0,
+      },
+      abi: tokenizedVaultV1Abi,
+    },
+    vaultAsset: {
+      name: "aAvaDAI",
+      decimals: 18,
+      address: addresses.aAvaDAI.vaultAsset,
+      abi: aTokenAbi,
+      isERC2612Supported: true,
+      domainName: "Aave Avalanche DAI",
+    },
+    pairToken: {
+      name: "NXUSD",
+      decimals: 18,
+      address: "0xF14f4CE569cB3679E99d5059909E23B07bd2F387",
+      abi: nxusdAbi,
+    },
+    stabilityFee: 5,
+    interest: 0,
+    ltv: 90,
+  },
+  {
+    name: "qiDAIV",
+    contractChain: "0xa86a",
+    id: 21,
+    contract: {
+      name: "CauldronV2",
+      address: addresses.qiDAI.cauldron,
+      abi: cauldronV2Abi,
+    },
+    token: {
+      name: "qiDAIV",
+      decimals: 18,
+      address: addresses.qiDAI.vault,
+      oracleId: 21,
+      oracleDatas: {
+        multiply: "0x0000000000000000000000000000000000000000",
+        divide: "0x0000000000000000000000000000000000000000",
+        decimals: 0,
+      },
+      abi: tokenizedVaultV1Abi,
+    },
+    vaultAsset: {
+      name: "qiDAI",
+      decimals: 8,
+      address: addresses.qiDAI.vaultAsset,
+      abi: erc20Abi,
+    },
+    pairToken: {
+      name: "NXUSD",
+      decimals: 18,
+      address: "0xF14f4CE569cB3679E99d5059909E23B07bd2F387",
+      abi: nxusdAbi,
+    },
+    stabilityFee: 5,
+    interest: 0,
+    ltv: 90,
+  },
+  {
+    name: "qiUSDCnV",
+    contractChain: "0xa86a",
+    id: 22,
+    contract: {
+      name: "CauldronV2",
+      address: addresses.qiUSDCn.cauldron,
+      abi: cauldronV2Abi,
+    },
+    token: {
+      name: "qiUSDCnV",
+      decimals: 18,
+      address: addresses.qiUSDCn.vault,
+      oracleId: 22,
+      oracleDatas: {
+        multiply: "0x0000000000000000000000000000000000000000",
+        divide: "0x0000000000000000000000000000000000000000",
+        decimals: 0,
+      },
+      abi: tokenizedVaultV1Abi,
+    },
+    vaultAsset: {
+      name: "qiUSDCn",
+      decimals: 8,
+      address: addresses.qiUSDCn.vaultAsset,
+      abi: erc20Abi,
+    },
+    pairToken: {
+      name: "NXUSD",
+      decimals: 18,
+      address: "0xF14f4CE569cB3679E99d5059909E23B07bd2F387",
+      abi: nxusdAbi,
+    },
+    stabilityFee: 5,
+    interest: 0,
+    ltv: 90,
   },
 ];

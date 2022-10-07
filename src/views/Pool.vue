@@ -41,10 +41,12 @@
           :isUpdatePrice="pool.askUpdatePrice"
           :ltv="pool.ltv"
           :pairBalance="pool.pairTokenBalance"
+          :vaultAssetBalance="pool.vaultAssetBalance"
           :poolId="pool.id"
           :poolName="pool.name"
           :tokenDecimals="pool.token.decimals"
           :tokenName="pool.token.name"
+          :vaultAsset="pool.vaultAsset"
           :tokenPair="pool.tokenPairPrice"
           :tokenPairDecimals="pool.pairToken.decimals"
           :tokenPairName="pool.pairToken.name"
@@ -70,7 +72,10 @@
           :tokenName="pool.token.name"
         />
 
-        <Balances :balances="userBalancesProp" />
+        <Balances
+          :balances="userBalancesProp"
+          @refreshPoolInfo="refreshPoolInfoHandler"
+        />
 
         <InfoBlock :infoItems="pool.mainInfo" />
       </div>
@@ -124,28 +129,57 @@ export default {
     },
     userBalancesProp() {
       const pool = this.pool;
-      const balances = [
-        {
-          balance: this.userBalanceNativeToken,
-          token: "AVAX",
-          decimals: "18",
-        },
-        {
-          balance: this.pool.tokenBalance,
-          token: pool.token.name,
-          decimals: pool.token.decimals.toString(),
-        },
-        {
-          balance: this.pool.pairTokenBalance,
-          token: pool.pairToken.name,
-          decimals: pool.pairToken.decimals.toString(),
-        },
-      ];
-      if (pool.name !== "AVAX") {
-        const filterBalances = balances.slice(1);
-        return filterBalances;
+      if (pool.vaultAsset) {
+        return [
+          {
+            balance: this.pool.vaultAssetBalance,
+            token: pool.vaultAsset.name,
+            decimals: pool.vaultAsset.decimals.toString(),
+          },
+          {
+            balance: this.pool.tokenBalance,
+            token: pool.token.name,
+            decimals: pool.token.decimals.toString(),
+            useRedeem: true,
+            contract: pool.token.contract,
+          },
+          {
+            balance: this.pool.pairTokenBalance,
+            token: pool.pairToken.name,
+            decimals: pool.pairToken.decimals.toString(),
+          },
+        ];
+      } else if (pool.name === "AVAX") {
+        return [
+          {
+            balance: this.userBalanceNativeToken,
+            token: "AVAX",
+            decimals: "18",
+          },
+          {
+            balance: this.pool.tokenBalance,
+            token: pool.token.name,
+            decimals: pool.token.decimals.toString(),
+          },
+          {
+            balance: this.pool.pairTokenBalance,
+            token: pool.pairToken.name,
+            decimals: pool.pairToken.decimals.toString(),
+          },
+        ];
       } else {
-        return balances;
+        return [
+          {
+            balance: this.pool.tokenBalance,
+            token: pool.token.name,
+            decimals: pool.token.decimals.toString(),
+          },
+          {
+            balance: this.pool.pairTokenBalance,
+            token: pool.pairToken.name,
+            decimals: pool.pairToken.decimals.toString(),
+          },
+        ];
       }
     },
     userBalanceNativeToken() {
@@ -166,6 +200,9 @@ export default {
     },
   },
   methods: {
+    async refreshPoolInfoHandler() {
+      await this.refreshPoolInfo(this.$route.params.id, this.account);
+    },
     async wrapperStatusTx(result) {
       const status = await result.wait();
       if (status) {
@@ -184,6 +221,9 @@ export default {
     getAVAXStatus() {
       return this.$store.getters.getUseAVAX;
     },
+    getVaultAssetStatus() {
+      return this.$store.getters.getUseVaultAsset && !!this.pool.vaultAsset;
+    },
     setActionType(type) {
       if (type !== this.actionType) this.actionType = type;
     },
@@ -195,7 +235,7 @@ export default {
     async addMultiBorrowHandler(data) {
       console.log("ADD COLL OR/AND BORROW -MULTI- HANDLER", data);
 
-      let isTokenToCookApprove = await this.isTokenApprowed(
+      let isTokenToCookApprove = await this.isTokenApproved(
         this.pool.token.contract,
         this.pool.masterContractInstance.address.toLowerCase()
       );
@@ -207,7 +247,7 @@ export default {
         );
       }
 
-      let isTokenToSwapApprove = await this.isTokenApprowed(
+      let isTokenToSwapApprove = await this.isTokenApproved(
         this.pool.token.contract,
         this.pool.swapContract.address
       );
@@ -219,7 +259,7 @@ export default {
         );
       }
 
-      let isPairTokenToSwapApprove = await this.isTokenApprowed(
+      let isPairTokenToSwapApprove = await this.isTokenApproved(
         this.pool.pairTokenContract,
         this.pool.swapContract.address
       );
@@ -231,107 +271,214 @@ export default {
         );
       }
 
-      const isApprowed = await this.isApprowed();
+      const isApproved = await this.isMasterContractApproved();
 
       if (
         isTokenToCookApprove &&
         isTokenToSwapApprove &&
         isPairTokenToSwapApprove
       ) {
-        this.cookMultiBorrow(data, isApprowed);
+        this.cookMultiBorrow(data, isApproved);
         return false;
       }
     },
     async addAndBorrowHandler(data) {
-      console.log("ADD COLL & BORROW HANDLER", data);
-      const useAVAXStatus = this.getAVAXStatus();
-      const isApprowed = await this.isApprowed();
+      try {
+        console.log("ADD COLL & BORROW HANDLER", data);
+        const useAVAX = this.getAVAXStatus();
+        const useVaultAsset = this.getVaultAssetStatus();
 
-      if (useAVAXStatus) {
-        this.cookAddAndBorrow(data, isApprowed);
-      } else {
-        const isTokenApprove = await this.isTokenApprowed(
-          this.pool.token.contract,
-          this.pool.masterContractInstance.address
-        );
-
-        if (isTokenApprove) {
-          this.cookAddAndBorrow(data, isApprowed);
-          return false;
+        if (useAVAX) {
+          await this.cookAddAndBorrow(data);
+        } else if (useVaultAsset) {
+          const sharesAmount = await this.vaultAssetDepositHandler({
+            depositAmount: data.collateralAmount,
+          });
+          await this.cookAddAndBorrow({
+            ...data,
+            collateralAmount: sharesAmount,
+          });
+        } else {
+          await this.approveTokenIfRequired();
+          await this.cookAddAndBorrow(data);
         }
-
-        const approveResult = await this.approveToken(
-          this.pool.token.contract,
-          this.pool.masterContractInstance.address
-        );
-        if (approveResult) this.cookAddAndBorrow(data, isApprowed);
+      } catch (err) {
+        console.error("addAndBorrowHandler error", err);
       }
     },
     async addCollateralHandler(data) {
-      console.log("ADD COL HANDLER", data);
-      const useAVAXStatus = this.getAVAXStatus();
-      const isApprowed = await this.isApprowed();
+      try {
+        console.log("ADD COL HANDLER", data);
+        const useAVAX = this.getAVAXStatus();
+        const useVaultAsset = this.getVaultAssetStatus();
 
-      if (useAVAXStatus) {
-        this.cookAddCollateral(data, isApprowed);
-      } else {
-        const isTokenApprove = await this.isTokenApprowed(
-          this.pool.token.contract,
-          this.pool.masterContractInstance.address
-        );
-
-        if (isTokenApprove) {
-          this.cookAddCollateral(data, isApprowed);
-          return false;
+        if (useAVAX) {
+          await this.cookAddCollateral(data);
+        } else if (useVaultAsset) {
+          const sharesAmount = await this.vaultAssetDepositHandler({
+            depositAmount: data.amount,
+          });
+          await this.cookAddCollateral({
+            ...data,
+            amount: sharesAmount,
+          });
+        } else {
+          await this.approveTokenIfRequired();
+          await this.cookAddCollateral(data);
         }
+      } catch (err) {
+        console.error("addCollateral error", err);
+      }
+    },
+    async approveTokenIfRequired() {
+      const isTokenApprove = await this.isTokenApproved(
+        this.pool.token.contract,
+        this.pool.masterContractInstance.address
+      );
 
+      if (!isTokenApprove) {
         const approveResult = await this.approveToken(
           this.pool.token.contract,
           this.pool.masterContractInstance.address
         );
-        if (approveResult) this.cookAddCollateral(data, isApprowed);
+
+        if (!approveResult) {
+          throw Error("Token approval error");
+        }
       }
     },
-    async borrowHandler(data) {
-      console.log("BORROW HANDLER", data);
-      const isApprowed = await this.isApprowed();
+    async approvePairTokenIfRequired() {
+      const isTokenApprove = await this.isTokenApproved(
+        this.pool.pairTokenContract,
+        this.pool.masterContractInstance.address
+      );
 
-      if (isApprowed) {
-        this.cookBorrow(data, isApprowed);
+      if (!isTokenApprove) {
+        const approveResult = await this.approveToken(
+          this.pool.pairTokenContract,
+          this.pool.masterContractInstance.address
+        );
+
+        if (!approveResult) {
+          throw Error("Pair Token approval error");
+        }
+      }
+    },
+    async vaultAssetDepositHandler({ depositAmount }) {
+      let depositTx;
+      if (this.pool.vaultAsset.isERC2612Supported) {
+        const { v, r, s, deadline } = await this.getERC20PermitSignature({
+          tokenContract: this.pool.vaultAssetContract,
+          spender: this.pool.token.address,
+          permitAmount: depositAmount,
+          domainName: await this.pool.vaultAssetContract.name(),
+        });
+        depositTx = await this.pool.token.contract.depositWithPermit(
+          depositAmount,
+          this.account,
+          deadline,
+          v,
+          r,
+          s
+        );
+      } else {
+        const isVaultAssetApproved = await this.isTokenApproved(
+          this.pool.vaultAssetContract, // e.g. aAveUSDT
+          this.pool.token.contract.address // e.g. aAveUSDTV
+        );
+        if (!isVaultAssetApproved) {
+          const approveResult = await this.approveToken(
+            this.pool.vaultAssetContract,
+            this.pool.token.contract.address
+          );
+          if (!approveResult) {
+            return false;
+          }
+        }
+
+        depositTx = await this.pool.token.contract.deposit(
+          depositAmount,
+          this.account
+        );
+      }
+
+      if (!depositTx) {
+        return false;
+      }
+      const depositReceipt = await depositTx.wait();
+
+      const depositTopic = this.pool.token.contract.filters
+        .Deposit()
+        .topics[0].toString();
+      const depositEvent = depositReceipt?.logs?.find(
+        (log) =>
+          log.address.toLowerCase() ===
+            this.pool.token.contract.address.toLowerCase() &&
+          depositTopic === log.topics[0]
+      );
+
+      if (!depositEvent) {
+        throw Error(
+          `Could not find deposit event, depositReceipt: ${JSON.stringify(
+            depositReceipt
+          )}`
+        );
+      }
+
+      //event Deposit(caller, receiver, assets, shares)
+      const depositEventParsed =
+        this.pool.token.contract.interface.parseLog(depositEvent);
+
+      this.refreshPoolInfoHandler();
+      return depositEventParsed.args.shares;
+    },
+    async vaultAssetRedeemIfRequired({ redeemAmount }) {
+      if (this.pool.vaultAsset) {
+        await this.vaultAssetRedeemHandler({
+          redeemAmount,
+        });
+        await this.refreshPoolInfoHandler();
+      }
+    },
+    async vaultAssetRedeemHandler({ redeemAmount }) {
+      const redeemTx = await this.pool.token.contract.redeem(
+        redeemAmount,
+        this.account,
+        this.account
+      );
+      await redeemTx.wait();
+    },
+    async borrowHandler(data) {
+      try {
+        console.log("BORROW HANDLER", data);
+        await this.cookBorrow(data);
+      } catch (err) {
+        console.error("borrowHandler error", err);
       }
     },
     async removeAndRepayHandler(data) {
-      console.log("REMOVE & REPAY HANDLER", data);
-
-      const isTokenApprowed = await this.isTokenApprowed(
-        this.pool.pairTokenContract,
-        this.pool.masterContractInstance.address
-      );
-
-      const isApprowed = await this.isApprowed();
-
-      if (isTokenApprowed) {
-        this.cookRemoveAndRepay(data, isApprowed);
-        return false;
+      try {
+        console.log("REMOVE & REPAY HANDLER", data);
+        await this.approvePairTokenIfRequired();
+        await this.cookRemoveAndRepay(data);
+        await this.vaultAssetRedeemIfRequired({
+          redeemAmount: data.amount,
+        });
+      } catch (err) {
+        console.error("removeAndRepayMaxHandler error", err);
       }
-
-      const approveResult = await this.approveToken(
-        this.pool.pairTokenContract,
-        this.pool.masterContractInstance.address
-      );
-      if (approveResult) this.cookRemoveAndRepay(data, isApprowed);
     },
     async repayWithDeleverageHandler(data) {
       console.log("REPAY WITH DELEVERAGE HANDLER", data);
-      const isTokenApprowed = await this.isTokenApprowed(
+      const isTokenApproved = await this.isTokenApproved(
         this.pool.pairTokenContract,
         this.pool.masterContractInstance.address
       );
 
-      const isApprowed = await this.isApprowed();
+      const isApproved = await this.isMasterContractApproved();
 
-      if (isTokenApprowed) {
-        this.cookRepayWithDeleverage(data, isApprowed);
+      if (isTokenApproved) {
+        this.cookRepayWithDeleverage(data, isApproved);
         return false;
       }
 
@@ -339,61 +486,43 @@ export default {
         this.pool.pairTokenContract,
         this.pool.masterContractInstance.address
       );
-      if (approveResult) this.cookRepayWithDeleverage(data, isApprowed);
+      if (approveResult) this.cookRepayWithDeleverage(data, isApproved);
     },
     async repayHandler(data) {
-      console.log("REPAY HANDLER", data);
-
-      const isTokenApprowed = await this.isTokenApprowed(
-        this.pool.pairTokenContract,
-        this.pool.masterContractInstance.address
-      );
-
-      const isApprowed = await this.isApprowed();
-
-      if (isTokenApprowed) {
-        this.cookRepay(data, isApprowed);
-        return false;
+      try {
+        console.log("REPAY HANDLER", data);
+        await this.approvePairTokenIfRequired();
+        await this.cookRepay(data);
+      } catch (err) {
+        console.error("repayHandler error", err);
       }
-
-      const approveResult = await this.approveToken(
-        this.pool.pairTokenContract,
-        this.pool.masterContractInstance.address
-      );
-      if (approveResult) this.cookRepay(data, isApprowed);
     },
     async removeCollateralHandler(data) {
-      console.log("REMOVE COLLATERAL HANDLER", data);
-
-      const isApprowed = await this.isApprowed();
-      this.cookRemoveCollateral(data, isApprowed);
+      try {
+        console.log("REMOVE COLLATERAL HANDLER", data);
+        await this.cookRemoveCollateral(data);
+        await this.vaultAssetRedeemIfRequired({
+          redeemAmount: data.amount,
+        });
+      } catch (err) {
+        console.error("removeCollateralHandler error", err);
+      }
     },
     async removeAndRepayMaxHandler(data) {
-      console.log("REMOVE & REPAY MAX HANDLER", data);
-
-      const isTokenApprowed = await this.isTokenApprowed(
-        this.pool.pairTokenContract,
-        this.pool.masterContractInstance.address
-      );
-
-      const isApprowed = await this.isApprowed();
-
-      if (isTokenApprowed) {
-        // (this.valueAmount < isTokenApprowed)
-        this.cookRemoveAndRepayMax(data, isApprowed);
-        return false;
+      try {
+        console.log("REMOVE & REPAY MAX HANDLER", data);
+        await this.approvePairTokenIfRequired();
+        await this.cookRemoveAndRepayMax(data);
+        await this.vaultAssetRedeemIfRequired({
+          redeemAmount: data.amount,
+        });
+      } catch (err) {
+        console.error("removeAndRepayMaxHandler error", err);
       }
-
-      const approveResult = await this.approveToken(
-        this.pool.pairTokenContract,
-        this.pool.masterContractInstance.address
-      );
-      if (approveResult) this.cookRemoveAndRepayMax(data, isApprowed);
     },
-    async cookRemoveAndRepayMax(
-      { amount, collateralAmount, updatePrice },
-      isApprowed
-    ) {
+    async cookRemoveAndRepayMax({ amount, collateralAmount, updatePrice }) {
+      const isApproved = await this.isMasterContractApproved();
+
       const account = this.account;
       const pairToken = this.pool.pairToken.address;
 
@@ -431,8 +560,8 @@ export default {
       const gasPrice = await this.getGasPrice();
       console.log("GAS PRICE:", gasPrice);
 
-      if (isApprowed) {
-        console.log("APPROWED");
+      if (isApproved) {
+        console.log("APPROVED");
 
         if (updatePrice) {
           const updateEncode = this.getUpdateRateEncode();
@@ -478,6 +607,8 @@ export default {
           );
 
           console.log(result);
+          await this.wrapperStatusTx(result);
+
           return false;
         }
 
@@ -518,7 +649,7 @@ export default {
 
         console.log(result);
       } else {
-        console.log("NOT APPROWED");
+        console.log("NOT APPROVED");
         const approvalEncode = await this.getApprovalEncode();
 
         if (approvalEncode === "ledger") {
@@ -573,6 +704,8 @@ export default {
             );
 
             console.log(result);
+            await this.wrapperStatusTx(result);
+
             return false;
           }
 
@@ -615,6 +748,7 @@ export default {
           );
 
           console.log(result);
+          await this.wrapperStatusTx(result);
 
           return false;
         }
@@ -665,6 +799,8 @@ export default {
           );
 
           console.log(result);
+          await this.wrapperStatusTx(result);
+
           return false;
         }
 
@@ -707,11 +843,13 @@ export default {
             gasLimit,
           }
         );
+        await this.wrapperStatusTx(result);
 
         console.log(result);
       }
     },
-    async cookRepay({ amount, updatePrice }, isApprowed) {
+    async cookRepay({ amount, updatePrice }) {
+      const isApproved = await this.isMasterContractApproved();
       const account = this.account;
       const pairToken = this.pool.pairToken.address;
 
@@ -733,8 +871,8 @@ export default {
       const gasPrice = await this.getGasPrice();
       console.log("GAS PRICE:", gasPrice);
 
-      if (isApprowed) {
-        console.log("APPROWED");
+      if (isApproved) {
+        console.log("APPROVED");
 
         if (updatePrice) {
           const updateEncode = this.getUpdateRateEncode();
@@ -797,7 +935,7 @@ export default {
 
         console.log(result);
       } else {
-        console.log("NOT APPROWED");
+        console.log("NOT APPROVED");
         const approvalEncode = await this.getApprovalEncode();
 
         console.log("approvalEncode result:", approvalEncode);
@@ -955,7 +1093,9 @@ export default {
         console.log(result);
       }
     },
-    async cookRemoveCollateral({ amount, updatePrice }, isApprowed) {
+    async cookRemoveCollateral({ amount, updatePrice }) {
+      const isApproved = await this.isMasterContractApproved();
+
       const withdrawAddressToken = this.getAVAXStatus()
         ? "0x0000000000000000000000000000000000000000"
         : this.pool.token.address;
@@ -972,8 +1112,8 @@ export default {
       const gasPrice = await this.getGasPrice();
       console.log("GAS PRICE:", gasPrice);
 
-      if (isApprowed) {
-        console.log("APPROWED");
+      if (isApproved) {
+        console.log("APPROVED");
 
         if (updatePrice) {
           const updateEncode = this.getUpdateRateEncode();
@@ -1040,7 +1180,7 @@ export default {
 
         console.log(result);
       } else {
-        console.log("NOT APPROWED");
+        console.log("NOT APPROVED");
         const approvalEncode = await this.getApprovalEncode();
 
         console.log("approvalEncode result:", approvalEncode);
@@ -1205,7 +1345,7 @@ export default {
     // amount: total amount to repay
     async cookRepayWithDeleverage(
       { updatePrice, collateralAmount, walletAmount, amount },
-      isApprowed
+      isApproved
     ) {
       const swapperAddress = this.pool.reverseSwapContract.address;
       const userAddress = this.account;
@@ -1217,7 +1357,7 @@ export default {
       const gasPrice = await this.getGasPrice();
       console.log("GAS PRICE:", gasPrice.toString());
 
-      if (!isApprowed) {
+      if (!isApproved) {
         const approvalEncode = await this.getApprovalEncode();
         if (approvalEncode === "ledger") {
           const approvalMaster = await this.approveMasterContract();
@@ -1318,10 +1458,9 @@ export default {
         console.log(e);
       }
     },
-    async cookRemoveAndRepay(
-      { amount, collateralAmount, updatePrice },
-      isApprowed
-    ) {
+    async cookRemoveAndRepay({ amount, collateralAmount, updatePrice }) {
+      const isApproved = await this.isMasterContractApproved();
+
       const account = this.account;
       const pairToken = this.pool.pairToken.address;
 
@@ -1362,8 +1501,8 @@ export default {
       const gasPrice = await this.getGasPrice();
       console.log("GAS PRICE:", gasPrice);
 
-      if (isApprowed) {
-        console.log("APPROWED");
+      if (isApproved) {
+        console.log("APPROVED");
 
         if (updatePrice) {
           const updateEncode = this.getUpdateRateEncode();
@@ -1456,7 +1595,7 @@ export default {
 
         console.log(result);
       } else {
-        console.log("NOT APPROWED");
+        console.log("NOT APPROVED");
         const approvalEncode = await this.getApprovalEncode();
 
         if (approvalEncode === "ledger") {
@@ -1657,15 +1796,17 @@ export default {
         console.log(result);
       }
     },
-    async cookBorrow({ amount, updatePrice }, isApprowed) {
+    async cookBorrow({ amount, updatePrice }) {
+      const isApproved = await this.isMasterContractApproved();
+
       const borrowEncode = this.getBorrowEncode(amount);
       const bentoWithdrawEncode = this.getBentoWithdrawEncode(amount);
 
       const gasPrice = await this.getGasPrice();
       console.log("GAS PRICE:", gasPrice);
 
-      if (isApprowed) {
-        console.log("APPROWED");
+      if (isApproved) {
+        console.log("APPROVED");
 
         if (updatePrice) {
           const updateEncode = this.getUpdateRateEncode();
@@ -1734,7 +1875,7 @@ export default {
         return false;
       }
 
-      console.log("NOT APPROWED");
+      console.log("NOT APPROVED");
       const approvalEncode = await this.getApprovalEncode();
 
       if (approvalEncode === "ledger") {
@@ -1877,18 +2018,19 @@ export default {
 
       console.log(result);
     },
-    async cookAddCollateral({ amount, updatePrice }, isApprowed) {
+    async cookAddCollateral({ amount, updatePrice }) {
+      const isApproved = await this.isMasterContractApproved();
       const depositEncode = this.getDepositEncode(amount);
 
-      const colateralEncode = this.getAddCollateralEncode();
+      const collateralEncode = this.getAddCollateralEncode();
 
       const gasPrice = await this.getGasPrice();
       console.log("GAS PRICE:", gasPrice);
 
       const depositAmount = this.getAVAXStatus() ? amount : 0;
 
-      if (isApprowed) {
-        console.log("APPROWED");
+      if (isApproved) {
+        console.log("APPROVED");
 
         if (updatePrice) {
           const updateEncode = this.getUpdateRateEncode();
@@ -1896,7 +2038,7 @@ export default {
           const estimateGas = await this.pool.contractInstance.estimateGas.cook(
             [11, 20, 10],
             [0, depositAmount, 0],
-            [updateEncode, depositEncode, colateralEncode],
+            [updateEncode, depositEncode, collateralEncode],
             {
               value: depositAmount,
               // gasPrice,
@@ -1911,7 +2053,7 @@ export default {
           const result = await this.pool.contractInstance.cook(
             [11, 20, 10],
             [0, depositAmount, 0],
-            [updateEncode, depositEncode, colateralEncode],
+            [updateEncode, depositEncode, collateralEncode],
             {
               value: depositAmount,
               // gasPrice,
@@ -1928,7 +2070,7 @@ export default {
         const estimateGas = await this.pool.contractInstance.estimateGas.cook(
           [20, 10],
           [depositAmount, 0],
-          [depositEncode, colateralEncode],
+          [depositEncode, collateralEncode],
           {
             value: depositAmount,
             // gasPrice,
@@ -1943,7 +2085,7 @@ export default {
         const result = await this.pool.contractInstance.cook(
           [20, 10],
           [depositAmount, 0],
-          [depositEncode, colateralEncode],
+          [depositEncode, collateralEncode],
           {
             value: depositAmount,
             // gasPrice,
@@ -1957,7 +2099,7 @@ export default {
         return false;
       }
 
-      console.log("NOT APPROWED");
+      console.log("NOT APPROVED");
       const approvalEncode = await this.getApprovalEncode();
 
       console.log("approvalEncode result:", approvalEncode);
@@ -1975,7 +2117,7 @@ export default {
           const estimateGas = await this.pool.contractInstance.estimateGas.cook(
             [11, 20, 10],
             [0, depositAmount, 0],
-            [updateEncode, depositEncode, colateralEncode],
+            [updateEncode, depositEncode, collateralEncode],
             {
               value: depositAmount,
               // gasPrice,
@@ -1990,7 +2132,7 @@ export default {
           const result = await this.pool.contractInstance.cook(
             [11, 20, 10],
             [0, depositAmount, 0],
-            [updateEncode, depositEncode, colateralEncode],
+            [updateEncode, depositEncode, collateralEncode],
             {
               value: depositAmount,
               // gasPrice,
@@ -2007,7 +2149,7 @@ export default {
         const estimateGas = await this.pool.contractInstance.estimateGas.cook(
           [20, 10],
           [depositAmount, 0],
-          [depositEncode, colateralEncode],
+          [depositEncode, collateralEncode],
           {
             value: depositAmount,
             // gasPrice,
@@ -2022,7 +2164,7 @@ export default {
         const result = await this.pool.contractInstance.cook(
           [20, 10],
           [depositAmount, 0],
-          [depositEncode, colateralEncode],
+          [depositEncode, collateralEncode],
           {
             value: depositAmount,
             // gasPrice,
@@ -2043,7 +2185,7 @@ export default {
         const estimateGas = await this.pool.contractInstance.estimateGas.cook(
           [24, 11, 20, 10],
           [0, 0, depositAmount, 0],
-          [approvalEncode, updateEncode, depositEncode, colateralEncode],
+          [approvalEncode, updateEncode, depositEncode, collateralEncode],
           {
             value: depositAmount,
             // gasPrice,
@@ -2058,7 +2200,7 @@ export default {
         const result = await this.pool.contractInstance.cook(
           [24, 11, 20, 10],
           [0, 0, depositAmount, 0],
-          [approvalEncode, updateEncode, depositEncode, colateralEncode],
+          [approvalEncode, updateEncode, depositEncode, collateralEncode],
           {
             value: depositAmount,
             // gasPrice,
@@ -2075,7 +2217,7 @@ export default {
       const estimateGas = await this.pool.contractInstance.estimateGas.cook(
         [24, 20, 10],
         [0, depositAmount, 0],
-        [approvalEncode, depositEncode, colateralEncode],
+        [approvalEncode, depositEncode, collateralEncode],
         {
           value: depositAmount,
           // gasPrice,
@@ -2090,7 +2232,7 @@ export default {
       const result = await this.pool.contractInstance.cook(
         [24, 20, 10],
         [0, depositAmount, 0],
-        [approvalEncode, depositEncode, colateralEncode],
+        [approvalEncode, depositEncode, collateralEncode],
         {
           value: depositAmount,
           // gasPrice,
@@ -2102,15 +2244,14 @@ export default {
 
       console.log(result);
     },
-    async cookAddAndBorrow(
-      { collateralAmount, amount, updatePrice },
-      isApprowed
-    ) {
+    async cookAddAndBorrow({ collateralAmount, amount, updatePrice }) {
+      const isApproved = await this.isMasterContractApproved();
+
       const borrowEncode = this.getBorrowEncode(amount);
 
       const depositEncode = this.getDepositEncode(collateralAmount);
 
-      const colateralEncode = this.getAddCollateralEncode();
+      const collateralEncode = this.getAddCollateralEncode();
 
       const bentoWithdrawEncode = this.getBentoWithdrawEncode(amount);
 
@@ -2121,8 +2262,8 @@ export default {
         ? collateralAmount
         : 0;
 
-      if (isApprowed) {
-        console.log("APPROWED");
+      if (isApproved) {
+        console.log("APPROVED");
 
         if (updatePrice) {
           const updateEncode = this.getUpdateRateEncode();
@@ -2135,7 +2276,7 @@ export default {
               borrowEncode,
               bentoWithdrawEncode,
               depositEncode,
-              colateralEncode,
+              collateralEncode,
             ],
             {
               value: depositCollateralAmount,
@@ -2156,7 +2297,7 @@ export default {
               borrowEncode,
               bentoWithdrawEncode,
               depositEncode,
-              colateralEncode,
+              collateralEncode,
             ],
             {
               value: depositCollateralAmount,
@@ -2175,7 +2316,7 @@ export default {
         const estimateGas = await this.pool.contractInstance.estimateGas.cook(
           [5, 21, 20, 10],
           [0, 0, depositCollateralAmount, 0],
-          [borrowEncode, bentoWithdrawEncode, depositEncode, colateralEncode],
+          [borrowEncode, bentoWithdrawEncode, depositEncode, collateralEncode],
           {
             value: depositCollateralAmount,
             // gasPrice,
@@ -2190,7 +2331,7 @@ export default {
         const result = await this.pool.contractInstance.cook(
           [5, 21, 20, 10],
           [0, 0, depositCollateralAmount, 0],
-          [borrowEncode, bentoWithdrawEncode, depositEncode, colateralEncode],
+          [borrowEncode, bentoWithdrawEncode, depositEncode, collateralEncode],
           {
             value: depositCollateralAmount,
             // gasPrice,
@@ -2204,7 +2345,7 @@ export default {
         return false;
       }
 
-      console.log("NOT APPROWED");
+      console.log("NOT APPROVED");
       const approvalEncode = await this.getApprovalEncode();
 
       console.log("approvalEncode result:", approvalEncode);
@@ -2227,7 +2368,7 @@ export default {
               borrowEncode,
               bentoWithdrawEncode,
               depositEncode,
-              colateralEncode,
+              collateralEncode,
             ],
             {
               value: depositCollateralAmount,
@@ -2248,7 +2389,7 @@ export default {
               borrowEncode,
               bentoWithdrawEncode,
               depositEncode,
-              colateralEncode,
+              collateralEncode,
             ],
             {
               value: depositCollateralAmount,
@@ -2266,7 +2407,7 @@ export default {
         const estimateGas = await this.pool.contractInstance.estimateGas.cook(
           [5, 21, 20, 10],
           [0, 0, depositCollateralAmount, 0],
-          [borrowEncode, bentoWithdrawEncode, depositEncode, colateralEncode],
+          [borrowEncode, bentoWithdrawEncode, depositEncode, collateralEncode],
           {
             value: depositCollateralAmount,
             // gasPrice,
@@ -2281,7 +2422,7 @@ export default {
         const result = await this.pool.contractInstance.cook(
           [5, 21, 20, 10],
           [0, 0, depositCollateralAmount, 0],
-          [borrowEncode, bentoWithdrawEncode, depositEncode, colateralEncode],
+          [borrowEncode, bentoWithdrawEncode, depositEncode, collateralEncode],
           {
             value: depositCollateralAmount,
             // gasPrice,
@@ -2308,7 +2449,7 @@ export default {
             borrowEncode,
             bentoWithdrawEncode,
             depositEncode,
-            colateralEncode,
+            collateralEncode,
           ],
           {
             value: depositCollateralAmount,
@@ -2330,7 +2471,7 @@ export default {
             borrowEncode,
             bentoWithdrawEncode,
             depositEncode,
-            colateralEncode,
+            collateralEncode,
           ],
           {
             value: depositCollateralAmount,
@@ -2353,7 +2494,7 @@ export default {
           borrowEncode,
           bentoWithdrawEncode,
           depositEncode,
-          colateralEncode,
+          collateralEncode,
         ],
         {
           value: depositCollateralAmount,
@@ -2374,7 +2515,7 @@ export default {
           borrowEncode,
           bentoWithdrawEncode,
           depositEncode,
-          colateralEncode,
+          collateralEncode,
         ],
         {
           value: depositCollateralAmount,
@@ -2389,7 +2530,7 @@ export default {
     },
     async cookMultiBorrow(
       { collateralAmount, amount, updatePrice, minExpected },
-      isApprowed
+      isApproved
     ) {
       const swapperAddres = this.pool.swapContract.address;
       const userAddr = this.account;
@@ -2398,7 +2539,7 @@ export default {
       const valuesArray = [];
       const datasArray = [];
 
-      if (!isApprowed) {
+      if (!isApproved) {
         const approvalEncode = await this.getApprovalEncode();
 
         if (approvalEncode === "ledger") {
@@ -2608,68 +2749,10 @@ export default {
         console.log("SIG ERR:", e.code);
         if (e.code === -32603) {
           return "ledger";
-
-          // this.$store.commit("setPopupState", {
-          //   type: "device-error",
-          //   isShow: true,
-          // });
         }
         return false;
       }
 
-      // const typedData = {
-      //   types: {
-      //     EIP712Domain: [
-      //       { name: "name", type: "string" },
-      //       { name: "chainId", type: "uint256" },
-      //       { name: "verifyingContract", type: "address" },
-      //     ],
-      //     SetMasterContractApproval: [
-      //       { name: "warning", type: "string" },
-      //       { name: "user", type: "address" },
-      //       { name: "masterContract", type: "address" },
-      //       { name: "approved", type: "bool" },
-      //       { name: "nonce", type: "uint256" },
-      //     ],
-      //   },
-      //   primaryType: "SetMasterContractApproval",
-      //   domain: {
-      //     name: "BentoBox V1",
-      //     chainId,
-      //     verifyingContract,
-      //   },
-      //   message: {
-      //     warning: "Give FULL access to funds in (and approved to) BentoBox?",
-      //     user: account,
-      //     masterContract,
-      //     approved: true,
-      //     nonce,
-      //   },
-      // };
-
-      // console.log("SIGNATURE DATA: ", typedData);
-
-      // let signature;
-      // try {
-      //   signature = await window.ethereum.request({
-      //     method: "eth_signTypedData_v4",
-      //     params: [account, JSON.stringify(typedData)],
-      //     from: [account],
-      //   });
-      // } catch (e) {
-      //   console.log("SIG ERR:", e.code);
-      //   //-32603
-      //   if (e.code === 4001) {
-      //     this.$store.commit("setPopupState", {
-      //       type: "device-error",
-      //       isShow: true,
-      //     });
-      //   }
-
-      //   return false;
-      // }
-      // console.log("SIGNATURE@", signature);
-      // console.log(signature1 === signature);
       const parsedSignature = this.parseSignature(signature);
 
       return this.$ethers.utils.defaultAbiCoder.encode(
@@ -2683,6 +2766,65 @@ export default {
           parsedSignature.s,
         ]
       );
+    },
+    getERC20PermitSignature: async function ({
+      tokenContract,
+      spender,
+      permitAmount,
+      domainName,
+    }) {
+      const account = this.account;
+      const verifyingContract = tokenContract.address;
+      const nonce = await tokenContract.nonces(account);
+      const chainId = this.$store.getters.getActiveChain.code;
+
+      const domain = {
+        name: domainName,
+        version: "1",
+        chainId,
+        verifyingContract,
+      };
+
+      const types = {
+        Permit: [
+          { name: "owner", type: "address" },
+          { name: "spender", type: "address" },
+          { name: "value", type: "uint256" },
+          { name: "nonce", type: "uint256" },
+          { name: "deadline", type: "uint256" },
+        ],
+      };
+
+      const deadline = Math.trunc(Date.now() / 1000) + 60 * 60; //1 hour
+
+      const value = {
+        owner: account,
+        spender,
+        value: permitAmount,
+        nonce,
+        deadline,
+      };
+
+      let signature;
+
+      try {
+        signature = await this.signer._signTypedData(domain, types, value);
+      } catch (e) {
+        console.log("SIG ERR:", e.code);
+        if (e.code === -32603) {
+          return "ledger";
+        }
+        return false;
+      }
+
+      const parsedSignature = this.parseSignature(signature);
+
+      return {
+        deadline,
+        v: parsedSignature.v,
+        r: parsedSignature.r,
+        s: parsedSignature.s,
+      };
     },
     parseSignature(signature) {
       const parsedSignature = signature.substring(2);
@@ -2722,22 +2864,22 @@ export default {
         console.log("getVerifyingContract err:", e);
       }
     },
-    async isApprowed() {
+    async isMasterContractApproved() {
       try {
         const masterContract = await this.getMasterContract();
-        const addressApprowed =
+        const addressApproved =
           await this.pool.masterContractInstance.masterContractApproved(
             masterContract,
             this.account
           );
-        return addressApprowed;
+        return addressApproved;
       } catch (e) {
-        console.log("isApprowed err:", e);
+        console.log("isApproved err:", e);
       }
     },
-    async isTokenApprowed(tokenContract, spenderAddress) {
+    async isTokenApproved(tokenContract, spenderAddress) {
       try {
-        const addressApprowed = await tokenContract.allowance(
+        const addressApproved = await tokenContract.allowance(
           this.account,
           spenderAddress,
           {
@@ -2747,12 +2889,12 @@ export default {
 
         console.log(
           "TOKEN APPROVE:",
-          addressApprowed,
-          parseFloat(addressApprowed.toString()) > 0
+          addressApproved,
+          parseFloat(addressApproved.toString()) > 0
         );
-        return parseFloat(addressApprowed.toString()) > 0;
+        return parseFloat(addressApproved.toString()) > 0;
       } catch (e) {
-        console.log("isApprowed err:", e);
+        console.log("isApproved err:", e);
         return false;
       }
     },
@@ -2780,7 +2922,7 @@ export default {
 
         return true;
       } catch (e) {
-        console.log("isApprowed err:", e);
+        console.log("isApproved err:", e);
         return false;
       }
     },

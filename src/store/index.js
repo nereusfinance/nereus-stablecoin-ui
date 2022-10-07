@@ -8,7 +8,7 @@ import pools from "@/store/modules/pools";
 import tokens from "@/store/modules/tokens";
 import swap from "@/store/modules/swap";
 import notification from "@/store/modules/notification";
-import avaxStatus from "@/store/modules/avaxStatus";
+import tokenSwitchStatus from "@/store/modules/tokenSwitchStatus";
 import balances from "@/store/modules/balances";
 import nxusdStaking from "@/store/modules/nxusdStaking";
 import multicall from "@/store/modules/multicall";
@@ -40,7 +40,7 @@ export default new Vuex.Store({
     tokens,
     swap,
     notification,
-    avaxStatus,
+    tokenSwitchStatus,
     balances,
     nxusdStaking,
     multicall,

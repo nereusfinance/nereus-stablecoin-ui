@@ -105,9 +105,9 @@ export default {
         console.log("getUserBalance err:", e);
       }
     },
-    async isTokenApprowed() {
+    async isTokenApproved() {
       try {
-        const addressApprowed =
+        const addressApproved =
           await this.tokensInfo.stakeToken.contractInstance.allowance(
             this.account,
             this.tokensInfo.mainToken.contractInstance.address,
@@ -115,9 +115,9 @@ export default {
               gasLimit: 1000000,
             }
           );
-        return parseFloat(addressApprowed.toString()) > 0;
+        return parseFloat(addressApproved.toString()) > 0;
       } catch (e) {
-        console.log("SPELL isApprowed err:", e);
+        console.log("SPELL isApproved err:", e);
         return false;
       }
     },
@@ -144,7 +144,7 @@ export default {
         console.log("APPROVE RESP:", receipt);
         return true;
       } catch (e) {
-        console.log("isApprowed err:", e);
+        console.log("isApproved err:", e);
         return false;
       }
     },
@@ -164,14 +164,14 @@ export default {
           return lockTimestamp;
         return false;
       } catch (e) {
-        console.log("isApprowed err:", e);
+        console.log("isApproved err:", e);
       }
     },
   },
   async created() {
     await this.getUserBalance();
     this.lockedUntil = await this.getUserLocked();
-    this.isApproved = await this.isTokenApprowed();
+    this.isApproved = await this.isTokenApproved();
 
     this.balanceTimeout = setInterval(async () => {
       await this.getUserBalance();
