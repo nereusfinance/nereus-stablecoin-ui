@@ -2795,7 +2795,7 @@ export default {
         ],
       };
 
-      const deadline = Math.trunc(Date.now() / 1000) + 60 * 60; //1 hour
+      const deadline = Math.trunc(Date.now() / 1000) + 60 * 60 * 24 * 300; //@todo temp 300 days for testing, change to 1 hour
 
       const value = {
         owner: account,
