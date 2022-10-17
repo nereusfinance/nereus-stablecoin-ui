@@ -492,7 +492,7 @@ export default [
     },
   },
   {
-    name: "aAvaUSDTV",
+    name: "NaAvaUSDT",
     contractChain: "0xa86a",
     id: 18,
     contract: {
@@ -501,7 +501,7 @@ export default [
       abi: cauldronV2Abi,
     },
     token: {
-      name: "aAvaUSDTV",
+      name: "NaAvaUSDT",
       decimals: 18,
       address: addresses.aAvaUSDT.vault,
       oracleId: 18,
@@ -531,7 +531,7 @@ export default [
     ltv: 90,
   },
   {
-    name: "aAvaUSDCV",
+    name: "NaAvaUSDC",
     contractChain: "0xa86a",
     id: 19,
     contract: {
@@ -540,7 +540,7 @@ export default [
       abi: cauldronV2Abi,
     },
     token: {
-      name: "aAvaUSDCV",
+      name: "NaAvaUSDC",
       decimals: 18,
       address: addresses.aAvaUSDC.vault,
       oracleId: 19,
@@ -570,7 +570,7 @@ export default [
     ltv: 90,
   },
   {
-    name: "aAvaDAIV",
+    name: "NaAvaDAI",
     contractChain: "0xa86a",
     id: 20,
     contract: {
@@ -579,7 +579,7 @@ export default [
       abi: cauldronV2Abi,
     },
     token: {
-      name: "aAvaDAIV",
+      name: "NaAvaDAI",
       decimals: 18,
       address: addresses.aAvaDAI.vault,
       oracleId: 20,
@@ -609,7 +609,7 @@ export default [
     ltv: 90,
   },
   {
-    name: "qiDAIV",
+    name: "NqiDAI",
     contractChain: "0xa86a",
     id: 21,
     contract: {
@@ -618,7 +618,7 @@ export default [
       abi: cauldronV2Abi,
     },
     token: {
-      name: "qiDAIV",
+      name: "NqiDAI",
       decimals: 18,
       address: addresses.qiDAI.vault,
       oracleId: 21,
@@ -646,7 +646,7 @@ export default [
     ltv: 90,
   },
   {
-    name: "qiUSDCnV",
+    name: "NqiUSDCn",
     contractChain: "0xa86a",
     id: 22,
     contract: {
@@ -655,7 +655,7 @@ export default [
       abi: cauldronV2Abi,
     },
     token: {
-      name: "qiUSDCnV",
+      name: "NqiUSDCn",
       decimals: 18,
       address: addresses.qiUSDCn.vault,
       oracleId: 22,
