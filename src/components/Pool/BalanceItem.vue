@@ -3,14 +3,20 @@
     <div class="value-type">
       <TokenIcon :token="this.item.token" />
       <p>{{ this.item.token }}</p>
-      <Redeem
-        v-if="this.item.useRedeem"
-        :contract="this.item.contract"
-        :balance="this.item.balance"
-        v-on="$listeners"
-      />
     </div>
-    <p class="value-text">{{ balance }}</p>
+    <div class="redeem-balance-item">
+      <div>
+        <Redeem
+          v-if="this.item.useRedeem"
+          :contract="this.item.contract"
+          :balance="this.item.balance"
+          v-on="$listeners"
+        />
+      </div>
+      <p class="value-text">
+        {{ balance }}
+      </p>
+    </div>
   </div>
 </template>
 
@@ -87,6 +93,15 @@ export default {
         width: 24px;
         height: 24px;
       }
+    }
+  }
+
+  .redeem-balance-item {
+    display: flex;
+    align-items: center;
+
+    > :first-child {
+      margin-right: 16px;
     }
   }
 }
