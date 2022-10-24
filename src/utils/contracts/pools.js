@@ -492,7 +492,7 @@ export default [
     },
   },
   {
-    name: "NaAvaUSDT",
+    name: "aAvaUSDT",
     contractChain: "0xa86a",
     id: 18,
     contract: {
@@ -531,7 +531,7 @@ export default [
     ltv: 90,
   },
   {
-    name: "NaAvaUSDC",
+    name: "aAvaUSDC",
     contractChain: "0xa86a",
     id: 19,
     contract: {
@@ -570,7 +570,7 @@ export default [
     ltv: 90,
   },
   {
-    name: "NaAvaDAI",
+    name: "aAvaDAI",
     contractChain: "0xa86a",
     id: 20,
     contract: {
@@ -609,7 +609,7 @@ export default [
     ltv: 90,
   },
   {
-    name: "NqiDAI",
+    name: "qiDAI",
     contractChain: "0xa86a",
     id: 21,
     contract: {
@@ -646,7 +646,7 @@ export default [
     ltv: 90,
   },
   {
-    name: "NqiUSDCn",
+    name: "qiUSDCn",
     contractChain: "0xa86a",
     id: 22,
     contract: {

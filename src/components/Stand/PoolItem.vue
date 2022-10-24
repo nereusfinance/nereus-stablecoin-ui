@@ -7,7 +7,7 @@
     <div class="table-col pool-name">
       <div class="val-item">
         <div class="item-wrapper">
-          <TokenIcon :token="pool.token.name" />
+          <TokenIcon :token="tokenIconName" />
           <p>
             {{ pool.name }}
             <img
@@ -44,17 +44,18 @@ export default {
     },
   },
   computed: {
+    tokenIconName() {
+      return this.pool.vaultAsset
+        ? this.pool.vaultAsset.name
+        : this.pool.token.name;
+    },
     totalBorrow() {
       return parseFloat(
         this.$ethers.utils.formatEther(this.pool.totalBorrow)
       ).toFixed(0);
     },
     isWTXPool() {
-      if (this.pool.token.name === "WXT") {
-        return true;
-      } else {
-        return false;
-      }
+      return this.pool.token.name === "WXT";
     },
   },
   methods: {
