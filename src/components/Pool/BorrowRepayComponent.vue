@@ -97,7 +97,7 @@
       />
     </div>
 
-    <div v-if="actionType === 'borrow' && false" class="config-box">
+    <div v-if="actionType === 'borrow'" class="config-box">
       <LiquidationRules
         :liquidationPrice="liquidationPrice"
         :maxValue="ltv"
