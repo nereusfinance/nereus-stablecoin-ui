@@ -123,46 +123,21 @@ export default {
         pairTokenContractInterface,
       };
     },
-    /**
-     * Creates pool swap contract instance
-     * @param {*pool address} pool
-     * @returns contract instance and it's ABI Interface
-     */
-    createSwapContract(pool) {
-      const swapContract = new this.$ethers.Contract(
-        pool.swapContractInfo.address,
-        JSON.stringify(pool.swapContractInfo.abi),
+    createPoolVaultAsset(pool) {
+      if (!pool.vaultAsset) return null;
+
+      const vaultAssetContract = new this.$ethers.Contract(
+        pool.vaultAsset.address,
+        JSON.stringify(pool.vaultAsset.abi),
         this.signer
       );
-
-      const swapContractInterface = new this.$ethers.utils.Interface(
-        pool.swapContractInfo.abi
+      const vaultAssetContractInterface = new this.$ethers.utils.Interface(
+        pool.vaultAsset.abi
       );
 
       return {
-        swapContract,
-        swapContractInterface,
-      };
-    },
-    /**
-     * Creates pool reverse swap contract instance
-     * @param {*pool address} pool
-     * @returns contract instance and it's ABI Interface
-     */
-    createReverseSwapContract(pool) {
-      const reverseSwapContract = new this.$ethers.Contract(
-        pool.reverseSwapContractInfo.address,
-        JSON.stringify(pool.reverseSwapContractInfo.abi),
-        this.signer
-      );
-
-      const reverseSwapContractInterface = new this.$ethers.utils.Interface(
-        pool.reverseSwapContractInfo.abi
-      );
-
-      return {
-        reverseSwapContract,
-        reverseSwapContractInterface,
+        vaultAssetContract,
+        vaultAssetContractInterface,
       };
     },
     /**
@@ -208,8 +183,7 @@ export default {
 
       const poolTokenInfo = this.createPoolTokenContract(pool);
       const pairTokenInfo = this.createPoolPairToken(pool);
-      const swapContractInfo = this.createSwapContract(pool);
-      const reverseSwapContractInfo = this.createReverseSwapContract(pool);
+      const vaultAssetInfo = this.createPoolVaultAsset(pool);
       const oracleContractInfo = this.createOracleContract(pool);
 
       return {
@@ -229,6 +203,10 @@ export default {
         pairToken: pool.pairToken,
         pairTokenContract: pairTokenInfo.pairTokenContract,
         pairTokenContractInterface: pairTokenInfo.pairTokenContractInterface,
+        vaultAsset: pool.vaultAsset,
+        vaultAssetContract: vaultAssetInfo?.vaultAssetContract,
+        vaultAssetContractInterface:
+          vaultAssetInfo?.vaultAssetContractInterface,
         token: {
           contract: poolTokenInfo.tokenContract,
           contractInterface: poolTokenInfo.tokenContractInterface,
@@ -238,8 +216,6 @@ export default {
           oracleId: pool.token.oracleId,
           oracleDatas: pool.token.oracleDatas,
         },
-        swapContract: swapContractInfo.swapContract,
-        reverseSwapContract: reverseSwapContractInfo.reverseSwapContract,
       };
     },
   },

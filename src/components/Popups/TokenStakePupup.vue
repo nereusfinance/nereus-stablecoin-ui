@@ -158,7 +158,7 @@ export default {
     },
     async actionHandler() {
       if (this.action === "stake") {
-        const isApproved = await this.isTokenApprowed(
+        const isApproved = await this.isTokenApproved(
           this.sSpellTokenObject.stakeToken.contractInstance
         );
 
@@ -230,18 +230,18 @@ export default {
         console.log("stake err:", e);
       }
     },
-    async isTokenApprowed(tokenContract) {
+    async isTokenApproved(tokenContract) {
       try {
-        const addressApprowed = await tokenContract.allowance(
+        const addressApproved = await tokenContract.allowance(
           this.account,
           this.sSpellTokenObject.mainToken.contractInstance.address,
           {
             gasLimit: 1000000,
           }
         );
-        return parseFloat(addressApprowed.toString()) > 0;
+        return parseFloat(addressApproved.toString()) > 0;
       } catch (e) {
-        console.log("SPELL isApprowed err:", e);
+        console.log("SPELL isApproved err:", e);
         return false;
       }
     },
@@ -265,7 +265,7 @@ export default {
         console.log("APPROVE RESP:", receipt);
         return true;
       } catch (e) {
-        console.log("isApprowed err:", e);
+        console.log("isApproved err:", e);
         return false;
       }
     },

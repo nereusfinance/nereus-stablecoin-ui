@@ -11,7 +11,7 @@
     </div>
 
     <p class="btm-text">1 NXUSD = 1 USD</p>
-    <p class="btm-text">1 {{ tokenName }} = {{ tokentToNUSD }} NXUSD</p>
+    <p class="btm-text">1 {{ tokenName }} = {{ tokenToNUSD }} NXUSD</p>
   </div>
 </template>
 
@@ -32,7 +32,7 @@ export default {
     },
   },
   computed: {
-    tokentToNUSD() {
+    tokenToNUSD() {
       const tokenToNUSD = 1 / this.exchangeRate;
       // eslint-disable-next-line no-useless-escape
       let re = new RegExp(`^-?\\d+(?:\.\\d{0,` + (6 || -1) + `})?`);

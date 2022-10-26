@@ -27,9 +27,10 @@ export default {
           stabilityFee: pool.stabilityFee,
           isEnabled: pool.isEnabled,
           token: pool.token,
+          vaultAsset: pool.vaultAsset,
           pairToken: pool.pairToken,
           masterContractInstance: pool.masterContractInstance,
-          masterContractInterface: pool.masterContractInterface
+          masterContractInterface: pool.masterContractInterface,
         };
 
         poolInfo.totalBorrow = standPoolsFetchData[pool.id].totalBorrow;

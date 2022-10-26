@@ -19,6 +19,9 @@ export default {
         pairToken: pool.pairToken,
         pairTokenContract: pool.pairTokenContract,
         pairTokenContractInterface: pool.pairTokenContractInterface,
+        vaultAsset: pool.vaultAsset,
+        vaultAssetContract: pool.vaultAssetContract,
+        vaultAssetContractInterface: pool.vaultAssetContractInterface,
         masterContractInstance: pool.masterContractInstance,
         masterContractInterface: pool.masterContractInterface,
         swapContract: pool.swapContract,
@@ -29,7 +32,8 @@ export default {
       const multiCallData = await this.buildPoolMulticallData(pool, account);
       const multicallResult = await this.aggregate(multiCallData);
       // handle multicall result
-      poolInfo = this.getPoolInfoData(
+      poolInfo = await this.getPoolInfoData(
+        pool,
         multiCallData,
         multicallResult,
         pool.id,
@@ -72,9 +76,6 @@ export default {
         id: pool.id,
       });
 
-      // oracle exchange rate
-      multicallData.push(this.buildOracleExchangeRateMulticall(pool));
-
       multicallData.push({
         function: "balanceOf",
         arguments: [account],
@@ -92,6 +93,17 @@ export default {
         type: "checkBalancePairToken",
         id: pool.id,
       });
+
+      if (pool.vaultAsset) {
+        multicallData.push({
+          function: "balanceOf",
+          arguments: [account],
+          target: pool.vaultAssetContract.address,
+          interface: pool.vaultAssetContractInterface,
+          type: "checkBalanceVaultAsset",
+          id: pool.id,
+        });
+      }
 
       multicallData.push({
         function: "totalBorrow",
@@ -154,7 +166,13 @@ export default {
 
       return { tokenPairRate, askUpdatePrice };
     },
-    getPoolInfoData(multicallData, multicallResult, poolId, poolInfo) {
+    async getPoolInfoData(
+      pool,
+      multicallData,
+      multicallResult,
+      poolId,
+      poolInfo
+    ) {
       const userCollateralShareResult = this.getMulticallResult(
         multicallData,
         multicallResult,
@@ -176,12 +194,8 @@ export default {
         "exchangeRate"
       );
 
-      const oracleExchangeRateResult = this.getMulticallResult(
-        multicallData,
-        multicallResult,
-        poolId,
-        "peekSpot"
-      );
+      const oracleExchangeRateResult =
+        await pool.oracleInstance.callStatic.peekSpot("0x");
 
       const borrowOpeningFeeResult = this.getMulticallResult(
         multicallData,
@@ -192,7 +206,7 @@ export default {
 
       const oracleExchangeRate = this.getOracleExchangeRate(
         poolExchangeRateResult[0],
-        oracleExchangeRateResult[0]
+        oracleExchangeRateResult
       );
 
       const tokenBalanceOfResult = this.getBalanceOfMulticallResult(
@@ -210,6 +224,16 @@ export default {
         "balanceOf",
         "checkBalancePairToken"
       );
+
+      const vaultAssetBalanceOfResult = pool.vaultAsset
+        ? this.getBalanceOfMulticallResult(
+            multicallData,
+            multicallResult,
+            poolId,
+            "balanceOf",
+            "checkBalanceVaultAsset"
+          )
+        : [this.$ethers.BigNumber.from("0")];
 
       poolInfo.userCollateralShare = this.$ethers.utils.formatUnits(
         userCollateralShareResult[0],
@@ -238,6 +262,7 @@ export default {
 
       poolInfo.tokenBalance = tokenBalanceOfResult[0];
       poolInfo.pairTokenBalance = pairTokenBalanceOfResult[0];
+      poolInfo.vaultAssetBalance = vaultAssetBalanceOfResult[0];
       poolInfo.collateralInfo = this.createCollateralInfo(
         poolInfo.userCollateralShare,
         poolInfo.userBorrowPart,

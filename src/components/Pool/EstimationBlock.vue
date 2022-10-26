@@ -89,7 +89,7 @@ export default {
       const tokenToNUSD = 1 / this.tokenCurrentPrice;
       return tokenToNUSD;
     },
-    stableCoinMultiplyer() {
+    stableCoinMultiplier() {
       if (this.ltv === 90) {
         return 10;
       }
@@ -112,7 +112,7 @@ export default {
         return parseFloat("0").toFixed(2);
 
       const riskPersent =
-        ((this.priceDifference * this.stableCoinMultiplyer) / this.tokenPrice) *
+        ((this.priceDifference * this.stableCoinMultiplier) / this.tokenPrice) *
         100;
 
       if (riskPersent > 100) {

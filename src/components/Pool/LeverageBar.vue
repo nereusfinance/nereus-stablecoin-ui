@@ -81,7 +81,7 @@ export default {
     },
     leverageData() {
       const borrowPerc = (100 - this.$store.borrowFee) / 100;
-      const amountMultiplyer =
+      const amountMultiplier =
         (this.pairValue * this.pool.ltv) / this.maxPairValue / 100;
       let startAmount = this.pairValue * borrowPerc;
       let finalBorrowAmount = 0;
@@ -89,7 +89,7 @@ export default {
       for (let i = this.sliderValue; i > 0; i--) {
         if (i > 1) {
           finalBorrowAmount += +startAmount;
-          startAmount = startAmount * amountMultiplyer;
+          startAmount = startAmount * amountMultiplier;
         } else {
           finalBorrowAmount += +startAmount * i;
         }

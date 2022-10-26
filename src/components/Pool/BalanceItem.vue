@@ -4,12 +4,25 @@
       <TokenIcon :token="this.item.token" />
       <p>{{ this.item.token }}</p>
     </div>
-    <p class="value-text">{{ balance }}</p>
+    <div class="redeem-balance-item">
+      <div>
+        <Redeem
+          v-if="this.item.useRedeem"
+          :contract="this.item.contract"
+          :balance="this.item.balance"
+          v-on="$listeners"
+        />
+      </div>
+      <p class="value-text">
+        {{ balance }}
+      </p>
+    </div>
   </div>
 </template>
 
 <script>
 const TokenIcon = () => import("@/components/UiComponents/TokenIcon");
+const Redeem = () => import("@/components/Pool/Redeem");
 
 export default {
   props: {
@@ -39,6 +52,7 @@ export default {
   },
   components: {
     TokenIcon,
+    Redeem,
   },
 };
 </script>
@@ -79,6 +93,15 @@ export default {
         width: 24px;
         height: 24px;
       }
+    }
+  }
+
+  .redeem-balance-item {
+    display: flex;
+    align-items: center;
+
+    > :first-child {
+      margin-right: 16px;
     }
   }
 }

@@ -58,7 +58,7 @@ export default {
       const tokenToNUSD = 1 / this.tokenCurrentPrice;
       return tokenToNUSD;
     },
-    stableCoinMultiplyer() {
+    stableCoinMultiplier() {
       if (this.ltv === 90) {
         return 10;
       }
@@ -79,7 +79,7 @@ export default {
       if (+this.userBorrowPart === 0 || isNaN(this.liquidationPrice)) return 0;
 
       const riskPersent =
-        ((this.priceDifferens * this.stableCoinMultiplyer) / this.tokenPrice) *
+        ((this.priceDifferens * this.stableCoinMultiplier) / this.tokenPrice) *
         100;
 
       if (riskPersent > 100) {

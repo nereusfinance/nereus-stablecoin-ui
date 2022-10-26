@@ -1,14 +1,14 @@
 <template>
-  <div class="slipage-block">
-    <p class="slipage-title">Swap Tolerance</p>
+  <div class="slippage-block">
+    <p class="slippage-title">Swap Tolerance</p>
 
     <div class="items-wrap">
       <div
         class="splipage-item"
-        :class="{ active: slipage === item }"
-        v-for="(item, idx) in slipageItems"
+        :class="{ active: slippage === item }"
+        v-for="(item, idx) in slippageItems"
         :key="idx"
-        @click="setSlipage(item)"
+        @click="setSlippage(item)"
       >
         <p>{{ item }}%</p>
       </div>
@@ -16,7 +16,7 @@
         class="splipage-item custom"
         :class="{
           error: customErr,
-          active: customValue == slipage && customValue !== '',
+          active: customValue == slippage && customValue !== '',
         }"
         @click="activateCustomState()"
       >
@@ -36,13 +36,13 @@
 <script>
 export default {
   props: {
-    slipage: {
+    slippage: {
       required: true,
     },
   },
   data() {
     return {
-      slipageItems: [0.5, 1, 3, 5],
+      slippageItems: [0.5, 1, 3, 5],
       isCustom: false,
       customValue: "",
       customErr: false,
@@ -50,7 +50,7 @@ export default {
     };
   },
   methods: {
-    setSlipage(item) {
+    setSlippage(item) {
       this.customErr = false;
       this.isCustom = false;
       this.customValue = "";
@@ -80,11 +80,11 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-.slipage-block {
+.slippage-block {
   margin-bottom: 24px;
   margin-top: 20px;
 
-  .slipage-title {
+  .slippage-title {
     text-align: left;
     line-height: 20px;
     font-size: 14px;
